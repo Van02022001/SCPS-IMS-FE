@@ -8,13 +8,13 @@ import Iconify from '../../../components/iconify';
 
 // ----------------------------------------------------------------------
 
-export default function LoginForm() {
+const RegisterForm = ()  => {
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleClick = () => {
-    navigate('/dashboard', { replace: true });
+  const handleBackToLogin = () => {
+    navigate('/login', { replace: true });
   };
   const handleRegister = () => {
     navigate('/register');
@@ -23,8 +23,9 @@ export default function LoginForm() {
   return (
     <>
       <Stack spacing={3}>
+        <TextField name="username" label="User Name" />
         <TextField name="email" label="Email address" />
-
+        <TextField name="phone" label="Phone" />
         <TextField
           name="password"
           label="Password"
@@ -40,19 +41,17 @@ export default function LoginForm() {
           }}
         />
       </Stack>
-      <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 1 }}>
-        <Checkbox name="remember" label="Remember me" />
-        <Link variant="subtitle2" underline="hover">
-          Forgot password?
+      <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
+        
+        <Link variant="subtitle2" underline="hover" onClick={handleBackToLogin}>
+          You have an account? Back to login
         </Link>
       </Stack>
-      <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={handleClick} sx={{ my: 1 }}>
-        Login
-      </LoadingButton>
-
       <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={handleRegister}>
         Register
       </LoadingButton>
     </>
   );
 }
+
+export default RegisterForm
