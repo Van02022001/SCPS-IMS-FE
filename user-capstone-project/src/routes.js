@@ -9,6 +9,7 @@ import LoginPage from './pages/login/LoginPage';
 import Page404 from './pages/Page404';
 import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/dashboard/DashboardAppPage';
+import CreateProduct from './sections/@dashboard/products/crudProducts/CreateProduct';
 
 // ----------------------------------------------------------------------
 
@@ -40,6 +41,13 @@ const Router = () => {
     {
       path: '*',
       element: <Navigate to="/404" replace />,
+    },
+    {
+      element: <DashboardLayout />,
+      children: [
+        { element: <Navigate to="/dashboard/app" />, index: true },
+        { path: 'createProducts', element: <CreateProduct /> },
+      ],
     },
   ]);
 
