@@ -1,11 +1,13 @@
 import { Helmet } from 'react-helmet-async';
+import { useState } from 'react';
 // @mui
-import { Grid, Button, Container, Stack, Typography } from '@mui/material';
+import { Grid, Button, Container, Stack, Typography , Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControlLabel, IconButton, TextField } from '@mui/material';
 // components
 import Iconify from '../components/iconify';
 import { BlogPostCard, BlogPostsSort, BlogPostsSearch } from '../sections/@dashboard/blog';
 // mock
 import POSTS from '../_mock/blog';
+import UserForm from '../sections/auth/home/UserForm';
 
 // ----------------------------------------------------------------------
 
@@ -18,6 +20,7 @@ const SORT_OPTIONS = [
 // ----------------------------------------------------------------------
 
 export default function BlogPage() {
+  const [open, setOpen] = useState(false);
   return (
     <>
       <Helmet>
@@ -29,9 +32,27 @@ export default function BlogPage() {
           <Typography variant="h4" gutterBottom>
             Blog
           </Typography>
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={() => setOpen(true)}>
             New Post
           </Button>
+          <Dialog fullWidth maxWidth="sm" open={open} >
+                    <DialogTitle>User Registeration   </DialogTitle>
+                    <DialogContent>
+                        {/* <DialogContentText>Do you want remove this user?</DialogContentText> */}
+                        <Stack spacing={2} margin={2}>
+                            <TextField variant="outlined" label="Username" />
+                            <TextField variant="outlined" label="Password" />
+                            <TextField variant="outlined" label="Email" />
+                            <TextField variant="outlined" label="Phone" />
+
+                            <Button color="primary" variant="contained">Submit</Button>
+                        </Stack>
+                    </DialogContent>
+                    <DialogActions>
+                        {/* <Button color="success" variant="contained">Yes</Button>
+                    <Button onClick={closepopup} color="error" variant="contained">Close</Button> */}
+                    </DialogActions>
+                </Dialog>
         </Stack>
 
         <Stack mb={5} direction="row" alignItems="center" justifyContent="space-between">
