@@ -26,6 +26,7 @@ const RegisterForm = ()  => {
         <TextField name="username" label="User Name" />
         <TextField name="email" label="Email address" />
         <TextField name="phone" label="Phone" />
+        <TextField name="adress " label="Adress" />
         <TextField
           name="password"
           label="Password"

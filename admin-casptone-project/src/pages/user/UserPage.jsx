@@ -21,7 +21,13 @@ import {
   IconButton,
   TableContainer,
   TablePagination,
+  Dialog,
+  TextField,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from '@mui/material';
+import CloseIcon from "@mui/icons-material/Close"
 // components
 import Label from '../../components/label';
 import Iconify from '../../components/iconify';
@@ -30,6 +36,8 @@ import Scrollbar from '../../components/scrollbar';
 import { UserListHead, UserListToolbar } from '../../sections/@dashboard/user';
 // mock
 import USERLIST from '../../_mock/user';
+import UserForm from '../../sections/auth/home/UserForm';
+
 
 // ----------------------------------------------------------------------
 
@@ -73,9 +81,9 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
- const UserPage = () => {
+const UserPage = () => {
   const [open, setOpen] = useState(null);
-
+  const [openForm, setOpenForm] = useState(false);
   const [page, setPage] = useState(0);
 
   const [order, setOrder] = useState('asc');
@@ -95,7 +103,9 @@ function applySortFilter(array, comparator, query) {
   const handleCloseMenu = () => {
     setOpen(null);
   };
-
+  const handleCloseUserForm = () => {
+    setOpenForm(false);
+  };
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -157,9 +167,28 @@ function applySortFilter(array, comparator, query) {
           <Typography variant="h4" gutterBottom>
             User
           </Typography>
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+          <Button
+            variant="contained"
+            startIcon={<Iconify icon="eva:plus-fill" />}
+            onClick={() => setOpenForm(true)}
+          >
             New User
           </Button>
+          <Dialog fullWidth maxWidth="sm" open={openForm}>
+            <DialogTitle>User Registeration  <IconButton onClick={handleCloseUserForm} style={{ float: 'right' }}><CloseIcon color="primary" /></IconButton>  </DialogTitle>
+            <DialogContent>
+              {/* <DialogContentText>Do you want remove this user?</DialogContentText> */}
+              <Stack spacing={2} margin={2}>
+                <TextField variant="outlined" label="Username" />
+                <TextField variant="outlined" label="Password" />
+                <TextField variant="outlined" label="Email" />
+                <TextField variant="outlined" label="Phone" />
+
+                <Button color="primary" variant="contained">Submit</Button>
+              </Stack>
+            </DialogContent>
+
+          </Dialog>
         </Stack>
 
         <Card>
