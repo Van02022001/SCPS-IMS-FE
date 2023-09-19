@@ -9,6 +9,7 @@ import LoginPage from './pages/login/LoginPage';
 import Page404 from './pages/Page404';
 import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/dashboard/DashboardAppPage';
+import RegisterPage from './pages/register/RegisterPage';
 
 // ----------------------------------------------------------------------
 
@@ -28,6 +29,10 @@ const Router = () => {
     {
       path: 'login',
       element: <LoginPage />,
+    },
+    {
+      path: 'register',
+      element: <RegisterPage />,
     },
     {
       element: <SimpleLayout />,
