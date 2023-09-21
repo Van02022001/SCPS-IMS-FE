@@ -11,15 +11,16 @@ const navConfig = [
   //   path: '/dashboard/app',
   //   icon: icon('ic_analytics'),
   // },
-  // {
-  //   title: 'Quản lý người dùng',
-  //   path: '/dashboard/user',
-  //   icon: icon('ic_user'),
-  // },
+  
   {
     title: 'product',
     path: '/dashboard/products',
     icon: icon('ic_cart'),
+  },
+  {
+    title: 'Quản lý hóa đơn',
+    path: '/dashboard/odersManager',
+    icon: icon('ic_user'),
   },
   {
     title: 'blog',
