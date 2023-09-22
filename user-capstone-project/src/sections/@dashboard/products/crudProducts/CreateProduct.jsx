@@ -64,7 +64,7 @@ function CreateProduct() {
                     <Grid item xs={8}>
                         <Box
                             sx={{
-                                width: 500,
+                                width: 600,
                                 maxWidth: '100%',
                                 marginBottom: '10px',
                             }}
@@ -73,7 +73,7 @@ function CreateProduct() {
                         </Box>
                         <Box
                             sx={{
-                                width: 500,
+                                width: 600,
                                 maxWidth: '100%',
                                 marginBottom: '10px',
                             }}

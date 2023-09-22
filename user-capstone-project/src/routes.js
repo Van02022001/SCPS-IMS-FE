@@ -12,6 +12,8 @@ import DashboardAppPage from './pages/dashboard/DashboardAppPage';
 import CreateProduct from './sections/@dashboard/products/crudProducts/CreateProduct';
 import ProductDetail from './pages/productDetail/ProductDetail';
 import OdersManagerPage from './pages/odersManager/OdersManager';
+import CategoryPage from './pages/category/CategoryPage';
+import BrandPage from './pages/brand/BrandPage';
 
 // ----------------------------------------------------------------------
 
@@ -27,6 +29,8 @@ const Router = () => {
         { path: 'products', element: <ProductsPage /> },
         { path: 'productsDetail', element: <ProductDetail />},
         { path: 'odersManager', element: <OdersManagerPage /> },
+        { path: 'category', element: <CategoryPage />},
+        { path: 'brand', element: <BrandPage />},
         { path: 'blog', element: <BlogPage /> },
       ],
     },

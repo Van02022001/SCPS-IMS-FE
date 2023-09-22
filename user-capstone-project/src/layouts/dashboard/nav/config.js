@@ -23,10 +23,20 @@ const navConfig = [
     icon: icon('ic_user'),
   },
   {
-    title: 'blog',
-    path: '/dashboard/blog',
+    title: 'Quản lý thể loại',
+    path: '/dashboard/category',
     icon: icon('ic_blog'),
   },
+  {
+    title: 'Quản lý thương hiệu',
+    path: '/dashboard/brand',
+    icon: icon('ic_blog'),
+  },
+  // {
+  //   title: 'blog',
+  //   path: '/dashboard/blog',
+  //   icon: icon('ic_blog'),
+  // },
   {
     title: 'login',
     path: '/login',
