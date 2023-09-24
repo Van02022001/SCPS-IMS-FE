@@ -7,7 +7,7 @@ import BlogPage from './pages/BlogPage';
 import UserPage from './pages/user/UserPage';
 import LoginPage from './pages/login/LoginPage';
 import Page404 from './pages/Page404';
-import ProductsPage from './pages/ProductsPage';
+import ProductsPage from './pages/product/ProductsPage';
 import DashboardAppPage from './pages/dashboard/DashboardAppPage';
 import RegisterPage from './pages/register/RegisterPage';
 
