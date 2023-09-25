@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Container, Typography, Button, Card, CardContent, CardMedia, Stack, Box, TextField } from '@mui/material';
+import { Container, Typography, Button, Card, CardContent, CardMedia, Stack, Box, Grid } from '@mui/material';
 import ProductMeta from './productMeta/ProductMeta';
 // components
 import Iconify from '~/components/iconify/Iconify';
+import InputMultiline from '~/components/multi-line/multi-line';
 //icons
 import ClearIcon from '@mui/icons-material/Clear';
 
@@ -52,16 +53,27 @@ const ProductDetail = () => {
                         <Typography variant="h5" component="div">
                             Product Meta
                         </Typography>
-                        <Box
-                            sx={{
-                                // width: 600,
-                                maxWidth: '100%',
-                                margin: '20px 0',
-                              
-                            }}
-                        >
-                            <TextField fullWidth label="Description" id="Description" />
-                        </Box>
+                        <Grid container spacing={2} columns={16}>
+                            <Grid item xs={4}>
+                                <Typography variant="h10" component="div">
+                                    Mô tả
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary">
+                                    Multi-line text
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={8}>
+                                <Box
+                                    sx={{
+                                        // width: 600,
+                                        maxWidth: '100%',
+                                        margin: '20px 0',
+                                    }}
+                                >
+                                    <InputMultiline fullWidth label="Description" id="Description" />
+                                </Box>
+                            </Grid>
+                        </Grid>
                         <Stack width={180} direction="row" alignItems="center" justifyContent="space-between" mt={0}>
                             <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
                                 Thêm

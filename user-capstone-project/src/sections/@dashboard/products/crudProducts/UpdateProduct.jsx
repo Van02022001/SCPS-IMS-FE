@@ -21,19 +21,19 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 import { DateRangePicker } from '@mui/x-date-pickers-pro/DateRangePicker';
 
-function CreateProduct() {
+function UpdateProduct() {
     const [value, setValue] = React.useState([dayjs('2022-04-17'), dayjs('2022-04-21')]);
 
     return (
         <>
             <Helmet>
-                <title> Create Products | Minimal UI </title>
+                <title> Update Products | Minimal UI </title>
             </Helmet>
 
             <Container>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                     <Typography variant="h4" sx={{ mb: 5 }}>
-                        Thêm mới Sản Phẩm
+                        Cập Nhật Sản Phẩm
                     </Typography>
                     <Button
                         variant="contained"
@@ -91,9 +91,9 @@ function CreateProduct() {
                         {/*========== ngày ==========*/}
                     </Grid>
                 </Grid>
-                <Stack width={190} direction="row" alignItems="center" justifyContent="space-between" mt={5}>
+                <Stack width={210} direction="row" alignItems="center" justifyContent="space-between" mt={5}>
                     <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-                        Thêm
+                        Cập nhật
                     </Button>
                     <Button variant="outlined" startIcon={<ClearIcon icon="eva:plus-fill" />}>
                         Hủy
@@ -104,4 +104,4 @@ function CreateProduct() {
     );
 }
 
-export default CreateProduct;
+export default UpdateProduct;

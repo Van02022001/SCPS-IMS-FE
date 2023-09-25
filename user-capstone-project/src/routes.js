@@ -14,6 +14,7 @@ import ProductDetail from './pages/productDetail/ProductDetail';
 import OdersManagerPage from './pages/odersManager/OdersManager';
 import CategoryPage from './pages/category/CategoryPage';
 import BrandPage from './pages/brand/BrandPage';
+import UpdateProduct from './sections/@dashboard/products/crudProducts/UpdateProduct';
 
 // ----------------------------------------------------------------------
 
@@ -55,6 +56,7 @@ const Router = () => {
       children: [
         { element: <Navigate to="/dashboard/app" />, index: true },
         { path: 'createProducts', element: <CreateProduct /> },
+        { path: 'updateProducts', element: <UpdateProduct /> },
       ],
     },
   ]);
