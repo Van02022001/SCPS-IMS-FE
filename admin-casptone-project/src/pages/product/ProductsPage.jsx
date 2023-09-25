@@ -8,7 +8,6 @@ import {
   Table,
   Stack,
   Paper,
-  Avatar,
   Button,
   Popover,
   Checkbox,
@@ -87,10 +86,11 @@ const ProductPage = () => {
   const [open, setOpen] = useState(null);
   const [openForm, setOpenForm] = useState(false);
   const [page, setPage] = useState(0);
-
+  const [selectedProducts, setSelectedProducts] = useState([]);
+  const [selectedProductIds, setSelectedProductIds] = useState([]);
+  const [sortedProducts, setSortedProducts] = useState([]);
+  const [sortBy, setSortBy] = useState('createdAt');
   const [order, setOrder] = useState('asc');
-
-  const [selected, setSelected] = useState([]);
 
   const [orderBy, setOrderBy] = useState('name');
 
@@ -108,35 +108,46 @@ const ProductPage = () => {
   const handleCloseUserForm = () => {
     setOpenForm(false);
   };
-  const handleRequestSort = (event, property) => {
+  const handleRequestSort = (property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
+    // Sắp xếp danh sách sản phẩm dựa trên trường và hướng đã chọn
+    const sortedProducts = [...products].sort((a, b) => {
+      const valueA = a[property];
+      const valueB = b[property];
+      if (valueA < valueB) {
+        return isAsc ? -1 : 1;
+      }
+      if (valueA > valueB) {
+        return isAsc ? 1 : -1;
+      }
+      return 0;
+    });
+    setSortedProducts(sortedProducts);
   };
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = USERLIST.map((n) => n.name);
-      setSelected(newSelecteds);
-      return;
+      // Nếu người dùng chọn checkbox "Chọn tất cả", lấy danh sách ID của tất cả sản phẩm.
+      const newSelectedIds = products.map((product) => product.id);
+      setSelectedProductIds(newSelectedIds);
+    } else {
+      // Nếu người dùng bỏ chọn checkbox "Chọn tất cả", loại bỏ tất cả sản phẩm khỏi danh sách đã chọn.
+      setSelectedProductIds([]);
     }
-    setSelected([]);
   };
 
-  // const handleClick = (event, name) => {
-  //   const selectedIndex = selected.indexOf(name);
-  //   let newSelected = [];
-  //   if (selectedIndex === -1) {
-  //     newSelected = newSelected.concat(selected, name);
-  //   } else if (selectedIndex === 0) {
-  //     newSelected = newSelected.concat(selected.slice(1));
-  //   } else if (selectedIndex === selected.length - 1) {
-  //     newSelected = newSelected.concat(selected.slice(0, -1));
-  //   } else if (selectedIndex > 0) {
-  //     newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-  //   }
-  //   setSelected(newSelected);
-  // };
+
+  const handleCheckboxChange = (event, productId) => {
+    if (event.target.checked) {
+      // Nếu người dùng chọn checkbox, thêm sản phẩm vào danh sách đã chọn.
+      setSelectedProductIds([...selectedProductIds, productId]);
+    } else {
+      // Nếu người dùng bỏ chọn checkbox, loại bỏ sản phẩm khỏi danh sách đã chọn.
+      setSelectedProductIds(selectedProductIds.filter((id) => id !== productId));
+    }
+  };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -149,7 +160,11 @@ const ProductPage = () => {
 
   const handleFilterByName = (event) => {
     setPage(0);
-    setFilterName(event.target.value);
+    const query = event.target.value;
+    setFilterName(query);
+    // Lọc danh sách sản phẩm theo tên và trường đang được sắp xếp
+    const filteredProducts = applySortFilter(sortedProducts, getComparator(order, sortBy), query);
+    setSortedProducts(filteredProducts);
   };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
@@ -162,7 +177,9 @@ const ProductPage = () => {
     getAllProducts()
       .then((response) => {
         const data = response.data;
-        setProducts(data)
+        // Cập nhật sortedProducts khi nhận dữ liệu từ API
+        setProducts(data);
+        setSortedProducts(data);
       })
       .catch((error) => {
         console.error("Error fetching products:", error);
@@ -191,7 +208,7 @@ const ProductPage = () => {
         </Stack>
 
         <Card>
-          <ProductListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+          <ProductListToolbar numSelected={selectedProductIds.length} filterName={filterName} onFilterName={handleFilterByName} />
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
@@ -200,71 +217,43 @@ const ProductPage = () => {
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={USERLIST.length}
-                  numSelected={selected.length}
+                  rowCount={products.length}
+                  numSelected={selectedProductIds.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-                  {/* {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, name, role, status, company, avatarUrl, isVerified } = row;
-                    const selectedUser = selected.indexOf(name) !== -1;
-                    
-                
-                    return (
-                      <TableRow hover key={id} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                        <TableCell padding="checkbox">
-                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, name)} />
-                        </TableCell>
-
-                        <TableCell component="th" scope="row" padding="none">
-                          <Stack direction="row" alignItems="center" spacing={2}>
-                            <Avatar alt={name} src={avatarUrl} />
-                            <Typography variant="subtitle2" noWrap>
-                              {name}
-                            </Typography>
-                          </Stack>
-                        </TableCell>
-
-                        <TableCell align="left">{company}</TableCell>
-
-                        <TableCell align="left">{role}</TableCell>
-
-                        <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell>
-
-                        <TableCell align="left">
-                          <Label color={(status === 'banned' && 'error') || 'success'}>{sentenceCase(status)}</Label>
-                        </TableCell>
-
-                        <TableCell align="right">
-                          <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
-                            <Iconify icon={'eva:more-vertical-fill'} />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })} */}
-                  {products.map((product) => {
+                  {sortedProducts.map((product) => {
                     console.log("Product:", product);
                     return (
                       <TableRow hover key={product.id} tabIndex={-1} role="checkbox">
                         <TableCell padding="checkbox">
-                          <Checkbox checked={product.id} />
+                          <Checkbox checked={selectedProductIds.includes(product.id)}
+                            onChange={(event) => handleCheckboxChange(event, product.id)} />
                         </TableCell>
 
-                        <TableCell>{product.id}</TableCell>
-                        <TableCell>{product.name}</TableCell>
-                        <TableCell>{product.description}</TableCell>
-                        <TableCell>{product.createdAt}</TableCell>
-                        <TableCell>{product.updatedAt}</TableCell>
-                        <TableCell>{product.status}</TableCell>
-                        <TableCell>{product.warehouses}</TableCell>
+                        <TableCell component="th" scope="row" padding="none">
+                          <Stack direction="row" alignItems="center" spacing={2}>{product.id}</Stack>
+                        </TableCell>
+
+                        <TableCell align="left">{product.name}</TableCell>
+                        <TableCell align="left">{product.description}</TableCell>
+                        <TableCell align="left">{product.createdAt}</TableCell>
+                        <TableCell align="left">{product.updatedAt}</TableCell>
+                        <TableCell align="left">
+                          <Label color={(product.status === 'banned' && 'error') || 'success'}>{sentenceCase(product.status)}</Label>
+                        </TableCell>
+                        <TableCell align="left">{product.warehouses}</TableCell>
                         <TableCell>
                           {product.categories.map((category, index) => (
                             <span key={index}>{category.name}</span>
                           ))}
                         </TableCell>
-                        {/* Thêm các cột khác tùy theo dữ liệu sản phẩm */}
+                        <TableCell align="right">
+                          <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
+                            <Iconify icon={'eva:more-vertical-fill'} />
+                          </IconButton>
+                        </TableCell>
                       </TableRow>
                     );
                   })}

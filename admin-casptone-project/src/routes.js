@@ -10,6 +10,8 @@ import Page404 from './pages/Page404';
 import ProductsPage from './pages/product/ProductsPage';
 import DashboardAppPage from './pages/dashboard/DashboardAppPage';
 import RegisterPage from './pages/register/RegisterPage';
+import CategoryPage from './pages/category/CategoryPage';
+import BrandPage from './pages/brand/BrandPage';
 
 // ----------------------------------------------------------------------
 
@@ -23,6 +25,8 @@ const Router = () => {
         { path: 'app', element: <DashboardAppPage /> },
         { path: 'user', element: <UserPage /> },
         { path: 'products', element: <ProductsPage /> },
+        { path: 'category', element: <CategoryPage /> },
+        { path: 'brand', element: <BrandPage /> },
         { path: 'blog', element: <BlogPage /> },
       ],
     },

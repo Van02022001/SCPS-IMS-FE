@@ -22,6 +22,16 @@ const navConfig = [
     icon: icon('ic_cart'),
   },
   {
+    title: 'Danh sách loại sản phẩm',
+    path: '/dashboard/category',
+    icon: icon('ic_cart'),
+  },
+  {
+    title: 'Danh sách thương hiệu',
+    path: '/dashboard/brand',
+    icon: icon('ic_cart'),
+  },
+  {
     title: 'blog',
     path: '/dashboard/blog',
     icon: icon('ic_blog'),
