@@ -41,8 +41,12 @@ import CategoryForm from '~/sections/@dashboard/categories/CategoryForm';
 
 const TABLE_HEAD = [
     { id: 'image', label: '', alignRight: false },
-    { id: 'name', label: 'Mã hàng', alignRight: false },
+    { id: 'id', label: 'Mã hàng', alignRight: false },
     { id: 'name', label: 'Tên sản phẩm', alignRight: false },
+    { id: 'type', label: 'Loại hàng', alignRight: false },
+    { id: 'price', label: 'Giá bán', alignRight: false },
+    { id: 'price', label: 'Giá vốn', alignRight: false },
+    { id: 'brand', label: 'Thương hiệu', alignRight: false },
     { id: 'company', label: 'Tồn kho', alignRight: false },
     { id: 'isVerified', label: 'Nhà cung cấp', alignRight: false },
     { id: 'status', label: 'Trạng thái', alignRight: false },
@@ -177,7 +181,7 @@ const ProductsPage = () => {
                     >
                         Thêm Sản Phẩm
                     </Button>
-                    <Dialog fullWidth maxWidth="sm" open={openOderForm}>
+                    <Dialog fullWidth maxWidth open={openOderForm}>
                         <DialogTitle>
                             Tạo Sản Phẩm{' '}
                             <IconButton style={{ float: 'right' }} onClick={handleCloseOdersForm}>
