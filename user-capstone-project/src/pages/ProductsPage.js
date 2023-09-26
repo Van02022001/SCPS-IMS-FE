@@ -169,7 +169,7 @@ const ProductsPage = () => {
                 <title> Quản lý sản phẩm | Minimal UI </title>
             </Helmet>
 
-            <Container>
+            {/* <Container> */}
                 <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                     <Typography variant="h4" gutterBottom>
                         Quản lý sản phẩm
@@ -325,7 +325,7 @@ const ProductsPage = () => {
                         onRowsPerPageChange={handleChangeRowsPerPage}
                     />
                 </Card>
-            </Container>
+            {/* </Container> */}
 
             <Popover
                 open={Boolean(open)}
