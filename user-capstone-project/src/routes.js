@@ -15,6 +15,9 @@ import OdersManagerPage from './pages/odersManager/OdersManager';
 import CategoryPage from './pages/category/CategoryPage';
 import BrandPage from './pages/brand/BrandPage';
 import UpdateProduct from './sections/@dashboard/products/crudProducts/UpdateProduct';
+import ReportPage from './pages/report/ReportPage';
+import ReportProductPage from './pages/report/ReportProductPage';
+import ReportSalePage from './pages/report/ReportSalePage';
 
 // ----------------------------------------------------------------------
 
@@ -33,6 +36,15 @@ const Router = () => {
         { path: 'category', element: <CategoryPage />},
         { path: 'brand', element: <BrandPage />},
         { path: 'blog', element: <BlogPage /> },
+        {
+          path: 'report',
+          children: [
+            {element: <Navigate to="/dashboard/report" />, index: true },
+            { path: 'report-end-day', element: <ReportPage /> }, // Con đường dẫn cho "Cuối Ngày"
+            { path: 'report-sale', element: <ReportSalePage/> }, // Con đường dẫn cho "Bán hàng"
+            { path: 'report-inventory', element: <ReportProductPage /> }, // Con đường dẫn cho "Hàng hóa"
+          ],
+        },
       ],
     },
     {

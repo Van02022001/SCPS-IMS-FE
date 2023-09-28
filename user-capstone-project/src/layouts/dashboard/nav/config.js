@@ -1,6 +1,5 @@
 // component
 import SvgColor from '../../../components/svg-color';
-
 // ----------------------------------------------------------------------
 
 const icon = (name) => <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />;
@@ -32,11 +31,24 @@ const navConfig = [
     path: '/dashboard/brand',
     icon: icon('ic_blog'),
   },
-  // {
-  //   title: 'blog',
-  //   path: '/dashboard/blog',
-  //   icon: icon('ic_blog'),
-  // },
+  {
+    title: 'Báo cáo',
+    icon: icon('ic_blog'),
+    children: [
+      {
+        title: 'Cuối Ngày',
+        path: '/dashboard/report/report-end-day',
+      },
+      {
+        title: 'Bán hàng',
+        path: '/dashboard/report/report-sale',
+      },
+      {
+        title: 'Hàng hóa',
+        path: '/dashboard/report/report-inventory',
+      },
+    ],
+  },
   {
     title: 'login',
     path: '/login',
@@ -48,5 +60,7 @@ const navConfig = [
     icon: icon('ic_disabled'),
   },
 ];
+
+
 
 export default navConfig;
