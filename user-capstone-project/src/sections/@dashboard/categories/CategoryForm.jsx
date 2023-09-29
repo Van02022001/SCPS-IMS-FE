@@ -87,27 +87,6 @@ const CategoryForm = () => {
                                             />
                                         </Grid>
 
-                                <Grid
-                                    container
-                                    spacing={1}
-                                    direction="row"
-                                    justifyContent="space-between"
-                                    alignItems="center"
-                                    sx={{ marginBottom: 4, gap: 2 }}
-                                >
-                                    <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
-                                        Kích thước:{' '}
-                                    </Typography>
-                                    <GroupedSelect ></GroupedSelect>
-                                </Grid>
-
-                                {/* Thêm các trường khác ở đây */}
-                            </Grid>
-                        </Grid>
-                        <Button color="primary" variant="contained">
-                            Tạo
-                        </Button>
-                    </Stack>
                                         <Grid
                                             container
                                             spacing={1}
@@ -287,15 +266,21 @@ const CategoryForm = () => {
                         // Hiển thị giao diện cho tab "Mô tả chi tiết"
                         <div>
                             {/* Các trường dữ liệu cho tab "Mô tả chi tiết" */}
-                            <TextField
-                                name="field1"
-                                value={tab2Data.field1}
-                                onChange={handleTab2DataChange}
-                            />
-
+                            <Grid
+                                container
+                                spacing={1}
+                                direction="row"
+                                justifyContent="space-between"
+                                alignItems="center"
+                                sx={{ marginBottom: 4, gap: 2 }}
+                            >
+                                <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
+                                    Kích thước:{' '}
+                                </Typography>
+                                <GroupedSelect ></GroupedSelect>
+                            </Grid>
                         </div>
                     )}
-
                 </DialogContent>
                 <DialogActions>
                     {/* <Button color="success" variant="contained">Yes</Button>
