@@ -12,9 +12,22 @@ const navConfig = [
   // },
   
   {
-    title: 'product',
-    path: '/dashboard/products',
+    title: 'Hàng hóa',
     icon: icon('ic_cart'),
+    children: [
+      {
+        title: 'Danh mục',
+        path: '/dashboard/products/production',
+      },
+      {
+        title: 'Thiết lập giá',
+        path: '/dashboard/products/products-price',
+      },
+      {
+        title: 'Kiểm kho  ',
+        path: '/dashboard/products',
+      },
+    ],
   },
   {
     title: 'Quản lý hóa đơn',

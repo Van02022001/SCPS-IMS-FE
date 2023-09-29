@@ -18,6 +18,7 @@ import UpdateProduct from './sections/@dashboard/products/crudProducts/UpdatePro
 import ReportPage from './pages/report/ReportPage';
 import ReportProductPage from './pages/report/ReportProductPage';
 import ReportSalePage from './pages/report/ReportSalePage';
+import ProductsPricePage from './pages/products/ProductPrice';
 
 // ----------------------------------------------------------------------
 
@@ -30,7 +31,12 @@ const Router = () => {
         { element: <Navigate to="/dashboard/app" />, index: true },
         { path: 'app', element: <DashboardAppPage /> },
         { path: 'user', element: <UserPage /> },
-        { path: 'products', element: <ProductsPage /> },
+        { path: 'products', 
+        children: [
+          {element: <Navigate to="/dashboard/products"/>, index: true},
+          {path: 'production', element: <ProductsPage/>},
+          {path: 'products-price', element: <ProductsPricePage/>} ] },
+
         { path: 'productsDetail', element: <ProductDetail />},
         { path: 'odersManager', element: <OdersManagerPage /> },
         { path: 'category', element: <CategoryPage />},
