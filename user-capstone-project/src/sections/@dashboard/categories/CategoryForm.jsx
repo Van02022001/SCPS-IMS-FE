@@ -27,6 +27,7 @@ import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 //icons
 import AddIcon from '@mui/icons-material/Add';
+import GroupedSelect from '~/components/list-subheader/ListSubheader';
 
 const CategoryForm = () => {
     const [currentTab, setCurrentTab] = useState(0);
@@ -229,6 +230,20 @@ const CategoryForm = () => {
                                         Tồn kho:{' '}
                                     </Typography>
                                     <TextField size="small" variant="outlined" sx={{ width: '70%' }} />
+                                </Grid>
+
+                                <Grid
+                                    container
+                                    spacing={1}
+                                    direction="row"
+                                    justifyContent="space-between"
+                                    alignItems="center"
+                                    sx={{ marginBottom: 4, gap: 2 }}
+                                >
+                                    <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
+                                        Kích thước:{' '}
+                                    </Typography>
+                                    <GroupedSelect ></GroupedSelect>
                                 </Grid>
 
                                 {/* Thêm các trường khác ở đây */}
