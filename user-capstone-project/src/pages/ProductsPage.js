@@ -45,11 +45,13 @@ const TABLE_HEAD = [
     { id: 'name', label: 'Tên sản phẩm', alignRight: false },
     { id: 'type', label: 'Loại hàng', alignRight: false },
     { id: 'price', label: 'Giá bán', alignRight: false },
-    { id: 'price', label: 'Giá vốn', alignRight: false },
+    { id: 'capitalprice', label: 'Giá vốn', alignRight: false },
     { id: 'brand', label: 'Thương hiệu', alignRight: false },
     { id: 'company', label: 'Tồn kho', alignRight: false },
     { id: 'isVerified', label: 'Nhà cung cấp', alignRight: false },
     { id: 'status', label: 'Trạng thái', alignRight: false },
+    { id: 'sold', label: 'Đã bán', alignRight: false },
+    { id: 'defective', label: 'Trả hàng', alignRight: false },
     { id: '' },
 ];
 

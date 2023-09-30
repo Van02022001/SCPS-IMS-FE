@@ -416,10 +416,20 @@ const CategoryForm = () => {
                                         multiline
                                         rows={4}
                                         defaultValue="Default Value"
-                                        sx={{width: "100%", border: "none"}}
+                                        sx={{ width: '100%', border: 'none' }}
                                     />
                                 </CardContent>
                             </Card>
+                            <Stack spacing={4} margin={2}>
+                                <Grid container spacing={1} sx={{ gap: '20px' }}>
+                                    <Button color="primary" variant="contained" startIcon={<SaveIcon />}>
+                                        Lưu
+                                    </Button>
+                                    <Button color="primary" variant="outlined" startIcon={<ClearIcon />}>
+                                        Hủy
+                                    </Button>
+                                </Grid>
+                            </Stack>
                         </div>
                     )}
                 </DialogContent>
