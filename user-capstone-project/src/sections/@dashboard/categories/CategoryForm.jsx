@@ -21,13 +21,26 @@ import {
     Tabs,
     TextField,
     Typography,
+    Card,
+    CardContent,
 } from '@mui/material';
 import { useState } from 'react';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 //icons
 import AddIcon from '@mui/icons-material/Add';
+import ClearIcon from '@mui/icons-material/Clear';
+import SaveIcon from '@mui/icons-material/Save';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+
+//components
 import GroupedSelect from '~/components/list-subheader/ListSubheader';
+import BoxComponent from '~/components/box/BoxComponent';
+import CustomizedDividers from '~/components/togglebutton/CustomizedDividers';
+
+//ckeditor
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 const CategoryForm = () => {
     const [currentTab, setCurrentTab] = useState(0);
@@ -252,12 +265,36 @@ const CategoryForm = () => {
                                             <TextField size="small" variant="outlined" sx={{ width: '70%' }} />
                                         </Grid>
 
+                                        <Grid
+                                            container
+                                            spacing={1}
+                                            direction="row"
+                                            justifyContent="space-between"
+                                            alignItems="center"
+                                            sx={{ marginBottom: 4, gap: 2 }}
+                                        >
+                                            <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
+                                                Kích thước:{' '}
+                                            </Typography>
+                                            <GroupedSelect></GroupedSelect>
+                                        </Grid>
+
                                         {/* Thêm các trường khác ở đây */}
                                     </Grid>
                                 </Grid>
-                                <Button color="primary" variant="contained">
-                                    Tạo
-                                </Button>
+                                <Grid container spacing={2} sx={{ gap: '20px' }}>
+                                    <BoxComponent />
+                                    <BoxComponent />
+                                    <BoxComponent />
+                                </Grid>
+                                <Grid container spacing={1} sx={{ gap: '20px' }}>
+                                    <Button color="primary" variant="contained" startIcon={<SaveIcon />}>
+                                        Lưu
+                                    </Button>
+                                    <Button color="primary" variant="outlined" startIcon={<ClearIcon />}>
+                                        Hủy
+                                    </Button>
+                                </Grid>
                             </Stack>
                         </div>
                     )}
@@ -266,19 +303,123 @@ const CategoryForm = () => {
                         // Hiển thị giao diện cho tab "Mô tả chi tiết"
                         <div>
                             {/* Các trường dữ liệu cho tab "Mô tả chi tiết" */}
-                            <Grid
-                                container
-                                spacing={1}
-                                direction="row"
-                                justifyContent="space-between"
-                                alignItems="center"
-                                sx={{ marginBottom: 4, gap: 2 }}
-                            >
-                                <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
-                                    Kích thước:{' '}
+                            <Card sx={{ minWidth: 275, marginTop: 5 }} spacing={2}>
+                                <Typography
+                                    variant="subtitle1"
+                                    sx={{
+                                        fontSize: '18px',
+                                        backgroundColor: '#f0f1f3',
+                                        height: 50,
+                                        textAlign: 'start',
+                                        padding: '10px 0 0 20px',
+                                    }}
+                                >
+                                    Định mức tồn
                                 </Typography>
-                                <GroupedSelect ></GroupedSelect>
-                            </Grid>
+                                <CardContent>
+                                    <Grid container spacing={2}>
+                                        <Grid item xs={6}>
+                                            <Grid
+                                                container
+                                                direction="row"
+                                                justifyContent="space-between"
+                                                alignItems="center"
+                                            >
+                                                <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
+                                                    Ít nhất
+                                                    <Button sx={{ padding: 0, minWidth: 0, marginLeft: 1 }}>
+                                                        <ErrorOutlineIcon color="disabled" />
+                                                    </Button>
+                                                </Typography>
+                                                <TextField
+                                                    size="small"
+                                                    variant="outlined"
+                                                    sx={{ width: '50%' }}
+                                                    placeholder="0"
+                                                />
+                                            </Grid>
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <Grid
+                                                container
+                                                direction="row"
+                                                justifyContent="space-between"
+                                                alignItems="center"
+                                            >
+                                                <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
+                                                    Nhiều nhất
+                                                    <Button sx={{ padding: 0, minWidth: 0, marginLeft: 1 }}>
+                                                        <ErrorOutlineIcon color="disabled" />
+                                                    </Button>
+                                                </Typography>
+                                                <TextField
+                                                    size="small"
+                                                    variant="outlined"
+                                                    sx={{ width: '50%' }}
+                                                    placeholder="999,999,999"
+                                                />
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+                                </CardContent>
+                            </Card>
+                            <Card sx={{ minWidth: 275, marginTop: 5 }} spacing={2}>
+                                <Typography
+                                    variant="subtitle1"
+                                    sx={{
+                                        fontSize: '18px',
+                                        backgroundColor: '#f0f1f3',
+                                        height: 50,
+                                        textAlign: 'start',
+                                        padding: '10px 0 0 20px',
+                                    }}
+                                >
+                                    Mô tả
+                                </Typography>
+                                <CardContent>
+                                    <CKEditor
+                                        editor={ClassicEditor}
+                                        data=""
+                                        onReady={(editor) => {
+                                            // You can store the "editor" and use when it is needed.
+                                            console.log('Editor is ready to use!', editor);
+                                        }}
+                                        onChange={(event, editor) => {
+                                            const data = editor.getData();
+                                            console.log({ event, editor, data });
+                                        }}
+                                        onBlur={(event, editor) => {
+                                            console.log('Blur.', editor);
+                                        }}
+                                        onFocus={(event, editor) => {
+                                            console.log('Focus.', editor);
+                                        }}
+                                    />
+                                </CardContent>
+                            </Card>
+                            <Card sx={{ minWidth: 275, marginTop: 5 }} spacing={2}>
+                                <Typography
+                                    variant="subtitle1"
+                                    sx={{
+                                        fontSize: '18px',
+                                        backgroundColor: '#f0f1f3',
+                                        height: 50,
+                                        textAlign: 'start',
+                                        padding: '10px 0 0 20px',
+                                    }}
+                                >
+                                    Mẫu ghi chú (hóa đơn, đặt hàng)
+                                </Typography>
+                                <CardContent>
+                                    <TextField
+                                        id="outlined-multiline-static"
+                                        multiline
+                                        rows={4}
+                                        defaultValue="Default Value"
+                                        sx={{width: "100%", border: "none"}}
+                                    />
+                                </CardContent>
+                            </Card>
                         </div>
                     )}
                 </DialogContent>
