@@ -3,7 +3,8 @@ import { Helmet } from 'react-helmet-async';
 import { faker } from '@faker-js/faker';
 // @mui
 import { useTheme } from '@mui/material/styles';
-import { Grid, Container, Typography, Menu, MenuItem, Button } from '@mui/material';
+import { Grid, Container, Typography, Menu, MenuItem, Button, Checkbox, FormControlLabel, RadioGroup, Radio, FormControl } from '@mui/material';
+
 // components
 import Iconify from '../../components/iconify';
 // sections
@@ -13,6 +14,14 @@ import { AppConversionRates } from '../../sections/@dashboard/app';
 
 const ReportProductPage = () => {
     const theme = useTheme();
+    const [selectedFilters, setSelectedFilters] = useState({
+        chart: [],
+        interested: [],
+        time: [],
+        product: [],
+        type: [],
+        brand: [],
+    });
     const [anchorElChart, setAnchorElChart] = useState(null);
     const [anchorElInterested, setAnchorElInterested] = useState(null);
     const [anchorElTime, setAnchorElTime] = useState(null);
@@ -90,6 +99,17 @@ const ReportProductPage = () => {
         setAnchorElType(null);
         setAnchorElBrand(null);
     };
+
+    // const handleFilterChange = (category, filter) => {
+    //     const updatedFilters = { ...selectedFilters };
+    //     if (updatedFilters[category].includes(filter)) {
+    //         updatedFilters[category] = updatedFilters[category].filter((item) => item !== filter);
+    //     } else {
+    //         updatedFilters[category].push(filter);
+    //     }
+    //     setSelectedFilters(updatedFilters);
+    // };
+
     const filterChart = [
         'Biểu đồ',
         'Báo cáo',
@@ -124,30 +144,69 @@ const ReportProductPage = () => {
                 <title> Report | Minimal UI </title>
             </Helmet>
 
-            <Container maxWidth="xl">
-                <Typography variant="h4" sx={{ mb: 5 }}>
-                    Báo cáo hàng hóa
-                </Typography>
-                <Grid container>
-                    <Grid item xs={2}>
-                        <Button variant="outlined" onClick={handleFilterChartClick}>
-                            {selectedFilterChart || 'Kiểu Hiện thị'}
-                        </Button>
 
-                        <Menu
-                            anchorEl={anchorElChart}
-                            open={Boolean(anchorElChart)}
-                            onClose={handleClose}
-                        >
+            <Typography variant="h4" sx={{ mb: 5 }}>
+                Báo cáo hàng hóa
+            </Typography>
+
+            <Grid container>
+                <Grid item xs={12} sm={6} md={4} lg={3}>
+                    <FormControl
+                        variant="outlined"
+                        style={{
+                            marginBottom: 20,
+                            height: '100%',
+                            width: '70%',
+                            backgroundColor: 'white',
+                            borderRadius: '10px',
+                            boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+                            padding: '10px',
+                        }}
+                    >
+                        <Typography style={{ margin: 10 }}>
+                            <span style={{ color: '#2065D1', fontWeight: 'bold' }}>Kiểu Hiện thị</span>
+                        </Typography>
+                        <RadioGroup value={selectedFilterChart}>
                             {filterChart.map((filter, index) => (
-                                <MenuItem key={index} onClick={() => handleMenuChartClick(filter)}>
-                                    {filter}
-                                </MenuItem>
+                                <FormControlLabel
+                                    key={index}
+                                    control={<Radio />}
+                                    label={filter}
+                                    value={filter}
+                                />
                             ))}
-                        </Menu>
-                    </Grid>
-
-                    <Grid item xs={2}>
+                        </RadioGroup>
+                    </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={6} md={4} lg={3}>
+                    <FormControl
+                        variant="outlined"
+                        style={{
+                            height: '100%',
+                            width: '70%',
+                            backgroundColor: 'white',
+                            borderRadius: '10px',
+                            boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+                            padding: '10px',
+                        }}
+                    >
+                        <Typography style={{ margin: 10 }}>
+                            <span style={{ color: '#2065D1', fontWeight: 'bold' }}>Mối quan tâm</span>
+                        </Typography>
+                        <RadioGroup value={selectedFilterInterested}>
+                            {filterOptions.map((filter, index) => (
+                                <FormControlLabel
+                                    key={index}
+                                    control={<Radio />}
+                                    label={filter}
+                                    value={filter}
+                                    onClick={handleFilterInterestedClick}
+                                />
+                            ))}
+                        </RadioGroup>
+                    </FormControl>
+                </Grid>
+                {/* <Grid item xs={2}>
                         <Button variant="outlined" onClick={handleFilterInterestedClick}>
                             {selectedFilterInterested || 'Mối quan tâm'}
                         </Button>
@@ -163,105 +222,126 @@ const ReportProductPage = () => {
                                 </MenuItem>
                             ))}
                         </Menu>
-                    </Grid>
-                    <Grid item xs={2}>
-                        <Button variant="outlined" onClick={handleFilterTimeClick}>
-                            {selectedFilterTime || 'Thời gian'}
-                        </Button>
+                    </Grid> */}
+                <Grid item xs={2}>
+                    <Button variant="outlined" onClick={handleFilterTimeClick}>
+                        {selectedFilterTime || 'Thời gian'}
+                    </Button>
 
-                        <Menu
-                            anchorEl={anchorElTime}
-                            open={Boolean(anchorElTime)}
-                            onClose={handleClose}
-                        >
-                            {filterTime.map((filter, index) => (
-                                <MenuItem key={index} onClick={() => handleMenuTimeClick(filter)}>
-                                    {filter}
-                                </MenuItem>
-                            ))}
-                        </Menu>
-                    </Grid>
-                    <Grid item xs={2}>
-                        <Button variant="outlined" onClick={handleFilterProductClick}>
-                            {selectedFilterProduct || 'Hàng hóa'}
-                        </Button>
+                    <Menu
+                        anchorEl={anchorElTime}
+                        open={Boolean(anchorElTime)}
+                        onClose={handleClose}
+                    >
+                        {filterTime.map((filter, index) => (
+                            <MenuItem key={index} onClick={() => handleMenuTimeClick(filter)}>
+                                {filter}
+                            </MenuItem>
+                        ))}
+                    </Menu>
+                </Grid>
+                <Grid item xs={2}>
+                    <Button variant="outlined" onClick={handleFilterProductClick}>
+                        {selectedFilterProduct || 'Hàng hóa'}
+                    </Button>
 
-                        <Menu
-                            anchorEl={anchorElProduct}
-                            open={Boolean(anchorElProduct)}
-                            onClose={handleClose}
-                        >
-                            {filterProduct.map((filter, index) => (
-                                <MenuItem key={index} onClick={() => handleMenuProductClick(filter)}>
-                                    {filter}
-                                </MenuItem>
-                            ))}
-                        </Menu>
-                    </Grid>
-                    <Grid item xs={2}>
-                        <Button variant="outlined" onClick={handleFilterTypeClick}>
-                            {selectedFilterType || 'Loại hàng'}
-                        </Button>
+                    <Menu
+                        anchorEl={anchorElProduct}
+                        open={Boolean(anchorElProduct)}
+                        onClose={handleClose}
+                    >
+                        {filterProduct.map((filter, index) => (
+                            <MenuItem key={index} onClick={() => handleMenuProductClick(filter)}>
+                                {filter}
+                            </MenuItem>
+                        ))}
+                    </Menu>
+                </Grid>
+                <Grid item xs={2}>
+                    <Button variant="outlined" onClick={handleFilterTypeClick}>
+                        {selectedFilterType || 'Loại hàng'}
+                    </Button>
 
-                        <Menu
-                            anchorEl={anchorElType}
-                            open={Boolean(anchorElType)}
-                            onClose={handleClose}
-                        >
-                            {filterType.map((filter, index) => (
-                                <MenuItem key={index} onClick={() => handleMenuTypeClick(filter)}>
-                                    {filter}
-                                </MenuItem>
-                            ))}
-                        </Menu>
-                    </Grid>
-                    <Grid item xs={2}>
-                        <Button variant="outlined" onClick={handleFilterBrandClick}>
-                            {selectedFilterBrand || 'Thương hiệu'}
-                        </Button>
+                    <Menu
+                        anchorEl={anchorElType}
+                        open={Boolean(anchorElType)}
+                        onClose={handleClose}
+                    >
+                        {filterType.map((filter, index) => (
+                            <MenuItem key={index} onClick={() => handleMenuTypeClick(filter)}>
+                                {filter}
+                            </MenuItem>
+                        ))}
+                    </Menu>
+                </Grid>
+                <Grid item xs={2}>
+                    <Button variant="outlined" onClick={handleFilterBrandClick}>
+                        {selectedFilterBrand || 'Thương hiệu'}
+                    </Button>
 
-                        <Menu
-                            anchorEl={anchorElBrand}
-                            open={Boolean(anchorElBrand)}
-                            onClose={handleClose}
-                        >
-                            {filterBrand.map((filter, index) => (
-                                <MenuItem key={index} onClick={() => handleMenuBrandClick(filter)}>
-                                    {filter}
-                                </MenuItem>
-                            ))}
-                        </Menu>
-                    </Grid>
+                    <Menu
+                        anchorEl={anchorElBrand}
+                        open={Boolean(anchorElBrand)}
+                        onClose={handleClose}
+                    >
+                        {filterBrand.map((filter, index) => (
+                            <MenuItem key={index} onClick={() => handleMenuBrandClick(filter)}>
+                                {filter}
+                            </MenuItem>
+                        ))}
+                    </Menu>
+                </Grid>
+            </Grid>
+
+
+
+
+            <Grid spacing={3} >
+                <Grid item xs={12} md={6} lg={8} style={{ margin: '10px 10px 20px 0px' }}>
+                    <AppConversionRates
+                        title="Top 10 sản phẩm bán chạy nhất (đã trừ trả hàng)"
+                        chartData={[
+                            { label: 'Ống đồng', value: 400 },
+                            { label: 'Ren', value: 430 },
+                            { label: 'Móc', value: 1200 },
+                            { label: 'Ro', value: 1380 },
+                        ]}
+                    />
+                </Grid>
+                <Grid item xs={12} md={6} lg={8} style={{ margin: '10px 10px 10px 0px' }}>
+                    <AppConversionRates
+                        title="Top 10 sản phẩm bán chạy theo số lượng (đã trừ trả hàng)"
+                        chartData={[
+                            { label: 'Ống đồng', value: 400 },
+                            { label: 'Ren', value: 430 },
+                            { label: 'Móc', value: 1200 },
+                            { label: 'Ro', value: 1380 },
+                        ]}
+                    />
                 </Grid>
 
-                <Grid container spacing={3}>
-                    <Grid item xs={12} md={6} lg={8}>
-                        <AppConversionRates
-                            title="Top 10 sản phẩm bán chạy nhất (đã trừ trả hàng)"
-                            chartData={[
-                                { label: 'Ống đồng', value: 400 },
-                                { label: 'Ren', value: 430 },
-                                { label: 'Móc', value: 1200 },
-                                { label: 'Ro', value: 1380 },
-                            ]}
-                        />
-                    </Grid>
-                    <Grid item xs={12} md={6} lg={8}>
-                        <AppConversionRates
-                            title="Top 10 sản phẩm bán chạy theo số lượng (đã trừ trả hàng)"
-                            chartData={[
-                                { label: 'Ống đồng', value: 400 },
-                                { label: 'Ren', value: 430 },
-                                { label: 'Móc', value: 1200 },
-                                { label: 'Ro', value: 1380 },
-                            ]}
-                        />
-                    </Grid>
+            </Grid>
 
-                </Grid>
 
-            </Container>
+            {/* <Grid item xs={2}>
+                        <Button variant="outlined" onClick={handleFilterChartClick}>
+                            {selectedFilterChart || 'Kiểu Hiện thị'}
+                        </Button>
+
+                        <Menu
+                            anchorEl={anchorElChart}
+                            open={Boolean(anchorElChart)}
+                            onClose={handleClose}
+                        >
+                            {filterChart.map((filter, index) => (
+                                <MenuItem key={index} onClick={() => handleMenuChartClick(filter)}>
+                                    {filter}
+                                </MenuItem>
+                            ))}
+                        </Menu>
+                    </Grid> */}
         </>
+
     );
 };
 export default ReportProductPage;

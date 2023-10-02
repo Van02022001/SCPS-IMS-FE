@@ -5,12 +5,6 @@ import SvgColor from '../../../components/svg-color';
 const icon = (name) => <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />;
 
 const navConfig = [
-  // {
-  //   title: 'dashboard',
-  //   path: '/dashboard/app',
-  //   icon: icon('ic_analytics'),
-  // },
-  
   {
     title: 'Hàng hóa',
     icon: icon('ic_cart'),
@@ -25,7 +19,7 @@ const navConfig = [
       },
       {
         title: 'Kiểm kho  ',
-        path: '/dashboard/products',
+        path: '/dashboard/products/products-check',
       },
     ],
   },

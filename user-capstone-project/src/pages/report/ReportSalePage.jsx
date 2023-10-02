@@ -234,8 +234,8 @@ const ReportSalePage = () => {
                     </Grid>
                 </Grid>
 
-                <Grid container spacing={3}>
-                    <Grid item xs={12} md={6} lg={8}>
+                <Grid spacing={3}>
+                    <Grid item xs={12} md={6} lg={8} style={{ margin: '10px 10px 20px 0px' }}>
                         <AppConversionRates
                             title="Doanh thu tuần này"
                             chartData={[

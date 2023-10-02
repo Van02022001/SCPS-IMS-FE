@@ -64,20 +64,13 @@ const CategoryForm = () => {
     return (
         <>
             <div style={{ textAlign: 'center' }}>
-                <DialogContent>
+                <DialogContent style={{ width: '90%' }}>
                     <Tabs value={currentTab} onChange={handleChangeTab} indicatorColor="primary" textColor="primary">
                         <Tab label="Thông tin" />
                         <Tab label="Mô tả chi tiết" />
                     </Tabs>
                     {currentTab === 0 && (
-                        // Hiển thị giao diện cho tab "Thông tin"
-                        <div>
-                            {/* <TextField
-                                name="field1"
-                                value={tab1Data.field1}
-                                onChange={handleTab1DataChange}
-                            /> */}
-                            {/* <DialogContentText>Do you want remove this user?</DialogContentText> */}
+                        <div style={{ marginLeft: 100 }}>
                             <Stack spacing={4} margin={2}>
                                 <Grid container spacing={2}>
                                     <Grid item xs={6}>
@@ -300,9 +293,7 @@ const CategoryForm = () => {
                     )}
 
                     {currentTab === 1 && (
-                        // Hiển thị giao diện cho tab "Mô tả chi tiết"
-                        <div>
-                            {/* Các trường dữ liệu cho tab "Mô tả chi tiết" */}
+                        <div style={{ marginLeft: 100 }}>
                             <Card sx={{ minWidth: 275, marginTop: 5 }} spacing={2}>
                                 <Typography
                                     variant="subtitle1"
@@ -334,7 +325,7 @@ const CategoryForm = () => {
                                                 <TextField
                                                     size="small"
                                                     variant="outlined"
-                                                    sx={{ width: '50%' }}
+                                                    sx={{ width: '50%', marginRight: 30 }}
                                                     placeholder="0"
                                                 />
                                             </Grid>
@@ -355,7 +346,7 @@ const CategoryForm = () => {
                                                 <TextField
                                                     size="small"
                                                     variant="outlined"
-                                                    sx={{ width: '50%' }}
+                                                    sx={{ width: '50%', marginRight: 30 }}
                                                     placeholder="999,999,999"
                                                 />
                                             </Grid>
@@ -433,10 +424,10 @@ const CategoryForm = () => {
                         </div>
                     )}
                 </DialogContent>
-                <DialogActions>
-                    {/* <Button color="success" variant="contained">Yes</Button>
-                    <Button onClick={closepopup} color="error" variant="contained">Close</Button> */}
-                </DialogActions>
+                {/* <DialogActions>
+                    <Button color="success" variant="contained">Yes</Button>
+                    <Button color="error" variant="contained">Close</Button>
+                </DialogActions> */}
             </div>
         </>
     );

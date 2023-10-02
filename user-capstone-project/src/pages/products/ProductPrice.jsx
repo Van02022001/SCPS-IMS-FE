@@ -230,7 +230,7 @@ const ProductsPricePage = () => {
             </Helmet>
 
             {/* <Container> */}
-            <div style={{ backgroundColor: '#f6f6f6' }}>
+            <div>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                     <Typography variant="h4" gutterBottom>
                         Bảng giá chung
@@ -256,9 +256,30 @@ const ProductsPricePage = () => {
                 </Stack>
                 <Grid container>
                     <Grid container item xs={2}>
-                        <FormControl variant="outlined" style={{ marginTop: 10, height: 200, backgroundColor: 'white' }}>
-                            {selectedFilterPrice || <Typography style={{ marginBottom: 10, }}>Bảng giá  <Button startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleCreatePrice} style={{ marginLeft: 10 }}></Button></Typography>}
-                            <TextField type="text" id="standard-basic" label="Chọn bảng giá..." variant="standard" />
+                        <FormControl
+                            variant="outlined"
+                            style={{
+                                marginBottom: 20,
+                                height: 100,
+                                width: 200,
+                                backgroundColor: 'white',
+                                borderRadius: '10px',
+                                boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)'
+                            }}
+                        >
+                            {selectedFilterPrice || (
+                                <Typography style={{ marginBottom: 10, marginLeft: 10 }}>
+                                    <span style={{ color: '#2065D1', fontWeight: 'bold' }}>Bảng giá</span>
+                                    <Button startIcon={<Iconify icon="eva:plus-fill" style={{ marginLeft: 10 }} />} onClick={handleCreatePrice} style={{ marginLeft: 50 }}></Button>
+                                </Typography>
+                            )}
+                            <TextField
+                                type="text"
+                                id="standard-basic"
+                                label="Chọn bảng giá..."
+                                variant="standard"
+                                style={{ width: '80%', marginLeft: 10 }}
+                            />
                         </FormControl>
                         {openCreatePricePopup && (
                             <Dialog open={openCreatePricePopup} onClose={handleCloseCreatePricePopup}>
@@ -268,24 +289,11 @@ const ProductsPricePage = () => {
                                         <CloseIcon color="primary" />
                                     </IconButton>{' '}
                                 </DialogTitle>
-                                {/* Nội dung của popup để tạo bảng giá ở đây */}
+
                             </Dialog>
                         )}
                     </Grid>
 
-                    {/* <Grid item xs={2}>
-                    <Menu
-                        anchorEl={anchorElPrice}
-                        open={Boolean(anchorElPrice)}
-                        onClose={handleClose}
-                    >
-                        {filterPrice.map((filter, index) => (
-                            <MenuItem key={index} onClick={() => handleMenuPriceClick(filter)}>
-                                {filter}
-                            </MenuItem>
-                        ))}
-                    </Menu>
-                </Grid> */}
 
                     <Grid item xs={2}>
                         <Button variant="outlined" onClick={handleFilterOptionsClick}>

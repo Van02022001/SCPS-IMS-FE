@@ -35,7 +35,7 @@ const Router = () => {
         children: [
           {element: <Navigate to="/dashboard/products"/>, index: true},
           {path: 'production', element: <ProductsPage/>},
-          {path: 'products-price', element: <ProductsPricePage/>} ] },
+          {path: 'products-price', element: <ProductsPricePage />} ] },
 
         { path: 'productsDetail', element: <ProductDetail />},
         { path: 'odersManager', element: <OdersManagerPage /> },

@@ -51,10 +51,10 @@ function NavItem({ item, isReportMenuOpen }) {
           fontWeight: 'fontWeightBold',
         },
         ...(item.title === 'Báo cáo' && !isReportMenuOpen && {
-          marginBottom: open ? '160px' : 0,
+          marginBottom: open ? '170px' : 0,
         }),
         ...(item.title === 'Hàng hóa' && !isReportMenuOpen && {
-          marginBottom: open ? '160px' : 0,
+          marginBottom: open ? '170px' : 0,
         }),
       }}
     >
@@ -78,11 +78,11 @@ function NavItem({ item, isReportMenuOpen }) {
     unmountOnExit
     sx={{
       position: 'absolute',
-      top: '100%', // Hiển thị bảng dropdown bên dưới mục "Báo cáo"
-      left: 0, // Đặt vị trí bên trái của bảng dropdown
-      backgroundColor: 'white', // Nền màu trắng
-      zIndex: 1, // Đảm bảo bảng dropdown hiển thị trên các phần tử khác
-      // Các thuộc tính khác của CSS mà bạn muốn áp dụng
+      top: '100%',
+      left: 0,
+      backgroundColor: 'white',
+      zIndex: 1,
+      width: 260
     }}
   >
     <List disablePadding>
