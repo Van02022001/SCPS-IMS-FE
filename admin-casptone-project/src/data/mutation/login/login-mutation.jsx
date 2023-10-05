@@ -10,3 +10,7 @@ export const authenValidation = async () => {
     return response.data;
 }
 
+export const authenChangePassword = async (changeParams) => {
+    const response = await axiosInstance.post("/auth/password-change", changeParams);
+    return response.data;
+}

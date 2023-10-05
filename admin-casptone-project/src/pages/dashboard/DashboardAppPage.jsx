@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { faker } from '@faker-js/faker';
+import { useNavigate } from 'react-router-dom';
 // @mui
 import { useTheme } from '@mui/material/styles';
 import { Grid, Container, Typography } from '@mui/material';
@@ -19,9 +20,23 @@ import {
   AppConversionRates,
 } from '../../sections/@dashboard/app';
 
+
 // ----------------------------------------------------------------------
 
 const DashboardAppPage = () => {
+  const navigate = useNavigate();
+  const isAuthenticated = () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+    }
+  };
+
+  useEffect(() => {
+    isAuthenticated();
+  }, []);
+
+
   const theme = useTheme();
 
   return (

@@ -8,7 +8,7 @@ import { createUser } from "../../../data/mutation/user/user-mutation";
 const UserForm = () => {
     const [open, openchange] = useState(false);
     const [firstName, setFirstName] = useState("");
-    const [midName, setMidName] = useState("");
+    const [middleName, setMiddleName] = useState("");
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
@@ -18,7 +18,7 @@ const UserForm = () => {
         try {
             const userParams = {
                 firstName,
-                midName,
+                middleName,
                 lastName,
                 email,
                 phone,
@@ -59,7 +59,7 @@ const UserForm = () => {
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
-                                    <TextField variant="outlined" label="Tên đệm người dùng" onChange={(e) => setMidName(e.target.value)} />
+                                    <TextField variant="outlined" label="Tên đệm người dùng" onChange={(e) => setMiddleName(e.target.value)} />
                                 </Grid>
                             </Grid>
 

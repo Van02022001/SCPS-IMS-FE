@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 // @mui
 import { alpha } from '@mui/material/styles';
-import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover } from '@mui/material';
+import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover, Dialog, DialogTitle } from '@mui/material';
+import CloseIcon from "@mui/icons-material/Close"
 // mocks_
 import account from '../../../_mock/account';
 import UserInfoForm from '../../../sections/auth/home/UserInfoForm';
@@ -27,18 +28,34 @@ const MENU_OPTIONS = [
 
 export default function AccountPopover() {
   const [anchorEl, setAnchorEl] = useState(null);
+
+  // const [openUseProfileForm, setOpenUseProfileForm] = useState(false);
   const [profilePopupOpen, setProfilePopupOpen] = useState(false);
+  const [popoverOpen, setPopoverOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const handleOpen = (event) => {
     setAnchorEl(event.currentTarget);
     if (event.currentTarget.id === 'profile-label') {
       setProfilePopupOpen(true);
+      setDialogOpen(true);
+      setOpen(true);
+    } else {
+      setOpen(true);
     }
   };
 
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const handleCloseUserProfileForm = () => {
+    setOpen(false);
+    setProfilePopupOpen(false);
+    setDialogOpen(false);
+  };
+
 
   return (
     <>
@@ -54,7 +71,6 @@ export default function AccountPopover() {
               height: '100%',
               borderRadius: '50%',
               position: 'absolute',
-              bgcolor: (theme) => alpha(theme.palette.grey[900], 0.8),
             },
           }),
         }}
@@ -63,7 +79,7 @@ export default function AccountPopover() {
       </IconButton>
 
       <Popover
-        open={Boolean(anchorEl)}
+        open={Boolean(anchorEl) && open}
         anchorEl={anchorEl}
         onClose={handleClose}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -110,9 +126,15 @@ export default function AccountPopover() {
           Logout
         </MenuItem>
       </Popover>
-      
-      {/* UserProfilePopup */}
-      {profilePopupOpen && <UserInfoForm open={profilePopupOpen} onClose={() => setProfilePopupOpen(false)} />}
+
+      <Dialog fullWidth maxWidth open={dialogOpen} onClose={handleCloseUserProfileForm}>
+        <DialogTitle>Hồ sơ tài khoản{' '}
+          <IconButton style={{ float: 'right' }} onClick={handleCloseUserProfileForm}>
+            <CloseIcon color="primary" />
+          </IconButton>
+        </DialogTitle>
+        <UserInfoForm onClose={handleCloseUserProfileForm} />
+      </Dialog>
     </>
   );
 }

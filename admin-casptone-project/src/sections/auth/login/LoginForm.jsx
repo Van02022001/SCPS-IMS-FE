@@ -25,8 +25,6 @@ export default function LoginForm() {
       const token = response.data.data.accessToken;
       localStorage.setItem('token', token);
       localStorage.setItem('refreshToken', response.data.data.refreshToken);
-      const tokens = localStorage.getItem('token')
-      console.log(tokens, "2222222222222222222222222222222222222");
 
       if (response.status === 202) {
         const myHeaders = new Headers();

@@ -98,6 +98,7 @@ const ProductPage = () => {
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [products, setProducts] = useState([]);
+
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);
   };
@@ -177,7 +178,6 @@ const ProductPage = () => {
     getAllProducts()
       .then((response) => {
         const data = response.data;
-        // Cập nhật sortedProducts khi nhận dữ liệu từ API
         setProducts(data);
         setSortedProducts(data);
       })

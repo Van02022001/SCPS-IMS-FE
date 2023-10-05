@@ -199,8 +199,6 @@ const UserPage = () => {
   }
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    console.log(token);
     getAllUser()
       .then((respone) => {
         const data = respone.data

@@ -12,7 +12,7 @@ export const axiosInstance = axios.create({
     common: {
       "Content-Type": "application/json",
     },
-    authorization: token ? `Bearer ${token}` : " ",
+    authorization: `Bearer ${token}`,
   },
 });
 
@@ -23,6 +23,6 @@ export const imageInstance = axios.create({
     common: {
       "Content-Type": "multipart/form-data",
     },
-    authorization: token ? `Bearer ${token}` : "",
+    authorization: `Bearer ${token}`,
   },
 });
