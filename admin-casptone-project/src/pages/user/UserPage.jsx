@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
-import { filter } from 'lodash';
+import { filter, sortBy } from 'lodash';
 import { sentenceCase } from 'change-case';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 // @mui
 import {
   Card,
@@ -37,16 +37,18 @@ import { UserListHead, UserListToolbar } from '../../sections/@dashboard/user';
 // mock
 import USERLIST from '../../_mock/user';
 import UserForm from '../../sections/auth/home/UserForm';
-
+import { getAllUser, deleteUser } from '../../data/mutation/user/user-mutation';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Name', alignRight: false },
-  { id: 'company', label: 'Company', alignRight: false },
-  { id: 'role', label: 'Role', alignRight: false },
-  { id: 'isVerified', label: 'Verified', alignRight: false },
+  { id: 'name', label: 'Họ và tên', alignRight: false },
+  { id: 'phone', label: 'Số điện thoại', alignRight: false },
+  { id: 'email', label: 'Email', alignRight: false },
+  { id: 'role', label: 'Vị trí', alignRight: false },
+  { id: 'registeredAt', label: 'Ngày tạo tài khoản', alignRight: false },
   { id: 'status', label: 'Status', alignRight: false },
+  { id: 'company', label: 'Công ty', alignRight: false },
   { id: '' },
 ];
 
@@ -83,18 +85,25 @@ function applySortFilter(array, comparator, query) {
 
 const UserPage = () => {
   const [open, setOpen] = useState(null);
-  const [openForm, setOpenForm] = useState(false);
-  const [page, setPage] = useState(0);
+  const [openUserForm, setOpenUserForm] = useState(false);
 
+  const [page, setPage] = useState(0);
+  const [sortBy, setSortBy] = useState('createdAt');
   const [order, setOrder] = useState('asc');
 
   const [selected, setSelected] = useState([]);
 
   const [orderBy, setOrderBy] = useState('name');
 
-  const [filterName, setFilterName] = useState('');
+
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const [users, setUsers] = useState([]);
+  const [filterName, setFilterName] = useState('');
+  const [sortedUsers, setSortedUsers] = useState([]);
+
+  const [selectedUserIds, setSelectedUserIds] = useState([]);
 
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);
@@ -104,12 +113,36 @@ const UserPage = () => {
     setOpen(null);
   };
   const handleCloseUserForm = () => {
-    setOpenForm(false);
+    setOpenUserForm(false);
   };
-  const handleRequestSort = (event, property) => {
+
+  const handleCheckboxChange = (event, userId) => {
+    if (event.target.checked) {
+      // Nếu người dùng chọn checkbox, thêm sản phẩm vào danh sách đã chọn.
+      setSelectedUserIds([...selectedUserIds, userId]);
+    } else {
+      // Nếu người dùng bỏ chọn checkbox, loại bỏ sản phẩm khỏi danh sách đã chọn.
+      setSelectedUserIds(selectedUserIds.filter((id) => id !== userId));
+    }
+  };
+
+  const handleRequestSort = (property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
+    // Sắp xếp danh sách sản phẩm dựa trên trường và hướng đã chọn
+    const sortedUsers = [...users].sort((a, b) => {
+      const valueA = a[property];
+      const valueB = b[property];
+      if (valueA < valueB) {
+        return isAsc ? -1 : 1;
+      }
+      if (valueA > valueB) {
+        return isAsc ? 1 : -1;
+      }
+      return 0;
+    });
+    setSortedUsers(sortedUsers);
   };
 
   const handleSelectAllClick = (event) => {
@@ -147,7 +180,11 @@ const UserPage = () => {
 
   const handleFilterByName = (event) => {
     setPage(0);
-    setFilterName(event.target.value);
+    const query = event.target.value;
+    setFilterName(query);
+
+    const filteredUsers = applySortFilter(sortedUsers, getComparator(order, sortBy), query);
+    setSortedUsers(filteredUsers)
   };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
@@ -156,38 +193,56 @@ const UserPage = () => {
 
   const isNotFound = !filteredUsers.length && !!filterName;
 
+  const handleDeleteUser = (id) => {
+    deleteUser(id)
+    console.log(id);
+  }
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    console.log(token);
+    getAllUser()
+      .then((respone) => {
+        const data = respone.data
+        if (data && data.length > 0) {
+          setUsers(data)
+          setSortedUsers(data)
+        } else {
+          console.error('No users found')
+        }
+
+      })
+      .catch((error) => {
+        console.error("Error fetching users:", error);
+      })
+  }, [])
+
   return (
     <>
       <Helmet>
-        <title> User | Minimal UI </title>
+        <title> Tài khoản </title>
       </Helmet>
 
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            User
+            Tài khoản người dùng
           </Typography>
           <Button
             variant="contained"
             startIcon={<Iconify icon="eva:plus-fill" />}
-            onClick={() => setOpenForm(true)}
+            onClick={() => setOpenUserForm(true)}
           >
-            New User
+            Tạo tài khoản
           </Button>
-          <Dialog fullWidth maxWidth="sm" open={openForm}>
-            <DialogTitle>User Registeration  <IconButton onClick={handleCloseUserForm} style={{ float: 'right' }}><CloseIcon color="primary" /></IconButton>  </DialogTitle>
-            <DialogContent>
-              {/* <DialogContentText>Do you want remove this user?</DialogContentText> */}
-              <Stack spacing={2} margin={2}>
-                <TextField variant="outlined" label="Username" />
-                <TextField variant="outlined" label="Password" />
-                <TextField variant="outlined" label="Email" />
-                <TextField variant="outlined" label="Phone" />
-
-                <Button color="primary" variant="contained">Submit</Button>
-              </Stack>
-            </DialogContent>
-
+          <Dialog fullWidth maxWidth open={openUserForm}>
+            <DialogTitle>
+              Tạo tài khoản{' '}
+              <IconButton style={{ float: 'right' }} onClick={handleCloseUserForm}>
+                <CloseIcon color="primary" />
+              </IconButton>{' '}
+            </DialogTitle>
+            <UserForm />
           </Dialog>
         </Stack>
 
@@ -201,41 +256,41 @@ const UserPage = () => {
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={USERLIST.length}
+                  rowCount={users.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-                  {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                  {/* {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                     const { id, name, role, status, company, avatarUrl, isVerified } = row;
-                    const selectedUser = selected.indexOf(name) !== -1;
-
+                    const selectedUser = selected.indexOf(name) !== -1; */}
+                  {sortedUsers.map((users) => {
+                    console.log(users);
                     return (
-                      <TableRow hover key={id} tabIndex={-1} role="checkbox" selected={selectedUser}>
+                      <TableRow hover key={users.id} tabIndex={-1} role="checkbox">
                         <TableCell padding="checkbox">
-                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, name)} />
+                          <Checkbox checked={selectedUserIds.includes(users.id)}
+                            onChange={(event) => handleCheckboxChange(event, users.id)} />
                         </TableCell>
 
                         <TableCell component="th" scope="row" padding="none">
                           <Stack direction="row" alignItems="center" spacing={2}>
-                            <Avatar alt={name} src={avatarUrl} />
-                            <Typography variant="subtitle2" noWrap>
-                              {name}
-                            </Typography>
+                            {users.middleName} {users.lastName} {users.firstName}
                           </Stack>
                         </TableCell>
 
-                        <TableCell align="left">{company}</TableCell>
+                        <TableCell align="left">{users.phone}</TableCell>
 
-                        <TableCell align="left">{role}</TableCell>
+                        <TableCell align="left">{users.email}</TableCell>
 
-                        <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell>
+                        <TableCell align="left">{users.role.name}</TableCell>
+                        <TableCell align="left">{users.registeredAt}</TableCell>
 
                         <TableCell align="left">
-                          <Label color={(status === 'banned' && 'error') || 'success'}>{sentenceCase(status)}</Label>
+                          <Label color={(users.role.status === 'banned' && 'error') || 'success'}>{sentenceCase(users.role.status)}</Label>
                         </TableCell>
-
+                        <TableCell align="left">{users.company}</TableCell>
                         <TableCell align="right">
                           <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
                             <Iconify icon={'eva:more-vertical-fill'} />
@@ -243,6 +298,7 @@ const UserPage = () => {
                         </TableCell>
                       </TableRow>
                     );
+                    // })}
                   })}
                   {emptyRows > 0 && (
                     <TableRow style={{ height: 53 * emptyRows }}>
@@ -314,7 +370,7 @@ const UserPage = () => {
         </MenuItem>
 
         <MenuItem sx={{ color: 'error.main' }}>
-          <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
+          <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} onClick={() => handleDeleteUser(users.id)} />
           Delete
         </MenuItem>
       </Popover>

@@ -82,7 +82,7 @@ function applySortFilter(array, comparator, query) {
     return stabilizedThis.map((el) => el[0]);
 }
 
-const CategoryPage = () => {
+const BrandPage = () => {
     const [open, setOpen] = useState(null);
     const [openForm, setOpenForm] = useState(false);
     const [page, setPage] = useState(0);
@@ -195,7 +195,7 @@ const CategoryPage = () => {
             <Container>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                     <Typography variant="h4" gutterBottom>
-                        Danh sách sản phẩm
+                        Danh sách thương hiệu
                     </Typography>
                     <Button
                         variant="contained"
@@ -334,4 +334,4 @@ const CategoryPage = () => {
         </>
     );
 }
-export default CategoryPage
+export default BrandPage

@@ -4,6 +4,7 @@ import { alpha } from '@mui/material/styles';
 import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover } from '@mui/material';
 // mocks_
 import account from '../../../_mock/account';
+import UserInfoForm from '../../../sections/auth/home/UserInfoForm';
 
 // ----------------------------------------------------------------------
 
@@ -25,14 +26,18 @@ const MENU_OPTIONS = [
 // ----------------------------------------------------------------------
 
 export default function AccountPopover() {
-  const [open, setOpen] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [profilePopupOpen, setProfilePopupOpen] = useState(false);
 
   const handleOpen = (event) => {
-    setOpen(event.currentTarget);
+    setAnchorEl(event.currentTarget);
+    if (event.currentTarget.id === 'profile-label') {
+      setProfilePopupOpen(true);
+    }
   };
 
   const handleClose = () => {
-    setOpen(null);
+    setAnchorEl(null);
   };
 
   return (
@@ -41,7 +46,7 @@ export default function AccountPopover() {
         onClick={handleOpen}
         sx={{
           p: 0,
-          ...(open && {
+          ...(anchorEl && {
             '&:before': {
               zIndex: 1,
               content: "''",
@@ -58,8 +63,8 @@ export default function AccountPopover() {
       </IconButton>
 
       <Popover
-        open={Boolean(open)}
-        anchorEl={open}
+        open={Boolean(anchorEl)}
+        anchorEl={anchorEl}
         onClose={handleClose}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
@@ -89,7 +94,11 @@ export default function AccountPopover() {
 
         <Stack sx={{ p: 1 }}>
           {MENU_OPTIONS.map((option) => (
-            <MenuItem key={option.label} onClick={handleClose}>
+            <MenuItem
+              key={option.label}
+              onClick={handleOpen}
+              id={option.label === 'Profile' ? 'profile-label' : ''}
+            >
               {option.label}
             </MenuItem>
           ))}
@@ -101,6 +110,9 @@ export default function AccountPopover() {
           Logout
         </MenuItem>
       </Popover>
+      
+      {/* UserProfilePopup */}
+      {profilePopupOpen && <UserInfoForm open={profilePopupOpen} onClose={() => setProfilePopupOpen(false)} />}
     </>
   );
 }
