@@ -17,6 +17,10 @@ export default function LoginForm() {
     navigate('/dashboard', { replace: true });
   };
 
+  const handleForgotPW = () => {
+    navigate('/forgotpw', { replace: true });
+  };
+
   return (
     <>
       <Stack spacing={3}>
@@ -40,7 +44,7 @@ export default function LoginForm() {
 
       <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
         <Checkbox name="remember" label="Remember me" />
-        <Link variant="subtitle2" underline="hover">
+        <Link variant="subtitle2" underline="hover" onClick={handleForgotPW}>
           Forgot password?
         </Link>
       </Stack>
