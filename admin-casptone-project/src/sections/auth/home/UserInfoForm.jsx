@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 // @mui
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { alpha } from '@mui/material/styles';
+import LockOpenIcon from '@mui/icons-material/LockOpen';
 import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover, Button, TextField, DialogContent, Grid, FormControl, InputLabel, Input, InputAdornment } from '@mui/material';
 import account from '../../../_mock/account';
 // api
@@ -88,9 +89,9 @@ export default function UserInfoForm() {
                 <Grid container spacing={3}>
 
                     {/* Avatar */}
-                    <Grid item xs={12} sm={6}>
-                        <Box sx={{ textAlign: 'center', my: 1.5, px: 2.5 }}>
-                            <Avatar src={account.photoURL} alt="photoURL" style={{ height: 100, width: 100 }} />
+                    <Grid item xs={6} sm={6}>
+                        <Box sx={{ textAlign: 'center', my: 1.5, px: 2.5 }} style={{ width: '90%' }}>
+                            <Avatar src={account.photoURL} alt="photoURL" style={{ height: 100, width: 100, margin: '0 auto' }} />
                             <Typography variant="subtitle2" noWrap>
                                 Họ và tên: {profileData.firstName} {profileData.lastName}
                             </Typography>
@@ -101,21 +102,113 @@ export default function UserInfoForm() {
                     </Grid>
 
                     {/* User Profile Form */}
-                    <Grid item xs={12} sm={6}>
-                        <DialogContent style={{ width: '90%' }}>
+                    <Grid item xs={6} sm={6}>
+                        <DialogContent  >
+
                             <Stack spacing={2} margin={2}>
-                                <TextField variant="outlined" label="Tên người dùng" value={profileData.firstName} onChange={(e) => setFirstName(e.target.value)} />
-                                <TextField variant="outlined" label="Tên đệm người dùng" onChange={(e) => setMidName(e.target.value)} />
-                                <TextField variant="outlined" label="Họ người dùng" value={profileData.lastName} onChange={(e) => setLastName(e.target.value)} />
-                                <TextField variant="outlined" label="Email" value={profileData.email} onChange={(e) => setEmail(e.target.value)} />
-                                <TextField
-                                    variant="outlined"
-                                    label="Vị trí"
-                                    value={profileData.role ? profileData.role.name : ''}
-                                    onChange={(e) => setPhone(e.target.value)}
-                                />
+                                <Grid item xs={12}>
+
+                                    <Grid
+                                        container
+                                        spacing={1}
+                                        direction="row"
+                                        justifyContent="space-between"
+                                        alignItems="center"
+                                        sx={{ marginBottom: 4, gap: 5 }}>
+
+                                        <Typography variant="subtitle1" sx={{ fontSize: '14px', }}>
+                                            Tên:{' '}
+                                        </Typography>
+                                        <TextField
+                                            size="small"
+                                            variant="outlined"
+                                            sx={{ width: '70%' }}
+                                            label="Tên người dùng"
+                                            value={profileData.firstName}
+                                            onChange={(e) => setFirstName(e.target.value)} />
+                                    </Grid>
+
+                                    <Grid
+                                        container
+                                        spacing={1}
+                                        direction="row"
+                                        justifyContent="space-between"
+                                        alignItems="center"
+                                        sx={{ marginBottom: 4, gap: 5 }}>
+                                        <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
+                                            Tên đệm:{' '}
+                                        </Typography>
+
+                                        <TextField
+                                            size="small"
+                                            variant="outlined"
+                                            sx={{ width: '70%' }} label="Tên đệm người dùng"
+                                            onChange={(e) => setMidName(e.target.value)} />
+                                    </Grid>
+
+                                    <Grid
+                                        container
+                                        spacing={1}
+                                        direction="row"
+                                        justifyContent="space-between"
+                                        alignItems="center"
+                                        sx={{ marginBottom: 4, gap: 5 }}>
+                                        <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
+                                            Họ:{' '}
+                                        </Typography>
+
+                                        <TextField size="small"
+                                            variant="outlined"
+                                            sx={{ width: '70%' }}
+                                            label="Họ người dùng"
+                                            value={profileData.lastName}
+                                            onChange={(e) => setLastName(e.target.value)} />
+                                    </Grid>
+
+                                    <Grid
+                                        container
+                                        spacing={1}
+                                        direction="row"
+                                        justifyContent="space-between"
+                                        alignItems="center"
+                                        sx={{ marginBottom: 4, gap: 5 }}>
+                                        <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
+                                            Email:{' '}
+                                        </Typography>
+
+                                        <TextField
+                                            size="small"
+                                            variant="outlined"
+                                            sx={{ width: '70%' }}
+                                            label="Email"
+                                            value={profileData.email}
+                                            onChange={(e) => setEmail(e.target.value)} />
+                                    </Grid>
+
+                                    <Grid
+                                        container
+                                        spacing={1}
+                                        direction="row"
+                                        justifyContent="space-between"
+                                        alignItems="center"
+                                        sx={{ marginBottom: 4, gap: 5 }}>
+                                        <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
+                                            Vị trí:{' '}
+                                        </Typography>
+
+                                        <TextField
+                                            size="small"
+                                            variant="outlined"
+                                            sx={{ width: '70%' }}
+                                            label="Vị trí"
+                                            value={profileData.role ? profileData.role.name : ''}
+                                            onChange={(e) => setPhone(e.target.value)}
+                                        />
+                                    </Grid>
+                                </Grid>
+
                                 <Grid sx={4}>
-                                    <Button color="primary" variant="contained">
+                                    <Button color="primary" variant="contained" style={{ margin: 10 }}>
                                         Lưu lại
                                     </Button>
                                     <Button color="primary" variant="contained">
@@ -127,15 +220,33 @@ export default function UserInfoForm() {
                     </Grid>
                 </Grid>
             </Grid>
+
             {/* Đăng nhập và bảo mật Form */}
-            <Grid item xs={12} sm={8}>
-                <Box sx={{ borderStyle: 'dashed', borderColor: 'divider', borderWidth: 1, my: 2, p: 1 }}>
-                    <Typography variant="body1">Đăng nhập và bảo mật</Typography>
+            <Grid item xs={12} sm={8} margin={10}>
+                <Box sx={{
+                    borderStyle: 'dashed',  // Đặt kiểu đường viền là đứt đoạn
+                    borderColor: 'black',   // Đặt màu sắc của đường viền
+                    borderWidth: 1,
+                    boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',  // Đặt độ bóng
+                    my: 2,
+                    p: 2,
+                }}>
+                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>Đăng nhập và bảo mật</Typography>
+
                     {!isEditingPassword ? (
-                        <Button color="primary" variant="contained" onClick={handleEditPassword}>
-                            Chỉnh sửa mật khẩu
-                        </Button>
+                        <Grid xs={12}>
+                            <Grid xs={6}>
+                                <Typography variant="body1" sx={{ marginLeft: 2, marginTop: 2, fontWeight: 'bold', fontSize: 14 }}><LockOpenIcon sx={{ fontSize: 20 }} /> Đổi mật khẩu</Typography>
+                            </Grid>
+                            <Grid xs={6} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                <Button color="primary" variant="contained" onClick={handleEditPassword}>
+                                    Chỉnh sửa
+                                </Button>
+                            </Grid>
+
+                        </Grid>
                     ) : (
+
                         <>
                             <FormControl variant="outlined" fullWidth>
                                 <InputLabel htmlFor="current-password">Mật khẩu hiện tại</InputLabel>
@@ -214,8 +325,8 @@ export default function UserInfoForm() {
                         </>
                     )}
                 </Box>
-            </Grid>
+            </Grid >
 
-        </Grid>
+        </Grid >
     );
 }

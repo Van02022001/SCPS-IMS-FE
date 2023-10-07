@@ -82,6 +82,14 @@ function applySortFilter(array, comparator, query) {
   }
   return stabilizedThis.map((el) => el[0]);
 }
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  const day = date.getDate();
+  const month = date.getMonth() + 1;
+  const year = date.getFullYear();
+
+  return `${day}/${month}/${year}`;
+}
 
 const UserPage = () => {
   const [open, setOpen] = useState(null);
@@ -233,7 +241,7 @@ const UserPage = () => {
           >
             Tạo tài khoản
           </Button>
-          <Dialog fullWidth maxWidth open={openUserForm}>
+          <Dialog fullWidth maxWidth="md" open={openUserForm}>
             <DialogTitle>
               Tạo tài khoản{' '}
               <IconButton style={{ float: 'right' }} onClick={handleCloseUserForm}>
@@ -283,7 +291,8 @@ const UserPage = () => {
                         <TableCell align="left">{users.email}</TableCell>
 
                         <TableCell align="left">{users.role.name}</TableCell>
-                        <TableCell align="left">{users.registeredAt}</TableCell>
+
+                        <TableCell align="left">{formatDate(users.registeredAt)}</TableCell>
 
                         <TableCell align="left">
                           <Label color={(users.role.status === 'banned' && 'error') || 'success'}>{sentenceCase(users.role.status)}</Label>
@@ -364,12 +373,12 @@ const UserPage = () => {
       >
         <MenuItem>
           <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-          Edit
+          Chỉnh sửa
         </MenuItem>
 
         <MenuItem sx={{ color: 'error.main' }}>
           <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} onClick={() => handleDeleteUser(users.id)} />
-          Delete
+          Xóa
         </MenuItem>
       </Popover>
     </>

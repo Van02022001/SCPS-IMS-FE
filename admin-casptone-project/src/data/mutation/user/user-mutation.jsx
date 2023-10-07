@@ -10,6 +10,11 @@ export const createUser = async (usersParams) => {
     return response.data;
 }
 
+export const updateUser = async (usersParams) => {
+    const response = await axiosInstance.post("/admin/users", usersParams);
+    return response.data;
+}
+
 export const deleteUser = async (id) => {
     const response = await axiosInstance.delete(`/admin/users/${id}`);
     return response;
