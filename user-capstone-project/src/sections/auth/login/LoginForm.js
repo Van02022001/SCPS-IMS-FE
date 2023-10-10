@@ -22,11 +22,10 @@ export default function LoginForm() {
                 password,
             };
             const response = await authenLogin(userParams);
-            const token = response.data.data.accessToken;
-            localStorage.setItem('token', token);
-            localStorage.setItem('refreshToken', response.data.data.refreshToken);
-
             if (response.status === 202) {
+                const token = response.data.data.accessToken;
+                localStorage.setItem('token', token);
+                localStorage.setItem('refreshToken', response.data.data.refreshToken);
                 const myHeaders = new Headers();
                 myHeaders.append('Authorization', `Bearer ${localStorage.getItem('token')}`);
                 const requestOptions = {
@@ -47,6 +46,8 @@ export default function LoginForm() {
                         if (localStorage.getItem('role') === 'ADMIN') {
                             navigate('/dashboard', { replace: true });
                         } else if (localStorage.getItem('role') === 'MANAGER') {
+                            navigate('/dashboard', { replace: true });
+                        } else if (localStorage.getItem('role') === 'INVENTORY_STAFF') {
                             navigate('/dashboard', { replace: true });
                         } else {
                             navigate('/login');

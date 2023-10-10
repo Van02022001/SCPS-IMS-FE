@@ -34,7 +34,7 @@ import CloseIcon from "@mui/icons-material/Close"
 import { UserListHead, UserListToolbar } from '../../sections/@dashboard/user';
 // mock
 import USERLIST from '../../_mock/user';
-import CategoryForm from '~/sections/@dashboard/categories/CategoryForm';
+import CategoryForm from '~/sections/auth/categories/CategoryForm';
 
 // ----------------------------------------------------------------------
 

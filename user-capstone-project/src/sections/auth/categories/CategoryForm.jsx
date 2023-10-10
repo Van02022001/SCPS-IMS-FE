@@ -24,7 +24,7 @@ import {
     Card,
     CardContent,
 } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 //icons
@@ -41,11 +41,40 @@ import CustomizedDividers from '~/components/togglebutton/CustomizedDividers';
 //ckeditor
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+// form popup
+import AddCategoryForm from './AddCategoryForm';
+import AddOriginForm from './AddOriginForm';
+
+// api 
+import { createProduct } from '~/data/mutation/product/product-mutation';
+import { getAllCategories } from '~/data/mutation/categories/categories-mutation';
+import { getAllUnit, getAllUnitMeasurement } from '~/data/mutation/unit/unit-mutation';
+import { getAllOrigins } from '~/data/mutation/origins/origins-mutation';
+
 
 const CategoryForm = () => {
     const [currentTab, setCurrentTab] = useState(0);
     const [tab1Data, setTab1Data] = useState({});
     const [tab2Data, setTab2Data] = useState({});
+
+    // mở popup form 
+    const [openAddCategoryDialog, setOpenAddCategoryDialog] = useState(false);
+    const [openAddOriginForm, setOpenAddOriginForm] = useState(false)
+
+    // form để call api
+    const [name, setName] = useState("");
+    const [description, setDescription] = useState("");
+    const [minStockLevel, setMinStockLevel] = useState("");
+    const [maxStockLevel, setMaxStockLevel] = useState("");
+    const [length, setLength] = useState("");
+    const [width, setWidth] = useState("");
+    const [height, setHeight] = useState("");
+
+    const [categories_id, setCategories_id] = useState([]);
+    const [unit_id, setUnits_id] = useState([]);
+    const [origins_id, setOrigins_id] = useState([]);
+    const [unit_mea_id, setUnit_mea_id] = useState([]);
+
 
     const handleTab1DataChange = (event) => {
         // Cập nhật dữ liệu cho tab 1 tại đây
@@ -60,6 +89,78 @@ const CategoryForm = () => {
     const handleChangeTab = (event, newValue) => {
         setCurrentTab(newValue);
     };
+
+    // hàm xử lý đóng mở popup form
+    const handleOpenAddCategoryDialog = () => {
+        setOpenAddCategoryDialog(true);
+      };
+      
+      const handleCloseAddCategoryDialog = () => {
+        setOpenAddCategoryDialog(false);
+      };
+      
+      const handleOpenAddOriginForm = () => {
+        setOpenAddOriginForm(true);
+      };
+    
+      const handleCloseAddOriginForm = () => {
+        setOpenAddOriginForm(false);
+      };
+    
+      // hàm create category-----------------------------------------
+    const handleCreateProduct = async () => {
+        const productParams = {
+            name,
+            description,
+            minStockLevel,
+            maxStockLevel,
+            categories_id,
+            unit_id,
+            origins_id,
+            length,
+            width,
+            height,
+            unit_mea_id,
+        };
+        try{
+        const response = await createProduct(productParams);
+        console.log('Create product response:', response);
+        }catch(error){
+            console.error('Error creating product:', error);
+        }
+       
+    }
+
+    const handleAddCategories = async () => {
+        
+    }
+
+    useEffect(() => {
+        getAllCategories()
+            .then((respone) => {
+                const data = respone.data;
+                setCategories_id(data)
+            })
+            .catch((error) => console.error('Error fetching categories:', error));
+
+        getAllUnit()
+            .then((respone) =>{
+                const data = respone.data; 
+                setUnits_id(data)
+            })
+            .catch((error) => console.error('Error fetching units:', error));
+        getAllUnitMeasurement()
+            .then((respone) => {
+                const data = respone.data;
+                setUnit_mea_id(data)})
+            .catch((error) => console.error('Error fetching units measurement:', error));
+        getAllOrigins()
+            .then((respone) => {
+                const data = respone.data;
+                setOrigins_id(data)
+            })
+            .catch((error) => console.error('Error fetching origins:', error));
+    }, []);
 
     return (
         <>
@@ -104,7 +205,7 @@ const CategoryForm = () => {
                                             <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
                                                 Tên hàng:{' '}
                                             </Typography>
-                                            <TextField size="small" variant="outlined" sx={{ width: '70%' }} />
+                                            <TextField size="small" variant="outlined" sx={{ width: '70%' }} value={name} onChange={(e) => setName(e.target.value)} />
                                         </Grid>
                                         <FormControl size="small" variant="outlined" sx={{ width: '100%' }}>
                                             <Grid
@@ -124,17 +225,23 @@ const CategoryForm = () => {
                                                         labelId="group-label"
                                                         id="group-select"
                                                         sx={{ width: '90%', fontSize: '14px' }}
+                                                        value={tab1Data.categories_id}
+                                                        onChange={handleTab1DataChange}
+                                                        name="categories_id"
                                                     >
-                                                        <MenuItem value="">
-                                                            <em>None</em>
-                                                        </MenuItem>
-                                                        <MenuItem value="option1">Option 1</MenuItem>
-                                                        <MenuItem value="option2">Option 2</MenuItem>
-                                                        <MenuItem value="option3">Option 3</MenuItem>
+                                                        {categories_id.map((category) => (
+                                                        <MenuItem key={category.id} value={category.id}>
+                                                            {category.name}
+                                                            </MenuItem>
+                                                        ))}
                                                     </Select>
-                                                    <Button variant="outlined" sx={{ padding: 0.8, minWidth: 0 }}>
+                                                    <Button variant="outlined" sx={{ padding: 0.8, minWidth: 0 }} onClick={handleOpenAddCategoryDialog}>
                                                         <AddIcon />
                                                     </Button>
+                                                    <AddCategoryForm
+                                                        open={openAddCategoryDialog}
+                                                        onClose={handleCloseAddCategoryDialog}
+                                                    />
                                                 </Grid>
                                             </Grid>
                                         </FormControl>
@@ -156,17 +263,23 @@ const CategoryForm = () => {
                                                         labelId="group-label"
                                                         id="group-select"
                                                         sx={{ width: '90%', fontSize: '14px' }}
+                                                        value={tab1Data.origins_id}
+                                                        onChange={handleTab1DataChange}
+                                                        name="origins_id"
                                                     >
-                                                        <MenuItem value="">
-                                                            <em>None</em>
+                                                        {origins_id.map((origin) => (
+                                                        <MenuItem key={origin.id} value={origin.id}>
+                                                            {origin.name}
                                                         </MenuItem>
-                                                        <MenuItem value="option1">Option 1</MenuItem>
-                                                        <MenuItem value="option2">Option 2</MenuItem>
-                                                        <MenuItem value="option3">Option 3</MenuItem>
+                                                        ))}
                                                     </Select>
-                                                    <Button variant="outlined" sx={{ padding: 0.8, minWidth: 0 }}>
+                                                    <Button variant="outlined" sx={{ padding: 0.8, minWidth: 0 }}  onClick={handleOpenAddOriginForm}>
                                                         <AddIcon />
                                                     </Button>
+                                                    <AddOriginForm
+                                                     open={openAddOriginForm}
+                                                     onClose={handleCloseAddOriginForm}
+                                                   />
                                                 </Grid>
                                             </Grid>
                                         </FormControl>
@@ -190,6 +303,7 @@ const CategoryForm = () => {
                                                             padding: '10px',
                                                         },
                                                     }}
+                                                    
                                                 />
                                             </Grid>
                                         </LocalizationProvider>

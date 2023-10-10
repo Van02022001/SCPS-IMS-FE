@@ -71,11 +71,11 @@ const LoginPage = () => {
         <Container maxWidth="sm">
           <StyledContent>
             <Typography variant="h4" gutterBottom>
-              Sign in to Minimal
+              Đăng nhập
             </Typography>
 
             <Typography variant="body2" sx={{ mb: 5 }}>
-              Don’t have an account? {''}
+              Bạn không có tài khoản ? {''}
               <Link variant="subtitle2">Get started</Link>
             </Typography>
 
