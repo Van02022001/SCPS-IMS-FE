@@ -24,8 +24,9 @@ export default function LoginForm() {
             const response = await authenLogin(userParams);
             if (response.status === 202) {
                 const token = response.data.data.accessToken;
+                const rfToken = response.data.data.refreshToken;
                 localStorage.setItem('token', token);
-                localStorage.setItem('refreshToken', response.data.data.refreshToken);
+                localStorage.setItem('refreshToken', rfToken);
                 const myHeaders = new Headers();
                 myHeaders.append('Authorization', `Bearer ${localStorage.getItem('token')}`);
                 const requestOptions = {

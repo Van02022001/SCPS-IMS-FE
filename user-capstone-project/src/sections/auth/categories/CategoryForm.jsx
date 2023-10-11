@@ -32,6 +32,7 @@ import AddIcon from '@mui/icons-material/Add';
 import ClearIcon from '@mui/icons-material/Clear';
 import SaveIcon from '@mui/icons-material/Save';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import CloseIcon from '@mui/icons-material/Close';
 
 //components
 import GroupedSelect from '~/components/list-subheader/ListSubheader';
@@ -45,36 +46,34 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import AddCategoryForm from './AddCategoryForm';
 import AddOriginForm from './AddOriginForm';
 
-// api 
+// api
 import { createProduct } from '~/data/mutation/product/product-mutation';
 import { getAllCategories } from '~/data/mutation/categories/categories-mutation';
 import { getAllUnit, getAllUnitMeasurement } from '~/data/mutation/unit/unit-mutation';
-import { getAllOrigins } from '~/data/mutation/origins/origins-mutation';
-
+import { deleteOrigins, getAllOrigins } from '~/data/mutation/origins/origins-mutation';
 
 const CategoryForm = () => {
     const [currentTab, setCurrentTab] = useState(0);
     const [tab1Data, setTab1Data] = useState({});
     const [tab2Data, setTab2Data] = useState({});
 
-    // mở popup form 
+    // mở popup form
     const [openAddCategoryDialog, setOpenAddCategoryDialog] = useState(false);
-    const [openAddOriginForm, setOpenAddOriginForm] = useState(false)
+    const [openAddOriginForm, setOpenAddOriginForm] = useState(false);
 
     // form để call api
-    const [name, setName] = useState("");
-    const [description, setDescription] = useState("");
-    const [minStockLevel, setMinStockLevel] = useState("");
-    const [maxStockLevel, setMaxStockLevel] = useState("");
-    const [length, setLength] = useState("");
-    const [width, setWidth] = useState("");
-    const [height, setHeight] = useState("");
+    const [name, setName] = useState('');
+    const [description, setDescription] = useState('');
+    const [minStockLevel, setMinStockLevel] = useState('');
+    const [maxStockLevel, setMaxStockLevel] = useState('');
+    const [length, setLength] = useState('');
+    const [width, setWidth] = useState('');
+    const [height, setHeight] = useState('');
 
     const [categories_id, setCategories_id] = useState([]);
     const [unit_id, setUnits_id] = useState([]);
     const [origins_id, setOrigins_id] = useState([]);
     const [unit_mea_id, setUnit_mea_id] = useState([]);
-
 
     const handleTab1DataChange = (event) => {
         // Cập nhật dữ liệu cho tab 1 tại đây
@@ -93,21 +92,34 @@ const CategoryForm = () => {
     // hàm xử lý đóng mở popup form
     const handleOpenAddCategoryDialog = () => {
         setOpenAddCategoryDialog(true);
-      };
-      
-      const handleCloseAddCategoryDialog = () => {
+    };
+
+    const handleCloseAddCategoryDialog = () => {
         setOpenAddCategoryDialog(false);
-      };
-      
-      const handleOpenAddOriginForm = () => {
+    };
+
+    const handleOpenAddOriginForm = () => {
         setOpenAddOriginForm(true);
-      };
-    
-      const handleCloseAddOriginForm = () => {
+    };
+
+    const handleCloseAddOriginForm = () => {
         setOpenAddOriginForm(false);
-      };
-    
-      // hàm create category-----------------------------------------
+    };
+
+    const handleDeleteOrigin = async (id) => {
+        try {
+            const response = await deleteOrigins(id);
+
+            if (response.status === 202) {
+                const updatedOrigins = origins_id.filter((origin) => origin.id !== id);
+                setOrigins_id(updatedOrigins);
+            }
+        } catch (error) {
+            console.error('Error delete origins:', error);
+        }
+    };
+
+    // hàm create category-----------------------------------------
     const handleCreateProduct = async () => {
         const productParams = {
             name,
@@ -122,42 +134,40 @@ const CategoryForm = () => {
             height,
             unit_mea_id,
         };
-        try{
-        const response = await createProduct(productParams);
-        console.log('Create product response:', response);
-        }catch(error){
+        try {
+            const response = await createProduct(productParams);
+            console.log('Create product response:', response);
+        } catch (error) {
             console.error('Error creating product:', error);
         }
-       
-    }
+    };
 
-    const handleAddCategories = async () => {
-        
-    }
+    const handleAddCategories = async () => {};
 
     useEffect(() => {
         getAllCategories()
             .then((respone) => {
                 const data = respone.data;
-                setCategories_id(data)
+                setCategories_id(data);
             })
             .catch((error) => console.error('Error fetching categories:', error));
 
         getAllUnit()
-            .then((respone) =>{
-                const data = respone.data; 
-                setUnits_id(data)
+            .then((respone) => {
+                const data = respone.data;
+                setUnits_id(data);
             })
             .catch((error) => console.error('Error fetching units:', error));
         getAllUnitMeasurement()
             .then((respone) => {
                 const data = respone.data;
-                setUnit_mea_id(data)})
+                setUnit_mea_id(data);
+            })
             .catch((error) => console.error('Error fetching units measurement:', error));
         getAllOrigins()
             .then((respone) => {
                 const data = respone.data;
-                setOrigins_id(data)
+                setOrigins_id(data);
             })
             .catch((error) => console.error('Error fetching origins:', error));
     }, []);
@@ -205,7 +215,13 @@ const CategoryForm = () => {
                                             <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
                                                 Tên hàng:{' '}
                                             </Typography>
-                                            <TextField size="small" variant="outlined" sx={{ width: '70%' }} value={name} onChange={(e) => setName(e.target.value)} />
+                                            <TextField
+                                                size="small"
+                                                variant="outlined"
+                                                sx={{ width: '70%' }}
+                                                value={name}
+                                                onChange={(e) => setName(e.target.value)}
+                                            />
                                         </Grid>
                                         <FormControl size="small" variant="outlined" sx={{ width: '100%' }}>
                                             <Grid
@@ -230,12 +246,16 @@ const CategoryForm = () => {
                                                         name="categories_id"
                                                     >
                                                         {categories_id.map((category) => (
-                                                        <MenuItem key={category.id} value={category.id}>
-                                                            {category.name}
+                                                            <MenuItem key={category.id} value={category.id}>
+                                                                {category.name}
                                                             </MenuItem>
                                                         ))}
                                                     </Select>
-                                                    <Button variant="outlined" sx={{ padding: 0.8, minWidth: 0 }} onClick={handleOpenAddCategoryDialog}>
+                                                    <Button
+                                                        variant="outlined"
+                                                        sx={{ padding: 0.8, minWidth: 0 }}
+                                                        onClick={handleOpenAddCategoryDialog}
+                                                    >
                                                         <AddIcon />
                                                     </Button>
                                                     <AddCategoryForm
@@ -268,18 +288,36 @@ const CategoryForm = () => {
                                                         name="origins_id"
                                                     >
                                                         {origins_id.map((origin) => (
-                                                        <MenuItem key={origin.id} value={origin.id}>
-                                                            {origin.name}
-                                                        </MenuItem>
+                                                            <MenuItem
+                                                                sx={{
+                                                                    display: 'flex',
+                                                                    justifyContent: 'space-between',
+                                                                    alignItems: 'center',
+                                                                }}
+                                                                key={origin.id}
+                                                                value={origin.id}
+                                                            >
+                                                                {origin.name}
+                                                                <IconButton
+                                                                    style={{ float: 'right' }}
+                                                                    onClick={() => handleDeleteOrigin(origin.id)}
+                                                                >
+                                                                    <CloseIcon color="outlined" />
+                                                                </IconButton>{' '}
+                                                            </MenuItem>
                                                         ))}
                                                     </Select>
-                                                    <Button variant="outlined" sx={{ padding: 0.8, minWidth: 0 }}  onClick={handleOpenAddOriginForm}>
+                                                    <Button
+                                                        variant="outlined"
+                                                        sx={{ padding: 0.8, minWidth: 0 }}
+                                                        onClick={handleOpenAddOriginForm}
+                                                    >
                                                         <AddIcon />
                                                     </Button>
                                                     <AddOriginForm
-                                                     open={openAddOriginForm}
-                                                     onClose={handleCloseAddOriginForm}
-                                                   />
+                                                        open={openAddOriginForm}
+                                                        onClose={handleCloseAddOriginForm}
+                                                    />
                                                 </Grid>
                                             </Grid>
                                         </FormControl>
@@ -303,7 +341,6 @@ const CategoryForm = () => {
                                                             padding: '10px',
                                                         },
                                                     }}
-                                                    
                                                 />
                                             </Grid>
                                         </LocalizationProvider>
@@ -331,7 +368,7 @@ const CategoryForm = () => {
                                             </Grid>
                                         </LocalizationProvider>
                                     </Grid>
-                                    <Grid item xs={4} sx={{ marginLeft: 8 }}>
+                                    <Grid item xs={5} sx={{ marginLeft: 8 }}>
                                         <Grid
                                             container
                                             spacing={1}

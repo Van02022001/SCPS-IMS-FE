@@ -9,3 +9,9 @@ export const createOrigins = async (originParams) => {
     const response = await axiosInstance.post("/origins", originParams);
     return response.data;
 }
+
+export const deleteOrigins = async (id) => {
+    const response = await axiosInstance.delete(`/origins/${id}`, );
+    return response.data;
+}
+
