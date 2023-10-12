@@ -1,19 +1,10 @@
 import {
     Button,
-    Checkbox,
-    Dialog,
-    DialogActions,
     DialogContent,
-    DialogContentText,
-    DialogTitle,
     FormControl,
-    FormControlLabel,
     Grid,
     IconButton,
     InputLabel,
-    List,
-    ListItem,
-    ListItemText,
     MenuItem,
     Select,
     Stack,
@@ -23,7 +14,9 @@ import {
     Typography,
     Card,
     CardContent,
+    styled,
 } from '@mui/material';
+import InputBase from '@mui/material/InputBase';
 import { useEffect, useState } from 'react';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -49,10 +42,43 @@ import AddOriginForm from './AddOriginForm';
 // api
 import { createProduct } from '~/data/mutation/product/product-mutation';
 import { getAllCategories } from '~/data/mutation/categories/categories-mutation';
-import { getAllUnit, getAllUnitMeasurement } from '~/data/mutation/unit/unit-mutation';
+import { deleteUnits, getAllUnit, getAllUnitMeasurement } from '~/data/mutation/unit/unit-mutation';
 import { deleteOrigins, getAllOrigins } from '~/data/mutation/origins/origins-mutation';
 
 const CategoryForm = () => {
+    const BootstrapInput = styled(InputBase)(({ theme }) => ({
+        'label + &': {
+            width: '100px',
+            marginTop: theme.spacing(3),
+        },
+        '& .MuiInputBase-input': {
+            borderRadius: 4,
+            position: 'relative',
+            backgroundColor: theme.palette.background.paper,
+            border: '1px solid #ced4da',
+            fontSize: 16,
+            padding: '8px 20px 8px 12px',
+            transition: theme.transitions.create(['border-color', 'box-shadow']),
+            // Use the system font instead of the default Roboto font.
+            fontFamily: [
+                '-apple-system',
+                'BlinkMacSystemFont',
+                '"Segoe UI"',
+                'Roboto',
+                '"Helvetica Neue"',
+                'Arial',
+                'sans-serif',
+                '"Apple Color Emoji"',
+                '"Segoe UI Emoji"',
+                '"Segoe UI Symbol"',
+            ].join(','),
+            '&:focus': {
+                borderRadius: 4,
+                borderColor: '#80bdff',
+                boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
+            },
+        },
+    }));
     const [currentTab, setCurrentTab] = useState(0);
     const [tab1Data, setTab1Data] = useState({});
     const [tab2Data, setTab2Data] = useState({});
@@ -69,7 +95,7 @@ const CategoryForm = () => {
     const [length, setLength] = useState('');
     const [width, setWidth] = useState('');
     const [height, setHeight] = useState('');
-
+    const [diameter, setDiameter] = useState('');
     const [categories_id, setCategories_id] = useState([]);
     const [unit_id, setUnits_id] = useState([]);
     const [origins_id, setOrigins_id] = useState([]);
@@ -106,6 +132,7 @@ const CategoryForm = () => {
         setOpenAddOriginForm(false);
     };
 
+    // Hàm delete của trang ---------------------------------------------------------------------
     const handleDeleteOrigin = async (id) => {
         try {
             const response = await deleteOrigins(id);
@@ -119,6 +146,19 @@ const CategoryForm = () => {
         }
     };
 
+    const handleDeleteUnit = async (id) => {
+        try {
+            const response = await deleteUnits(id);
+
+            if (response.status === 202) {
+                const updatedUnits = unit_id.filter((unit) => unit.id !== id);
+                setUnits_id(updatedUnits);
+            }
+        } catch (error) {
+            console.error('Error delete origins:', error);
+        }
+    };
+
     // hàm create category-----------------------------------------
     const handleCreateProduct = async () => {
         const productParams = {
@@ -126,13 +166,13 @@ const CategoryForm = () => {
             description,
             minStockLevel,
             maxStockLevel,
-            categories_id,
-            unit_id,
-            origins_id,
+            categories_id: [tab1Data.categories_id], // Lấy ID từ tab1Data
+            unit_id: tab1Data.unit_id, // Lấy ID từ tab1Data
             length,
             width,
             height,
-            unit_mea_id,
+            diameter,
+            unit_mea_id: tab1Data.unit_mea_id, // Lấy ID từ tabData
         };
         try {
             const response = await createProduct(productParams);
@@ -142,7 +182,7 @@ const CategoryForm = () => {
         }
     };
 
-    const handleAddCategories = async () => {};
+    const handleAddCategories = async () => { };
 
     useEffect(() => {
         getAllCategories()
@@ -194,13 +234,15 @@ const CategoryForm = () => {
                                             sx={{ marginBottom: 4, gap: 5 }}
                                         >
                                             <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
-                                                Mã hàng:{' '}
+                                                Tên hàng hóa:{' '}
                                             </Typography>
                                             <TextField
                                                 size="small"
                                                 variant="outlined"
-                                                label="Mã hàng tự động"
+                                                label="Tên hàng"
                                                 sx={{ width: '70%' }}
+                                                value={name}
+                                                onChange={(e) => setName(e.target.value)}
                                             />
                                         </Grid>
 
@@ -213,14 +255,15 @@ const CategoryForm = () => {
                                             sx={{ marginBottom: 4, gap: 5 }}
                                         >
                                             <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
-                                                Tên hàng:{' '}
+                                                Mô tả về hàng hóa:{' '}
                                             </Typography>
                                             <TextField
                                                 size="small"
+                                                label="Mô tả"
                                                 variant="outlined"
                                                 sx={{ width: '70%' }}
-                                                value={name}
-                                                onChange={(e) => setName(e.target.value)}
+                                                value={description}
+                                                onChange={(e) => setDescription(e.target.value)}
                                             />
                                         </Grid>
                                         <FormControl size="small" variant="outlined" sx={{ width: '100%' }}>
@@ -265,6 +308,7 @@ const CategoryForm = () => {
                                                 </Grid>
                                             </Grid>
                                         </FormControl>
+
                                         <FormControl size="small" variant="outlined" sx={{ width: '100%' }}>
                                             <Grid
                                                 container
@@ -275,7 +319,7 @@ const CategoryForm = () => {
                                                 sx={{ marginBottom: 4, gap: 5 }}
                                             >
                                                 <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
-                                                    Thương hiệu:{' '}
+                                                    Đơn vị:{' '}
                                                 </Typography>
                                                 <Grid xs={8.5}>
                                                     <Select
@@ -283,24 +327,24 @@ const CategoryForm = () => {
                                                         labelId="group-label"
                                                         id="group-select"
                                                         sx={{ width: '90%', fontSize: '14px' }}
-                                                        value={tab1Data.origins_id}
+                                                        value={tab1Data.unit_id}
                                                         onChange={handleTab1DataChange}
-                                                        name="origins_id"
+                                                        name="unit_id"
                                                     >
-                                                        {origins_id.map((origin) => (
+                                                        {unit_id.map((unit) => (
                                                             <MenuItem
                                                                 sx={{
                                                                     display: 'flex',
                                                                     justifyContent: 'space-between',
                                                                     alignItems: 'center',
                                                                 }}
-                                                                key={origin.id}
-                                                                value={origin.id}
+                                                                key={unit.id}
+                                                                value={unit.id}
                                                             >
-                                                                {origin.name}
+                                                                {unit.name}
                                                                 <IconButton
                                                                     style={{ float: 'right' }}
-                                                                    onClick={() => handleDeleteOrigin(origin.id)}
+                                                                    onClick={() => handleDeleteUnit(unit.id)}
                                                                 >
                                                                     <CloseIcon color="outlined" />
                                                                 </IconButton>{' '}
@@ -409,6 +453,49 @@ const CategoryForm = () => {
                                             <TextField size="small" variant="outlined" sx={{ width: '70%' }} />
                                         </Grid>
 
+                                        <FormControl size="small" variant="outlined" sx={{ width: '100%' }}>
+                                            <Grid
+                                                container
+                                                spacing={1}
+                                                direction="row"
+                                                justifyContent="space-between"
+                                                alignItems="center"
+                                                sx={{ marginBottom: 4, gap: 5 }}
+                                            >
+                                                <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
+                                                    Đơn vị đo lường:{' '}
+                                                </Typography>
+                                                <Grid xs={8.5}>
+                                                    <Select
+                                                        size="small"
+                                                        labelId="group-label"
+                                                        id="group-select"
+                                                        sx={{ width: '90%', fontSize: '14px' }}
+                                                        value={tab1Data.unit_mea_id}
+                                                        onChange={handleTab1DataChange}
+                                                        name="unit_mea_id"
+                                                    >
+                                                        {unit_mea_id.map((unit_mea) => (
+                                                            <MenuItem key={unit_mea.id} value={unit_mea.id}>
+                                                                {unit_mea.name}
+                                                            </MenuItem>
+                                                        ))}
+                                                    </Select>
+                                                    <Button
+                                                        variant="outlined"
+                                                        sx={{ padding: 0.8, minWidth: 0 }}
+                                                        onClick={handleOpenAddCategoryDialog}
+                                                    >
+                                                        <AddIcon />
+                                                    </Button>
+                                                    <AddCategoryForm
+                                                        open={openAddCategoryDialog}
+                                                        onClose={handleCloseAddCategoryDialog}
+                                                    />
+                                                </Grid>
+                                            </Grid>
+                                        </FormControl>
+
                                         <Grid
                                             container
                                             spacing={1}
@@ -420,7 +507,57 @@ const CategoryForm = () => {
                                             <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
                                                 Kích thước:{' '}
                                             </Typography>
-                                            <GroupedSelect></GroupedSelect>
+                                            <FormControl sx={{ m: 0.2 }} variant="standard">
+
+                                                <TextField
+                                                    id="demo-customized-textbox"
+                                                    label="Chiều dài"
+                                                    value={length}
+                                                    onChange={(e) => setLength(e.target.value)}
+                                                />
+                                            </FormControl>
+                                            <FormControl sx={{ m: 0.2 }} variant="standard">
+                                                <TextField
+                                                    id="demo-customized-textbox"
+                                                    label="Chiều rộng"
+                                                    value={width}
+                                                    onChange={(e) => setWidth(e.target.value)}
+                                                />
+                                            </FormControl>
+                                            <FormControl sx={{ m: 0.2 }} variant="standard">
+                                                <TextField
+                                                    id="demo-customized-textbox"
+                                                    label="Chiều cao"
+                                                    value={height}
+                                                    onChange={(e) => setHeight(e.target.value)}
+                                                />
+                                            </FormControl>
+                                            <FormControl sx={{ m: 0.2 }} variant="standard">
+
+                                                <TextField
+                                                    id="demo-customized-textbox"
+                                                    label="Đường kính"
+                                                    value={diameter}
+                                                    onChange={(e) => setDiameter(e.target.value)}
+                                                />
+                                            </FormControl>
+                                            {/* <FormControl sx={{ m: 0.2 }} variant="standard">
+                                                <InputLabel sx={{ width: '60px' }} id="demo-customized-select-label">
+                                                    đơn vị
+                                                </InputLabel>
+                                                <Select
+                                                    labelId="demo-customized-select-label"
+                                                    id="demo-customized-select"
+                                                    input={<BootstrapInput />}
+                                                >
+                                                    <MenuItem value="">
+                                                        <em>Đơn vị</em>
+                                                    </MenuItem>
+                                                    <MenuItem value={10}>mm</MenuItem>
+                                                    <MenuItem value={20}>cm</MenuItem>
+                                                    <MenuItem value={30}>m</MenuItem>
+                                                </Select>
+                                            </FormControl> */}
                                         </Grid>
 
                                         {/* Thêm các trường khác ở đây */}
@@ -432,7 +569,7 @@ const CategoryForm = () => {
                                     <BoxComponent />
                                 </Grid>
                                 <Grid container spacing={1} sx={{ gap: '20px' }}>
-                                    <Button color="primary" variant="contained" startIcon={<SaveIcon />}>
+                                    <Button color="primary" variant="contained" startIcon={<SaveIcon />} onClick={handleCreateProduct}>
                                         Lưu
                                     </Button>
                                     <Button color="primary" variant="outlined" startIcon={<ClearIcon />}>
@@ -478,6 +615,8 @@ const CategoryForm = () => {
                                                     variant="outlined"
                                                     sx={{ width: '50%', marginRight: 30 }}
                                                     placeholder="0"
+                                                    value={minStockLevel}
+                                                    onChange={(e) => setMinStockLevel(e.target.value)}
                                                 />
                                             </Grid>
                                         </Grid>
@@ -499,6 +638,8 @@ const CategoryForm = () => {
                                                     variant="outlined"
                                                     sx={{ width: '50%', marginRight: 30 }}
                                                     placeholder="999,999,999"
+                                                    value={maxStockLevel}
+                                                    onChange={(e) => setMaxStockLevel(e.target.value)}
                                                 />
                                             </Grid>
                                         </Grid>
@@ -575,10 +716,6 @@ const CategoryForm = () => {
                         </div>
                     )}
                 </DialogContent>
-                {/* <DialogActions>
-                    <Button color="success" variant="contained">Yes</Button>
-                    <Button color="error" variant="contained">Close</Button>
-                </DialogActions> */}
             </div>
         </>
     );

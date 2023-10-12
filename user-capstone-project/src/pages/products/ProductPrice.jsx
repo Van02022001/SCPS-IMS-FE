@@ -35,10 +35,11 @@ import Scrollbar from '~/components/scrollbar/Scrollbar';
 import CloseIcon from "@mui/icons-material/Close"
 
 // sections
-import { ProductsListHead, ProductsListToolbar } from '../../sections/@dashboard/products';
+import { ProductsListHead } from '../../sections/@dashboard/products';
 // mock
 import PRODUCTSLIST from '../../_mock/products';
 import CategoryForm from '~/sections/auth/categories/CategoryForm';
+import ProductsPriceToolbar from '~/sections/@dashboard/products/productsPrice/ProductsPriceToolbar';
 
 // ----------------------------------------------------------------------
 
@@ -121,6 +122,8 @@ const ProductsPricePage = () => {
     const [selectedFilterOptions, setSelectedFilterOptions] = useState(null);
     const [selectedFilterSale, setSelectedFilterSale] = useState(null);
     const [openCreatePricePopup, setOpenCreatePricePopup] = useState(false);
+
+    const [visibleColumns, setVisibleColumns] = useState(TABLE_HEAD.map((col) => col.id));
 
     const handleCloseCreatePricePopup = () => {
         setOpenCreatePricePopup(false);
@@ -332,7 +335,7 @@ const ProductsPricePage = () => {
 
                 </Grid>
                 <Card>
-                    <ProductsListToolbar
+                    <ProductsPriceToolbar
                         numSelected={selected.length}
                         filterName={filterName}
                         onFilterName={handleFilterByName}

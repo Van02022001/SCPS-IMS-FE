@@ -171,18 +171,18 @@ const ProductsPage = () => {
 
     useEffect(() => {
         getAllProduct()
-        .then((respone) => {
-            const data = respone.data;
-            if (Array.isArray(data)) {
-                setProductData(data);
-            } else {
-                console.error('API response is not an array:', data);
-            }
-            
-        })
-        .catch((error) => {
-            console.error('Error fetching users:', error);
-        });
+            .then((respone) => {
+                const data = respone.data;
+                if (Array.isArray(data)) {
+                    setProductData(data);
+                } else {
+                    console.error('API response is not an array:', data);
+                }
+
+            })
+            .catch((error) => {
+                console.error('Error fetching users:', error);
+            });
     }, [])
 
     return (
@@ -239,70 +239,70 @@ const ProductsPage = () => {
                                     .map((row) => {
                                         const { id, image, name, role, status, company, avatarUrl, isVerified } = row;
                                         const selectedUser = selected.indexOf(name) !== -1; */}
-    {productsData.map((product) => {
-                                        return (
-                                            <TableRow
-                                                hover
-                                                key={product.id}
-                                                tabIndex={-1}
-                                                role="checkbox"
-                                                // selected={selectedUser}
-                                            >
-                                                <TableCell padding="checkbox">
-                                                    <Checkbox
-                                                        // checked={selectedUser}
-                                                        // onChange={(event) => handleClick(event, name)}
-                                                    />
-                                                </TableCell>
+                                {productsData.map((product) => {
+                                    return (
+                                        <TableRow
+                                            hover
+                                            key={product.id}
+                                            tabIndex={-1}
+                                            role="checkbox"
+                                        // selected={selectedUser}
+                                        >
+                                            <TableCell padding="checkbox">
+                                                <Checkbox
+                                                // checked={selectedUser}
+                                                // onChange={(event) => handleClick(event, name)}
+                                                />
+                                            </TableCell>
 
-                                                <TableCell component="th" scope="row" padding="none">
-                                                    <Stack direction="row" alignItems="center" spacing={2}>
-                                                        {/* <Avatar alt={name} src={avatarUrl} /> */}
-                                                        
-                                                        
-                                                    </Stack>
-                                                </TableCell>
+                                            <TableCell component="th" scope="row" padding="none">
+                                                <Stack direction="row" alignItems="center" spacing={2}>
+                                                    {/* <Avatar alt={name} src={avatarUrl} /> */}
 
-                                                <TableCell align="left">
-                                                    <Typography variant="subtitle2" noWrap>{product.id}</Typography>
-                                                    </TableCell>
 
-                                                <TableCell component="th" scope="row" padding="none">
-                                                    <Stack direction="row" alignItems="center" spacing={2}>
-                                                        {/* <Avatar alt={name} src={avatarUrl} /> */}
-                                                        <Typography variant="subtitle2" noWrap>
-                                                            {product.name}
-                                                        </Typography>
-                                                    </Stack>
-                                                </TableCell>
+                                                </Stack>
+                                            </TableCell>
 
-                                                
+                                            <TableCell align="left">
+                                                <Typography variant="subtitle2" noWrap>{product.id}</Typography>
+                                            </TableCell>
 
-                                                <TableCell align="left">{product.description}</TableCell>
+                                            <TableCell component="th" scope="row" padding="none">
+                                                <Stack direction="row" alignItems="center" spacing={2}>
+                                                    {/* <Avatar alt={name} src={avatarUrl} /> */}
+                                                    <Typography variant="subtitle2" noWrap>
+                                                        {product.name}
+                                                    </Typography>
+                                                </Stack>
+                                            </TableCell>
 
-                                                <TableCell align="left">{product.createdAt}</TableCell>
-                                                <TableCell align="left">{product.updatedAt}</TableCell>
-                                                <TableCell align="left">{product.origins[0].name}</TableCell>
-                                                <TableCell align="left">
-    {product.warehouses.length > 0 ? product.warehouses[0].name : " "}
-</TableCell>
-<TableCell align="left">{product.categories[0].name}</TableCell>
-                                                {/* <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell> */}
 
-                                                <TableCell align="left">
-                                                    <Label color={(product.status === 'banned' && 'error') || 'success'}>
-                                                        {sentenceCase(product.status)}
-                                                    </Label>
-                                                </TableCell>
 
-                                                <TableCell align="right">
-                                                    <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
-                                                        <Iconify icon={'eva:more-vertical-fill'} />
-                                                    </IconButton>
-                                                </TableCell>
-                                            </TableRow>
-                                        );
-                                    })}
+                                            <TableCell align="left">{product.description}</TableCell>
+
+                                            <TableCell align="left">{product.createdAt}</TableCell>
+                                            <TableCell align="left">{product.updatedAt}</TableCell>
+                                            {/* <TableCell align="left">{product.origins[0].name}</TableCell>
+                                            <TableCell align="left">
+                                                {product.warehouses.length > 0 ? product.warehouses[0].name : " "}
+                                            </TableCell> */}
+                                            <TableCell align="left">{product.categories[0].name}</TableCell>
+                                            {/* <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell> */}
+
+                                            <TableCell align="left">
+                                                <Label color={(product.status === 'banned' && 'error') || 'success'}>
+                                                    {sentenceCase(product.status)}
+                                                </Label>
+                                            </TableCell>
+
+                                            <TableCell align="right">
+                                                <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
+                                                    <Iconify icon={'eva:more-vertical-fill'} />
+                                                </IconButton>
+                                            </TableCell>
+                                        </TableRow>
+                                    );
+                                })}
                                 {emptyRows > 0 && (
                                     <TableRow style={{ height: 53 * emptyRows }}>
                                         <TableCell colSpan={6} />

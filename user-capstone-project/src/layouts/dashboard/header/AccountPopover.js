@@ -29,7 +29,7 @@ const MENU_OPTIONS = [
         icon: 'eva:home-fill',
     },
     {
-        label: 'Profile',
+        label: 'Hồ sơ',
         icon: 'eva:person-fill',
     },
     {
@@ -161,7 +161,7 @@ export default function AccountPopover() {
                 <Divider sx={{ borderStyle: 'dashed' }} />
 
                 <MenuItem onClick={handleLogout} sx={{ m: 1 }}>
-                    Logout
+                    Đăng xuất
                 </MenuItem>
             </Popover>
 
