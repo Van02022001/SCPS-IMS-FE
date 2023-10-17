@@ -70,15 +70,8 @@ export default function AccountPopover() {
     const handleLogout = async () => {
         try {
             const rftoken = localStorage.getItem('refreshToken');
-            setRefreshToken(rftoken);
-            
-            console.log(rftoken);
-
-            const schemaParams = { refreshToken };
+            const schemaParams = { refreshToken: rftoken, };
             const response = await logout(schemaParams);
-
-            console.log(response);
-
             if (response.status === 202) {
                 navigate('/login');
             } else {

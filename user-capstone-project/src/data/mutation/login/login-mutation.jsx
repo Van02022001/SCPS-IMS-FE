@@ -17,5 +17,5 @@ export const authenChangePassword = async (changeParams) => {
 
 export const logout = async (schemaParams) => {
     const response = await axiosInstance.post("/auth/sessions", schemaParams);
-    return response.data;
+    return response;
 }

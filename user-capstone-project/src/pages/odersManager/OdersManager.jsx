@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
-import { useState } from 'react';
+import React, { useState } from 'react';
 // @mui
 import {
     Card,
@@ -31,20 +31,27 @@ import Scrollbar from '../../components/scrollbar';
 import CloseIcon from "@mui/icons-material/Close"
 // sections
 import { UserListHead, UserListToolbar } from '../../sections/@dashboard/user';
-// mock
-import USERLIST from '../../_mock/user';
 import OdersForm from '~/sections/@dashboard/oders/OdersForm';
+import OrderDetailForm from '~/sections/auth/orders/OrderDetailForm';
+import USERLIST from '../../_mock/user';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-    { id: 'name', label: 'Mã sản phẩm', alignRight: false },
-    { id: 'company', label: 'Tên khách hàng', alignRight: false },
-    { id: 'role', label: 'Ngày nhập đơn', alignRight: false },
-    { id: 'isVerified', label: 'Tổng tiền', alignRight: false },
-    { id: 'status', label: 'Thanh toán', alignRight: false },
+    { id: 'name', label: 'Mã hóa đơn', alignRight: false },
+    { id: 'company', label: 'Thời gian', alignRight: false },
+    { id: 'role', label: 'Mã khách hàng', alignRight: false },
+    { id: 'isVerified', label: 'Khách hàng', alignRight: false },
+    { id: 'status', label: 'Tổng tiền hàng', alignRight: false },
+    { id: 'status', label: 'Giảm giá', alignRight: false },
+    { id: 'status', label: 'Khách đã trả', alignRight: false },
     { id: '' },
 ];
+const orderDetailFormStyles = {
+    maxHeight: 0,
+    overflow: 'hidden',
+    transition: 'max-height 0.3s ease-in-out',
+};
 
 // ----------------------------------------------------------------------
 
@@ -93,6 +100,23 @@ const OdersManagerPage = () => {
     const [filterName, setFilterName] = useState('');
 
     const [rowsPerPage, setRowsPerPage] = useState(5);
+    //-------------------------------------------------
+    const [openOderFormDetail, setOpenOderFormDetail] = useState(false);
+    const [selectedOrderId, setSelectedOrderId] = useState(null);
+    const [selectedOrder, setSelectedOrder] = useState(null);
+
+    const handleOrderClick = (order) => {
+        if (selectedOrderId === order.id) {
+            setSelectedOrderId(null); // Đóng nếu đã mở
+        } else {
+            setSelectedOrderId(order.id); // Mở hoặc chuyển sang hóa đơn khác
+        }
+    };
+
+    const handleCloseOrderDetails = () => {
+        setSelectedOrder(null);
+    };
+
 
     const handleOpenMenu = (event) => {
         setOpen(event.currentTarget);
@@ -154,6 +178,7 @@ const OdersManagerPage = () => {
 
     const isNotFound = !filteredUsers.length && !!filterName;
 
+
     return (
         <>
             <Helmet>
@@ -194,68 +219,80 @@ const OdersManagerPage = () => {
                                         const selectedUser = selected.indexOf(name) !== -1;
 
                                         return (
-                                            <TableRow hover key={id} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                                                <TableCell padding="checkbox">
-                                                    <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, name)} />
-                                                </TableCell>
+                                            <React.Fragment key={id}>
+                                                <TableRow
+                                                    hover
+                                                    tabIndex={-1}
+                                                    role="checkbox"
+                                                    selected={selectedOrderId === id}
+                                                    onClick={() => handleOrderClick(row)}
+                                                >
+                                                    <TableCell padding="checkbox">
+                                                        <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, name)} />
+                                                    </TableCell>
 
-                                                <TableCell component="th" scope="row" padding="none">
-                                                    <Stack direction="row" alignItems="center" spacing={2}>
-                                                        <Avatar alt={name} src={avatarUrl} />
-                                                        <Typography variant="subtitle2" noWrap>
-                                                            {name}
-                                                        </Typography>
-                                                    </Stack>
-                                                </TableCell>
+                                                    <TableCell component="th" scope="row" padding="none">
+                                                        <Stack direction="row" alignItems="center" spacing={2}>
+                                                            <Avatar alt={name} src={avatarUrl} />
+                                                            <Typography variant="subtitle2" noWrap>
+                                                                {name}
+                                                            </Typography>
+                                                        </Stack>
+                                                    </TableCell>
 
-                                                <TableCell align="left">{company}</TableCell>
+                                                    <TableCell align="left">{company}</TableCell>
 
-                                                <TableCell align="left">{role}</TableCell>
+                                                    <TableCell align="left">{role}</TableCell>
 
-                                                <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell>
+                                                    <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell>
 
-                                                <TableCell align="left">
-                                                    <Label color={(status === 'banned' && 'error') || 'success'}>{sentenceCase(status)}</Label>
-                                                </TableCell>
+                                                    <TableCell align="left">
+                                                        <Label color={(status === 'banned' && 'error') || 'success'}>{sentenceCase(status)}</Label>
+                                                    </TableCell>
 
-                                                <TableCell align="right">
-                                                    <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
-                                                        <Iconify icon={'eva:more-vertical-fill'} />
-                                                    </IconButton>
-                                                </TableCell>
-                                            </TableRow>
+                                                    <TableCell align="right">
+                                                        <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
+                                                            <Iconify icon={'eva:more-vertical-fill'} />
+                                                        </IconButton>
+                                                    </TableCell>
+                                                </TableRow>
+
+
+                                                {selectedOrderId === id && (
+                                                    <TableRow>
+                                                        <TableCell colSpan={8}>
+                                                            <OrderDetailForm orders={USERLIST} orderId={selectedOrderId} onClose={handleCloseOrderDetails} />
+                                                        </TableCell>
+                                                    </TableRow>
+                                                )}
+                                            </React.Fragment>
                                         );
                                     })}
-                                    {emptyRows > 0 && (
-                                        <TableRow style={{ height: 53 * emptyRows }}>
-                                            <TableCell colSpan={6} />
-                                        </TableRow>
+
+                                    {isNotFound && (
+                                        <TableBody>
+                                            <TableRow>
+                                                <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                                                    <Paper
+                                                        sx={{
+                                                            textAlign: 'center',
+                                                        }}
+                                                    >
+                                                        <Typography variant="h6" paragraph>
+                                                            Not found
+                                                        </Typography>
+
+                                                        <Typography variant="body2">
+                                                            No results found for &nbsp;
+                                                            <strong>&quot;{filterName}&quot;</strong>.
+                                                            <br /> Try checking for typos or using complete words.
+                                                        </Typography>
+                                                    </Paper>
+                                                </TableCell>
+                                            </TableRow>
+                                        </TableBody>
                                     )}
                                 </TableBody>
-
-                                {isNotFound && (
-                                    <TableBody>
-                                        <TableRow>
-                                            <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                                                <Paper
-                                                    sx={{
-                                                        textAlign: 'center',
-                                                    }}
-                                                >
-                                                    <Typography variant="h6" paragraph>
-                                                        Not found
-                                                    </Typography>
-
-                                                    <Typography variant="body2">
-                                                        No results found for &nbsp;
-                                                        <strong>&quot;{filterName}&quot;</strong>.
-                                                        <br /> Try checking for typos or using complete words.
-                                                    </Typography>
-                                                </Paper>
-                                            </TableCell>
-                                        </TableRow>
-                                    </TableBody>
-                                )}
                             </Table>
                         </TableContainer>
                     </Scrollbar>
@@ -270,6 +307,7 @@ const OdersManagerPage = () => {
                         onRowsPerPageChange={handleChangeRowsPerPage}
                     />
                 </Card>
+
             </Container>
 
             <Popover

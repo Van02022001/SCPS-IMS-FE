@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { NavLink as RouterLink } from 'react-router-dom';
+import { NavLink as RouterLink, useLocation } from 'react-router-dom';
 // @mui
 import { Box, Collapse, IconButton, List, ListItemText } from '@mui/material';
 //
@@ -35,10 +35,13 @@ function NavItem({ item, isReportMenuOpen }) {
   // ...
   const { title, path, icon, info, children } = item;
   const [open, setOpen] = useState(false);
+  const { pathname } = useLocation();
 
   const handleToggle = () => {
     setOpen(!open);
   };
+
+  const isActive = path === pathname;
 
   return (
     <StyledNavItem
@@ -60,7 +63,11 @@ function NavItem({ item, isReportMenuOpen }) {
     >
       <StyledNavItemIcon>{icon && icon}</StyledNavItemIcon>
 
-      <ListItemText disableTypography primary={title} />
+      <ListItemText disableTypography primary={title} 
+      sx={{
+          fontWeight: isActive ? 'bold' : 'normal',
+        }} 
+        />
 
       {children ? (
         <IconButton
