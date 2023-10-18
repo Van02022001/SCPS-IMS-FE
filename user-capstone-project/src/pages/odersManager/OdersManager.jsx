@@ -185,130 +185,130 @@ const OdersManagerPage = () => {
                 <title> User | Minimal UI </title>
             </Helmet>
 
-            <Container>
-                <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-                    <Typography variant="h4" gutterBottom>
-                        Quản lý hóa đơn
-                    </Typography>
-                    <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={() => setOpenOderForm(true)}>
-                        Thêm hóa đơn
-                    </Button>
-                    <Dialog fullWidth maxWidth="sm" open={openOderForm} >
-                        <DialogTitle>Tạo Hóa Đơn  <IconButton style={{ float: 'right' }} onClick={handleCloseOdersForm}><CloseIcon color="primary" /></IconButton>  </DialogTitle><OdersForm /></Dialog>
 
-                </Stack>
+            <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+                <Typography variant="h4" gutterBottom>
+                    Quản lý hóa đơn
+                </Typography>
+                <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={() => setOpenOderForm(true)}>
+                    Thêm hóa đơn
+                </Button>
+                <Dialog fullWidth maxWidth="sm" open={openOderForm} >
+                    <DialogTitle>Tạo Hóa Đơn  <IconButton style={{ float: 'right' }} onClick={handleCloseOdersForm}><CloseIcon color="primary" /></IconButton>  </DialogTitle><OdersForm /></Dialog>
 
-                <Card>
-                    <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+            </Stack>
 
-                    <Scrollbar>
-                        <TableContainer sx={{ minWidth: 800 }}>
-                            <Table>
-                                <UserListHead
-                                    order={order}
-                                    orderBy={orderBy}
-                                    headLabel={TABLE_HEAD}
-                                    rowCount={USERLIST.length}
-                                    numSelected={selected.length}
-                                    onRequestSort={handleRequestSort}
-                                    onSelectAllClick={handleSelectAllClick}
-                                />
-                                <TableBody>
-                                    {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                                        const { id, name, role, status, company, avatarUrl, isVerified } = row;
-                                        const selectedUser = selected.indexOf(name) !== -1;
+            <Card>
+                <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
 
-                                        return (
-                                            <React.Fragment key={id}>
-                                                <TableRow
-                                                    hover
-                                                    tabIndex={-1}
-                                                    role="checkbox"
-                                                    selected={selectedOrderId === id}
-                                                    onClick={() => handleOrderClick(row)}
-                                                >
-                                                    <TableCell padding="checkbox">
-                                                        <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, name)} />
-                                                    </TableCell>
+                <Scrollbar>
+                    <TableContainer sx={{ minWidth: 800 }}>
+                        <Table>
+                            <UserListHead
+                                order={order}
+                                orderBy={orderBy}
+                                headLabel={TABLE_HEAD}
+                                rowCount={USERLIST.length}
+                                numSelected={selected.length}
+                                onRequestSort={handleRequestSort}
+                                onSelectAllClick={handleSelectAllClick}
+                            />
+                            <TableBody>
+                                {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                                    const { id, name, role, status, company, avatarUrl, isVerified } = row;
+                                    const selectedUser = selected.indexOf(name) !== -1;
 
-                                                    <TableCell component="th" scope="row" padding="none">
-                                                        <Stack direction="row" alignItems="center" spacing={2}>
-                                                            <Avatar alt={name} src={avatarUrl} />
-                                                            <Typography variant="subtitle2" noWrap>
-                                                                {name}
-                                                            </Typography>
-                                                        </Stack>
-                                                    </TableCell>
+                                    return (
+                                        <React.Fragment key={id}>
+                                            <TableRow
+                                                hover
+                                                tabIndex={-1}
+                                                role="checkbox"
+                                                selected={selectedOrderId === id}
+                                                onClick={() => handleOrderClick(row)}
+                                            >
+                                                <TableCell padding="checkbox">
+                                                    <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, name)} />
+                                                </TableCell>
 
-                                                    <TableCell align="left">{company}</TableCell>
-
-                                                    <TableCell align="left">{role}</TableCell>
-
-                                                    <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell>
-
-                                                    <TableCell align="left">
-                                                        <Label color={(status === 'banned' && 'error') || 'success'}>{sentenceCase(status)}</Label>
-                                                    </TableCell>
-
-                                                    <TableCell align="right">
-                                                        <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
-                                                            <Iconify icon={'eva:more-vertical-fill'} />
-                                                        </IconButton>
-                                                    </TableCell>
-                                                </TableRow>
-
-
-                                                {selectedOrderId === id && (
-                                                    <TableRow>
-                                                        <TableCell colSpan={8}>
-                                                            <OrderDetailForm orders={USERLIST} orderId={selectedOrderId} onClose={handleCloseOrderDetails} />
-                                                        </TableCell>
-                                                    </TableRow>
-                                                )}
-                                            </React.Fragment>
-                                        );
-                                    })}
-
-                                    {isNotFound && (
-                                        <TableBody>
-                                            <TableRow>
-                                                <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                                                    <Paper
-                                                        sx={{
-                                                            textAlign: 'center',
-                                                        }}
-                                                    >
-                                                        <Typography variant="h6" paragraph>
-                                                            Not found
+                                                <TableCell component="th" scope="row" padding="none">
+                                                    <Stack direction="row" alignItems="center" spacing={2}>
+                                                        <Avatar alt={name} src={avatarUrl} />
+                                                        <Typography variant="subtitle2" noWrap>
+                                                            {name}
                                                         </Typography>
+                                                    </Stack>
+                                                </TableCell>
 
-                                                        <Typography variant="body2">
-                                                            No results found for &nbsp;
-                                                            <strong>&quot;{filterName}&quot;</strong>.
-                                                            <br /> Try checking for typos or using complete words.
-                                                        </Typography>
-                                                    </Paper>
+                                                <TableCell align="left">{company}</TableCell>
+
+                                                <TableCell align="left">{role}</TableCell>
+
+                                                <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell>
+
+                                                <TableCell align="left">
+                                                    <Label color={(status === 'banned' && 'error') || 'success'}>{sentenceCase(status)}</Label>
+                                                </TableCell>
+
+                                                <TableCell align="right">
+                                                    <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
+                                                        <Iconify icon={'eva:more-vertical-fill'} />
+                                                    </IconButton>
                                                 </TableCell>
                                             </TableRow>
-                                        </TableBody>
-                                    )}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-                    </Scrollbar>
 
-                    <TablePagination
-                        rowsPerPageOptions={[5, 10, 25]}
-                        component="div"
-                        count={USERLIST.length}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        onPageChange={handleChangePage}
-                        onRowsPerPageChange={handleChangeRowsPerPage}
-                    />
-                </Card>
 
-            </Container>
+                                            {selectedOrderId === id && (
+                                                <TableRow>
+                                                    <TableCell colSpan={8}>
+                                                        <OrderDetailForm orders={USERLIST} orderId={selectedOrderId} onClose={handleCloseOrderDetails} />
+                                                    </TableCell>
+                                                </TableRow>
+                                            )}
+                                        </React.Fragment>
+                                    );
+                                })}
+
+                                {isNotFound && (
+                                    <TableBody>
+                                        <TableRow>
+                                            <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                                                <Paper
+                                                    sx={{
+                                                        textAlign: 'center',
+                                                    }}
+                                                >
+                                                    <Typography variant="h6" paragraph>
+                                                        Not found
+                                                    </Typography>
+
+                                                    <Typography variant="body2">
+                                                        No results found for &nbsp;
+                                                        <strong>&quot;{filterName}&quot;</strong>.
+                                                        <br /> Try checking for typos or using complete words.
+                                                    </Typography>
+                                                </Paper>
+                                            </TableCell>
+                                        </TableRow>
+                                    </TableBody>
+                                )}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </Scrollbar>
+
+                <TablePagination
+                    rowsPerPageOptions={[5, 10, 25]}
+                    component="div"
+                    count={USERLIST.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+            </Card>
+
+
 
             <Popover
                 open={Boolean(open)}

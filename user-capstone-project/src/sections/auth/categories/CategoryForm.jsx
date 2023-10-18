@@ -35,6 +35,7 @@ import CustomizedDividers from '~/components/togglebutton/CustomizedDividers';
 //ckeditor
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import PropTypes from 'prop-types';
 // form popup
 import AddCategoryForm from './AddCategoryForm';
 import AddOriginForm from './AddOriginForm';
