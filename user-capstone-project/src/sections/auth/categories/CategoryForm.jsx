@@ -183,7 +183,7 @@ const CategoryForm = () => {
         }
     };
 
-    const handleAddCategories = async () => { };
+    const handleAddCategories = async () => {};
 
     useEffect(() => {
         getAllCategories()
@@ -366,7 +366,7 @@ const CategoryForm = () => {
                                                 </Grid>
                                             </Grid>
                                         </FormControl>
-                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                        {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
                                             <Grid
                                                 container
                                                 spacing={1}
@@ -388,8 +388,8 @@ const CategoryForm = () => {
                                                     }}
                                                 />
                                             </Grid>
-                                        </LocalizationProvider>
-                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                        </LocalizationProvider> */}
+                                        {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
                                             <Grid
                                                 container
                                                 spacing={1}
@@ -411,10 +411,10 @@ const CategoryForm = () => {
                                                     }}
                                                 />
                                             </Grid>
-                                        </LocalizationProvider>
+                                        </LocalizationProvider> */}
                                     </Grid>
                                     <Grid item xs={5} sx={{ marginLeft: 8 }}>
-                                        <Grid
+                                        {/* <Grid
                                             container
                                             spacing={1}
                                             direction="row"
@@ -426,8 +426,8 @@ const CategoryForm = () => {
                                                 Giá tiền:{' '}
                                             </Typography>
                                             <TextField size="small" variant="outlined" sx={{ width: '70%' }} />
-                                        </Grid>
-                                        <Grid
+                                        </Grid> */}
+                                        {/* <Grid
                                             container
                                             spacing={1}
                                             direction="row"
@@ -439,7 +439,8 @@ const CategoryForm = () => {
                                                 Giá bán:{' '}
                                             </Typography>
                                             <TextField size="small" variant="outlined" sx={{ width: '70%' }} />
-                                        </Grid>
+                                        </Grid> */}
+
                                         <Grid
                                             container
                                             spacing={1}
@@ -471,7 +472,7 @@ const CategoryForm = () => {
                                                         size="small"
                                                         labelId="group-label"
                                                         id="group-select"
-                                                        sx={{ width: '90%', fontSize: '14px' }}
+                                                        sx={{ width: '98%', fontSize: '16px' }}
                                                         value={tab1Data.unit_mea_id}
                                                         onChange={handleTab1DataChange}
                                                         name="unit_mea_id"
@@ -482,13 +483,13 @@ const CategoryForm = () => {
                                                             </MenuItem>
                                                         ))}
                                                     </Select>
-                                                    <Button
+                                                    {/* <Button
                                                         variant="outlined"
                                                         sx={{ padding: 0.8, minWidth: 0 }}
                                                         onClick={handleOpenAddCategoryDialog}
                                                     >
                                                         <AddIcon />
-                                                    </Button>
+                                                    </Button> */}
                                                     <AddCategoryForm
                                                         open={openAddCategoryDialog}
                                                         onClose={handleCloseAddCategoryDialog}
@@ -506,42 +507,75 @@ const CategoryForm = () => {
                                             sx={{ marginBottom: 4, gap: 2 }}
                                         >
                                             <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
+                                                Định mức tồn:{' '}
+                                            </Typography>
+                                            <div>
+                                                <FormControl sx={{ m: 0.2 }} variant="standard">
+                                                    <TextField
+                                                        id="demo-customized-textbox"
+                                                        label="Ít nhất"
+                                                        value={length}
+                                                        onChange={(e) => setLength(e.target.value)}
+                                                        sx={{ width: '208px' }}
+                                                    />
+                                                </FormControl>
+                                                <FormControl sx={{ m: 0.2 }} variant="standard">
+                                                    <TextField
+                                                        id="demo-customized-textbox"
+                                                        label="Nhiều nhất"
+                                                        value={length}
+                                                        onChange={(e) => setLength(e.target.value)}
+                                                        sx={{ width: '208px' }}
+                                                    />
+                                                </FormControl>
+                                            </div>
+                                        </Grid>
+
+                                        <Grid
+                                            container
+                                            spacing={1}
+                                            direction="row"
+                                            justifyContent="space-between"
+                                            alignItems="center"
+                                            sx={{ marginBottom: 4, gap: 2 }}
+                                        >
+                                            <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
                                                 Kích thước:{' '}
                                             </Typography>
-                                            <FormControl sx={{ m: 0.2 }} variant="standard">
-
-                                                <TextField
-                                                    id="demo-customized-textbox"
-                                                    label="Chiều dài"
-                                                    value={length}
-                                                    onChange={(e) => setLength(e.target.value)}
-                                                />
-                                            </FormControl>
-                                            <FormControl sx={{ m: 0.2 }} variant="standard">
-                                                <TextField
-                                                    id="demo-customized-textbox"
-                                                    label="Chiều rộng"
-                                                    value={width}
-                                                    onChange={(e) => setWidth(e.target.value)}
-                                                />
-                                            </FormControl>
-                                            <FormControl sx={{ m: 0.2 }} variant="standard">
-                                                <TextField
-                                                    id="demo-customized-textbox"
-                                                    label="Chiều cao"
-                                                    value={height}
-                                                    onChange={(e) => setHeight(e.target.value)}
-                                                />
-                                            </FormControl>
-                                            <FormControl sx={{ m: 0.2 }} variant="standard">
-
-                                                <TextField
-                                                    id="demo-customized-textbox"
-                                                    label="Đường kính"
-                                                    value={diameter}
-                                                    onChange={(e) => setDiameter(e.target.value)}
-                                                />
-                                            </FormControl>
+                                            <div style={{ display: 'flex' }}>
+                                                <FormControl sx={{ m: 0.2 }} variant="standard">
+                                                    <TextField
+                                                        id="demo-customized-textbox"
+                                                        label="Chiều dài"
+                                                        value={length}
+                                                        onChange={(e) => setLength(e.target.value)}
+                                                    />
+                                                </FormControl>
+                                                <FormControl sx={{ m: 0.2 }} variant="standard">
+                                                    <TextField
+                                                        id="demo-customized-textbox"
+                                                        label="Chiều rộng"
+                                                        value={width}
+                                                        onChange={(e) => setWidth(e.target.value)}
+                                                    />
+                                                </FormControl>
+                                                <FormControl sx={{ m: 0.2 }} variant="standard">
+                                                    <TextField
+                                                        id="demo-customized-textbox"
+                                                        label="Chiều cao"
+                                                        value={height}
+                                                        onChange={(e) => setHeight(e.target.value)}
+                                                    />
+                                                </FormControl>
+                                                <FormControl sx={{ m: 0.2 }} variant="standard">
+                                                    <TextField
+                                                        id="demo-customized-textbox"
+                                                        label="Đường kính"
+                                                        value={diameter}
+                                                        onChange={(e) => setDiameter(e.target.value)}
+                                                    />
+                                                </FormControl>
+                                            </div>
                                             {/* <FormControl sx={{ m: 0.2 }} variant="standard">
                                                 <InputLabel sx={{ width: '60px' }} id="demo-customized-select-label">
                                                     đơn vị
@@ -570,7 +604,12 @@ const CategoryForm = () => {
                                     <BoxComponent />
                                 </Grid>
                                 <Grid container spacing={1} sx={{ gap: '20px' }}>
-                                    <Button color="primary" variant="contained" startIcon={<SaveIcon />} onClick={handleCreateProduct}>
+                                    <Button
+                                        color="primary"
+                                        variant="contained"
+                                        startIcon={<SaveIcon />}
+                                        onClick={handleCreateProduct}
+                                    >
                                         Lưu
                                     </Button>
                                     <Button color="primary" variant="outlined" startIcon={<ClearIcon />}>
@@ -583,7 +622,7 @@ const CategoryForm = () => {
 
                     {currentTab === 1 && (
                         <div style={{ marginLeft: 100 }}>
-                            <Card sx={{ minWidth: 275, marginTop: 5 }} spacing={2}>
+                            {/* <Card sx={{ minWidth: 275, marginTop: 5 }} spacing={2}>
                                 <Typography
                                     variant="subtitle1"
                                     sx={{
@@ -646,7 +685,7 @@ const CategoryForm = () => {
                                         </Grid>
                                     </Grid>
                                 </CardContent>
-                            </Card>
+                            </Card> */}
                             <Card sx={{ minWidth: 275, marginTop: 5 }} spacing={2}>
                                 <Typography
                                     variant="subtitle1"
