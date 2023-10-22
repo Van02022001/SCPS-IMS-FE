@@ -38,6 +38,7 @@ import PRODUCTSLIST from '../../_mock/products';
 import CategoryForm from '~/sections/auth/categories/CategoryForm';
 // api
 import { getAllProduct } from '~/data/mutation/product/product-mutation';
+import EditCategoryForm from '~/sections/auth/categories/EditCategoryForm';
 
 // ----------------------------------------------------------------------
 
@@ -93,6 +94,8 @@ const ProductsPage = () => {
 
     const [openOderForm, setOpenOderForm] = useState(false);
 
+    const [openEditForm, setOpenEditForm] = useState(false);
+
     const [page, setPage] = useState(0);
 
     const [order, setOrder] = useState('asc');
@@ -107,7 +110,10 @@ const ProductsPage = () => {
 
     const [productsData, setProductData] = useState([]);
 
-    const handleOpenMenu = (event) => {
+    const [selectedProduct, setSelectedProduct] = useState(null);
+
+    const handleOpenMenu = (event, product) => {
+        setSelectedProduct(product);
         setOpen(event.currentTarget);
     };
 
@@ -163,6 +169,10 @@ const ProductsPage = () => {
         setOpenOderForm(false);
     };
 
+    const handleCloseEditsForm = () => {
+        setOpenEditForm(false);
+    };
+
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - PRODUCTSLIST.length) : 0;
 
     const filteredUsers = applySortFilter(PRODUCTSLIST, getComparator(order, orderBy), filterName);
@@ -178,12 +188,11 @@ const ProductsPage = () => {
                 } else {
                     console.error('API response is not an array:', data);
                 }
-
             })
             .catch((error) => {
                 console.error('Error fetching users:', error);
             });
-    }, [])
+    }, []);
 
     return (
         <>
@@ -246,7 +255,7 @@ const ProductsPage = () => {
                                             key={product.id}
                                             tabIndex={-1}
                                             role="checkbox"
-                                        // selected={selectedUser}
+                                            // selected={selectedUser}
                                         >
                                             <TableCell padding="checkbox">
                                                 <Checkbox
@@ -258,13 +267,13 @@ const ProductsPage = () => {
                                             <TableCell component="th" scope="row" padding="none">
                                                 <Stack direction="row" alignItems="center" spacing={2}>
                                                     {/* <Avatar alt={name} src={avatarUrl} /> */}
-
-
                                                 </Stack>
                                             </TableCell>
 
                                             <TableCell align="left">
-                                                <Typography variant="subtitle2" noWrap>{product.id}</Typography>
+                                                <Typography variant="subtitle2" noWrap>
+                                                    {product.id}
+                                                </Typography>
                                             </TableCell>
 
                                             <TableCell component="th" scope="row" padding="none">
@@ -275,8 +284,6 @@ const ProductsPage = () => {
                                                     </Typography>
                                                 </Stack>
                                             </TableCell>
-
-
 
                                             <TableCell align="left">{product.description}</TableCell>
 
@@ -290,7 +297,9 @@ const ProductsPage = () => {
                                             <TableCell align="left">
                                                 <Typography variant="subtitle2" noWrap>
                                                     {product.categories.map((category, index) => {
-                                                        return index === product.categories.length - 1 ? category.name : `${category.name}, `;
+                                                        return index === product.categories.length - 1
+                                                            ? category.name
+                                                            : `${category.name}, `;
                                                     })}
                                                 </Typography>
                                             </TableCell>
@@ -304,7 +313,11 @@ const ProductsPage = () => {
                                             </TableCell>
 
                                             <TableCell align="right">
-                                                <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
+                                                <IconButton
+                                                    size="large"
+                                                    color="inherit"
+                                                    onClick={(event) => handleOpenMenu(event, product)}
+                                                >
                                                     <Iconify icon={'eva:more-vertical-fill'} />
                                                 </IconButton>
                                             </TableCell>
@@ -375,10 +388,23 @@ const ProductsPage = () => {
                     },
                 }}
             >
-                <MenuItem>
+                <MenuItem onClick={() => setOpenEditForm(true)}>
                     <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
                     Edit
                 </MenuItem>
+                <Dialog fullWidth maxWidth open={openEditForm}>
+                    <DialogTitle>
+                        Cập Nhật Sản Phẩm{' '}
+                        <IconButton style={{ float: 'right' }} onClick={handleCloseEditsForm}>
+                            <CloseIcon color="primary" />
+                        </IconButton>{' '}
+                    </DialogTitle>
+                    <EditCategoryForm
+                        open={openEditForm}
+                        product={selectedProduct}
+                        handleClose={handleCloseEditsForm}
+                    />
+                </Dialog>
 
                 <MenuItem sx={{ color: 'error.main' }}>
                     <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
