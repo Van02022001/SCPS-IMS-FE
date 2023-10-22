@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { faker } from '@faker-js/faker';
 // @mui
@@ -6,6 +6,7 @@ import { useTheme } from '@mui/material/styles';
 import { Grid, Container, Typography } from '@mui/material';
 // components
 import Iconify from '../../components/iconify';
+import { useNavigate } from 'react-router-dom';
 // sections
 import {
   AppTasks,
@@ -19,11 +20,23 @@ import {
   AppConversionRates,
 } from '../../sections/@dashboard/app';
 
+
 // ----------------------------------------------------------------------
 
 const DashboardAppPage = () => {
   const theme = useTheme();
+  const navigate = useNavigate();
+  const isAuthenticated = () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+    }
+  };
 
+  useEffect(() => {
+    isAuthenticated();
+
+  }, []);
   return (
     <>
       <Helmet>

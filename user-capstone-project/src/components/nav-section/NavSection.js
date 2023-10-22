@@ -59,6 +59,9 @@ function NavItem({ item, isReportMenuOpen }) {
         ...(item.title === 'Hàng hóa' && !isReportMenuOpen && {
           marginBottom: open ? '170px' : 0,
         }),
+        ...(item.title === 'Quản lý mục' && !isReportMenuOpen && {
+          marginBottom: open ? '150px' : 0,
+        }),
       }}
     >
       <StyledNavItemIcon>{icon && icon}</StyledNavItemIcon>

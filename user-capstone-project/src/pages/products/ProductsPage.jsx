@@ -286,7 +286,15 @@ const ProductsPage = () => {
                                             <TableCell align="left">
                                                 {product.warehouses.length > 0 ? product.warehouses[0].name : " "}
                                             </TableCell> */}
-                                            <TableCell align="left">{product.categories[0].name}</TableCell>
+
+                                            <TableCell align="left">
+                                                <Typography variant="subtitle2" noWrap>
+                                                    {product.categories.map((category, index) => {
+                                                        return index === product.categories.length - 1 ? category.name : `${category.name}, `;
+                                                    })}
+                                                </Typography>
+                                            </TableCell>
+
                                             {/* <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell> */}
 
                                             <TableCell align="left">

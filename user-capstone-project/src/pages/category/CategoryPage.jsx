@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 // @mui
 import {
     Card,
@@ -35,6 +35,7 @@ import { UserListHead, UserListToolbar } from '../../sections/@dashboard/user';
 // mock
 import USERLIST from '../../_mock/user';
 import CategoryForm from '~/sections/auth/categories/CategoryForm';
+import { getAllUnit } from '~/data/mutation/unit/unit-mutation';
 
 // ----------------------------------------------------------------------
 
@@ -94,6 +95,8 @@ const CategoryPage = () => {
     const [filterName, setFilterName] = useState('');
 
     const [rowsPerPage, setRowsPerPage] = useState(5);
+
+    const [unitData, setUnitData] = useState([]);
 
     const handleOpenMenu = (event) => {
         setOpen(event.currentTarget);
@@ -156,6 +159,21 @@ const CategoryPage = () => {
     const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
 
     const isNotFound = !filteredUsers.length && !!filterName;
+    useEffect(() => {
+        getAllUnit()
+            .then((respone) => {
+                const data = respone.data;
+                if (Array.isArray(data)) {
+                    setUnitData(data);
+                } else {
+                    console.error('API response is not an array:', data);
+                }
+
+            })
+            .catch((error) => {
+                console.error('Error fetching users:', error);
+            });
+    }, [])
 
     return (
         <>
@@ -206,60 +224,60 @@ const CategoryPage = () => {
                                     onSelectAllClick={handleSelectAllClick}
                                 />
                                 <TableBody>
-                                    {filteredUsers
+                                    {/* {filteredUsers
                                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                         .map((row) => {
                                             const { id, name, role, status, company, avatarUrl, isVerified } = row;
-                                            const selectedUser = selected.indexOf(name) !== -1;
+                                            const selectedUser = selected.indexOf(name) !== -1; */}
+                                    {unitData.map((unit) => {
+                                        return (
+                                            <TableRow
+                                                hover
+                                                key={unit.id}
+                                                tabIndex={-1}
+                                                role="checkbox"
 
-                                            return (
-                                                <TableRow
-                                                    hover
-                                                    key={id}
-                                                    tabIndex={-1}
-                                                    role="checkbox"
-                                                    selected={selectedUser}
-                                                >
-                                                    <TableCell padding="checkbox">
-                                                        <Checkbox
-                                                            checked={selectedUser}
-                                                            onChange={(event) => handleClick(event, name)}
-                                                        />
-                                                    </TableCell>
+                                            >
+                                                <TableCell padding="checkbox">
+                                                    <Checkbox
 
-                                                    <TableCell component="th" scope="row" padding="none">
-                                                        <Stack direction="row" alignItems="center" spacing={2}>
-                                                            {/* <Avatar alt={name} src={avatarUrl} /> */}
-                                                            <Typography variant="subtitle2" noWrap>
-                                                                {name}
-                                                            </Typography>
-                                                        </Stack>
-                                                    </TableCell>
+                                                        onChange={(event) => handleClick(event, unit.name)}
+                                                    />
+                                                </TableCell>
 
-                                                    <TableCell align="left">{company}</TableCell>
+                                                <TableCell component="th" scope="row" padding="none">
+                                                    <Stack direction="row" alignItems="center" spacing={2}>
+                                                        {/* <Avatar alt={name} src={avatarUrl} /> */}
+                                                        <Typography variant="subtitle2" noWrap>
+                                                            {unit.id}
+                                                        </Typography>
+                                                    </Stack>
+                                                </TableCell>
 
-                                                    <TableCell align="left">{role}</TableCell>
+                                                <TableCell align="left">{unit.name}</TableCell>
 
-                                                    <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell>
+                                                {/* <TableCell align="left">{role}</TableCell>
 
-                                                    <TableCell align="left">
-                                                        <Label color={(status === 'banned' && 'error') || 'success'}>
-                                                            {sentenceCase(status)}
-                                                        </Label>
-                                                    </TableCell>
+                                                <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell>
 
-                                                    <TableCell align="right">
-                                                        <IconButton
-                                                            size="large"
-                                                            color="inherit"
-                                                            onClick={handleOpenMenu}
-                                                        >
-                                                            <Iconify icon={'eva:more-vertical-fill'} />
-                                                        </IconButton>
-                                                    </TableCell>
-                                                </TableRow>
-                                            );
-                                        })}
+                                                <TableCell align="left">
+                                                    <Label color={(status === 'banned' && 'error') || 'success'}>
+                                                        {sentenceCase(status)}
+                                                    </Label>
+                                                </TableCell> */}
+
+                                                <TableCell align="right">
+                                                    <IconButton
+                                                        size="large"
+                                                        color="inherit"
+                                                        onClick={handleOpenMenu}
+                                                    >
+                                                        <Iconify icon={'eva:more-vertical-fill'} />
+                                                    </IconButton>
+                                                </TableCell>
+                                            </TableRow>
+                                        );
+                                    })}
                                     {emptyRows > 0 && (
                                         <TableRow style={{ height: 53 * emptyRows }}>
                                             <TableCell colSpan={6} />

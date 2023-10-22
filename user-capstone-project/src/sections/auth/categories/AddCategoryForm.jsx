@@ -21,12 +21,12 @@ const AddCategoryForm = ({ open, onClose, onSave }) => {
             console.log(response);
             console.log(response.status);
 
-            if (response.status === '200 OK') {
+            if (response.status === 200) {
                 setIsSuccess(true);
                 setIsError(false);
             } else {
                 if (response.data && response.data.message) {
-                    // Use the error message from the response data
+
                     setIsError(response.data.message);
                 } else if (Array.isArray(response.data) && response.data.length > 0) {
                     // If there are specific error details, display them

@@ -23,21 +23,27 @@ const navConfig = [
       },
     ],
   },
-  {
-    title: 'Quản lý hóa đơn',
-    path: '/dashboard/odersManager',
+   {
+    title: 'Quản lý mục',
     icon: icon('ic_user'),
+    children: [{
+      title: 'Quản lý hóa đơn',
+      path: '/dashboard/odersManager',
+      icon: icon('ic_user'),
+    },
+    {
+      title: 'Quản lý thể loại',
+      path: '/dashboard/category',
+      icon: icon('ic_blog'),
+    },
+    {
+      title: 'Quản lý thương hiệu',
+      path: '/dashboard/brand',
+      icon: icon('ic_blog'),
+    },
+  ],
   },
-  {
-    title: 'Quản lý thể loại',
-    path: '/dashboard/category',
-    icon: icon('ic_blog'),
-  },
-  {
-    title: 'Quản lý thương hiệu',
-    path: '/dashboard/brand',
-    icon: icon('ic_blog'),
-  },
+
   {
     title: 'Báo cáo',
     icon: icon('ic_blog'),

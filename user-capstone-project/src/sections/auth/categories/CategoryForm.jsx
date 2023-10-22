@@ -39,12 +39,14 @@ import PropTypes from 'prop-types';
 // form popup
 import AddCategoryForm from './AddCategoryForm';
 import AddOriginForm from './AddOriginForm';
+import AddUnitForm from './AddUnitForm';
 
 // api
 import { createProduct } from '~/data/mutation/product/product-mutation';
 import { getAllCategories } from '~/data/mutation/categories/categories-mutation';
 import { deleteUnits, getAllUnit, getAllUnitMeasurement } from '~/data/mutation/unit/unit-mutation';
 import { deleteOrigins, getAllOrigins } from '~/data/mutation/origins/origins-mutation';
+
 
 const CategoryForm = () => {
     const BootstrapInput = styled(InputBase)(({ theme }) => ({
@@ -87,6 +89,7 @@ const CategoryForm = () => {
     // mở popup form
     const [openAddCategoryDialog, setOpenAddCategoryDialog] = useState(false);
     const [openAddOriginForm, setOpenAddOriginForm] = useState(false);
+    const [openAddUnitForm, setOpenAddUnitForm] = useState(false);
 
     // form để call api
     const [name, setName] = useState('');
@@ -132,7 +135,13 @@ const CategoryForm = () => {
     const handleCloseAddOriginForm = () => {
         setOpenAddOriginForm(false);
     };
+    const handleOpenAddUnitForm = () => {
+        setOpenAddUnitForm(true);
+    };
 
+    const handleCloseAddUnitFormm = () => {
+        setOpenAddUnitForm(false);
+    };
     // Hàm delete của trang ---------------------------------------------------------------------
     const handleDeleteOrigin = async (id) => {
         try {
@@ -167,13 +176,13 @@ const CategoryForm = () => {
             description,
             minStockLevel,
             maxStockLevel,
-            categories_id: [tab1Data.categories_id], // Lấy ID từ tab1Data
-            unit_id: tab1Data.unit_id, // Lấy ID từ tab1Data
+            categories_id: [tab1Data.categories_id],
+            unit_id: tab1Data.unit_id,
             length,
             width,
             height,
             diameter,
-            unit_mea_id: tab1Data.unit_mea_id, // Lấy ID từ tabData
+            unit_mea_id: tab1Data.unit_mea_id,
         };
         try {
             const response = await createProduct(productParams);
@@ -183,7 +192,7 @@ const CategoryForm = () => {
         }
     };
 
-    const handleAddCategories = async () => {};
+    const handleAddCategories = async () => { };
 
     useEffect(() => {
         getAllCategories()
@@ -355,13 +364,13 @@ const CategoryForm = () => {
                                                     <Button
                                                         variant="outlined"
                                                         sx={{ padding: 0.8, minWidth: 0 }}
-                                                        onClick={handleOpenAddOriginForm}
+                                                        onClick={handleOpenAddUnitForm}
                                                     >
                                                         <AddIcon />
                                                     </Button>
-                                                    <AddOriginForm
-                                                        open={openAddOriginForm}
-                                                        onClose={handleCloseAddOriginForm}
+                                                    <AddUnitForm
+                                                        open={openAddUnitForm}
+                                                        onClose={handleCloseAddUnitFormm}
                                                     />
                                                 </Grid>
                                             </Grid>
@@ -514,8 +523,8 @@ const CategoryForm = () => {
                                                     <TextField
                                                         id="demo-customized-textbox"
                                                         label="Ít nhất"
-                                                        value={length}
-                                                        onChange={(e) => setLength(e.target.value)}
+                                                        value={minStockLevel}
+                                                        onChange={(e) => setMinStockLevel(e.target.value)}
                                                         sx={{ width: '208px' }}
                                                     />
                                                 </FormControl>
@@ -523,8 +532,8 @@ const CategoryForm = () => {
                                                     <TextField
                                                         id="demo-customized-textbox"
                                                         label="Nhiều nhất"
-                                                        value={length}
-                                                        onChange={(e) => setLength(e.target.value)}
+                                                        value={maxStockLevel}
+                                                        onChange={(e) => setMaxStockLevel(e.target.value)}
                                                         sx={{ width: '208px' }}
                                                     />
                                                 </FormControl>

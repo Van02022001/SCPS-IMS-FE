@@ -7,7 +7,7 @@ export const getAllCategories = async () => {
 
 export const createCategories = async (categoriesParams) => {
     const response = await axiosInstance.post("/categories", categoriesParams);
-    return response.data;
+    return response;
 }
 export const deleteCategories = async (id) => {
     const response = await axiosInstance.delete(`/units/${id}`,);
