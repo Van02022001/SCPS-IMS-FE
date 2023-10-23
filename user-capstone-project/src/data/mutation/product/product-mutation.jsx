@@ -15,7 +15,7 @@ export const deleteProduct = async (id) => {
     return response.data;
 }
 
-export const editProduct = async (id) => {
-    const response = await axiosInstance.put(`/products/${id}`,);
+export const editProduct = async (productId, editProductParams) => {
+    const response = await axiosInstance.put(`/products/${productId}`, editProductParams);
     return response.data;
 }

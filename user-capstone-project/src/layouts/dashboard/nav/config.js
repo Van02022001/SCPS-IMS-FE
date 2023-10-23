@@ -23,7 +23,8 @@ const navConfig = [
       },
     ],
   },
-   {
+   
+  {
     title: 'Quản lý mục',
     icon: icon('ic_user'),
     children: [{

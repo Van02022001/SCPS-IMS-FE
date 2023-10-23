@@ -4,7 +4,6 @@ import {
     FormControl,
     Grid,
     IconButton,
-    InputLabel,
     MenuItem,
     Select,
     Stack,
@@ -14,7 +13,6 @@ import {
     Typography,
     Card,
     CardContent,
-    styled,
 } from '@mui/material';
 import InputBase from '@mui/material/InputBase';
 import { useEffect, useState } from 'react';
@@ -42,41 +40,8 @@ import { deleteOrigins, getAllOrigins } from '~/data/mutation/origins/origins-mu
 
 
 const CategoryForm = () => {
-    const BootstrapInput = styled(InputBase)(({ theme }) => ({
-        'label + &': {
-            width: '100px',
-            marginTop: theme.spacing(3),
-        },
-        '& .MuiInputBase-input': {
-            borderRadius: 4,
-            position: 'relative',
-            backgroundColor: theme.palette.background.paper,
-            border: '1px solid #ced4da',
-            fontSize: 16,
-            padding: '8px 20px 8px 12px',
-            transition: theme.transitions.create(['border-color', 'box-shadow']),
-            // Use the system font instead of the default Roboto font.
-            fontFamily: [
-                '-apple-system',
-                'BlinkMacSystemFont',
-                '"Segoe UI"',
-                'Roboto',
-                '"Helvetica Neue"',
-                'Arial',
-                'sans-serif',
-                '"Apple Color Emoji"',
-                '"Segoe UI Emoji"',
-                '"Segoe UI Symbol"',
-            ].join(','),
-            '&:focus': {
-                borderRadius: 4,
-                borderColor: '#80bdff',
-                boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
-            },
-        },
-    }));
     const [currentTab, setCurrentTab] = useState(0);
-    const [tab1Data, setTab1Data] = useState({});
+    const [tab1Data, setTab1Data] = useState({ categories_id: [] });
     const [tab2Data, setTab2Data] = useState({});
 
     // mở popup form
@@ -121,13 +86,14 @@ const CategoryForm = () => {
         setOpenAddCategoryDialog(false);
     };
 
-    const handleOpenAddOriginForm = () => {
-        setOpenAddOriginForm(true);
-    };
+    // const handleOpenAddOriginForm = () => {
+    //     setOpenAddOriginForm(true);
+    // };
 
-    const handleCloseAddOriginForm = () => {
-        setOpenAddOriginForm(false);
-    };
+    // const handleCloseAddOriginForm = () => {
+    //     setOpenAddOriginForm(false);
+    // };
+
     const handleOpenAddUnitForm = () => {
         setOpenAddUnitForm(true);
     };
@@ -169,7 +135,7 @@ const CategoryForm = () => {
             description,
             minStockLevel,
             maxStockLevel,
-            categories_id: [tab1Data.categories_id],
+            categories_id: tab1Data.categories_id,
             unit_id: tab1Data.unit_id,
             length,
             width,
@@ -287,7 +253,8 @@ const CategoryForm = () => {
                                                         labelId="group-label"
                                                         id="group-select"
                                                         sx={{ width: '90%', fontSize: '14px' }}
-                                                        value={tab1Data.categories_id}
+                                                        multiple  // Thêm thuộc tính multiple để cho phép chọn nhiều giá trị
+                                                        value={[...tab1Data.categories_id]}
                                                         onChange={handleTab1DataChange}
                                                         name="categories_id"
                                                     >
@@ -578,23 +545,7 @@ const CategoryForm = () => {
                                                     />
                                                 </FormControl>
                                             </div>
-                                            {/* <FormControl sx={{ m: 0.2 }} variant="standard">
-                                                <InputLabel sx={{ width: '60px' }} id="demo-customized-select-label">
-                                                    đơn vị
-                                                </InputLabel>
-                                                <Select
-                                                    labelId="demo-customized-select-label"
-                                                    id="demo-customized-select"
-                                                    input={<BootstrapInput />}
-                                                >
-                                                    <MenuItem value="">
-                                                        <em>Đơn vị</em>
-                                                    </MenuItem>
-                                                    <MenuItem value={10}>mm</MenuItem>
-                                                    <MenuItem value={20}>cm</MenuItem>
-                                                    <MenuItem value={30}>m</MenuItem>
-                                                </Select>
-                                            </FormControl> */}
+
                                         </Grid>
 
                                         {/* Thêm các trường khác ở đây */}
