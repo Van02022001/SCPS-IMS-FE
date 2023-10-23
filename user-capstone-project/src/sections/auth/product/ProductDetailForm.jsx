@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Button, Tab, Tabs, Stack, Grid, TextField, FormControl } from '@mui/material';
+import { Typography, Button, Tab, Tabs, Stack, Grid, TextField, FormControl, Select, MenuItem } from '@mui/material';
 
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { editProduct } from '~/data/mutation/product/product-mutation';
-
+import { getAllCategories } from '~/data/mutation/categories/categories-mutation';
+import { getAllUnit, getAllUnitMeasurement } from '~/data/mutation/unit/unit-mutation';
 
 const ProductDetailForm = ({ products, productId, onClose, isOpen, mode }) => {
     const [expandedItem, setExpandedItem] = useState(productId);
     const [formHeight, setFormHeight] = useState(0);
     const [selectedTab, setSelectedTab] = useState(0);
+
+    const [categories_id, setCategories_id] = useState([]);
+    const [unit_id, setUnits_id] = useState([]);
+    const [unit_mea_id, setUnit_mea_id] = useState([]);
 
     const [editedProduct, setEditedProduct] = useState(null);
 
@@ -37,10 +42,15 @@ const ProductDetailForm = ({ products, productId, onClose, isOpen, mode }) => {
             });
         } else {
             const product = products.find((o) => o.id === productId);
+            console.log(product);
             if (product) {
-                const categoryIds = product.categories ? product.categories.map(category => category.id) : [];
+                const categoryIds = product.categories ? product.categories.map((category) => category.id) : [];
                 const unitId = product.unit ? product.unit.id : 0;
-                const unitMeaId = product.size ? (product.size.unitMeasurement ? product.size.unitMeasurement.id : 0) : 0;
+                const unitMeaId = product.size
+                    ? product.size.unitMeasurement
+                        ? product.size.unitMeasurement.id
+                        : 0
+                    : 0;
 
                 // Create a new object with only the desired fields
                 const editedProduct = {
@@ -56,10 +66,33 @@ const ProductDetailForm = ({ products, productId, onClose, isOpen, mode }) => {
                 };
 
                 setEditedProduct(editedProduct);
+
+                console.log(editedProduct);
             }
         }
     }, [productId, products, mode]);
 
+    useEffect(() => {
+        getAllCategories()
+            .then((respone) => {
+                const data = respone.data;
+                setCategories_id(data);
+            })
+            .catch((error) => console.error('Error fetching categories:', error));
+
+        getAllUnit()
+            .then((respone) => {
+                const data = respone.data;
+                setUnits_id(data);
+            })
+            .catch((error) => console.error('Error fetching units:', error));
+        getAllUnitMeasurement()
+            .then((respone) => {
+                const data = respone.data;
+                setUnit_mea_id(data);
+            })
+            .catch((error) => console.error('Error fetching units measurement:', error));
+    }, []);
 
     const product = products.find((o) => o.id === productId);
 
@@ -73,8 +106,7 @@ const ProductDetailForm = ({ products, productId, onClose, isOpen, mode }) => {
         try {
             const response = await editProduct(productId, editedProduct);
             console.log(response);
-        } catch (error) {
-        }
+        } catch (error) {}
     };
 
     const handleEdit = (field, value) => {
@@ -100,11 +132,11 @@ const ProductDetailForm = ({ products, productId, onClose, isOpen, mode }) => {
     };
     const handleSave = () => {
         // Xử lý lưu
-    }
+    };
 
     const handleDelete = () => {
         // Xử lý xóa
-    }
+    };
 
     return editedProduct ? (
         <div
@@ -122,11 +154,12 @@ const ProductDetailForm = ({ products, productId, onClose, isOpen, mode }) => {
             </Tabs>
 
             {selectedTab === 0 && (
-                <div style={{ marginLeft: 50 }}>
+                <div>
                     <Stack spacing={4} margin={2}>
                         <Grid container spacing={2}>
                             <Grid item xs={6}>
-                                <Grid container
+                                <Grid
+                                    container
                                     spacing={1}
                                     direction="row"
                                     justifyContent="space-between"
@@ -139,10 +172,11 @@ const ProductDetailForm = ({ products, productId, onClose, isOpen, mode }) => {
                                         variant="outlined"
                                         label="Mã hàng"
                                         sx={{ width: '70%' }}
-                                        value={editedProduct ? editedProduct.id : ''}
+                                        value={product ? product.id : ''}
                                     />
                                 </Grid>
-                                <Grid container
+                                <Grid
+                                    container
                                     spacing={1}
                                     direction="row"
                                     justifyContent="space-between"
@@ -155,13 +189,13 @@ const ProductDetailForm = ({ products, productId, onClose, isOpen, mode }) => {
                                         variant="outlined"
                                         label="Tên sản phẩm"
                                         sx={{ width: '70%' }}
-                                        value={editedProduct ? editedProduct.name : ''}
+                                        value={product ? product.name : ''}
                                         onChange={(e) => handleEdit('name', e.target.value)}
                                     />
                                 </Grid>
 
-
-                                <Grid container
+                                <Grid
+                                    container
                                     spacing={1}
                                     direction="row"
                                     justifyContent="space-between"
@@ -174,11 +208,12 @@ const ProductDetailForm = ({ products, productId, onClose, isOpen, mode }) => {
                                         variant="outlined"
                                         label="Mô tả"
                                         sx={{ width: '70%' }}
-                                        value={editedProduct.description}
+                                        value={product.description}
                                         onChange={(e) => handleEdit('description', e.target.value)}
                                     />
                                 </Grid>
-                                <Grid container
+                                <Grid
+                                    container
                                     spacing={1}
                                     direction="row"
                                     justifyContent="space-between"
@@ -195,7 +230,8 @@ const ProductDetailForm = ({ products, productId, onClose, isOpen, mode }) => {
                                     />
                                 </Grid>
 
-                                <Grid container
+                                <Grid
+                                    container
                                     spacing={1}
                                     direction="row"
                                     justifyContent="space-between"
@@ -211,129 +247,152 @@ const ProductDetailForm = ({ products, productId, onClose, isOpen, mode }) => {
                                         value={product.updatedAt}
                                     />
                                 </Grid>
-
                             </Grid>
 
                             {/* 5 field bên phải*/}
-                            <Grid item xs={6} >
-                                <Grid container
-                                    spacing={1}
-                                    direction="row"
-                                    justifyContent="space-between"
-                                    alignItems="center"
-                                    sx={{ marginBottom: 4, gap: 5 }}
-                                >
-                                    <Typography variant="body1">Trạng thái:</Typography>
-                                    <TextField
-                                        size="small"
-                                        variant="outlined"
-                                        label="Trạng thái"
-                                        sx={{ width: '70%' }}
-                                        value={(product.status === 'Active') ? 'Đang hoạt động' : 'Đã ngưng'}
-                                    />
-                                </Grid>
-                                <Grid container
-                                    spacing={1}
-                                    direction="row"
-                                    justifyContent="space-between"
-                                    alignItems="center"
-                                    sx={{ marginBottom: 4, gap: 5 }}
-                                >
-                                    <Typography variant="body1">Nhóm hàng:</Typography>
-                                    <TextField
-                                        size="small"
-                                        variant="outlined"
-                                        label="Nhóm hàng"
-                                        sx={{ width: '70%' }}
-                                        value={editedProduct.categories ? editedProduct.categories.map((category, index) => {
-                                            return index === editedProduct.categories.length - 1 ? category.name : `${category.name} `;
-                                        }) : ''}
-                                        onChange={(e) => handleEdit('categories_id', e.target.value)}
-                                    />
-                                </Grid>
+                            <Grid item xs={6}>
+                                <div style={{ marginLeft: 30 }}>
+                                    <Grid
+                                        container
+                                        spacing={1}
+                                        direction="row"
+                                        justifyContent="space-between"
+                                        alignItems="center"
+                                        sx={{ marginBottom: 4, gap: 5 }}
+                                    >
+                                        <Typography variant="body1">Trạng thái:</Typography>
+                                        <TextField
+                                            size="small"
+                                            variant="outlined"
+                                            label="Trạng thái"
+                                            sx={{ width: '70%' }}
+                                            value={product.status === 'Active' ? 'Đang hoạt động' : 'Đã ngưng'}
+                                        />
+                                    </Grid>
+                                    <Grid
+                                        container
+                                        spacing={1}
+                                        direction="row"
+                                        justifyContent="space-between"
+                                        alignItems="center"
+                                        sx={{ marginBottom: 4, gap: 5 }}
+                                    >
+                                        <Typography variant="body1">Nhóm hàng:</Typography>
+                                        <TextField
+                                            size="small"
+                                            variant="outlined"
+                                            label="Nhóm hàng"
+                                            sx={{ width: '70%' }}
+                                            value={
+                                                product.categories
+                                                    ? product.categories.map((category, index) => {
+                                                          return index === product.categories.length - 1
+                                                              ? category.name
+                                                              : `${category.name} `;
+                                                      })
+                                                    : ''
+                                            }
+                                            onChange={(e) => handleEdit('categories_id', e.target.value)}
+                                        />
+                                    </Grid>
 
-                                <Grid container
-                                    spacing={1}
-                                    direction="row"
-                                    justifyContent="space-between"
-                                    alignItems="center"
-                                    sx={{ marginBottom: 4, gap: 5 }}
-                                >
-                                    <Typography variant="body1">Đơn vị:</Typography>
-                                    <TextField
-                                        size="small"
-                                        variant="outlined"
-                                        label="Đơn vị"
-                                        sx={{ width: '70%' }}
-                                        value={product.unit.name}
-                                        onChange={(e) => handleEdit('unit_id', e.target.value)}
-                                    />
-                                </Grid>
-                                <Grid container
-                                    spacing={1}
-                                    direction="row"
-                                    justifyContent="space-between"
-                                    alignItems="center"
-                                    sx={{ marginBottom: 4, gap: 5 }}
-                                >
-                                    <Typography variant="body1">Đơn vị đo lường:</Typography>
-                                    <TextField
-                                        size="small"
-                                        variant="outlined"
-                                        label="Đơn vị đo lường"
-                                        sx={{ width: '70%' }}
-                                        value={editedProduct.unitMeasurement}
-                                        onChange={(e) => handleEdit('unit_mea_id', e.target.value)}
-                                    />
-                                </Grid>
-                                <Grid
-                                    container
-                                    spacing={1}
-                                    direction="row"
-                                    justifyContent="space-between"
-                                    alignItems="center"
-                                    sx={{ marginBottom: 4, gap: 2 }}
-                                >
-                                    <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
-                                        Kích thước:{' '}
-                                    </Typography>
-                                    <div style={{ display: 'flex' }}>
-                                        <FormControl sx={{ m: 0.2 }} variant="standard">
-                                            <TextField
-                                                id="demo-customized-textbox"
-                                                label="Chiều dài"
-                                                value={editedProduct.size ? editedProduct.size.length : 0}
-                                                onChange={(e) => handleEdit('length', e.target.value)}
-
-                                            />
-                                        </FormControl>
-                                        <FormControl sx={{ m: 0.2 }} variant="standard">
-                                            <TextField
-                                                id="demo-customized-textbox"
-                                                label="Chiều rộng"
-                                                value={editedProduct.size ? editedProduct.size.width : 0}
-                                                onChange={(e) => handleEdit('width', e.target.value)}
-                                            />
-                                        </FormControl>
-                                        <FormControl sx={{ m: 0.2 }} variant="standard">
-                                            <TextField
-                                                id="demo-customized-textbox"
-                                                label="Chiều cao"
-                                                value={editedProduct.size ? editedProduct.size.height : 0}
-                                                onChange={(e) => handleEdit('height', e.target.value)}
-                                            />
-                                        </FormControl>
-                                        <FormControl sx={{ m: 0.2 }} variant="standard">
-                                            <TextField
-                                                id="demo-customized-textbox"
-                                                label="Đường kính"
-                                                value={editedProduct.size ? editedProduct.size.diameter : 0}
-                                                onChange={(e) => handleEdit('diameter', e.target.value)}
-                                            />
-                                        </FormControl>
-                                    </div>
-
-                                </Grid>
+                                    <Grid
+                                        container
+                                        spacing={1}
+                                        direction="row"
+                                        justifyContent="space-between"
+                                        alignItems="center"
+                                        sx={{ marginBottom: 4, gap: 5 }}
+                                    >
+                                        <Typography variant="body1">Đơn vị:</Typography>
+                                        <Select
+                                            size="small"
+                                            variant="outlined"
+                                            label="Đơn vị"
+                                            sx={{ width: '70%' }}
+                                            value={product.unit.name}
+                                            onChange={(e) => handleEdit('unit_id', e.target.value)}
+                                        >
+                                            {unit_id.map((unit) => (
+                                                <MenuItem
+                                                    sx={{
+                                                        display: 'flex',
+                                                        justifyContent: 'space-between',
+                                                        alignItems: 'center',
+                                                    }}
+                                                    key={unit.id}
+                                                    value={unit.id}
+                                                >
+                                                    {unit.name}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </Grid>
+                                    <Grid
+                                        container
+                                        spacing={1}
+                                        direction="row"
+                                        justifyContent="space-between"
+                                        alignItems="center"
+                                        sx={{ marginBottom: 4, gap: 5 }}
+                                    >
+                                        <Typography variant="body1">Đơn vị đo lường:</Typography>
+                                        <TextField
+                                            size="small"
+                                            variant="outlined"
+                                            label="Đơn vị đo lường"
+                                            sx={{ width: '70%' }}
+                                            value={product ? product.size.unitMeasurement.name : ''}
+                                            onChange={(e) => handleEdit('unit_mea_id', e.target.value)}
+                                        />
+                                    </Grid>
+                                    <Grid
+                                        container
+                                        spacing={1}
+                                        direction="row"
+                                        justifyContent="space-between"
+                                        alignItems="center"
+                                        sx={{ marginBottom: 4, gap: 2 }}
+                                    >
+                                        <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
+                                            Kích thước:{' '}
+                                        </Typography>
+                                        <div style={{ display: 'flex' }}>
+                                            <FormControl sx={{ m: 0.2 }} variant="standard">
+                                                <TextField
+                                                    id="demo-customized-textbox"
+                                                    label="Chiều dài"
+                                                    value={product ? product.size.length : 0}
+                                                    onChange={(e) => handleEdit('length', e.target.value)}
+                                                />
+                                            </FormControl>
+                                            <FormControl sx={{ m: 0.2 }} variant="standard">
+                                                <TextField
+                                                    id="demo-customized-textbox"
+                                                    label="Chiều rộng"
+                                                    value={product ? product.size.width : 0}
+                                                    onChange={(e) => handleEdit('width', e.target.value)}
+                                                />
+                                            </FormControl>
+                                            <FormControl sx={{ m: 0.2 }} variant="standard">
+                                                <TextField
+                                                    id="demo-customized-textbox"
+                                                    label="Chiều cao"
+                                                    value={product ? product.size.height : 0}
+                                                    onChange={(e) => handleEdit('height', e.target.value)}
+                                                />
+                                            </FormControl>
+                                            <FormControl sx={{ m: 0.2 }} variant="standard">
+                                                <TextField
+                                                    id="demo-customized-textbox"
+                                                    label="Đường kính"
+                                                    value={product ? product.size.diameter : 0}
+                                                    onChange={(e) => handleEdit('diameter', e.target.value)}
+                                                />
+                                            </FormControl>
+                                        </div>
+                                    </Grid>
+                                </div>
                             </Grid>
                         </Grid>
                     </Stack>
@@ -347,16 +406,12 @@ const ProductDetailForm = ({ products, productId, onClose, isOpen, mode }) => {
                         Hủy bỏ
                     </Button>
                 </div>
-
             )}
             {selectedTab === 1 && (
-                <div style={{ flex: 1 }}>
-                    {/* Hiển thị nội dung cho tab "Lịch sử thanh toán" ở đây */}
-                </div>
+                <div style={{ flex: 1 }}>{/* Hiển thị nội dung cho tab "Lịch sử thanh toán" ở đây */}</div>
             )}
-
         </div>
     ) : null;
-}
+};
 
 export default ProductDetailForm;
