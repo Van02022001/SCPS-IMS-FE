@@ -2,14 +2,19 @@ import React, { useEffect, useState } from 'react';
 import { Typography, Button, Tab, Tabs, Stack, Grid, TextField, FormControl, Select, MenuItem } from '@mui/material';
 
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+
 import { editProduct } from '~/data/mutation/product/product-mutation';
 import { getAllCategories } from '~/data/mutation/categories/categories-mutation';
 import { getAllUnit, getAllUnitMeasurement } from '~/data/mutation/unit/unit-mutation';
 
 const ProductDetailForm = ({ products, productId, onClose, isOpen, mode }) => {
+    const [tab1Data, setTab1Data] = useState({ categories_id: [] });
+    const [tab2Data, setTab2Data] = useState({});
+    const [tab3Data, setTab3Data] = useState({});
+
     const [expandedItem, setExpandedItem] = useState(productId);
     const [formHeight, setFormHeight] = useState(0);
-    const [selectedTab, setSelectedTab] = useState(0);
+    const [currentTab, setCurrentTab] = useState(0);
 
     const [categories_id, setCategories_id] = useState([]);
     const [unit_id, setUnits_id] = useState([]);
@@ -17,6 +22,18 @@ const ProductDetailForm = ({ products, productId, onClose, isOpen, mode }) => {
 
     const [editedProduct, setEditedProduct] = useState(null);
 
+    const handleTab1DataChange = (event) => {
+        // Cập nhật dữ liệu cho tab 1 tại đây
+        setTab1Data({ ...tab1Data, [event.target.name]: event.target.value });
+    };
+
+    const handleTab2DataChange = (event) => {
+        // Cập nhật dữ liệu cho tab 2 tại đây
+        setTab2Data({ ...tab2Data, [event.target.name]: event.target.value });
+    };
+    const handleChangeTab = (event, newValue) => {
+        setCurrentTab(newValue);
+    };
     useEffect(() => {
         if (isOpen) {
             setFormHeight(1000);
@@ -27,13 +44,14 @@ const ProductDetailForm = ({ products, productId, onClose, isOpen, mode }) => {
 
     useEffect(() => {
         if (mode === 'create') {
+            const defaultUnitId = unit_id.find((unit) => unit.name === 'Cái').id;
             setEditedProduct({
                 name: '',
                 description: '',
                 minStockLevel: 0,
                 maxStockLevel: 0,
                 categories_id: [],
-                unit_id: 0,
+                unit_id: defaultUnitId,
                 length: 0,
                 width: 0,
                 height: 0,
@@ -46,13 +64,8 @@ const ProductDetailForm = ({ products, productId, onClose, isOpen, mode }) => {
             if (product) {
                 const categoryIds = product.categories ? product.categories.map((category) => category.id) : [];
                 const unitId = product.unit ? product.unit.id : 0;
-                const unitMeaId = product.size
-                    ? product.size.unitMeasurement
-                        ? product.size.unitMeasurement.id
-                        : 0
-                    : 0;
+                const unitMeaId = product.size.unitMeasurement ? product.size.unitMeasurement.id : 0;
 
-                // Create a new object with only the desired fields
                 const editedProduct = {
                     name: product.name,
                     description: product.description,
@@ -106,7 +119,7 @@ const ProductDetailForm = ({ products, productId, onClose, isOpen, mode }) => {
         try {
             const response = await editProduct(productId, editedProduct);
             console.log(response);
-        } catch (error) {}
+        } catch (error) { }
     };
 
     const handleEdit = (field, value) => {
@@ -130,9 +143,6 @@ const ProductDetailForm = ({ products, productId, onClose, isOpen, mode }) => {
             }));
         }
     };
-    const handleSave = () => {
-        // Xử lý lưu
-    };
 
     const handleDelete = () => {
         // Xử lý xóa
@@ -147,13 +157,13 @@ const ProductDetailForm = ({ products, productId, onClose, isOpen, mode }) => {
                 zIndex: 999,
             }}
         >
-            <Tabs value={selectedTab} onChange={(event, newValue) => setSelectedTab(newValue)}>
+            <Tabs value={currentTab} onChange={handleChangeTab} indicatorColor="primary" textColor="primary">
                 <Tab label="Thông tin" />
                 <Tab label="Thẻ kho" />
                 <Tab label="Tồn kho" />
             </Tabs>
 
-            {selectedTab === 0 && (
+            {currentTab === 0 && (
                 <div>
                     <Stack spacing={4} margin={2}>
                         <Grid container spacing={2}>
@@ -277,23 +287,27 @@ const ProductDetailForm = ({ products, productId, onClose, isOpen, mode }) => {
                                         alignItems="center"
                                         sx={{ marginBottom: 4, gap: 5 }}
                                     >
-                                        <Typography variant="body1">Nhóm hàng:</Typography>
-                                        <TextField
-                                            size="small"
-                                            variant="outlined"
-                                            label="Nhóm hàng"
-                                            sx={{ width: '70%' }}
-                                            value={
-                                                product.categories
-                                                    ? product.categories.map((category, index) => {
-                                                          return index === product.categories.length - 1
-                                                              ? category.name
-                                                              : `${category.name} `;
-                                                      })
-                                                    : ''
-                                            }
-                                            onChange={(e) => handleEdit('categories_id', e.target.value)}
-                                        />
+                                        <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
+                                            Nhóm hàng:{' '}
+                                        </Typography>
+                                        <Grid xs={8.5}>
+                                            <Select
+                                                size="small"
+                                                labelId="group-label"
+                                                id="group-select"
+                                                sx={{ width: '90%', fontSize: '14px' }}
+                                                multiple
+                                                value={editedProduct.categories_id}
+                                                onChange={(e) => handleEdit('categories_id', e.target.value)}
+                                                name="categories_id"
+                                            >
+                                                {categories_id.map((category) => (
+                                                    <MenuItem key={category.id} value={category.id}>
+                                                        {category.name}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </Grid>
                                     </Grid>
 
                                     <Grid
@@ -310,7 +324,7 @@ const ProductDetailForm = ({ products, productId, onClose, isOpen, mode }) => {
                                             variant="outlined"
                                             label="Đơn vị"
                                             sx={{ width: '70%' }}
-                                            value={product.unit.name}
+                                            value={editedProduct.unit_id}
                                             onChange={(e) => handleEdit('unit_id', e.target.value)}
                                         >
                                             {unit_id.map((unit) => (
@@ -328,6 +342,7 @@ const ProductDetailForm = ({ products, productId, onClose, isOpen, mode }) => {
                                             ))}
                                         </Select>
                                     </Grid>
+
                                     <Grid
                                         container
                                         spacing={1}
@@ -337,14 +352,28 @@ const ProductDetailForm = ({ products, productId, onClose, isOpen, mode }) => {
                                         sx={{ marginBottom: 4, gap: 5 }}
                                     >
                                         <Typography variant="body1">Đơn vị đo lường:</Typography>
-                                        <TextField
+                                        <Select
                                             size="small"
                                             variant="outlined"
                                             label="Đơn vị đo lường"
                                             sx={{ width: '70%' }}
-                                            value={product ? product.size.unitMeasurement.name : ''}
+                                            value={editedProduct.unit_mea_id}
                                             onChange={(e) => handleEdit('unit_mea_id', e.target.value)}
-                                        />
+                                        >
+                                            {unit_mea_id.map((unitMeaId) => (
+                                                <MenuItem
+                                                    sx={{
+                                                        display: 'flex',
+                                                        justifyContent: 'space-between',
+                                                        alignItems: 'center',
+                                                    }}
+                                                    key={unitMeaId.id}
+                                                    value={unitMeaId.id}
+                                                >
+                                                    {unitMeaId.name}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
                                     </Grid>
                                     <Grid
                                         container
@@ -407,7 +436,7 @@ const ProductDetailForm = ({ products, productId, onClose, isOpen, mode }) => {
                     </Button>
                 </div>
             )}
-            {selectedTab === 1 && (
+            {currentTab === 1 && (
                 <div style={{ flex: 1 }}>{/* Hiển thị nội dung cho tab "Lịch sử thanh toán" ở đây */}</div>
             )}
         </div>

@@ -102,13 +102,13 @@ const EditCategoryForm = ({ open, product, handleClose }) => {
             description,
             minStockLevel,
             maxStockLevel,
-            categories_id: categories_id, // Make sure to include the category ID(s)
-            unit_id, // Include the unit ID
+            categories_id: categories_id,
+            unit_id,
             length,
             width,
             height,
             diameter,
-            unit_mea_id, // Include the unit measurement ID
+            unit_mea_id,
         };
 
         editProduct(updatedProduct)
