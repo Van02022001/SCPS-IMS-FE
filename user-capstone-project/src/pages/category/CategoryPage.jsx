@@ -1,7 +1,8 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+
 // @mui
 import {
     Card,
@@ -28,14 +29,15 @@ import {
 import Label from '../../components/label';
 import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
-import CloseIcon from "@mui/icons-material/Close"
+import CloseIcon from '@mui/icons-material/Close';
 
 // sections
 import { UserListHead, UserListToolbar } from '../../sections/@dashboard/user';
 // mock
 import USERLIST from '../../_mock/user';
 import CategoryForm from '~/sections/auth/categories/CategoryForm';
-import { getAllUnit } from '~/data/mutation/unit/unit-mutation';
+import { getAllCategories } from '~/data/mutation/categories/categories-mutation';
+import CategoryDetailForm from '~/sections/auth/categories/CategoryDetailForm';
 
 // ----------------------------------------------------------------------
 
@@ -80,6 +82,8 @@ function applySortFilter(array, comparator, query) {
 }
 
 const CategoryPage = () => {
+    const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+
     const [open, setOpen] = useState(null);
 
     const [openOderForm, setOpenOderForm] = useState(false);
@@ -96,7 +100,7 @@ const CategoryPage = () => {
 
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
-    const [unitData, setUnitData] = useState([]);
+    const [categoryData, setCategoryData] = useState([]);
 
     const handleOpenMenu = (event) => {
         setOpen(event.currentTarget);
@@ -154,26 +158,38 @@ const CategoryPage = () => {
         setOpenOderForm(false);
     };
 
+    const handleCategoryClick = (category) => {
+        if (selectedCategoryId === category.id) {
+            console.log(selectedCategoryId);
+            setSelectedCategoryId(null); // Đóng nếu đã mở
+        } else {
+            setSelectedCategoryId(category.id); // Mở hoặc chuyển sang hóa đơn khác
+        }
+    };
+
+    const handleCloseCategoryDetails = () => {
+        setSelectedCategoryId(null);
+    };
+
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
     const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
 
     const isNotFound = !filteredUsers.length && !!filterName;
     useEffect(() => {
-        getAllUnit()
+        getAllCategories()
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
-                    setUnitData(data);
+                    setCategoryData(data);
                 } else {
                     console.error('API response is not an array:', data);
                 }
-
             })
             .catch((error) => {
                 console.error('Error fetching users:', error);
             });
-    }, [])
+    }, []);
 
     return (
         <>
@@ -229,53 +245,72 @@ const CategoryPage = () => {
                                         .map((row) => {
                                             const { id, name, role, status, company, avatarUrl, isVerified } = row;
                                             const selectedUser = selected.indexOf(name) !== -1; */}
-                                    {unitData.map((unit) => {
+                                    {categoryData.map((category) => {
                                         return (
-                                            <TableRow
-                                                hover
-                                                key={unit.id}
-                                                tabIndex={-1}
-                                                role="checkbox"
+                                            <React.Fragment key={category.id}>
+                                                <TableRow
+                                                    hover
+                                                    key={category.id}
+                                                    tabIndex={-1}
+                                                    role="checkbox"
+                                                    selected={selectedCategoryId === category.id}
+                                                    onClick={() => handleCategoryClick(category)}
+                                                >
+                                                    <TableCell padding="checkbox">
+                                                        <Checkbox
+                                                            onChange={(event) => handleClick(event, category.name)}
+                                                        />
+                                                    </TableCell>
 
-                                            >
-                                                <TableCell padding="checkbox">
-                                                    <Checkbox
+                                                    {/* tên  */}
+                                                    <TableCell component="th" scope="row" padding="none">
+                                                        <Stack direction="row" alignItems="center" spacing={2}>
+                                                            {/* <Avatar alt={name} src={avatarUrl} /> */}
+                                                            <Typography variant="subtitle2" noWrap>
+                                                                {category.name}
+                                                            </Typography>
+                                                        </Stack>
+                                                    </TableCell>
+                                                    {/* mô tả */}
+                                                    <TableCell align="left">{category.description}</TableCell>
+                                                    {/* ngày tạo */}
+                                                    <TableCell align="left">{category.createdAt}</TableCell>
+                                                    {/* ngày cập nhật */}
+                                                    <TableCell align="left">{category.updatedAt}</TableCell>
+                                                    {/* trạng thái */}
+                                                    <TableCell align="left">
+                                                        <Label
+                                                            color={
+                                                                (category.status === 'banned' && 'error') || 'success'
+                                                            }
+                                                        >
+                                                            {sentenceCase(category.status)}
+                                                        </Label>
+                                                    </TableCell>
 
-                                                        onChange={(event) => handleClick(event, unit.name)}
-                                                    />
-                                                </TableCell>
+                                                    <TableCell align="right">
+                                                        <IconButton
+                                                            size="large"
+                                                            color="inherit"
+                                                            onClick={handleOpenMenu}
+                                                        >
+                                                            <Iconify icon={'eva:more-vertical-fill'} />
+                                                        </IconButton>
+                                                    </TableCell>
+                                                </TableRow>
 
-                                                <TableCell component="th" scope="row" padding="none">
-                                                    <Stack direction="row" alignItems="center" spacing={2}>
-                                                        {/* <Avatar alt={name} src={avatarUrl} /> */}
-                                                        <Typography variant="subtitle2" noWrap>
-                                                            {unit.id}
-                                                        </Typography>
-                                                    </Stack>
-                                                </TableCell>
-
-                                                <TableCell align="left">{unit.name}</TableCell>
-
-                                                {/* <TableCell align="left">{role}</TableCell>
-
-                                                <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell>
-
-                                                <TableCell align="left">
-                                                    <Label color={(status === 'banned' && 'error') || 'success'}>
-                                                        {sentenceCase(status)}
-                                                    </Label>
-                                                </TableCell> */}
-
-                                                <TableCell align="right">
-                                                    <IconButton
-                                                        size="large"
-                                                        color="inherit"
-                                                        onClick={handleOpenMenu}
-                                                    >
-                                                        <Iconify icon={'eva:more-vertical-fill'} />
-                                                    </IconButton>
-                                                </TableCell>
-                                            </TableRow>
+                                                {selectedCategoryId === category.id && (
+                                                    <TableRow>
+                                                        <TableCell colSpan={8}>
+                                                            <CategoryDetailForm
+                                                                categories={categoryData}
+                                                                categoriesId={selectedCategoryId}
+                                                                onClose={handleCloseCategoryDetails}
+                                                            />
+                                                        </TableCell>
+                                                    </TableRow>
+                                                )}
+                                            </React.Fragment>
                                         );
                                     })}
                                     {emptyRows > 0 && (

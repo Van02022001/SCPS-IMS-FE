@@ -1,25 +1,55 @@
-import { Button, Checkbox, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControlLabel, IconButton, List, ListItem, ListItemText, Stack, TextField, Typography } from "@mui/material";
-import { useState } from "react";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-
+import {
+    Button,
+    Checkbox,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    FormControlLabel,
+    IconButton,
+    List,
+    ListItem,
+    ListItemText,
+    Stack,
+    TextField,
+    Typography,
+} from '@mui/material';
+import { useState } from 'react';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { createOrigins } from '~/data/mutation/origins/origins-mutation';
 
 const BrandForm = () => {
+    const [name, setName] = useState('');
 
+    const handleCreateOrigins = async () => {
+        const originParams = {
+            name,
+        };
+        try {
+            const response = await createOrigins(originParams);
+            console.log('Create origin response:', response);
+        } catch (error) {
+            console.error('Error creating origin:', error);
+        }
+    };
 
     return (
         <>
             <div style={{ textAlign: 'center' }}>
                 <DialogContent>
-
                     {/* <DialogContentText>Do you want remove this user?</DialogContentText> */}
                     <Stack spacing={2} margin={2}>
-                        <TextField variant="outlined" label="Tên thương hiệu" />
-                        <TextField variant="outlined" label="Mô tả" />
-                        <LocalizationProvider dateAdapter={AdapterDayjs}><DatePicker label="Ngày tạo" /></LocalizationProvider>
-                        <LocalizationProvider dateAdapter={AdapterDayjs}><DatePicker label="Ngày cập nhật" /></LocalizationProvider>
-
-                        <Button color="primary" variant="contained">Tạo</Button>
+                        <TextField
+                            variant="outlined"
+                            value={name}
+                            label="Tên thương hiệu"
+                            onChange={(e) => setName(e.target.value)}
+                        />
+                        <Button color="primary" variant="contained" onClick={handleCreateOrigins}>
+                            Tạo
+                        </Button>
                     </Stack>
                 </DialogContent>
                 <DialogActions>
@@ -29,6 +59,6 @@ const BrandForm = () => {
             </div>
         </>
     );
-}
+};
 
 export default BrandForm;

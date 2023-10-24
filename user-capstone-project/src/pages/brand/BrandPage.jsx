@@ -1,7 +1,8 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+
 // @mui
 import {
     Card,
@@ -25,28 +26,21 @@ import {
     DialogTitle,
 } from '@mui/material';
 // components
-import Label from '../../components/label';
 import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
-import CloseIcon from "@mui/icons-material/Close"
+import CloseIcon from '@mui/icons-material/Close';
 
 // sections
 import { UserListHead, UserListToolbar } from '../../sections/@dashboard/user';
 // mock
 import USERLIST from '../../_mock/user';
-import CategoryForm from '~/sections/auth/categories/CategoryForm';
 import BrandForm from '~/sections/@dashboard/brand/BrandForm';
+import { getAllOrigins } from '~/data/mutation/origins/origins-mutation';
+import OriginDetailForm from '~/sections/auth/origin/OriginDetailForm';
 
 // ----------------------------------------------------------------------
 
-const TABLE_HEAD = [
-    { id: 'name', label: 'Tên', alignRight: false },
-    { id: 'company', label: 'Mô tả', alignRight: false },
-    { id: 'role', label: 'Ngày tạo', alignRight: false },
-    { id: 'isVerified', label: 'Ngày cập nhật', alignRight: false },
-    { id: 'status', label: 'Trạng thái', alignRight: false },
-    { id: '' },
-];
+const TABLE_HEAD = [{ id: 'name', label: 'Tên', alignRight: false }, { id: '' }];
 
 // ----------------------------------------------------------------------
 
@@ -80,6 +74,8 @@ function applySortFilter(array, comparator, query) {
 }
 
 const BrandPage = () => {
+    const [selectedOriginId, setSelectedOriginId] = useState(null);
+
     const [open, setOpen] = useState(null);
 
     const [openOderForm, setOpenOderForm] = useState(false);
@@ -95,6 +91,23 @@ const BrandPage = () => {
     const [filterName, setFilterName] = useState('');
 
     const [rowsPerPage, setRowsPerPage] = useState(5);
+
+    const [originData, setOriginData] = useState([]);
+
+    useEffect(() => {
+        getAllOrigins()
+            .then((respone) => {
+                const data = respone.data;
+                if (Array.isArray(data)) {
+                    setOriginData(data);
+                } else {
+                    console.error('API response is not an array:', data);
+                }
+            })
+            .catch((error) => {
+                console.error('Error fetching users:', error);
+            });
+    }, []);
 
     const handleOpenMenu = (event) => {
         setOpen(event.currentTarget);
@@ -132,6 +145,19 @@ const BrandPage = () => {
             newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
         }
         setSelected(newSelected);
+    };
+
+    const handleOriginClick = (origin) => {
+        if (selectedOriginId === origin.id) {
+            console.log(selectedOriginId);
+            setSelectedOriginId(null); // Đóng nếu đã mở
+        } else {
+            setSelectedOriginId(origin.id); // Mở hoặc chuyển sang hóa đơn khác
+        }
+    };
+
+    const handleCloseOriginDetails = () => {
+        setSelectedOriginId(null);
     };
 
     const handleChangePage = (event, newPage) => {
@@ -207,60 +233,47 @@ const BrandPage = () => {
                                     onSelectAllClick={handleSelectAllClick}
                                 />
                                 <TableBody>
-                                    {filteredUsers
-                                        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                        .map((row) => {
-                                            const { id, name, role, status, company, avatarUrl, isVerified } = row;
-                                            const selectedUser = selected.indexOf(name) !== -1;
-
-                                            return (
+                                    {originData.map((origin) => {
+                                        return (
+                                            <React.Fragment key={origin.id}>
                                                 <TableRow
                                                     hover
-                                                    key={id}
+                                                    key={origin.id}
                                                     tabIndex={-1}
                                                     role="checkbox"
-                                                    selected={selectedUser}
+                                                    selected={selectedOriginId === origin.id}
+                                                    onClick={() => handleOriginClick(origin)}
                                                 >
                                                     <TableCell padding="checkbox">
                                                         <Checkbox
-                                                            checked={selectedUser}
-                                                            onChange={(event) => handleClick(event, name)}
+                                                            onChange={(event) => handleClick(event, origin.name)}
                                                         />
                                                     </TableCell>
 
+                                                    {/* tên  */}
                                                     <TableCell component="th" scope="row" padding="none">
                                                         <Stack direction="row" alignItems="center" spacing={2}>
                                                             {/* <Avatar alt={name} src={avatarUrl} /> */}
                                                             <Typography variant="subtitle2" noWrap>
-                                                                {name}
+                                                                {origin.name}
                                                             </Typography>
                                                         </Stack>
                                                     </TableCell>
-
-                                                    <TableCell align="left">{company}</TableCell>
-
-                                                    <TableCell align="left">{role}</TableCell>
-
-                                                    <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell>
-
-                                                    <TableCell align="left">
-                                                        <Label color={(status === 'banned' && 'error') || 'success'}>
-                                                            {sentenceCase(status)}
-                                                        </Label>
-                                                    </TableCell>
-
-                                                    <TableCell align="right">
-                                                        <IconButton
-                                                            size="large"
-                                                            color="inherit"
-                                                            onClick={handleOpenMenu}
-                                                        >
-                                                            <Iconify icon={'eva:more-vertical-fill'} />
-                                                        </IconButton>
-                                                    </TableCell>
                                                 </TableRow>
-                                            );
-                                        })}
+                                                {selectedOriginId === origin.id && (
+                                                    <TableRow>
+                                                        <TableCell colSpan={8}>
+                                                            <OriginDetailForm
+                                                                origins={originData}
+                                                                originsId={selectedOriginId}
+                                                                onClose={handleCloseOriginDetails}
+                                                            />
+                                                        </TableCell>
+                                                    </TableRow>
+                                                )}
+                                            </React.Fragment>
+                                        );
+                                    })}
                                     {emptyRows > 0 && (
                                         <TableRow style={{ height: 53 * emptyRows }}>
                                             <TableCell colSpan={6} />
@@ -324,17 +337,7 @@ const BrandPage = () => {
                         },
                     },
                 }}
-            >
-                <MenuItem>
-                    <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-                    Edit
-                </MenuItem>
-
-                <MenuItem sx={{ color: 'error.main' }}>
-                    <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
-                    Delete
-                </MenuItem>
-            </Popover>
+            ></Popover>
         </>
     );
 };

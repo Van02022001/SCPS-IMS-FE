@@ -15,3 +15,8 @@ export const deleteOrigins = async (id) => {
     return response.data;
 }
 
+export const editOrigins = async (originsId, editOriginsParams) => {
+    const response = await axiosInstance.put(`/origins/${originsId}`, editOriginsParams);
+    return response.data;
+}
+
