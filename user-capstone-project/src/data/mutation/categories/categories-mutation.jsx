@@ -18,3 +18,7 @@ export const editCategories = async (categoriesId, editCategoriesParams) => {
     const response = await axiosInstance.put(`/categories/${categoriesId}`, editCategoriesParams);
     return response.data;
 }
+export const editStatusCategories = async (categoriesId, status) => {
+    const response = await axiosInstance.put(`/categories/category-status/${categoriesId}?status=${status}`);
+    return response.data;
+}

@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { Typography, Button, Tab, Tabs, Stack, Grid, TextField, FormControl, Select, MenuItem } from '@mui/material';
 
-import { editCategories } from '~/data/mutation/categories/categories-mutation';
+import { editCategories, editStatusCategories } from '~/data/mutation/categories/categories-mutation';
 
-const CategoryDetailForm = ({ categories, categoriesId, onClose, isOpen, mode }) => {
+
+const CategoryDetailForm = ({ categories, updateCategoryData, categoryStatus, updateCategoriesStatus, categoriesId, onClose, isOpen, mode }) => {
     const [expandedItem, setExpandedItem] = useState(categoriesId);
     const [formHeight, setFormHeight] = useState(0);
     const [selectedTab, setSelectedTab] = useState(0);
 
     const [editedCategory, setEditedCategory] = useState(null);
+    const [currentStatus, setCurrentStatus] = useState('');
 
     useEffect(() => {
         if (isOpen) {
@@ -35,6 +37,7 @@ const CategoryDetailForm = ({ categories, categoriesId, onClose, isOpen, mode })
                 };
 
                 setEditedCategory(editedCategory);
+                setCurrentStatus(category.status);
 
                 console.log(editedCategory);
             }
@@ -58,8 +61,7 @@ const CategoryDetailForm = ({ categories, categoriesId, onClose, isOpen, mode })
 
                 // Call your API to update the category
                 const response = await editCategories(categoriesId, updateData);
-
-                // Handle the response as needed
+                updateCategoryData([response.data])
                 console.log('Category updated:', response);
             }
         } catch (error) {
@@ -75,8 +77,20 @@ const CategoryDetailForm = ({ categories, categoriesId, onClose, isOpen, mode })
             [field]: value,
         }));
     };
-    const handleSave = () => {
-        // Xử lý lưu
+    // Thay đổi status
+    const updateCategoryStatus = async () => {
+        try {
+            let newStatus = currentStatus === 'Active' ? 'Inactive' : 'Active';
+
+            const response = await editStatusCategories(categoriesId, newStatus);
+            // Đoạn này đang muốn status cũng thay đổi ở categories Page nhưng chưa hoạt động cần chỉnh sửa chút nữa
+            // updateCategoriesStatus(newStatus);
+            setCurrentStatus(newStatus);
+
+            console.log('Category status updated:', response);
+        } catch (error) {
+            console.error('Error updating category status:', error);
+        }
     };
 
     const handleDelete = () => {
@@ -174,9 +188,14 @@ const CategoryDetailForm = ({ categories, categoriesId, onClose, isOpen, mode })
                                 </Grid>
                             </Grid>
                         </Grid>
+                        <div style={{ background: currentStatus === 'Active' ? 'green' : 'red' }} />
+                        <Typography variant="body1">Trạng thái: {currentStatus}</Typography>
                     </Stack>
                     <Button variant="contained" color="primary" onClick={updateCategory}>
                         Cập nhập
+                    </Button>
+                    <Button variant="contained" color="primary" onClick={updateCategoryStatus}>
+                        Thay đổi trạng thái
                     </Button>
                     <Button variant="outlined" color="secondary" onClick={handleDelete}>
                         Xóa

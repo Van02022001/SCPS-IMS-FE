@@ -35,7 +35,7 @@ import { UserListHead, UserListToolbar } from '../../sections/@dashboard/user';
 // mock
 import USERLIST from '../../_mock/user';
 import PRODUCTSLIST from '../../_mock/products';
-import CategoryForm from '~/sections/auth/categories/CategoryForm';
+import CategoryForm from '~/sections/auth/product/CategoryForm';
 // api
 import { getAllProduct } from '~/data/mutation/product/product-mutation';
 import ProductDetailForm from '~/sections/auth/product/ProductDetailForm';

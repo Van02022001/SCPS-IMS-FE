@@ -38,7 +38,7 @@ import CloseIcon from "@mui/icons-material/Close"
 import { ProductsListHead } from '../../sections/@dashboard/products';
 // mock
 import PRODUCTSLIST from '../../_mock/products';
-import CategoryForm from '~/sections/auth/categories/CategoryForm';
+import CategoryForm from '~/sections/auth/product/CategoryForm';
 import ProductsPriceToolbar from '~/sections/@dashboard/products/productsPrice/ProductsPriceToolbar';
 
 // ----------------------------------------------------------------------

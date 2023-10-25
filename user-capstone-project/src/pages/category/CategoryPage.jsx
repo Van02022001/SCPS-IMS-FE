@@ -35,9 +35,10 @@ import CloseIcon from '@mui/icons-material/Close';
 import { UserListHead, UserListToolbar } from '../../sections/@dashboard/user';
 // mock
 import USERLIST from '../../_mock/user';
-import CategoryForm from '~/sections/auth/categories/CategoryForm';
 import { getAllCategories } from '~/data/mutation/categories/categories-mutation';
+// form validation
 import CategoryDetailForm from '~/sections/auth/categories/CategoryDetailForm';
+import CreateCategoriesForm from '~/sections/auth/categories/CreateCategoryForm';
 
 // ----------------------------------------------------------------------
 
@@ -101,7 +102,18 @@ const CategoryPage = () => {
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
     const [categoryData, setCategoryData] = useState([]);
+    const [categoryStatus, setCategoryStatus] = useState('');
 
+    // Hàm để thay đổi data mỗi khi call xong api-------------------------------------------------------------
+    const updateCategoryData = (updatedCategoryData) => {
+        setCategoryData(updatedCategoryData);
+    };
+
+    const updateCategoriesStatus = (newStatus) => {
+        setCategoryStatus(newStatus);
+    };
+
+    //----------------------------------------------------------------
     const handleOpenMenu = (event) => {
         setOpen(event.currentTarget);
     };
@@ -216,7 +228,7 @@ const CategoryPage = () => {
                                 <CloseIcon color="primary" />
                             </IconButton>{' '}
                         </DialogTitle>
-                        <CategoryForm />
+                        <CreateCategoriesForm />
                     </Dialog>
                 </Stack>
 
@@ -305,6 +317,9 @@ const CategoryPage = () => {
                                                             <CategoryDetailForm
                                                                 categories={categoryData}
                                                                 categoriesId={selectedCategoryId}
+                                                                updateCategoryData={updateCategoryData}
+                                                                categoryStatus={categoryStatus}
+                                                                updateCategoriesStatus={updateCategoriesStatus}
                                                                 onClose={handleCloseCategoryDetails}
                                                             />
                                                         </TableCell>
