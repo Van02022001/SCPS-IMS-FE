@@ -2,15 +2,31 @@ import React, { useEffect, useState } from 'react';
 import { Typography, Button, Tab, Tabs, Stack, Grid, TextField, FormControl, Select, MenuItem } from '@mui/material';
 
 import { editCategories, editStatusCategories } from '~/data/mutation/categories/categories-mutation';
+import SuccessAlerts from '~/components/alert/SuccessAlert';
+import ErrorAlerts from '~/components/alert/ErrorAlert';
 
-
-const CategoryDetailForm = ({ categories, updateCategoryInList, updateCategoryStatusInList, categoryStatus, categoriesId, onClose, isOpen, mode }) => {
+const CategoryDetailForm = ({
+    categories,
+    updateCategoryInList,
+    updateCategoryStatusInList,
+    categoryStatus,
+    categoriesId,
+    onClose,
+    isOpen,
+    mode,
+}) => {
     const [expandedItem, setExpandedItem] = useState(categoriesId);
     const [formHeight, setFormHeight] = useState(0);
     const [selectedTab, setSelectedTab] = useState(0);
 
     const [editedCategory, setEditedCategory] = useState(null);
     const [currentStatus, setCurrentStatus] = useState('');
+
+    //thông báo
+    const [isSuccess, setIsSuccess] = useState(false);
+    const [isError, setIsError] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
         if (isOpen) {
@@ -62,6 +78,12 @@ const CategoryDetailForm = ({ categories, updateCategoryInList, updateCategorySt
                 // Call your API to update the category
                 const response = await editCategories(categoriesId, updateData);
 
+                if (response.status === '200 OK') {
+                    setIsSuccess(true);
+                    setIsError(false);
+                    setSuccessMessage(response.message);
+                }
+
                 updateCategoryInList(response.data);
 
                 console.log('Category updated:', response);
@@ -69,6 +91,12 @@ const CategoryDetailForm = ({ categories, updateCategoryInList, updateCategorySt
         } catch (error) {
             // Handle errors
             console.error('Error updating category:', error);
+            setIsError(true);
+            setIsSuccess(false);
+            setErrorMessage(error.response.data.message);
+            if (error.response) {
+                console.log('Error response:', error.response);
+            }
         }
     };
 
@@ -86,6 +114,12 @@ const CategoryDetailForm = ({ categories, updateCategoryInList, updateCategorySt
 
             const response = await editStatusCategories(categoriesId, newStatus);
 
+            if (response.status === '200 OK') {
+                setIsSuccess(true);
+                setIsError(false);
+                setSuccessMessage(response.message);
+            }
+
             // Sử dụng hàm để cập nhật trạng thái trong danh sách categories trong CategoryPage
             updateCategoryStatusInList(categoriesId, newStatus);
             setCurrentStatus(newStatus);
@@ -93,6 +127,12 @@ const CategoryDetailForm = ({ categories, updateCategoryInList, updateCategorySt
             console.log('Category status updated:', response);
         } catch (error) {
             console.error('Error updating category status:', error);
+            setIsError(true);
+            setIsSuccess(false);
+            setErrorMessage(error.response.data.message);
+            if (error.response) {
+                console.log('Error response:', error.response);
+            }
         }
     };
 
@@ -194,18 +234,24 @@ const CategoryDetailForm = ({ categories, updateCategoryInList, updateCategorySt
                         <div style={{ background: currentStatus === 'Active' ? 'green' : 'red' }} />
                         <Typography variant="body1">Trạng thái: {currentStatus}</Typography>
                     </Stack>
-                    <Button variant="contained" color="primary" onClick={updateCategory}>
-                        Cập nhập
-                    </Button>
-                    <Button variant="contained" color="primary" onClick={updateCategoryStatus}>
-                        Thay đổi trạng thái
-                    </Button>
-                    <Button variant="outlined" color="secondary" onClick={handleDelete}>
-                        Xóa
-                    </Button>
-                    <Button variant="outlined" color="secondary" onClick={handleDelete}>
-                        Hủy bỏ
-                    </Button>
+                    {isSuccess && <SuccessAlerts message={successMessage} />}
+                    {isError && <ErrorAlerts errorMessage={errorMessage} />}
+                    <Stack spacing={4} margin={2}>
+                        <Grid container spacing={1} sx={{ gap: '10px' }}>
+                            <Button variant="contained" color="primary" onClick={updateCategory}>
+                                Cập nhập
+                            </Button>
+                            <Button variant="contained" color="error" onClick={updateCategoryStatus}>
+                                Thay đổi trạng thái
+                            </Button>
+                            {/* <Button variant="outlined" color="secondary" onClick={handleDelete}>
+                                Xóa
+                            </Button> */}
+                            <Button variant="outlined" color="error" onClick={handleDelete}>
+                                Hủy bỏ
+                            </Button>
+                        </Grid>
+                    </Stack>
                 </div>
             )}
             {selectedTab === 1 && (

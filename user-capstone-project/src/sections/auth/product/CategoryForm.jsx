@@ -37,7 +37,9 @@ import { createProduct } from '~/data/mutation/product/product-mutation';
 import { getAllCategories } from '~/data/mutation/categories/categories-mutation';
 import { deleteUnits, getAllUnit, getAllUnitMeasurement } from '~/data/mutation/unit/unit-mutation';
 import { deleteOrigins, getAllOrigins } from '~/data/mutation/origins/origins-mutation';
-
+import SuccessAlerts from '~/components/alert/SuccessAlert';
+import ErrorAlerts from '~/components/alert/ErrorAlert';
+import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
 
 const CategoryForm = () => {
     const [currentTab, setCurrentTab] = useState(0);
@@ -62,6 +64,12 @@ const CategoryForm = () => {
     const [unit_id, setUnits_id] = useState([]);
     const [origins_id, setOrigins_id] = useState([]);
     const [unit_mea_id, setUnit_mea_id] = useState([]);
+
+    //thông báo
+    const [isSuccess, setIsSuccess] = useState(false);
+    const [isError, setIsError] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
     const handleTab1DataChange = (event) => {
         // Cập nhật dữ liệu cho tab 1 tại đây
@@ -146,12 +154,38 @@ const CategoryForm = () => {
         try {
             const response = await createProduct(productParams);
             console.log('Create product response:', response);
+            if (response.status === '200 OK') {
+                setIsSuccess(true);
+                setIsError(false);
+                setSuccessMessage(response.message);
+            }
         } catch (error) {
             console.error('Error creating product:', error);
+            setIsError(true);
+            setIsSuccess(false);
+            setErrorMessage(error.response.data.message);
+            if (error.response) {
+                console.log('Error response:', error.response);
+            }
         }
     };
 
-    const handleAddCategories = async () => { };
+    const handleClear = () => {
+        setName('');
+        setDescription('');
+        setMinStockLevel('');
+        setMaxStockLevel('');
+        setLength('');
+        setWidth('');
+        setHeight('');
+        setDiameter('');
+        setCategories_id([]);
+        setUnits_id([]);
+        setOrigins_id([]);
+        setUnit_mea_id([]);
+    };
+
+    const handleAddCategories = async () => {};
 
     useEffect(() => {
         getAllCategories()
@@ -211,7 +245,7 @@ const CategoryForm = () => {
                                                 label="Tên hàng"
                                                 sx={{ width: '70%' }}
                                                 value={name}
-                                                onChange={(e) => setName(e.target.value)}
+                                                onChange={(e) => setName(capitalizeFirstLetter(e.target.value))}
                                             />
                                         </Grid>
 
@@ -232,7 +266,7 @@ const CategoryForm = () => {
                                                 variant="outlined"
                                                 sx={{ width: '70%' }}
                                                 value={description}
-                                                onChange={(e) => setDescription(e.target.value)}
+                                                onChange={(e) => setDescription(capitalizeFirstLetter(e.target.value))}
                                             />
                                         </Grid>
                                         <FormControl size="small" variant="outlined" sx={{ width: '100%' }}>
@@ -253,7 +287,7 @@ const CategoryForm = () => {
                                                         labelId="group-label"
                                                         id="group-select"
                                                         sx={{ width: '90%', fontSize: '14px' }}
-                                                        multiple  // Thêm thuộc tính multiple để cho phép chọn nhiều giá trị
+                                                        multiple // Thêm thuộc tính multiple để cho phép chọn nhiều giá trị
                                                         value={[...tab1Data.categories_id]}
                                                         onChange={handleTab1DataChange}
                                                         name="categories_id"
@@ -312,12 +346,12 @@ const CategoryForm = () => {
                                                                 value={unit.id}
                                                             >
                                                                 {unit.name}
-                                                                <IconButton
+                                                                {/* <IconButton
                                                                     style={{ float: 'right' }}
                                                                     onClick={() => handleDeleteUnit(unit.id)}
                                                                 >
                                                                     <CloseIcon color="outlined" />
-                                                                </IconButton>{' '}
+                                                                </IconButton>{' '} */}
                                                             </MenuItem>
                                                         ))}
                                                     </Select>
@@ -545,7 +579,6 @@ const CategoryForm = () => {
                                                     />
                                                 </FormControl>
                                             </div>
-
                                         </Grid>
 
                                         {/* Thêm các trường khác ở đây */}
@@ -556,6 +589,8 @@ const CategoryForm = () => {
                                     <BoxComponent />
                                     <BoxComponent />
                                 </Grid>
+                                {isSuccess && <SuccessAlerts message={successMessage} />}
+                                {isError && <ErrorAlerts errorMessage={errorMessage} />}
                                 <Grid container spacing={1} sx={{ gap: '20px' }}>
                                     <Button
                                         color="primary"
@@ -565,7 +600,12 @@ const CategoryForm = () => {
                                     >
                                         Lưu
                                     </Button>
-                                    <Button color="primary" variant="outlined" startIcon={<ClearIcon />}>
+                                    <Button
+                                        color="error"
+                                        variant="outlined"
+                                        startIcon={<ClearIcon />}
+                                        onClick={handleClear}
+                                    >
                                         Hủy
                                     </Button>
                                 </Grid>

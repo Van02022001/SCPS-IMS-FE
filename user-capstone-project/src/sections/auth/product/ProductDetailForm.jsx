@@ -6,8 +6,19 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { editProduct, editStatusProduct } from '~/data/mutation/product/product-mutation';
 import { getAllCategories } from '~/data/mutation/categories/categories-mutation';
 import { getAllUnit, getAllUnitMeasurement } from '~/data/mutation/unit/unit-mutation';
+import SuccessAlerts from '~/components/alert/SuccessAlert';
+import ErrorAlerts from '~/components/alert/ErrorAlert';
 
-const ProductDetailForm = ({ products, productId, updateProductInList, updateProductStatusInList, productStatus, onClose, isOpen, mode }) => {
+const ProductDetailForm = ({
+    products,
+    productId,
+    updateProductInList,
+    updateProductStatusInList,
+    productStatus,
+    onClose,
+    isOpen,
+    mode,
+}) => {
     const [tab1Data, setTab1Data] = useState({ categories_id: [] });
     const [tab2Data, setTab2Data] = useState({});
     const [tab3Data, setTab3Data] = useState({});
@@ -22,6 +33,15 @@ const ProductDetailForm = ({ products, productId, updateProductInList, updatePro
 
     const [editedProduct, setEditedProduct] = useState(null);
     const [currentStatus, setCurrentStatus] = useState('');
+
+    const [positionedSnackbarOpen, setPositionedSnackbarOpen] = useState(false);
+    const [positionedSnackbarError, setPositionedSnackbarError] = useState(false);
+
+    //thông báo
+    const [isSuccess, setIsSuccess] = useState(false);
+    const [isError, setIsError] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
     const handleTab1DataChange = (event) => {
         // Cập nhật dữ liệu cho tab 1 tại đây
@@ -113,6 +133,7 @@ const ProductDetailForm = ({ products, productId, updateProductInList, updatePro
     if (!product) {
         return null;
     }
+
     const updateProduct = async () => {
         if (!editedProduct) {
             return;
@@ -120,10 +141,22 @@ const ProductDetailForm = ({ products, productId, updateProductInList, updatePro
         try {
             const response = await editProduct(productId, editedProduct);
 
+            if (response.status === '200 OK') {
+                setIsSuccess(true);
+                setIsError(false);
+                setSuccessMessage(response.message);
+            }
             updateProductInList(response.data);
-
             console.log('Product updated:', response);
-        } catch (error) { }
+        } catch (error) {
+            console.error('An error occurred while updating the product:', error);
+            setIsError(true);
+            setIsSuccess(false);
+            setErrorMessage(error.response.data.message);
+            if (error.response) {
+                console.log('Error response:', error.response);
+            }
+        }
     };
 
     const updateProductStatus = async () => {
@@ -132,6 +165,12 @@ const ProductDetailForm = ({ products, productId, updateProductInList, updatePro
 
             const response = await editStatusProduct(productId, newStatus);
 
+            if (response.status === '200 OK') {
+                setIsSuccess(true);
+                setIsError(false);
+                setSuccessMessage(response.message);
+            }
+
             // Sử dụng hàm để cập nhật trạng thái trong danh sách categories trong CategoryPage
             updateProductStatusInList(productId, newStatus);
             setCurrentStatus(newStatus);
@@ -139,8 +178,16 @@ const ProductDetailForm = ({ products, productId, updateProductInList, updatePro
             console.log('Product status updated:', response);
         } catch (error) {
             console.error('Error updating category status:', error);
+            setIsError(true);
+            setIsSuccess(false);
+            setErrorMessage(error.response.data.message);
+            if (error.response) {
+                console.log('Error response:', error.response);
+            }
         }
     };
+
+    const handleClear = () => {};
 
     const handleEdit = (field, value) => {
         console.log(`Field: ${field}, Value: ${value}`);
@@ -445,20 +492,27 @@ const ProductDetailForm = ({ products, productId, updateProductInList, updatePro
                             </Grid>
                         </Grid>
                     </Stack>
-                    <Button variant="contained" color="primary" onClick={updateProduct}>
-                        Cập nhập
-                    </Button>
-                    <Button variant="contained" color="primary" onClick={updateProductStatus}>
-                        Thay đổi trạng thái
-                    </Button>
-                    <Button variant="outlined" color="secondary" onClick={handleDelete}>
-                        Xóa
-                    </Button>
-                    <Button variant="outlined" color="secondary" onClick={handleDelete}>
-                        Hủy bỏ
-                    </Button>
+                    {isSuccess && <SuccessAlerts message={successMessage} />}
+                    {isError && <ErrorAlerts errorMessage={errorMessage} />}
+                    <Stack spacing={4} margin={2}>
+                        <Grid container spacing={1} sx={{ gap: '10px' }}>
+                            <Button variant="contained" color="primary" onClick={updateProduct}>
+                                Cập nhập
+                            </Button>
+                            <Button variant="contained" color="error" onClick={updateProductStatus}>
+                                Thay đổi trạng thái
+                            </Button>
+                            {/* <Button variant="contained" color="error" onClick={handleDelete}>
+                                Xóa
+                            </Button> */}
+                            <Button variant="outlined" color="error" onClick={handleClear}>
+                                Hủy bỏ
+                            </Button>
+                        </Grid>
+                    </Stack>
                 </div>
             )}
+
             {currentTab === 1 && (
                 <div style={{ flex: 1 }}>{/* Hiển thị nội dung cho tab "Lịch sử thanh toán" ở đây */}</div>
             )}

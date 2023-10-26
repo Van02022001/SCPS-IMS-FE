@@ -8,7 +8,7 @@ import ErrorAlerts from '~/components/alert/ErrorAlert';
 const AddCategoryForm = ({ open, onClose, onSave }) => {
     const [categoryName, setCategoryName] = useState('');
     const [categoryDescription, setCategoryDescription] = useState('');
-    const [isSuccess, setIsSuccess] = useState(false); // New state for success message
+    const [isSuccess, setIsSuccess] = useState(false);
     const [isError, setIsError] = useState(false);
 
     const handleSave = async () => {

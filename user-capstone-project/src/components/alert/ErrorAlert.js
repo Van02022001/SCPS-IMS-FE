@@ -8,7 +8,7 @@ export default function ErrorAlerts({ errorMessage }) {
     <Stack sx={{ width: '100%' }} spacing={2}>
       <Alert severity="error">
         <AlertTitle>Error</AlertTitle>
-        {errorMessage} — <strong>check it out!</strong>
+        {errorMessage} — <strong>Hãy kiểm tra lại!!</strong>
       </Alert>
     </Stack>
   );

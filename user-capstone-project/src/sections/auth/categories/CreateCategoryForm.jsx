@@ -1,16 +1,20 @@
-import { Button, DialogContent, Stack, TextField, } from "@mui/material";
-import { useState } from "react";
+import { Button, DialogContent, Stack, TextField } from '@mui/material';
+import { useState } from 'react';
 import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
 // api
-import { createCategories } from "~/data/mutation/categories/categories-mutation";
-
+import { createCategories } from '~/data/mutation/categories/categories-mutation';
+import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
 
 const CreateCategoriesForm = () => {
     const [categoryName, setCategoryName] = useState('');
     const [categoryDescription, setCategoryDescription] = useState('');
-    const [isSuccess, setIsSuccess] = useState(false); // New state for success message
+
+    //thông báo
+    const [isSuccess, setIsSuccess] = useState(false);
     const [isError, setIsError] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
     const handleSave = async () => {
         const categoriesParams = {
@@ -19,27 +23,21 @@ const CreateCategoriesForm = () => {
         };
         try {
             const response = await createCategories(categoriesParams);
-            if (response.status === 200) {
+
+            console.log(response.status);
+            if (response.status === '200 OK') {
                 setIsSuccess(true);
                 setIsError(false);
-            } else {
-                if (response.data && response.data.message) {
-
-                    setIsError(response.data.message);
-                } else if (Array.isArray(response.data) && response.data.length > 0) {
-                    // If there are specific error details, display them
-                    const errorMessages = response.data.map((error) => error.message).join(', ');
-                    setIsError(`Validation errors: ${errorMessages}`);
-                } else {
-                    // Use the default error message
-                    setIsError('An error occurred.');
-                }
-                setIsSuccess(false);
+                setSuccessMessage(response.message);
             }
         } catch (error) {
             console.error("Can't fetch category", error);
             setIsError(true);
             setIsSuccess(false);
+            setErrorMessage(error.response.data.message);
+            if (error.response) {
+                console.log('Error response:', error.response);
+            }
         }
     };
 
@@ -49,16 +47,28 @@ const CreateCategoriesForm = () => {
                 <DialogContent>
                     {/* <DialogContentText>Do you want remove this user?</DialogContentText> */}
                     <Stack spacing={2} margin={2}>
-                        <TextField variant="outlined" label="Tên thể loại" onChange={(e) => setCategoryName(e.target.value)} />
-                        <TextField variant="outlined" label="Mô tả" onChange={(e) => setCategoryDescription(e.target.value)} />
-                        <Button color="primary" variant="contained" onClick={handleSave}>Tạo</Button>
+                        <TextField
+                            variant="outlined"
+                            label="Tên thể loại"
+                            value={categoryName}
+                            onChange={(e) => setCategoryName(capitalizeFirstLetter(e.target.value))}
+                        />
+                        <TextField
+                            variant="outlined"
+                            label="Mô tả"
+                            value={categoryDescription}
+                            onChange={(e) => setCategoryDescription(capitalizeFirstLetter(e.target.value))}
+                        />
+                        {isSuccess && <SuccessAlerts message={successMessage} />}
+                        {isError && <ErrorAlerts errorMessage={errorMessage} />}
+                        <Button color="primary" variant="contained" onClick={handleSave}>
+                            Tạo
+                        </Button>
                     </Stack>
-                    {isSuccess && <SuccessAlerts />}
-                    {isError && <ErrorAlerts errorMessage={isError} />}
                 </DialogContent>
             </div>
         </>
     );
-}
+};
 
 export default CreateCategoriesForm;
