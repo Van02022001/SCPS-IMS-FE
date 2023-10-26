@@ -4,7 +4,7 @@ import { Typography, Button, Tab, Tabs, Stack, Grid, TextField, FormControl, Sel
 import { editCategories, editStatusCategories } from '~/data/mutation/categories/categories-mutation';
 
 
-const CategoryDetailForm = ({ categories, updateCategoryData, categoryStatus, updateCategoriesStatus, categoriesId, onClose, isOpen, mode }) => {
+const CategoryDetailForm = ({ categories, updateCategoryInList, updateCategoryStatusInList, categoryStatus, categoriesId, onClose, isOpen, mode }) => {
     const [expandedItem, setExpandedItem] = useState(categoriesId);
     const [formHeight, setFormHeight] = useState(0);
     const [selectedTab, setSelectedTab] = useState(0);
@@ -61,7 +61,9 @@ const CategoryDetailForm = ({ categories, updateCategoryData, categoryStatus, up
 
                 // Call your API to update the category
                 const response = await editCategories(categoriesId, updateData);
-                updateCategoryData([response.data])
+
+                updateCategoryInList(response.data);
+
                 console.log('Category updated:', response);
             }
         } catch (error) {
@@ -83,8 +85,9 @@ const CategoryDetailForm = ({ categories, updateCategoryData, categoryStatus, up
             let newStatus = currentStatus === 'Active' ? 'Inactive' : 'Active';
 
             const response = await editStatusCategories(categoriesId, newStatus);
-            // Đoạn này đang muốn status cũng thay đổi ở categories Page nhưng chưa hoạt động cần chỉnh sửa chút nữa
-            // updateCategoriesStatus(newStatus);
+
+            // Sử dụng hàm để cập nhật trạng thái trong danh sách categories trong CategoryPage
+            updateCategoryStatusInList(categoriesId, newStatus);
             setCurrentStatus(newStatus);
 
             console.log('Category status updated:', response);

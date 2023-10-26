@@ -19,3 +19,8 @@ export const editProduct = async (productId, editProductParams) => {
     const response = await axiosInstance.put(`/products/${productId}`, editProductParams);
     return response.data;
 }
+
+export const editStatusProduct = async (productId, status) => {
+    const response = await axiosInstance.put(`/products/product-status/${productId}?status=${status}`);
+    return response.data;
+}

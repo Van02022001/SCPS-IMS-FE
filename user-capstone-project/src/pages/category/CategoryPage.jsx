@@ -104,13 +104,27 @@ const CategoryPage = () => {
     const [categoryData, setCategoryData] = useState([]);
     const [categoryStatus, setCategoryStatus] = useState('');
 
-    // Hàm để thay đổi data mỗi khi call xong api-------------------------------------------------------------
-    const updateCategoryData = (updatedCategoryData) => {
-        setCategoryData(updatedCategoryData);
+    // Hàm để thay đổi data mỗi khi Edit xong api-------------------------------------------------------------
+    const updateCategoryInList = (updatedCategory) => {
+        const categoryIndex = categoryData.findIndex((category) => category.id === updatedCategory.id);
+
+        if (categoryIndex !== -1) {
+            const updatedCategoryData = [...categoryData];
+            updatedCategoryData[categoryIndex] = updatedCategory;
+
+            setCategoryData(updatedCategoryData);
+        }
     };
 
-    const updateCategoriesStatus = (newStatus) => {
-        setCategoryStatus(newStatus);
+    const updateCategoryStatusInList = (categoryId, newStatus) => {
+        const categoryIndex = categoryData.findIndex((category) => category.id === categoryId);
+
+        if (categoryIndex !== -1) {
+            const updatedCategoryData = [...categoryData];
+            updatedCategoryData[categoryIndex].status = newStatus;
+
+            setCategoryData(updatedCategoryData);
+        }
     };
 
     //----------------------------------------------------------------
@@ -273,7 +287,6 @@ const CategoryPage = () => {
                                                             onChange={(event) => handleClick(event, category.name)}
                                                         />
                                                     </TableCell>
-
                                                     {/* tên  */}
                                                     <TableCell component="th" scope="row" padding="none">
                                                         <Stack direction="row" alignItems="center" spacing={2}>
@@ -316,10 +329,10 @@ const CategoryPage = () => {
                                                         <TableCell colSpan={8}>
                                                             <CategoryDetailForm
                                                                 categories={categoryData}
-                                                                categoriesId={selectedCategoryId}
-                                                                updateCategoryData={updateCategoryData}
                                                                 categoryStatus={categoryStatus}
-                                                                updateCategoriesStatus={updateCategoriesStatus}
+                                                                categoriesId={selectedCategoryId}
+                                                                updateCategoryInList={updateCategoryInList}
+                                                                updateCategoryStatusInList={updateCategoryStatusInList}
                                                                 onClose={handleCloseCategoryDetails}
                                                             />
                                                         </TableCell>

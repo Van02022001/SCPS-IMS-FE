@@ -31,7 +31,7 @@ import Scrollbar from '~/components/scrollbar/Scrollbar';
 import CloseIcon from '@mui/icons-material/Close';
 
 // sections
-import { UserListHead, UserListToolbar } from '../../sections/@dashboard/user';
+import { ProductsListHead, ProductsListToolbar } from '~/sections/@dashboard/products';
 // mock
 import USERLIST from '../../_mock/user';
 import PRODUCTSLIST from '../../_mock/products';
@@ -41,18 +41,19 @@ import { getAllProduct } from '~/data/mutation/product/product-mutation';
 import ProductDetailForm from '~/sections/auth/product/ProductDetailForm';
 import EditCategoryForm from '~/sections/auth/categories/EditCategoryForm';
 
+
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
     { id: 'image', label: '', alignRight: false },
     { id: 'id', label: 'Mã hàng', alignRight: false },
     { id: 'name', label: 'Tên sản phẩm', alignRight: false },
-    { id: 'type', label: 'Mô tả', alignRight: false },
-    { id: 'price', label: 'Ngày tạo', alignRight: false },
-    { id: 'capitalprice', label: 'Ngày cập nhập', alignRight: false },
-    { id: 'brand', label: 'Thương hiệu', alignRight: false },
-    { id: 'company', label: 'Kho hàng', alignRight: false },
-    { id: 'isVerified', label: 'Phân loại', alignRight: false },
+    { id: 'description', label: 'Mô tả', alignRight: false },
+    { id: 'createdAt', label: 'Ngày tạo', alignRight: false },
+    { id: 'updatedAt', label: 'Ngày cập nhập', alignRight: false },
+    { id: 'categories', label: 'Nhóm hàng', alignRight: false },
+    // { id: 'company', label: 'Kho hàng', alignRight: false },
+    // { id: 'isVerified', label: 'Phân loại', alignRight: false },
     { id: 'status', label: 'Trạng thái', alignRight: false },
     // { id: 'sold', label: 'Đã bán', alignRight: false },
     // { id: 'defective', label: 'Trả hàng', alignRight: false },
@@ -90,30 +91,64 @@ function applySortFilter(array, comparator, query) {
     return stabilizedThis.map((el) => el[0]);
 }
 
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+
+    return `${day}/${month}/${year}`;
+}
+
 const ProductsPage = () => {
-    const [selectedProductId, setSelectedProductId] = useState(null);
+    // State mở các form----------------------------------------------------------------
     const [open, setOpen] = useState(null);
-
     const [openOderForm, setOpenOderForm] = useState(false);
-
     const [openEditForm, setOpenEditForm] = useState(false);
 
-    const [page, setPage] = useState(0);
-
-    const [order, setOrder] = useState('asc');
-
     const [selected, setSelected] = useState([]);
+    const [selectedProductId, setSelectedProductId] = useState([]);
 
-    const [orderBy, setOrderBy] = useState('name');
-
+    // State cho phần soft theo name-------------------------------------------------------
     const [filterName, setFilterName] = useState('');
+    const [page, setPage] = useState(0);
+    const [orderBy, setOrderBy] = useState("name");
+    const [order, setOrder] = useState('asc');
+    const [sortBy, setSortBy] = useState('createdAt');
+    const [sortedProduct, setSortedProduct] = useState([]);
 
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
+    // State data và xử lý data
     const [productsData, setProductData] = useState([]);
+    const [productStatus, setProductStatus] = useState('');
 
     const [selectedProduct, setSelectedProduct] = useState(null);
 
+    // Hàm để thay đổi data mỗi khi Edit xong api-------------------------------------------------------------
+    const updateProductInList = (updatedProduct) => {
+        const productIndex = productsData.findIndex((product) => product.id === updatedProduct.id);
+
+        if (productIndex !== -1) {
+            const updatedProductData = [...productsData];
+            updatedProductData[productIndex] = updatedProduct;
+
+            setProductData(updatedProductData);
+        }
+    };
+
+    const updateProductStatusInList = (productId, newStatus) => {
+        const productIndex = productsData.findIndex((product) => product.id === productId);
+
+        if (productIndex !== -1) {
+            const updatedProductData = [...productsData];
+            updatedProductData[productIndex].status = newStatus;
+
+            setProductData(updatedProductData);
+        }
+    };
+
+    //----------------------------------------------------------------
     const handleOpenMenu = (event, product) => {
         setSelectedProduct(product);
         setOpen(event.currentTarget);
@@ -123,15 +158,10 @@ const ProductsPage = () => {
         setOpen(null);
     };
 
-    const handleRequestSort = (event, property) => {
-        const isAsc = orderBy === property && order === 'asc';
-        setOrder(isAsc ? 'desc' : 'asc');
-        setOrderBy(property);
-    };
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelecteds = PRODUCTSLIST.map((n) => n.name);
+            const newSelecteds = productsData.map((n) => n.name);
             setSelected(newSelecteds);
             return;
         }
@@ -155,10 +185,9 @@ const ProductsPage = () => {
 
     const handleProductClick = (product) => {
         if (selectedProductId === product.id) {
-            console.log(selectedProductId);
             setSelectedProductId(null); // Đóng nếu đã mở
         } else {
-            setSelectedProductId(product.id); // Mở hoặc chuyển sang hóa đơn khác
+            setSelectedProductId(product.id); // Mở hoặc chuyển sang sản phẩm khác
         }
     };
 
@@ -175,10 +204,42 @@ const ProductsPage = () => {
         setPage(0);
         setRowsPerPage(parseInt(event.target.value, 10));
     };
+    // Các hàm xử lý soft theo name--------------------------------------------------------------------------------------------------------------------------------
+    const handleCheckboxChange = (event, productId) => {
+        if (event.target.checked) {
+            // Nếu người dùng chọn checkbox, thêm sản phẩm vào danh sách đã chọn.
+            setSelectedProductId([...selectedProductId, productId]);
+        } else {
+            // Nếu người dùng bỏ chọn checkbox, loại bỏ sản phẩm khỏi danh sách đã chọn.
+            setSelectedProductId(selectedProductId.filter((id) => id !== productId));
+        }
+    };
+    const handleRequestSort = (property) => {
+        const isAsc = orderBy === property && order === 'asc';
+        setOrder(isAsc ? 'desc' : 'asc');
+        setOrderBy(property);
+        // Sắp xếp danh sách sản phẩm dựa trên trường và hướng đã chọn
+        const sortedProduct = [...productsData].sort((a, b) => {
+            const valueA = a[property];
+            const valueB = b[property];
+            if (valueA < valueB) {
+                return isAsc ? -1 : 1;
+            }
+            if (valueA > valueB) {
+                return isAsc ? 1 : -1;
+            }
+            return 0;
+        });
+        setSortedProduct(sortedProduct);
+    };
 
     const handleFilterByName = (event) => {
         setPage(0);
-        setFilterName(event.target.value);
+        const query = event.target.value;
+        setFilterName(query);
+
+        const filteredUsers = applySortFilter(sortedProduct, getComparator(order, sortBy), query);
+        setSortedProduct(filteredUsers)
     };
 
     const handleCloseOdersForm = () => {
@@ -201,6 +262,7 @@ const ProductsPage = () => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
                     setProductData(data);
+                    setSortedProduct(data);
                 } else {
                     console.error('API response is not an array:', data);
                 }
@@ -240,7 +302,7 @@ const ProductsPage = () => {
             </Stack>
 
             <Card>
-                <UserListToolbar
+                <ProductsListToolbar
                     numSelected={selected.length}
                     filterName={filterName}
                     onFilterName={handleFilterByName}
@@ -249,11 +311,11 @@ const ProductsPage = () => {
                 <Scrollbar>
                     <TableContainer sx={{ minWidth: 800 }}>
                         <Table>
-                            <UserListHead
+                            <ProductsListHead
                                 order={order}
                                 orderBy={orderBy}
                                 headLabel={TABLE_HEAD}
-                                rowCount={PRODUCTSLIST.length}
+                                rowCount={productsData.length}
                                 numSelected={selected.length}
                                 onRequestSort={handleRequestSort}
                                 onSelectAllClick={handleSelectAllClick}
@@ -264,7 +326,7 @@ const ProductsPage = () => {
                                     .map((row) => {
                                         const { id, image, name, role, status, company, avatarUrl, isVerified } = row;
                                         const selectedUser = selected.indexOf(name) !== -1; */}
-                                {productsData.map((product) => {
+                                {sortedProduct.map((product) => {
                                     return (
                                         <React.Fragment key={product.id}>
                                             <TableRow
@@ -277,6 +339,8 @@ const ProductsPage = () => {
                                             >
                                                 <TableCell padding="checkbox">
                                                     <Checkbox
+                                                        checked={selectedProductId === product.id}
+                                                        onChange={(event) => handleCheckboxChange(event, product.id)}
                                                     // checked={selectedUser}
                                                     // onChange={(event) => handleClick(event, name)}
                                                     />
@@ -322,8 +386,8 @@ const ProductsPage = () => {
                                                 {/* <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell> */}
 
                                                 <TableCell align="left">
-                                                    <Label color={(product.status === 'banned' && 'error') || 'success'}>
-                                                        {sentenceCase(product.status)}
+                                                    <Label color={(product.status === 'Inactive' && 'error') || 'success'}>
+                                                        {(product.status === 'Active') ? 'Đang hoạt động' : 'Ngừng hoạt động'}
                                                     </Label>
                                                 </TableCell>
 
@@ -337,7 +401,13 @@ const ProductsPage = () => {
                                             {selectedProductId === product.id && (
                                                 <TableRow>
                                                     <TableCell colSpan={8}>
-                                                        <ProductDetailForm products={productsData} productId={selectedProductId} onClose={handleCloseProductDetails} />
+                                                        <ProductDetailForm
+                                                            products={productsData}
+                                                            productStatus={productStatus}
+                                                            productId={selectedProductId}
+                                                            updateProductInList={updateProductInList}
+                                                            updateProductStatusInList={updateProductStatusInList}
+                                                            onClose={handleCloseProductDetails} />
                                                     </TableCell>
                                                 </TableRow>
                                             )}

@@ -3,11 +3,11 @@ import { Typography, Button, Tab, Tabs, Stack, Grid, TextField, FormControl, Sel
 
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 
-import { editProduct } from '~/data/mutation/product/product-mutation';
+import { editProduct, editStatusProduct } from '~/data/mutation/product/product-mutation';
 import { getAllCategories } from '~/data/mutation/categories/categories-mutation';
 import { getAllUnit, getAllUnitMeasurement } from '~/data/mutation/unit/unit-mutation';
 
-const ProductDetailForm = ({ products, productId, onClose, isOpen, mode }) => {
+const ProductDetailForm = ({ products, productId, updateProductInList, updateProductStatusInList, productStatus, onClose, isOpen, mode }) => {
     const [tab1Data, setTab1Data] = useState({ categories_id: [] });
     const [tab2Data, setTab2Data] = useState({});
     const [tab3Data, setTab3Data] = useState({});
@@ -21,6 +21,7 @@ const ProductDetailForm = ({ products, productId, onClose, isOpen, mode }) => {
     const [unit_mea_id, setUnit_mea_id] = useState([]);
 
     const [editedProduct, setEditedProduct] = useState(null);
+    const [currentStatus, setCurrentStatus] = useState('');
 
     const handleTab1DataChange = (event) => {
         // Cập nhật dữ liệu cho tab 1 tại đây
@@ -79,7 +80,7 @@ const ProductDetailForm = ({ products, productId, onClose, isOpen, mode }) => {
                 };
 
                 setEditedProduct(editedProduct);
-
+                setCurrentStatus(product.status);
                 console.log(editedProduct);
             }
         }
@@ -118,8 +119,27 @@ const ProductDetailForm = ({ products, productId, onClose, isOpen, mode }) => {
         }
         try {
             const response = await editProduct(productId, editedProduct);
-            console.log(response);
+
+            updateProductInList(response.data);
+
+            console.log('Product updated:', response);
         } catch (error) { }
+    };
+
+    const updateProductStatus = async () => {
+        try {
+            let newStatus = currentStatus === 'Active' ? 'Inactive' : 'Active';
+
+            const response = await editStatusProduct(productId, newStatus);
+
+            // Sử dụng hàm để cập nhật trạng thái trong danh sách categories trong CategoryPage
+            updateProductStatusInList(productId, newStatus);
+            setCurrentStatus(newStatus);
+
+            console.log('Product status updated:', response);
+        } catch (error) {
+            console.error('Error updating category status:', error);
+        }
     };
 
     const handleEdit = (field, value) => {
@@ -276,7 +296,7 @@ const ProductDetailForm = ({ products, productId, onClose, isOpen, mode }) => {
                                             variant="outlined"
                                             label="Trạng thái"
                                             sx={{ width: '70%' }}
-                                            value={product.status === 'Active' ? 'Đang hoạt động' : 'Đã ngưng'}
+                                            value={currentStatus === 'Active' ? 'Đang hoạt động' : 'Ngưng hoạt động'}
                                         />
                                     </Grid>
                                     <Grid
@@ -427,6 +447,9 @@ const ProductDetailForm = ({ products, productId, onClose, isOpen, mode }) => {
                     </Stack>
                     <Button variant="contained" color="primary" onClick={updateProduct}>
                         Cập nhập
+                    </Button>
+                    <Button variant="contained" color="primary" onClick={updateProductStatus}>
+                        Thay đổi trạng thái
                     </Button>
                     <Button variant="outlined" color="secondary" onClick={handleDelete}>
                         Xóa
