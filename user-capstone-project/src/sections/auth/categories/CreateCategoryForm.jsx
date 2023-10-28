@@ -25,10 +25,10 @@ const CreateCategoriesForm = () => {
             const response = await createCategories(categoriesParams);
 
             console.log(response.status);
-            if (response.status === '200 OK') {
+            if (response.status === 200) {
                 setIsSuccess(true);
                 setIsError(false);
-                setSuccessMessage(response.message);
+                setSuccessMessage(response.data.message);
             }
         } catch (error) {
             console.error("Can't fetch category", error);

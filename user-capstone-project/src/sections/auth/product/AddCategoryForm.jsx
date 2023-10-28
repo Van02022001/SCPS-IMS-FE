@@ -8,8 +8,12 @@ import ErrorAlerts from '~/components/alert/ErrorAlert';
 const AddCategoryForm = ({ open, onClose, onSave }) => {
     const [categoryName, setCategoryName] = useState('');
     const [categoryDescription, setCategoryDescription] = useState('');
+
+    //thông báo
     const [isSuccess, setIsSuccess] = useState(false);
     const [isError, setIsError] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
     const handleSave = async () => {
         const categoriesParams = {
@@ -24,24 +28,17 @@ const AddCategoryForm = ({ open, onClose, onSave }) => {
             if (response.status === 200) {
                 setIsSuccess(true);
                 setIsError(false);
-            } else {
-                if (response.data && response.data.message) {
-
-                    setIsError(response.data.message);
-                } else if (Array.isArray(response.data) && response.data.length > 0) {
-                    // If there are specific error details, display them
-                    const errorMessages = response.data.map((error) => error.message).join(', ');
-                    setIsError(`Validation errors: ${errorMessages}`);
-                } else {
-                    // Use the default error message
-                    setIsError('An error occurred.');
-                }
-                setIsSuccess(false);
+                setSuccessMessage(response.data.message);
+                console.log(response.data.message);
             }
         } catch (error) {
             console.error("Can't fetch category", error);
             setIsError(true);
             setIsSuccess(false);
+            setErrorMessage(error.response.data.message);
+            if (error.response) {
+                console.log('Error response:', error.response.data.message);
+            }
         }
     };
 
@@ -65,8 +62,8 @@ const AddCategoryForm = ({ open, onClose, onSave }) => {
                     value={categoryDescription}
                     onChange={(e) => setCategoryDescription(e.target.value)}
                 />
-                {isSuccess && <SuccessAlerts />}
-                {isError && <ErrorAlerts errorMessage={isError} />}
+                {isSuccess && <SuccessAlerts message={successMessage} />}
+                {isError && <ErrorAlerts errorMessage={errorMessage} />}
             </DialogContent>
             <div style={{ padding: '16px' }}>
                 <Button variant="contained" color="primary" onClick={handleSave}>
