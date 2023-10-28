@@ -261,6 +261,9 @@ const CategoryForm = () => {
                                                 Mô tả về hàng hóa:{' '}
                                             </Typography>
                                             <TextField
+                                                id="outlined-multiline-static"
+                                                multiline
+                                                rows={4}
                                                 size="small"
                                                 label="Mô tả"
                                                 variant="outlined"

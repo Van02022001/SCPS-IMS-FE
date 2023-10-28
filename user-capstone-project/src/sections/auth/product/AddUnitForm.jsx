@@ -7,11 +7,20 @@ import {
     Button,
 } from '@mui/material';
 import { createUnits } from '~/data/mutation/unit/unit-mutation';
+import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
+import SuccessAlerts from '~/components/alert/SuccessAlert';
+import ErrorAlerts from '~/components/alert/ErrorAlert';
 // api
 
 
 const AddUnitForm = ({ open, onClose, onSave }) => {
     const [unitName, setUnitName] = useState('');
+
+    //thông báo
+    const [isSuccess, setIsSuccess] = useState(false);
+    const [isError, setIsError] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
 
     const handleSave = async () => {
@@ -19,10 +28,22 @@ const AddUnitForm = ({ open, onClose, onSave }) => {
             name: unitName,
         }
         try {
-            const respone = await createUnits(unitParams);
-            console.log(respone);
+            const response = await createUnits(unitParams);
+
+            if (response.status === "200 OK"    ) {
+                setIsSuccess(true);
+                setIsError(false);
+                setSuccessMessage(response.message);
+                console.log(response);
+            }
         } catch (error) {
             console.error("can't feaching category", error);
+            setIsError(true);
+            setIsSuccess(false);
+            setErrorMessage(error.response.data.message);
+            if (error.response) {
+                console.log('Error response:', error.response.data.message);
+            }
         }
     };
 
@@ -37,8 +58,10 @@ const AddUnitForm = ({ open, onClose, onSave }) => {
                     fullWidth
                     margin="normal"
                     value={unitName}
-                    onChange={(e) => setUnitName(e.target.value)}
+                    onChange={(e) => setUnitName(capitalizeFirstLetter(e.target.value))}
                 />
+                {isSuccess && <SuccessAlerts message={successMessage} />}
+                {isError && <ErrorAlerts errorMessage={errorMessage} />}
             </DialogContent>
             <div style={{ padding: '16px' }}>
                 <Button

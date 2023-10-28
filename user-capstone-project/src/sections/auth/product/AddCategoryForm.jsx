@@ -4,6 +4,7 @@ import { Dialog, DialogTitle, DialogContent, TextField, Button } from '@mui/mate
 import { createCategories } from '~/data/mutation/categories/categories-mutation';
 import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
+import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
 
 const AddCategoryForm = ({ open, onClose, onSave }) => {
     const [categoryName, setCategoryName] = useState('');
@@ -52,7 +53,7 @@ const AddCategoryForm = ({ open, onClose, onSave }) => {
                     fullWidth
                     margin="normal"
                     value={categoryName}
-                    onChange={(e) => setCategoryName(e.target.value)}
+                    onChange={(e) => setCategoryName(capitalizeFirstLetter(e.target.value))}
                 />
                 <TextField
                     label="Mô tả nhóm hàng"
@@ -60,7 +61,7 @@ const AddCategoryForm = ({ open, onClose, onSave }) => {
                     fullWidth
                     margin="normal"
                     value={categoryDescription}
-                    onChange={(e) => setCategoryDescription(e.target.value)}
+                    onChange={(e) => setCategoryDescription(capitalizeFirstLetter(e.target.value))}
                 />
                 {isSuccess && <SuccessAlerts message={successMessage} />}
                 {isError && <ErrorAlerts errorMessage={errorMessage} />}

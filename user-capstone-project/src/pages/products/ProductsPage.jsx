@@ -391,11 +391,11 @@ const ProductsPage = () => {
                                                     </Label>
                                                 </TableCell>
 
-                                                <TableCell align="right">
+                                                {/* <TableCell align="right">
                                                     <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
                                                         <Iconify icon={'eva:more-vertical-fill'} />
                                                     </IconButton>
-                                                </TableCell>
+                                                </TableCell> */}
                                             </TableRow>
 
                                             {selectedProductId === product.id && (

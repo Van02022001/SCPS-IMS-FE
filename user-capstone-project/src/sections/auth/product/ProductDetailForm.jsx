@@ -281,6 +281,9 @@ const ProductDetailForm = ({
                                 >
                                     <Typography variant="body1">Mô tả:</Typography>
                                     <TextField
+                                        id="outlined-multiline-static"
+                                        multiline
+                                        rows={4}
                                         size="small"
                                         variant="outlined"
                                         label="Mô tả"
@@ -299,10 +302,11 @@ const ProductDetailForm = ({
                                 >
                                     <Typography variant="body1">Ngày tạo:</Typography>
                                     <TextField
+                                    
                                         size="small"
                                         variant="outlined"
                                         label="Ngày tạo"
-                                        sx={{ width: '70%' }}
+                                        sx={{ width: '70%', cursor: 'none' }}
                                         value={product.createdAt}
                                     />
                                 </Grid>

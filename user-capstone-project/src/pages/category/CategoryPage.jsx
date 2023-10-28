@@ -313,7 +313,7 @@ const CategoryPage = () => {
                                                         </Label>
                                                     </TableCell>
 
-                                                    <TableCell align="right">
+                                                    {/* <TableCell align="right">
                                                         <IconButton
                                                             size="large"
                                                             color="inherit"
@@ -321,7 +321,7 @@ const CategoryPage = () => {
                                                         >
                                                             <Iconify icon={'eva:more-vertical-fill'} />
                                                         </IconButton>
-                                                    </TableCell>
+                                                    </TableCell> */}
                                                 </TableRow>
 
                                                 {selectedCategoryId === category.id && (
