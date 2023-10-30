@@ -20,6 +20,7 @@ import ReportProductPage from './pages/report/ReportProductPage';
 import ReportSalePage from './pages/report/ReportSalePage';
 import ProductsPricePage from './pages/products/ProductPrice';
 import ForgotPassword from './pages/login/ForgotPassword';
+import WarehousePage from './pages/warehouse/WarehousePage';
 
 // ----------------------------------------------------------------------
 
@@ -46,6 +47,7 @@ const Router = () => {
                 { path: 'category', element: <CategoryPage /> },
                 { path: 'brand', element: <BrandPage /> },
                 { path: 'blog', element: <BlogPage /> },
+                { path: 'warehouse', element: <WarehousePage /> },
                 {
                     path: 'report',
                     children: [

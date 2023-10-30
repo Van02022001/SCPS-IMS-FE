@@ -35,18 +35,16 @@ import CloseIcon from '@mui/icons-material/Close';
 import { UserListHead, UserListToolbar } from '../../sections/@dashboard/user';
 // mock
 import USERLIST from '../../_mock/user';
-import { getAllCategories } from '~/data/mutation/categories/categories-mutation';
+import { getAllWarehouse } from '~/data/mutation/warehouse/warehouse-mutation';
 // form validation
-import CategoryDetailForm from '~/sections/auth/categories/CategoryDetailForm';
-import CreateCategoriesForm from '~/sections/auth/categories/CreateCategoryForm';
+import CreateWarehouseForm from '~/sections/auth/warehouse/CreateWarehouseForm';
+
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
     { id: 'name', label: 'Tên', alignRight: false },
-    { id: 'company', label: 'Mô tả', alignRight: false },
-    { id: 'role', label: 'Ngày tạo', alignRight: false },
-    { id: 'isVerified', label: 'Ngày cập nhật', alignRight: false },
+    { id: 'address', label: 'Địa chỉ', alignRight: false },
     { id: 'status', label: 'Trạng thái', alignRight: false },
     { id: '' },
 ];
@@ -101,31 +99,31 @@ const WarehousePage = () => {
 
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
-    const [categoryData, setCategoryData] = useState([]);
+    const [warehouseData, setWarehouseData] = useState([]);
     const [categoryStatus, setCategoryStatus] = useState('');
 
     // Hàm để thay đổi data mỗi khi Edit xong api-------------------------------------------------------------
-    const updateCategoryInList = (updatedCategory) => {
-        const categoryIndex = categoryData.findIndex((category) => category.id === updatedCategory.id);
+    // const updateCategoryInList = (updatedCategory) => {
+    //     const categoryIndex = categoryData.findIndex((category) => category.id === updatedCategory.id);
 
-        if (categoryIndex !== -1) {
-            const updatedCategoryData = [...categoryData];
-            updatedCategoryData[categoryIndex] = updatedCategory;
+    //     if (categoryIndex !== -1) {
+    //         const updatedCategoryData = [...categoryData];
+    //         updatedCategoryData[categoryIndex] = updatedCategory;
 
-            setCategoryData(updatedCategoryData);
-        }
-    };
+    //         setCategoryData(updatedCategoryData);
+    //     }
+    // };
 
-    const updateCategoryStatusInList = (categoryId, newStatus) => {
-        const categoryIndex = categoryData.findIndex((category) => category.id === categoryId);
+    // const updateCategoryStatusInList = (categoryId, newStatus) => {
+    //     const categoryIndex = categoryData.findIndex((category) => category.id === categoryId);
 
-        if (categoryIndex !== -1) {
-            const updatedCategoryData = [...categoryData];
-            updatedCategoryData[categoryIndex].status = newStatus;
+    //     if (categoryIndex !== -1) {
+    //         const updatedCategoryData = [...categoryData];
+    //         updatedCategoryData[categoryIndex].status = newStatus;
 
-            setCategoryData(updatedCategoryData);
-        }
-    };
+    //         setCategoryData(updatedCategoryData);
+    //     }
+    // };
 
     //----------------------------------------------------------------
     const handleOpenMenu = (event) => {
@@ -203,11 +201,11 @@ const WarehousePage = () => {
 
     const isNotFound = !filteredUsers.length && !!filterName;
     useEffect(() => {
-        getAllCategories()
+        getAllWarehouse()
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
-                    setCategoryData(data);
+                    setWarehouseData(data);
                 } else {
                     console.error('API response is not an array:', data);
                 }
@@ -220,29 +218,29 @@ const WarehousePage = () => {
     return (
         <>
             <Helmet>
-                <title> Quản lý thể loại | Minimal UI </title>
+                <title> Quản lý kho</title>
             </Helmet>
 
             <Container>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                     <Typography variant="h4" gutterBottom>
-                        Quản lý thể loại
+                        Quản lý kho
                     </Typography>
                     <Button
                         variant="contained"
                         startIcon={<Iconify icon="eva:plus-fill" />}
                         onClick={() => setOpenOderForm(true)}
                     >
-                        Thêm thể loại
+                        Thêm địa chỉ kho
                     </Button>
                     <Dialog fullWidth maxWidth="sm" open={openOderForm}>
                         <DialogTitle>
-                            Tạo Thể Loại{' '}
+                            Tạo thêm kho{' '}
                             <IconButton style={{ float: 'right' }} onClick={handleCloseOdersForm}>
                                 <CloseIcon color="primary" />
                             </IconButton>{' '}
                         </DialogTitle>
-                        <CreateCategoriesForm />
+                        <CreateWarehouseForm />
                     </Dialog>
                 </Stack>
 
@@ -271,20 +269,20 @@ const WarehousePage = () => {
                                         .map((row) => {
                                             const { id, name, role, status, company, avatarUrl, isVerified } = row;
                                             const selectedUser = selected.indexOf(name) !== -1; */}
-                                    {categoryData.map((category) => {
+                                    {warehouseData.map((warehouse) => {
                                         return (
-                                            <React.Fragment key={category.id}>
+                                            <React.Fragment key={warehouse.id}>
                                                 <TableRow
                                                     hover
-                                                    key={category.id}
+                                                    key={warehouse.id}
                                                     tabIndex={-1}
                                                     role="checkbox"
-                                                    selected={selectedCategoryId === category.id}
-                                                    onClick={() => handleCategoryClick(category)}
+                                                    selected={selectedCategoryId === warehouse.id}
+                                                    onClick={() => handleCategoryClick(warehouse)}
                                                 >
                                                     <TableCell padding="checkbox">
                                                         <Checkbox
-                                                            onChange={(event) => handleClick(event, category.name)}
+                                                            onChange={(event) => handleClick(event, warehouse.name)}
                                                         />
                                                     </TableCell>
                                                     {/* tên  */}
@@ -292,24 +290,20 @@ const WarehousePage = () => {
                                                         <Stack direction="row" alignItems="center" spacing={2}>
                                                             {/* <Avatar alt={name} src={avatarUrl} /> */}
                                                             <Typography variant="subtitle2" noWrap>
-                                                                {category.name}
+                                                                {warehouse.name}
                                                             </Typography>
                                                         </Stack>
                                                     </TableCell>
                                                     {/* mô tả */}
-                                                    <TableCell align="left">{category.description}</TableCell>
-                                                    {/* ngày tạo */}
-                                                    <TableCell align="left">{category.createdAt}</TableCell>
-                                                    {/* ngày cập nhật */}
-                                                    <TableCell align="left">{category.updatedAt}</TableCell>
+                                                    <TableCell align="left">{warehouse.address}</TableCell>
                                                     {/* trạng thái */}
                                                     <TableCell align="left">
                                                         <Label
                                                             color={
-                                                                (category.status === 'Inactive' && 'error') || 'success'
+                                                                (warehouse.status === 'Inactive' && 'error') || 'success'
                                                             }
                                                         >
-                                                            {(category.status === 'Active') ? 'Đang hoạt động' : 'Ngừng hoạt động'}
+                                                            {(warehouse.status === 'Active') ? 'Đang hoạt động' : 'Ngừng hoạt động'}
                                                         </Label>
                                                     </TableCell>
 
@@ -324,7 +318,7 @@ const WarehousePage = () => {
                                                     </TableCell>
                                                 </TableRow>
 
-                                                {selectedCategoryId === category.id && (
+                                                {/* {selectedCategoryId === category.id && (
                                                     <TableRow>
                                                         <TableCell colSpan={8}>
                                                             <CategoryDetailForm
@@ -337,7 +331,7 @@ const WarehousePage = () => {
                                                             />
                                                         </TableCell>
                                                     </TableRow>
-                                                )}
+                                                )} */}
                                             </React.Fragment>
                                         );
                                     })}

@@ -46,6 +46,11 @@ const navConfig = [
       path: '/dashboard/brand',
       icon: <LocalOfferOutlined />,
     },
+    {
+      title: 'Quản lý kho',
+      path: '/dashboard/warehouse',
+      icon: <Inventory2Outlined/>,
+    },
   ],
   },
 
