@@ -6,15 +6,18 @@ import {
     TextField,
     Button,
 } from '@mui/material';
-import { createUnits } from '~/data/mutation/unit/unit-mutation';
+
 import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
 import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
 // api
+import { createUnits } from '~/data/mutation/unit/unit-mutation';
+
 
 
 const AddUnitForm = ({ open, onClose, onSave }) => {
     const [unitName, setUnitName] = useState('');
+    const [showNotification, setShowNotification] = useState(false);
 
     //thông báo
     const [isSuccess, setIsSuccess] = useState(false);
@@ -30,7 +33,7 @@ const AddUnitForm = ({ open, onClose, onSave }) => {
         try {
             const response = await createUnits(unitParams);
 
-            if (response.status === "200 OK"    ) {
+            if (response.status === "200 OK") {
                 setIsSuccess(true);
                 setIsError(false);
                 setSuccessMessage(response.message);
@@ -46,7 +49,6 @@ const AddUnitForm = ({ open, onClose, onSave }) => {
             }
         }
     };
-
 
     return (
         <Dialog open={open} onClose={onClose}>
@@ -72,6 +74,22 @@ const AddUnitForm = ({ open, onClose, onSave }) => {
                     lưu
                 </Button>
             </div>
+            {/* Notification */}
+            {/* <Snackbar
+                open={showNotification || errorMessage.length > 0}
+                autoHideDuration={6000}
+                onClose={closeNotification}
+            >
+                {errorMessage ? (
+                    <Alert onClose={closeNotification} severity="error">
+                        {errorMessage}
+                    </Alert>
+                ) : (
+                    <Alert onClose={closeNotification} severity="success">
+                        Đơn vị đã được tạo thành công.
+                    </Alert>
+                )}
+            </Snackbar> */}
         </Dialog>
     );
 };

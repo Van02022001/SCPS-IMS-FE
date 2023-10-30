@@ -82,7 +82,7 @@ function applySortFilter(array, comparator, query) {
     return stabilizedThis.map((el) => el[0]);
 }
 
-const CategoryPage = () => {
+const WarehousePage = () => {
     const [selectedCategoryId, setSelectedCategoryId] = useState(null);
 
     const [open, setOpen] = useState(null);
@@ -313,7 +313,7 @@ const CategoryPage = () => {
                                                         </Label>
                                                     </TableCell>
 
-                                                    {/* <TableCell align="right">
+                                                    <TableCell align="right">
                                                         <IconButton
                                                             size="large"
                                                             color="inherit"
@@ -321,7 +321,7 @@ const CategoryPage = () => {
                                                         >
                                                             <Iconify icon={'eva:more-vertical-fill'} />
                                                         </IconButton>
-                                                    </TableCell> */}
+                                                    </TableCell>
                                                 </TableRow>
 
                                                 {selectedCategoryId === category.id && (
@@ -418,4 +418,4 @@ const CategoryPage = () => {
         </>
     );
 };
-export default CategoryPage;
+export default WarehousePage;
