@@ -21,6 +21,7 @@ import ReportSalePage from './pages/report/ReportSalePage';
 import ProductsPricePage from './pages/products/ProductPrice';
 import ForgotPassword from './pages/login/ForgotPassword';
 import WarehousePage from './pages/warehouse/WarehousePage';
+import SaleProductPage from './pages/sale/SaleProductPage';
 
 // ----------------------------------------------------------------------
 
@@ -62,6 +63,10 @@ const Router = () => {
         {
             path: 'login',
             element: <LoginPage />,
+        },
+        {
+            path: 'sale',
+            element: <SaleProductPage />,
         },
         {
             path: 'forgotpw',

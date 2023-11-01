@@ -114,7 +114,7 @@ const EditCategoryForm = ({ open, product, handleClose }) => {
         editProduct(updatedProduct)
             .then((response) => {
                 console.log('Product updated successfully', response);
-                handleClose(); // Close the edit form after successful update
+                handleClose();
             })
             .catch((error) => {
                 console.error('Error updating product:', error);

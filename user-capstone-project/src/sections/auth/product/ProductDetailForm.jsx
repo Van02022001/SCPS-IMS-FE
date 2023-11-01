@@ -146,6 +146,7 @@ const ProductDetailForm = ({
                 setIsError(false);
                 setSuccessMessage(response.message);
             }
+
             updateProductInList(response.data);
             console.log('Product updated:', response);
         } catch (error) {
@@ -187,7 +188,7 @@ const ProductDetailForm = ({
         }
     };
 
-    const handleClear = () => {};
+    const handleClear = () => { };
 
     const handleEdit = (field, value) => {
         console.log(`Field: ${field}, Value: ${value}`);
@@ -266,7 +267,7 @@ const ProductDetailForm = ({
                                         variant="outlined"
                                         label="Tên sản phẩm"
                                         sx={{ width: '70%' }}
-                                        value={product ? product.name : ''}
+                                        value={editedProduct ? editedProduct.name : ''}
                                         onChange={(e) => handleEdit('name', e.target.value)}
                                     />
                                 </Grid>
@@ -288,7 +289,7 @@ const ProductDetailForm = ({
                                         variant="outlined"
                                         label="Mô tả"
                                         sx={{ width: '70%' }}
-                                        value={product.description}
+                                        value={editedProduct ? editedProduct.description : ''}
                                         onChange={(e) => handleEdit('description', e.target.value)}
                                     />
                                 </Grid>
@@ -302,7 +303,7 @@ const ProductDetailForm = ({
                                 >
                                     <Typography variant="body1">Ngày tạo:</Typography>
                                     <TextField
-                                    
+
                                         size="small"
                                         variant="outlined"
                                         label="Ngày tạo"

@@ -148,6 +148,12 @@ const ProductsPage = () => {
         }
     };
 
+    const handleCreateProductSuccess = (newProduct) => {
+        // Close the form
+        setOpenOderForm(false);
+        setProductData((prevProductData) => [...prevProductData, newProduct]);
+    };
+
     //----------------------------------------------------------------
     const handleOpenMenu = (event, product) => {
         setSelectedProduct(product);
@@ -250,6 +256,8 @@ const ProductsPage = () => {
         setOpenEditForm(false);
     };
 
+
+
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - PRODUCTSLIST.length) : 0;
 
     const filteredUsers = applySortFilter(PRODUCTSLIST, getComparator(order, orderBy), filterName);
@@ -297,7 +305,10 @@ const ProductsPage = () => {
                             <CloseIcon color="primary" />
                         </IconButton>{' '}
                     </DialogTitle>
-                    <CategoryForm />
+                    <CategoryForm
+                        onClose={handleCreateProductSuccess}
+                        open={openOderForm}
+                    />
                 </Dialog>
             </Stack>
 
@@ -321,12 +332,7 @@ const ProductsPage = () => {
                                 onSelectAllClick={handleSelectAllClick}
                             />
                             <TableBody>
-                                {/* {filteredUsers
-                                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                    .map((row) => {
-                                        const { id, image, name, role, status, company, avatarUrl, isVerified } = row;
-                                        const selectedUser = selected.indexOf(name) !== -1; */}
-                                {sortedProduct.map((product) => {
+                                {productsData.map((product) => {
                                     return (
                                         <React.Fragment key={product.id}>
                                             <TableRow

@@ -4,6 +4,8 @@ import { useLocation } from 'react-router-dom';
 // @mui
 import { styled, alpha } from '@mui/material/styles';
 import { Box, Link, Button, Drawer, Typography, Avatar, Stack } from '@mui/material';
+import SvgColor from '../../../components/svg-color';
+import { ShoppingCart, Person, Assignment, Payments, CategoryOutlined, LocalOfferOutlined, ClassOutlined, CalendarToday, MonetizationOnOutlined, Inventory2Outlined, PriceChangeOutlined, DomainVerification } from '@mui/icons-material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 // mock
 import account from '../../../_mock/account';
@@ -34,11 +36,136 @@ Nav.propTypes = {
   openNav: PropTypes.bool,
   onCloseNav: PropTypes.func,
 };
+const icon = (name) => <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />;
 
+function getUserRole() {
+  const userRole = localStorage.getItem('role'); // Lấy vai trò từ Local Storage hoặc nguồn dữ liệu khác
+  return userRole || 'DEFAULT_ROLE'; // Gán một vai trò mặc định nếu không tìm thấy
+}
+// Cấu hình navbar cho vai trò MANAGER
+const managerNavConfig = [
+  {
+    title: 'Hàng hóa',
+    icon: <ShoppingCart />,
+    children: [
+      {
+        title: 'Danh mục',
+        path: '/dashboard/products/production',
+        icon: <ClassOutlined />,
+      },
+      {
+        title: 'Thiết lập giá',
+        path: '/dashboard/products/products-price',
+        icon: <PriceChangeOutlined />, 
+      },
+      {
+        title: 'Kiểm kho  ',
+        path: '/dashboard/products/products-check',
+        icon: <DomainVerification />,
+      },
+    ],
+  },
+   
+  {
+    title: 'Quản lý mục',
+    icon: <Person />,
+    children: [{
+      title: 'Quản lý hóa đơn',
+      path: '/dashboard/odersManager',
+      icon: <Payments />,
+    },
+    {
+      title: 'Quản lý thể loại',
+      path: '/dashboard/category',
+      icon: <CategoryOutlined />,
+    },
+    {
+      title: 'Quản lý thương hiệu',
+      path: '/dashboard/brand',
+      icon: <LocalOfferOutlined />,
+    },
+    {
+      title: 'Quản lý kho',
+      path: '/dashboard/warehouse',
+      icon: <Inventory2Outlined/>,
+    },
+  ],
+  },
+
+  {
+    title: 'Báo cáo',
+    icon: <Assignment />,
+    children: [
+      {
+        title: 'Cuối Ngày',
+        path: '/dashboard/report/report-end-day',
+        icon: <CalendarToday />,
+      },
+      {
+        title: 'Bán hàng',
+        path: '/dashboard/report/report-sale',
+        icon: <MonetizationOnOutlined />,
+      },
+      {
+        title: 'Hàng hóa',
+        path: '/dashboard/report/report-inventory',
+        icon: <Inventory2Outlined/>,
+      },
+    ],
+  },
+  {
+    title: 'login',
+    path: '/login',
+    icon: icon('ic_lock'),
+  },
+  {
+    title: 'Not found',
+    path: '/404',
+    icon: icon('ic_disabled'),
+  },
+];
+
+// Cấu hình navbar cho vai trò INVENTORY
+const inventoryNavConfig = [
+  {
+    title: 'login',
+    path: '/login',
+    icon: icon('ic_lock'),
+  },
+  // ...
+];
+
+// Cấu hình navbar cho vai trò SALE
+const saleNavConfig = [
+  
+  {
+    title: 'Bán hàng',
+    path: '/sale',
+    icon: icon('ic_disabled'),
+  },
+  {
+    title: 'login',
+    path: '/login',
+    icon: icon('ic_lock'),
+  },
+  
+  // ...
+];
 export default function Nav({ openNav, onCloseNav }) {
   const { pathname } = useLocation();
   const [isReportMenuOpen, setIsReportMenuOpen] = useState(false);
   const isDesktop = useResponsive('up', 'lg');
+  const userRole = getUserRole();
+  
+  let selectedNavbarConfig = [];
+
+  if (userRole === 'MANAGER') {
+    selectedNavbarConfig = managerNavConfig;
+  } else if (userRole === 'INVENTORY_STAFF') {
+    selectedNavbarConfig = inventoryNavConfig;
+  } else if (userRole === 'SALE_STAFF') {
+    selectedNavbarConfig = saleNavConfig;
+  }
 
   const handleReportMenuToggle = () => {
     setIsReportMenuOpen(!isReportMenuOpen);
@@ -80,7 +207,7 @@ export default function Nav({ openNav, onCloseNav }) {
         </Link>
       </Box>
 
-      <NavSection data={navConfig} onReportClick={handleReportMenuToggle} isReportMenuOpen={isReportMenuOpen} />
+      <NavSection data={selectedNavbarConfig} onReportClick={handleReportMenuToggle} isReportMenuOpen={isReportMenuOpen} />
 
       <Box sx={{ flexGrow: 1 }} />
     </Scrollbar>
