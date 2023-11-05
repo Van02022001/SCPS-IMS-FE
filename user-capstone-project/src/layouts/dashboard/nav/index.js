@@ -137,7 +137,11 @@ const inventoryNavConfig = [
 
 // Cấu hình navbar cho vai trò SALE
 const saleNavConfig = [
-  
+  {
+    title: 'Quản lý hóa đơn',
+    path: '/dashboard/odersManager',
+    icon: <Payments />,
+  },
   {
     title: 'Bán hàng',
     path: '/sale',

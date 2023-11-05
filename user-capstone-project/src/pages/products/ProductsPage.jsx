@@ -33,7 +33,6 @@ import CloseIcon from '@mui/icons-material/Close';
 // sections
 import { ProductsListHead, ProductsListToolbar } from '~/sections/@dashboard/products';
 // mock
-import USERLIST from '../../_mock/user';
 import PRODUCTSLIST from '../../_mock/products';
 import CategoryForm from '~/sections/auth/product/CategoryForm';
 // api

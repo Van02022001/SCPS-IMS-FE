@@ -22,6 +22,7 @@ import ProductsPricePage from './pages/products/ProductPrice';
 import ForgotPassword from './pages/login/ForgotPassword';
 import WarehousePage from './pages/warehouse/WarehousePage';
 import SaleProductPage from './pages/sale/SaleProductPage';
+import OrderSalePage from './pages/sale/order/OrderSalePage';
 
 // ----------------------------------------------------------------------
 
@@ -65,8 +66,11 @@ const Router = () => {
             element: <LoginPage />,
         },
         {
-            path: 'sale',
-            element: <SaleProductPage />,
+            element: <DashboardLayout />,   
+            children: [
+                {path: 'sale',element: <SaleProductPage />},
+                {path: 'order-sale',element: <OrderSalePage />}
+            ]
         },
         {
             path: 'forgotpw',
