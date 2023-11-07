@@ -24,6 +24,7 @@ import WarehousePage from './pages/warehouse/WarehousePage';
 import SaleProductPage from './pages/sale/SaleProductPage';
 import OrderSalePage from './pages/sale/order/OrderSalePage';
 import ProductInventoryPage from './pages/inventory_staff/product/ProductInventoryPage';
+import NhapKhoPage from './pages/brand/NhapKhoPage';
 
 // ----------------------------------------------------------------------
 
@@ -49,6 +50,7 @@ const Router = () => {
                 { path: 'odersManager', element: <OdersManagerPage /> },
                 { path: 'category', element: <CategoryPage /> },
                 { path: 'brand', element: <BrandPage /> },
+                { path: 'nhapkho', element: <NhapKhoPage /> },
                 { path: 'blog', element: <BlogPage /> },
                 { path: 'warehouse', element: <WarehousePage /> },
                 {
@@ -67,19 +69,19 @@ const Router = () => {
             element: <LoginPage />,
         },
         {
-            element: <DashboardLayout />,   
+            element: <DashboardLayout />,
             children: [
-                {path: 'sale',element: <SaleProductPage />},
-                {path: 'order-sale',element: <OrderSalePage />}
-            ]
+                { path: 'sale', element: <SaleProductPage /> },
+                { path: 'order-sale', element: <OrderSalePage /> },
+            ],
         },
         {
             path: '/inventory-staff',
-            element: <DashboardLayout />,   
+            element: <DashboardLayout />,
             children: [
-                {path: 'product',element: <ProductInventoryPage />},
-                {path: 'order-sale',element: <OrderSalePage />}
-            ]
+                { path: 'product', element: <ProductInventoryPage /> },
+                { path: 'order-sale', element: <OrderSalePage /> },
+            ],
         },
         {
             path: 'forgotpw',
