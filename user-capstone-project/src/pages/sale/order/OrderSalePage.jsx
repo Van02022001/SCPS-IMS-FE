@@ -34,6 +34,7 @@ import { UserListHead, UserListToolbar } from '../../../sections/@dashboard/user
 import OdersForm from '~/sections/@dashboard/oders/OdersForm';
 import OrderDetailForm from '~/sections/auth/orders/OrderDetailForm';
 import USERLIST from '../../../_mock/user';
+import CustomerRequestForm from '~/sections/auth/sale/customerRequest/CustomerRequestForm';
 
 // ----------------------------------------------------------------------
 
@@ -188,13 +189,15 @@ const OrderSalePage = () => {
 
             <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                 <Typography variant="h4" gutterBottom>
-                    Yêu cầu khách hàng
+                    Phiếu hóa đơn
                 </Typography>
                 <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={() => setOpenOderForm(true)}>
-                    Thêm hóa đơn
+                    Xử lý hóa đơn
                 </Button>
                 <Dialog fullWidth maxWidth="sm" open={openOderForm} >
-                    <DialogTitle>Tạo Hóa Đơn  <IconButton style={{ float: 'right' }} onClick={handleCloseOdersForm}><CloseIcon color="primary" /></IconButton>  </DialogTitle><OdersForm /></Dialog>
+                    <DialogTitle>Xử lý đặt hàng  <IconButton style={{ float: 'right' }} onClick={handleCloseOdersForm}><CloseIcon color="primary" /></IconButton>  </DialogTitle>
+                    <CustomerRequestForm />
+                </Dialog>
 
             </Stack>
 

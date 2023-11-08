@@ -166,7 +166,7 @@ const inventoryNavConfig = [
 const saleNavConfig = [
   {
     title: 'Quản lý hóa đơn',
-    path: '/dashboard/odersManager',
+    path: '/order-sale',
     icon: <Payments />,
   },
   {
