@@ -170,7 +170,17 @@ const inventoryNavConfig = [
 // Cấu hình navbar cho vai trò SALE
 const saleNavConfig = [
   {
-    title: 'Quản lý hóa đơn',
+    title: 'Sản phẩm',
+    path: '/items-sale',
+    icon: <Payments />,
+  },
+  {
+    title: 'Quản lý khách hàng',
+    path: '/customer-sale',
+    icon: <Payments />,
+  },
+  {
+    title: 'Quản lý phiếu xuất kho',
     path: '/order-sale',
     icon: <Payments />,
   },

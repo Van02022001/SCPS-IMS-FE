@@ -24,6 +24,8 @@ import WarehousePage from './pages/warehouse/WarehousePage';
 import SaleProductPage from './pages/sale/SaleProductPage';
 import OrderSalePage from './pages/sale/order/OrderSalePage';
 import ProductInventoryPage from './pages/inventory_staff/product/ProductInventoryPage';
+import ItemsSalePage from './pages/sale/items/ItemsSalePage';
+import CustomerSalePage from './pages/sale/customer/CustomerSalePage';
 import GoodsReceiptPage from './pages/inventory_staff/transaction/GoodsReceiptPage';
 import ViewReceiptPage from './pages/inventory_staff/transaction/ViewReceiptPage';
 import ExportsReceipt from './pages/inventory_staff/transaction/ExportsReceipt';
@@ -73,6 +75,8 @@ const Router = () => {
         {
             element: <DashboardLayout />,
             children: [
+                { path: 'items-sale', element: <ItemsSalePage /> },
+                { path: 'customer-sale', element: <CustomerSalePage /> },
                 { path: 'sale', element: <SaleProductPage /> },
                 { path: 'order-sale', element: <OrderSalePage /> },
             ],
