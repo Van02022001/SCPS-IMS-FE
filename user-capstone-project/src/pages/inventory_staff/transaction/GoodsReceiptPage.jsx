@@ -60,7 +60,7 @@ function GoodsReceiptPage() {
     };
 
     const handleNavigate = () => {
-        navigate("/inventory-staff/exports-receipt");
+        navigate("/inventory-staff/views-receipt");
     };
 
     return (

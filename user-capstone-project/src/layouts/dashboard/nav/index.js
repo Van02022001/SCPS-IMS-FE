@@ -149,7 +149,12 @@ const inventoryNavConfig = [
     children: [
       {
         title: 'Nhập hàng',
-        path: '/inventory-staff/goods-receipt',
+        path: '/inventory-staff/views-receipt',
+        icon: <ClassOutlined />,
+      },
+      {
+        title: 'Xuất hàng',
+        path: '/inventory-staff/exports-receipt',
         icon: <ClassOutlined />,
       },
     ],
