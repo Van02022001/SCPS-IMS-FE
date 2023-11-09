@@ -17,17 +17,23 @@ import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useState } from 'react';
 // sections
-import { UserListHead } from '../../sections/@dashboard/user';
+import { UserListHead } from '~/sections/@dashboard/user';
 // mock
-import USERLIST from '../../_mock/user';
+import USERLIST from '~/_mock/user';
 import Scrollbar from '~/components/scrollbar/Scrollbar';
+// icons
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
-function NhapKhoPage() {
+import { useNavigate } from 'react-router-dom';
+
+function BadsReceiptPage() {
     const [order, setOrder] = useState('asc');
 
     const [orderBy, setOrderBy] = useState('name');
 
     const [selected, setSelected] = useState([]);
+
+    const navigate = useNavigate();
 
     const TABLE_HEAD = [
         { id: 'name', label: 'Name', alignRight: false },
@@ -53,18 +59,25 @@ function NhapKhoPage() {
         setSelected([]);
     };
 
+    const handleNavigate = () => {
+        navigate('/inventory-staff/views-receipt');
+    };
+
     return (
         <>
             <Helmet>
-                <title> Nhap Kho </title>
+                <title> Xuất Kho </title>
             </Helmet>
 
             <Box sx={{ flexGrow: 1 }}>
                 <Grid container spacing={1}>
                     <Grid xs={8}>
-                        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+                        <Stack direction="row" alignItems="center" mb={5}>
+                            <Button onClick={handleNavigate}>
+                                <ArrowBackIcon fontSize="large" color="action" />
+                            </Button>
                             <Typography variant="h4" gutterBottom>
-                                Nhập Kho
+                                Xuất kho
                             </Typography>
                         </Stack>
                         <Scrollbar>
@@ -188,4 +201,4 @@ function NhapKhoPage() {
     );
 }
 
-export default NhapKhoPage;
+export default BadsReceiptPage;

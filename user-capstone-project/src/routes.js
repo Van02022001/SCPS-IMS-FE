@@ -24,7 +24,10 @@ import WarehousePage from './pages/warehouse/WarehousePage';
 import SaleProductPage from './pages/sale/SaleProductPage';
 import OrderSalePage from './pages/sale/order/OrderSalePage';
 import ProductInventoryPage from './pages/inventory_staff/product/ProductInventoryPage';
-import NhapKhoPage from './pages/brand/NhapKhoPage';
+import GoodsReceiptPage from './pages/inventory_staff/transaction/GoodsReceiptPage';
+import ViewReceiptPage from './pages/inventory_staff/transaction/ViewReceiptPage';
+import ExportsReceipt from './pages/inventory_staff/transaction/ExportsReceipt';
+import BadsReceiptPage from './pages/inventory_staff/transaction/BadsReceiptPage';
 
 // ----------------------------------------------------------------------
 
@@ -50,7 +53,6 @@ const Router = () => {
                 { path: 'odersManager', element: <OdersManagerPage /> },
                 { path: 'category', element: <CategoryPage /> },
                 { path: 'brand', element: <BrandPage /> },
-                { path: 'nhapkho', element: <NhapKhoPage /> },
                 { path: 'blog', element: <BlogPage /> },
                 { path: 'warehouse', element: <WarehousePage /> },
                 {
@@ -81,6 +83,12 @@ const Router = () => {
             children: [
                 { path: 'product', element: <ProductInventoryPage /> },
                 { path: 'order-sale', element: <OrderSalePage /> },
+                { path: 'views-receipt', element: <ViewReceiptPage /> },
+                { path: 'goods-receipt', element: <GoodsReceiptPage /> },
+                { path: 'exports-receipt', element: <ExportsReceipt /> },
+                { path: 'bads-receipt', element: <BadsReceiptPage /> },
+
+
             ],
         },
         {
