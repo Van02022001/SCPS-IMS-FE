@@ -3,7 +3,7 @@ import { Typography, Button, Tab, Tabs, Stack, Grid, TextField, FormControl, Sel
 
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 
-import { editProduct, editStatusProduct } from '~/data/mutation/product/product-mutation';
+import { editProduct, editStatusProduct } from '~/data/mutation/subCategory/subCategory-mutation';
 import { getAllCategories } from '~/data/mutation/categories/categories-mutation';
 import { getAllUnit, getAllUnitMeasurement } from '~/data/mutation/unit/unit-mutation';
 import SuccessAlerts from '~/components/alert/SuccessAlert';

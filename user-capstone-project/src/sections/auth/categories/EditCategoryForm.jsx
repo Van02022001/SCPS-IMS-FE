@@ -25,7 +25,7 @@ import BoxComponent from '~/components/box/BoxComponent';
 import { getAllCategories } from '~/data/mutation/categories/categories-mutation';
 import { getAllUnit, getAllUnitMeasurement } from '~/data/mutation/unit/unit-mutation';
 import { getAllOrigins } from '~/data/mutation/origins/origins-mutation';
-import { editProduct } from '~/data/mutation/product/product-mutation';
+import { editProduct } from '~/data/mutation/subCategory/subCategory-mutation';
 
 // api
 

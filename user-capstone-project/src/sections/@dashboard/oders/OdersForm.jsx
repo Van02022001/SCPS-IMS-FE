@@ -143,7 +143,7 @@ const OdersForm = (props) => {
         // setUnit_mea_id([]);
     };
 
-    const handleAddCategories = async () => {};
+    const handleAddCategories = async () => { };
 
     useEffect(() => {
         getAllProduct()
@@ -285,7 +285,7 @@ const OdersForm = (props) => {
                                             sx={{ marginBottom: 4, gap: 5 }}
                                         >
                                             <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
-                                               Xuất xứ:{' '}
+                                                Xuất xứ:{' '}
                                             </Typography>
                                             <Grid xs={8.5}>
                                                 <Select

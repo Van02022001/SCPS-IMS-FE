@@ -39,6 +39,7 @@ import CategoryForm from '~/sections/auth/product/CategoryForm';
 import { getAllItems } from '~/data/mutation/items/items-mutation';
 import ProductDetailForm from '~/sections/auth/product/ProductDetailForm';
 import EditCategoryForm from '~/sections/auth/categories/EditCategoryForm';
+import { getAllSubCategory } from '~/data/mutation/subCategory/subCategory-mutation';
 
 
 // ----------------------------------------------------------------------
@@ -48,14 +49,8 @@ const TABLE_HEAD = [
     { id: 'id', label: 'Mã hàng', alignRight: false },
     { id: 'name', label: 'Tên sản phẩm', alignRight: false },
     { id: 'description', label: 'Mô tả', alignRight: false },
-    { id: 'createdAt', label: 'Ngày tạo', alignRight: false },
-    { id: 'updatedAt', label: 'Ngày cập nhập', alignRight: false },
     { id: 'categories', label: 'Nhóm hàng', alignRight: false },
-    // { id: 'company', label: 'Kho hàng', alignRight: false },
-    // { id: 'isVerified', label: 'Phân loại', alignRight: false },
     { id: 'status', label: 'Trạng thái', alignRight: false },
-    // { id: 'sold', label: 'Đã bán', alignRight: false },
-    // { id: 'defective', label: 'Trả hàng', alignRight: false },
     { id: '' },
 ];
 
@@ -120,6 +115,7 @@ const ItemsSalePage = () => {
 
     // State data và xử lý data
     const [itemsData, setItemsData] = useState([]);
+    const [subCategoryData, setSubCategoryData] = useState([]);
     const [productStatus, setProductStatus] = useState('');
 
     const [selectedProduct, setSelectedProduct] = useState(null);
@@ -264,20 +260,23 @@ const ItemsSalePage = () => {
     const isNotFound = !filteredUsers.length && !!filterName;
 
     useEffect(() => {
-        getAllItems()
-            .then((respone) => {
-                const data = respone.data;
+        getAllSubCategory()
+            .then((response) => {
+                const data = response.data;
                 if (Array.isArray(data)) {
-                    setItemsData(data);
-                    setSortedProduct(data);
+                    setSubCategoryData(data);
+
                 } else {
-                    console.error('API response is not an array:', data);
+                    console.error('API response does not contain an array:', response.data);
                 }
             })
             .catch((error) => {
-                console.error('Error fetching users:', error);
+                console.error('Error fetching items:', error);
             });
+
     }, []);
+    console.log(subCategoryData);
+
 
     return (
         <>
@@ -312,21 +311,21 @@ const ItemsSalePage = () => {
                                 onSelectAllClick={handleSelectAllClick}
                             />
                             <TableBody>
-                                {itemsData.map((item) => {
+                                {subCategoryData?.map((subCategory) => {
                                     return (
-                                        <React.Fragment key={item.id}>
+                                        <React.Fragment key={subCategory.id}>
                                             <TableRow
                                                 hover
-                                                key={item.id}
+                                                key={subCategory.id}
                                                 tabIndex={-1}
                                                 role="checkbox"
-                                                selected={selectedProductId === item.id}
-                                                onClick={() => handleProductClick(item)}
+                                                selected={selectedProductId === subCategory.id}
+                                                onClick={() => handleProductClick(subCategory)}
                                             >
                                                 <TableCell padding="checkbox">
                                                     <Checkbox
-                                                        checked={selectedProductId === item.id}
-                                                        onChange={(event) => handleCheckboxChange(event, item.id)}
+                                                        checked={selectedProductId === subCategory.id}
+                                                        onChange={(event) => handleCheckboxChange(event, subCategory.id)}
                                                     // checked={selectedUser}
                                                     // onChange={(event) => handleClick(event, name)}
                                                     />
@@ -340,7 +339,7 @@ const ItemsSalePage = () => {
 
                                                 <TableCell align="left">
                                                     <Typography variant="subtitle2" noWrap>
-                                                        {item.id}
+                                                        {subCategory.id}
                                                     </Typography>
                                                 </TableCell>
 
@@ -348,43 +347,37 @@ const ItemsSalePage = () => {
                                                     <Stack direction="row" alignItems="center" spacing={2}>
                                                         {/* <Avatar alt={name} src={avatarUrl} /> */}
                                                         <Typography variant="subtitle2" noWrap>
-                                                            {item.name}
+                                                            {subCategory.name}
                                                         </Typography>
                                                     </Stack>
                                                 </TableCell>
-                                                <TableCell align="left">{item.description}</TableCell>
-                                                <TableCell align="left">{item.createdAt}</TableCell>
-                                                <TableCell align="left">{item.updatedAt}</TableCell>
-                                                {/* <TableCell align="left">{product.origins[0].name}</TableCell>
-                                            <TableCell align="left">
-                                                {product.warehouses.length > 0 ? product.warehouses[0].name : " "}
-                                            </TableCell> */}
+
                                                 <TableCell align="left">
                                                     <Typography variant="subtitle2" noWrap>
-                                                        {item.categories.map((category, index) => {
-                                                            return index === item.categories.length - 1
+                                                        {subCategory.description}
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell align="left">
+                                                    <Typography variant="subtitle2" noWrap>
+                                                        {subCategory.categories.map((category, index) => {
+                                                            return index === subCategory.categories.length - 1
                                                                 ? category.name
                                                                 : `${category.name}, `;
                                                         })}
                                                     </Typography>
                                                 </TableCell>
-
-                                                {/* <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell> */}
-
                                                 <TableCell align="left">
-                                                    <Label color={(item.status === 'Inactive' && 'error') || 'success'}>
-                                                        {(item.status === 'Active') ? 'Đang hoạt động' : 'Ngừng hoạt động'}
+                                                    <Label color={(subCategory.status === 'Inactive' && 'error') || 'success'}>
+                                                        {(subCategory.status === 'Active') ? 'Đang hoạt động' : 'Ngừng hoạt động'}
                                                     </Label>
                                                 </TableCell>
 
-                                                {/* <TableCell align="right">
-                                                    <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
-                                                        <Iconify icon={'eva:more-vertical-fill'} />
-                                                    </IconButton>
-                                                </TableCell> */}
+
+
+
                                             </TableRow>
 
-                                            {selectedProductId === item.id && (
+                                            {selectedProductId === subCategory.id && (
                                                 <TableRow>
                                                     <TableCell colSpan={8}>
                                                         <ProductDetailForm

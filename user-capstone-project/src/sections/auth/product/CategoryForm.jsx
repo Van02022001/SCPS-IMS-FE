@@ -33,7 +33,7 @@ import AddCategoryForm from './AddCategoryForm';
 import AddUnitForm from './AddUnitForm';
 
 // api
-import { createProduct } from '~/data/mutation/product/product-mutation';
+import { createProduct } from '~/data/mutation/subCategory/subCategory-mutation';
 import { getAllCategories } from '~/data/mutation/categories/categories-mutation';
 import { deleteUnits, getAllUnit, getAllUnitMeasurement } from '~/data/mutation/unit/unit-mutation';
 import { deleteOrigins, getAllOrigins } from '~/data/mutation/origins/origins-mutation';

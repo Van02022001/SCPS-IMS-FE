@@ -36,7 +36,7 @@ import { ProductsListHead, ProductsListToolbar } from '~/sections/@dashboard/pro
 import PRODUCTSLIST from '../../_mock/products';
 import CategoryForm from '~/sections/auth/product/CategoryForm';
 // api
-import { getAllProduct } from '~/data/mutation/product/product-mutation';
+import { getAllSubCategory } from '~/data/mutation/subCategory/subCategory-mutation';
 import ProductDetailForm from '~/sections/auth/product/ProductDetailForm';
 import EditCategoryForm from '~/sections/auth/categories/EditCategoryForm';
 
@@ -260,7 +260,7 @@ const ProductsPage = () => {
     const isNotFound = !filteredUsers.length && !!filterName;
 
     useEffect(() => {
-        getAllProduct()
+        getAllSubCategory()
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
