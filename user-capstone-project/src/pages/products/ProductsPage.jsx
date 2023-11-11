@@ -40,7 +40,6 @@ import { getAllProduct } from '~/data/mutation/product/product-mutation';
 import ProductDetailForm from '~/sections/auth/product/ProductDetailForm';
 import EditCategoryForm from '~/sections/auth/categories/EditCategoryForm';
 
-
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -111,7 +110,7 @@ const ProductsPage = () => {
     // State cho phần soft theo name-------------------------------------------------------
     const [filterName, setFilterName] = useState('');
     const [page, setPage] = useState(0);
-    const [orderBy, setOrderBy] = useState("name");
+    const [orderBy, setOrderBy] = useState('name');
     const [order, setOrder] = useState('asc');
     const [sortBy, setSortBy] = useState('createdAt');
     const [sortedProduct, setSortedProduct] = useState([]);
@@ -163,7 +162,6 @@ const ProductsPage = () => {
         setOpen(null);
     };
 
-
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
             const newSelecteds = productsData.map((n) => n.name);
@@ -189,6 +187,7 @@ const ProductsPage = () => {
     };
 
     const handleProductClick = (product) => {
+        console.log(product);
         if (selectedProductId === product.id) {
             setSelectedProductId(null); // Đóng nếu đã mở
         } else {
@@ -199,7 +198,6 @@ const ProductsPage = () => {
     const handleCloseProductDetails = () => {
         setSelectedProductId(null);
     };
-
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -244,7 +242,7 @@ const ProductsPage = () => {
         setFilterName(query);
 
         const filteredUsers = applySortFilter(sortedProduct, getComparator(order, sortBy), query);
-        setSortedProduct(filteredUsers)
+        setSortedProduct(filteredUsers);
     };
 
     const handleCloseOdersForm = () => {
@@ -254,8 +252,6 @@ const ProductsPage = () => {
     const handleCloseEditsForm = () => {
         setOpenEditForm(false);
     };
-
-
 
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - PRODUCTSLIST.length) : 0;
 
@@ -282,13 +278,13 @@ const ProductsPage = () => {
     return (
         <>
             <Helmet>
-                <title> Quản lý sản phẩm | Minimal UI </title>
+                <title> Quản lý danh mục | Minimal UI </title>
             </Helmet>
 
             {/* <Container> */}
             <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                 <Typography variant="h4" gutterBottom>
-                    Quản lý sản phẩm
+                    Quản lý danh mục
                 </Typography>
                 <Button
                     variant="contained"
@@ -304,10 +300,7 @@ const ProductsPage = () => {
                             <CloseIcon color="primary" />
                         </IconButton>{' '}
                     </DialogTitle>
-                    <CategoryForm
-                        onClose={handleCreateProductSuccess}
-                        open={openOderForm}
-                    />
+                    <CategoryForm onClose={handleCreateProductSuccess} open={openOderForm} />
                 </Dialog>
             </Stack>
 
@@ -346,8 +339,8 @@ const ProductsPage = () => {
                                                     <Checkbox
                                                         checked={selectedProductId === product.id}
                                                         onChange={(event) => handleCheckboxChange(event, product.id)}
-                                                    // checked={selectedUser}
-                                                    // onChange={(event) => handleClick(event, name)}
+                                                        // checked={selectedUser}
+                                                        // onChange={(event) => handleClick(event, name)}
                                                     />
                                                 </TableCell>
 
@@ -391,8 +384,12 @@ const ProductsPage = () => {
                                                 {/* <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell> */}
 
                                                 <TableCell align="left">
-                                                    <Label color={(product.status === 'Inactive' && 'error') || 'success'}>
-                                                        {(product.status === 'Active') ? 'Đang hoạt động' : 'Ngừng hoạt động'}
+                                                    <Label
+                                                        color={(product.status === 'Inactive' && 'error') || 'success'}
+                                                    >
+                                                        {product.status === 'Active'
+                                                            ? 'Đang hoạt động'
+                                                            : 'Ngừng hoạt động'}
                                                     </Label>
                                                 </TableCell>
 
@@ -412,7 +409,8 @@ const ProductsPage = () => {
                                                             productId={selectedProductId}
                                                             updateProductInList={updateProductInList}
                                                             updateProductStatusInList={updateProductStatusInList}
-                                                            onClose={handleCloseProductDetails} />
+                                                            onClose={handleCloseProductDetails}
+                                                        />
                                                     </TableCell>
                                                 </TableRow>
                                             )}

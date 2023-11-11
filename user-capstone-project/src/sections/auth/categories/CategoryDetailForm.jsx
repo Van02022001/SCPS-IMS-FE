@@ -234,7 +234,7 @@ const CategoryDetailForm = ({
                         <div style={{ background: currentStatus === 'Active' ? 'green' : 'red' }} />
                         <Typography variant="body1">Trạng thái: {currentStatus}</Typography>
                     </Stack>
-                    {isSuccess && <SuccessAlerts message={successMessage} />}
+                    {isSuccess && <SuccessAlerts />}
                     {isError && <ErrorAlerts errorMessage={errorMessage} />}
                     <Stack spacing={4} margin={2}>
                         <Grid container spacing={1} sx={{ gap: '10px' }}>

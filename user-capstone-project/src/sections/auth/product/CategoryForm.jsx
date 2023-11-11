@@ -54,8 +54,8 @@ const CategoryForm = (props) => {
     // form để call api
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
-    const [minStockLevel, setMinStockLevel] = useState('');
-    const [maxStockLevel, setMaxStockLevel] = useState('');
+    // const [minStockLevel, setMinStockLevel] = useState('');
+    // const [maxStockLevel, setMaxStockLevel] = useState('');
     const [length, setLength] = useState('');
     const [width, setWidth] = useState('');
     const [height, setHeight] = useState('');
@@ -140,8 +140,8 @@ const CategoryForm = (props) => {
         const productParams = {
             name,
             description,
-            minStockLevel,
-            maxStockLevel,
+            // minStockLevel,
+            // maxStockLevel,
             categories_id: tab1Data.categories_id,
             unit_id: tab1Data.unit_id,
             length,
@@ -173,8 +173,8 @@ const CategoryForm = (props) => {
     const handleClear = () => {
         setName('');
         setDescription('');
-        setMinStockLevel('');
-        setMaxStockLevel('');
+        // setMinStockLevel('');
+        // setMaxStockLevel('');
         setLength('');
         setWidth('');
         setHeight('');
@@ -376,20 +376,6 @@ const CategoryForm = (props) => {
                                     </Grid>
                                     <Grid item xs={5} sx={{ marginLeft: 8 }}>
 
-                                        <Grid
-                                            container
-                                            spacing={1}
-                                            direction="row"
-                                            justifyContent="space-between"
-                                            alignItems="center"
-                                            sx={{ marginBottom: 4, gap: 2 }}
-                                        >
-                                            <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
-                                                Tồn kho:{' '}
-                                            </Typography>
-                                            <TextField size="small" variant="outlined" sx={{ width: '70%' }} />
-                                        </Grid>
-
                                         <FormControl size="small" variant="outlined" sx={{ width: '100%' }}>
                                             <Grid
                                                 container
@@ -432,39 +418,6 @@ const CategoryForm = (props) => {
                                                 </Grid>
                                             </Grid>
                                         </FormControl>
-
-                                        <Grid
-                                            container
-                                            spacing={1}
-                                            direction="row"
-                                            justifyContent="space-between"
-                                            alignItems="center"
-                                            sx={{ marginBottom: 4, gap: 2 }}
-                                        >
-                                            <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
-                                                Định mức tồn:{' '}
-                                            </Typography>
-                                            <div>
-                                                <FormControl sx={{ m: 0.2 }} variant="standard">
-                                                    <TextField
-                                                        id="demo-customized-textbox"
-                                                        label="Ít nhất"
-                                                        value={minStockLevel}
-                                                        onChange={(e) => setMinStockLevel(e.target.value)}
-                                                        sx={{ width: '208px' }}
-                                                    />
-                                                </FormControl>
-                                                <FormControl sx={{ m: 0.2 }} variant="standard">
-                                                    <TextField
-                                                        id="demo-customized-textbox"
-                                                        label="Nhiều nhất"
-                                                        value={maxStockLevel}
-                                                        onChange={(e) => setMaxStockLevel(e.target.value)}
-                                                        sx={{ width: '208px' }}
-                                                    />
-                                                </FormControl>
-                                            </div>
-                                        </Grid>
 
                                         <Grid
                                             container

@@ -1,8 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Button, List, ListItem, Tab, Tabs, Stack, Grid, TextField, CardContent, Card, TableContainer, TableHead, TableRow, TableCell, TableBody, Table } from '@mui/material';
+import {
+    Typography,
+    Button,
+    List,
+    ListItem,
+    Tab,
+    Tabs,
+    Stack,
+    Grid,
+    TextField,
+    CardContent,
+    Card,
+    TableContainer,
+    TableHead,
+    TableRow,
+    TableCell,
+    TableBody,
+    Table,
+} from '@mui/material';
 
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-
 
 const OrderDetailForm = ({ orders, orderId, onClose, isOpen }) => {
     const [expandedItem, setExpandedItem] = useState(orderId);
@@ -25,11 +42,11 @@ const OrderDetailForm = ({ orders, orderId, onClose, isOpen }) => {
 
     const handleSave = () => {
         // Xử lý lưu
-    }
+    };
 
     const handleDelete = () => {
         // Xử lý xóa
-    }
+    };
 
     return (
         <div
@@ -50,39 +67,59 @@ const OrderDetailForm = ({ orders, orderId, onClose, isOpen }) => {
                     <Stack spacing={4} margin={2}>
                         <Grid container spacing={2}>
                             <Grid item xs={6}>
-                                <Grid container
+                                <Grid
+                                    container
                                     spacing={1}
                                     direction="row"
                                     justifyContent="space-between"
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
-                                    <Typography variant="body1">Mã hóa đơn:</Typography>
+                                    <Typography variant="body1">Mã sản phẩm:</Typography>
                                     <TextField
                                         size="small"
                                         variant="outlined"
-                                        label="Mã hóa đơn"
+                                        label="Mã sản phẩm"
                                         sx={{ width: '70%', marginRight: 5 }}
-                                        value={order.invoiceCode}
+                                        value={order.code}
                                     />
                                 </Grid>
-                                <Grid container
+                                <Grid
+                                    container
                                     spacing={1}
                                     direction="row"
                                     justifyContent="space-between"
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
-                                    <Typography variant="body1">Thời gian:</Typography>
+                                    <Typography variant="body1">Ngày tạo:</Typography>
                                     <TextField
                                         size="small"
                                         variant="outlined"
-                                        label="Thời gian"
+                                        label="Ngày tạo"
                                         sx={{ width: '70%', marginRight: 5 }}
-                                        value={order.timestamp}
+                                        value={order.createdAt}
                                     />
                                 </Grid>
-                                <Grid container
+                                <Grid
+                                    container
+                                    spacing={1}
+                                    direction="row"
+                                    justifyContent="space-between"
+                                    alignItems="center"
+                                    sx={{ marginBottom: 4, gap: 5 }}
+                                >
+                                    <Typography variant="body1">Ngày cập nhật:</Typography>
+                                    <TextField
+                                        size="small"
+                                        variant="outlined"
+                                        label="Ngày cập nhật"
+                                        sx={{ width: '70%', marginRight: 5 }}
+                                        value={order.updatedAt}
+                                    />
+                                </Grid>
+                                <Grid
+                                    container
                                     spacing={1}
                                     direction="row"
                                     justifyContent="space-between"
@@ -99,7 +136,8 @@ const OrderDetailForm = ({ orders, orderId, onClose, isOpen }) => {
                                     />
                                 </Grid>
 
-                                <Grid container
+                                <Grid
+                                    container
                                     spacing={1}
                                     direction="row"
                                     justifyContent="space-between"
@@ -115,7 +153,8 @@ const OrderDetailForm = ({ orders, orderId, onClose, isOpen }) => {
                                         value={order.priceList}
                                     />
                                 </Grid>
-                                <Grid container
+                                <Grid
+                                    container
                                     spacing={1}
                                     direction="row"
                                     justifyContent="space-between"
@@ -131,12 +170,12 @@ const OrderDetailForm = ({ orders, orderId, onClose, isOpen }) => {
                                         value={order.orderCode}
                                     />
                                 </Grid>
-
                             </Grid>
 
                             {/* 5 field bên phải*/}
-                            <Grid item xs={6} >
-                                <Grid container
+                            <Grid item xs={6}>
+                                <Grid
+                                    container
                                     spacing={1}
                                     direction="row"
                                     justifyContent="space-between"
@@ -152,23 +191,25 @@ const OrderDetailForm = ({ orders, orderId, onClose, isOpen }) => {
                                         value={order.status}
                                     />
                                 </Grid>
-                                <Grid container
+                                <Grid
+                                    container
                                     spacing={1}
                                     direction="row"
                                     justifyContent="space-between"
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
-                                    <Typography variant="body1">Chi nhánh:</Typography>
+                                    <Typography variant="body1">Thương hiệu:</Typography>
                                     <TextField
                                         size="small"
                                         variant="outlined"
                                         label="Chi nhánh"
                                         sx={{ width: '70%', marginRight: 5 }}
-                                        value={order.branch}
+                                        value={order.brand.name}
                                     />
                                 </Grid>
-                                <Grid container
+                                <Grid
+                                    container
                                     spacing={1}
                                     direction="row"
                                     justifyContent="space-between"
@@ -177,16 +218,15 @@ const OrderDetailForm = ({ orders, orderId, onClose, isOpen }) => {
                                 >
                                     <Typography variant="body1">Người bán:</Typography>
                                     <TextField
-                                        size
-
-                                        ="small"
+                                        size="small"
                                         variant="outlined"
-                                        label="Người bán"
+                                        label="Người bán:"
                                         sx={{ width: '70%', marginRight: 5 }}
-                                        value={order.salesperson}
+                                        value={order.supplier.name}
                                     />
                                 </Grid>
-                                <Grid container
+                                <Grid
+                                    container
                                     spacing={1}
                                     direction="row"
                                     justifyContent="space-between"
@@ -199,23 +239,30 @@ const OrderDetailForm = ({ orders, orderId, onClose, isOpen }) => {
                                         variant="outlined"
                                         label="Người tạo"
                                         sx={{ width: '70%', marginRight: 5 }}
-                                        value={order.creator}
+                                        value={
+                                            order.createdBy.firstName +
+                                            ' ' +
+                                            order.createdBy.middleName +
+                                            ' ' +
+                                            order.createdBy.lastName
+                                        }
                                     />
                                 </Grid>
-                                <Grid container
+                                <Grid
+                                    container
                                     spacing={1}
                                     direction="row"
                                     justifyContent="space-between"
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
-                                    <Typography variant="body1">Kênh bán:</Typography>
+                                    <Typography variant="body1">Xuất xứ:</Typography>
                                     <TextField
                                         size="small"
                                         variant="outlined"
-                                        label="Kênh bán"
+                                        label="Xuất xứ"
                                         sx={{ width: '70%', marginRight: 5 }}
-                                        value={order.salesChannel}
+                                        value={order.origin.name}
                                     />
                                 </Grid>
                             </Grid>
@@ -282,16 +329,12 @@ const OrderDetailForm = ({ orders, orderId, onClose, isOpen }) => {
                         </Button>
                     </div>
                 </div>
-
             )}
             {selectedTab === 1 && (
-                <div style={{ flex: 1 }}>
-                    {/* Hiển thị nội dung cho tab "Lịch sử thanh toán" ở đây */}
-                </div>
+                <div style={{ flex: 1 }}>{/* Hiển thị nội dung cho tab "Lịch sử thanh toán" ở đây */}</div>
             )}
-
         </div>
     );
-}
+};
 
 export default OrderDetailForm;

@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 // @mui
 import {
     Card,
@@ -28,23 +28,24 @@ import {
 import Label from '../../components/label';
 import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
-import CloseIcon from "@mui/icons-material/Close"
+import CloseIcon from '@mui/icons-material/Close';
 // sections
 import { UserListHead, UserListToolbar } from '../../sections/@dashboard/user';
 import OdersForm from '~/sections/@dashboard/oders/OdersForm';
 import OrderDetailForm from '~/sections/auth/orders/OrderDetailForm';
 import USERLIST from '../../_mock/user';
+import { getAllItem } from '~/data/mutation/items/item-mutation';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-    { id: 'name', label: 'Mã hóa đơn', alignRight: false },
-    { id: 'company', label: 'Thời gian', alignRight: false },
-    { id: 'role', label: 'Mã khách hàng', alignRight: false },
-    { id: 'isVerified', label: 'Khách hàng', alignRight: false },
-    { id: 'status', label: 'Tổng tiền hàng', alignRight: false },
-    { id: 'status', label: 'Giảm giá', alignRight: false },
-    { id: 'status', label: 'Khách đã trả', alignRight: false },
+    { id: 'code', label: 'Mã sản phẩm', alignRight: false },
+    { id: 'subCategory', label: 'Danh mục sản phẩm', alignRight: false },
+    { id: 'role', label: 'Số lượng', alignRight: false },
+    { id: 'status', label: 'Thương hiệu', alignRight: false },
+    { id: 'isVerified', label: 'Nhà cung cấp', alignRight: false },
+    { id: 'status', label: 'Nguồn gốc', alignRight: false },
+    { id: 'status', label: 'Trạng thái', alignRight: false },
     { id: '' },
 ];
 const orderDetailFormStyles = {
@@ -105,18 +106,15 @@ const OdersManagerPage = () => {
     const [selectedOrderId, setSelectedOrderId] = useState(null);
     const [selectedOrder, setSelectedOrder] = useState(null);
 
-    const handleOrderClick = (order) => {
-        if (selectedOrderId === order.id) {
-            setSelectedOrderId(null); // Đóng nếu đã mở
-        } else {
-            setSelectedOrderId(order.id); // Mở hoặc chuyển sang hóa đơn khác
-        }
-    };
+    const [selectedItemId, setSelectedItemId] = useState([]);
+    // State data và xử lý data
+    const [itemsData, setItemData] = useState([]);
+    const [itemStatus, setItemStatus] = useState('');
+    const [sortedItem, setSortedItem] = useState([]);
 
     const handleCloseOrderDetails = () => {
         setSelectedOrder(null);
     };
-
 
     const handleOpenMenu = (event) => {
         setOpen(event.currentTarget);
@@ -172,34 +170,83 @@ const OdersManagerPage = () => {
         setFilterName(event.target.value);
     };
 
+    const handleItemClick = (item) => {
+        console.log(item);
+        if (selectedItemId === item.id) {
+            setSelectedItemId(null); // Đóng nếu đã mở
+        } else {
+            setSelectedItemId(item.id); // Mở hoặc chuyển sang sản phẩm khác
+        }
+    };
+    // Các hàm xử lý soft theo name--------------------------------------------------------------------------------------------------------------------------------
+    const handleCheckboxChange = (event, itemId) => {
+        if (event.target.checked) {
+            // Nếu người dùng chọn checkbox, thêm sản phẩm vào danh sách đã chọn.
+            setSelectedItemId([...selectedItemId, itemId]);
+        } else {
+            // Nếu người dùng bỏ chọn checkbox, loại bỏ sản phẩm khỏi danh sách đã chọn.
+            setSelectedItemId(selectedItemId.filter((id) => id !== itemId));
+        }
+    };
+
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
     const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
 
     const isNotFound = !filteredUsers.length && !!filterName;
 
+    useEffect(() => {
+        getAllItem()
+            .then((respone) => {
+                const data = respone.data;
+                if (Array.isArray(data)) {
+                    setItemData(data);
+                    setSortedItem(data);
+                } else {
+                    console.error('API response is not an array:', data);
+                }
+            })
+            .catch((error) => {
+                console.error('Error fetching users:', error);
+            });
+    }, []);
+
+    console.log(itemsData);
 
     return (
         <>
             <Helmet>
-                <title> User | Minimal UI </title>
+                <title> Quản lý sản phẩm | Minimal UI </title>
             </Helmet>
-
 
             <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                 <Typography variant="h4" gutterBottom>
-                    Quản lý hóa đơn
+                    Quản lý sản phẩm
                 </Typography>
-                <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={() => setOpenOderForm(true)}>
-                    Thêm hóa đơn
+                <Button
+                    variant="contained"
+                    startIcon={<Iconify icon="eva:plus-fill" />}
+                    onClick={() => setOpenOderForm(true)}
+                >
+                    Thêm sản phẩm
                 </Button>
-                <Dialog fullWidth maxWidth="sm" open={openOderForm} >
-                    <DialogTitle>Tạo Hóa Đơn  <IconButton style={{ float: 'right' }} onClick={handleCloseOdersForm}><CloseIcon color="primary" /></IconButton>  </DialogTitle><OdersForm /></Dialog>
-
+                <Dialog fullWidth maxWidth="md" open={openOderForm}>
+                    <DialogTitle>
+                        Tạo sản phẩm{' '}
+                        <IconButton style={{ float: 'right' }} onClick={handleCloseOdersForm}>
+                            <CloseIcon color="primary" />
+                        </IconButton>{' '}
+                    </DialogTitle>
+                    <OdersForm />
+                </Dialog>
             </Stack>
 
             <Card>
-                <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+                <UserListToolbar
+                    numSelected={selected.length}
+                    filterName={filterName}
+                    onFilterName={handleFilterByName}
+                />
 
                 <Scrollbar>
                     <TableContainer sx={{ minWidth: 800 }}>
@@ -214,40 +261,48 @@ const OdersManagerPage = () => {
                                 onSelectAllClick={handleSelectAllClick}
                             />
                             <TableBody>
-                                {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                                    const { id, name, role, status, company, avatarUrl, isVerified } = row;
-                                    const selectedUser = selected.indexOf(name) !== -1;
-
+                                {itemsData.map((item) => {
                                     return (
-                                        <React.Fragment key={id}>
+                                        <React.Fragment key={item.id}>
                                             <TableRow
                                                 hover
+                                                key={item.id}
                                                 tabIndex={-1}
                                                 role="checkbox"
-                                                selected={selectedOrderId === id}
-                                                onClick={() => handleOrderClick(row)}
+                                                selected={selectedItemId === item.id}
+                                                onClick={() => handleItemClick(item)}
                                             >
                                                 <TableCell padding="checkbox">
-                                                    <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, name)} />
+                                                    <Checkbox
+                                                        checked={selectedItemId === item.id}
+                                                        onChange={(event) => handleCheckboxChange(event, item.id)}
+                                                        // checked={selectedUser}
+                                                        // onChange={(event) => handleClick(event, name)}
+                                                    />
                                                 </TableCell>
-
-                                                <TableCell component="th" scope="row" padding="none">
-                                                    <Stack direction="row" alignItems="center" spacing={2}>
-                                                        <Avatar alt={name} src={avatarUrl} />
-                                                        <Typography variant="subtitle2" noWrap>
-                                                            {name}
-                                                        </Typography>
-                                                    </Stack>
-                                                </TableCell>
-
-                                                <TableCell align="left">{company}</TableCell>
-
-                                                <TableCell align="left">{role}</TableCell>
-
-                                                <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell>
 
                                                 <TableCell align="left">
-                                                    <Label color={(status === 'banned' && 'error') || 'success'}>{sentenceCase(status)}</Label>
+                                                    <Typography variant="subtitle2" noWrap>
+                                                        {item.code}
+                                                    </Typography>
+                                                </TableCell>
+
+                                                <TableCell align="left">{item.subCategory.name}</TableCell>
+
+                                                <TableCell align="left">{item.quantity}</TableCell>
+
+                                                <TableCell align="left">{item.brand.name}</TableCell>
+
+                                                <TableCell align="left">{item.supplier.name}</TableCell>
+
+                                                <TableCell align="left">{item.origin.name}</TableCell>
+
+                                                <TableCell align="left">
+                                                    <Label color={(item.status === 'Inactive' && 'error') || 'success'}>
+                                                        {item.status === 'Active'
+                                                            ? 'Đang hoạt động'
+                                                            : 'Ngừng hoạt động'}
+                                                    </Label>
                                                 </TableCell>
 
                                                 <TableCell align="right">
@@ -257,11 +312,14 @@ const OdersManagerPage = () => {
                                                 </TableCell>
                                             </TableRow>
 
-
-                                            {selectedOrderId === id && (
+                                            {selectedItemId === item.id && (
                                                 <TableRow>
                                                     <TableCell colSpan={8}>
-                                                        <OrderDetailForm orders={USERLIST} orderId={selectedOrderId} onClose={handleCloseOrderDetails} />
+                                                        <OrderDetailForm
+                                                            orders={itemsData}
+                                                            orderId={selectedItemId}
+                                                            onClose={handleCloseOrderDetails}
+                                                        />
                                                     </TableCell>
                                                 </TableRow>
                                             )}
@@ -308,8 +366,6 @@ const OdersManagerPage = () => {
                 />
             </Card>
 
-
-
             <Popover
                 open={Boolean(open)}
                 anchorEl={open}
@@ -340,5 +396,5 @@ const OdersManagerPage = () => {
             </Popover>
         </>
     );
-}
-export default OdersManagerPage
+};
+export default OdersManagerPage;
