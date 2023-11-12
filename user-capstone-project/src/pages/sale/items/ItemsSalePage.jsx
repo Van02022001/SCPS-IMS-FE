@@ -39,7 +39,7 @@ import CategoryForm from '~/sections/auth/product/CategoryForm';
 import { getAllItems } from '~/data/mutation/items/items-mutation';
 import ProductDetailForm from '~/sections/auth/product/ProductDetailForm';
 import EditCategoryForm from '~/sections/auth/categories/EditCategoryForm';
-import { getAllSubCategory } from '~/data/mutation/subCategory/subCategory-mutation';
+import { getAllProduct } from '~/data/mutation/subCategory/subCategory-mutation';
 
 
 // ----------------------------------------------------------------------
@@ -260,7 +260,7 @@ const ItemsSalePage = () => {
     const isNotFound = !filteredUsers.length && !!filterName;
 
     useEffect(() => {
-        getAllSubCategory()
+        getAllProduct()
             .then((response) => {
                 const data = response.data;
                 if (Array.isArray(data)) {

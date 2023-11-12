@@ -89,6 +89,11 @@ const managerNavConfig = [
       path: '/dashboard/warehouse',
       icon: <Inventory2Outlined/>,
     },
+    {
+      title: 'Quản lý đơn vị',
+      path: '/dashboard/unit',
+      icon: <Inventory2Outlined/>,
+    },
   ],
   },
 

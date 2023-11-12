@@ -36,7 +36,7 @@ import { ProductsListHead, ProductsListToolbar } from '~/sections/@dashboard/pro
 import PRODUCTSLIST from '../../_mock/products';
 import CategoryForm from '~/sections/auth/product/CategoryForm';
 // api
-import { getAllSubCategory } from '~/data/mutation/subCategory/subCategory-mutation';
+import { getAllProduct } from '~/data/mutation/subCategory/subCategory-mutation';
 import ProductDetailForm from '~/sections/auth/product/ProductDetailForm';
 import EditCategoryForm from '~/sections/auth/categories/EditCategoryForm';
 
@@ -260,7 +260,7 @@ const ProductsPage = () => {
     const isNotFound = !filteredUsers.length && !!filterName;
 
     useEffect(() => {
-        getAllSubCategory()
+        getAllProduct()
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
@@ -339,8 +339,8 @@ const ProductsPage = () => {
                                                     <Checkbox
                                                         checked={selectedProductId === product.id}
                                                         onChange={(event) => handleCheckboxChange(event, product.id)}
-                                                        // checked={selectedUser}
-                                                        // onChange={(event) => handleClick(event, name)}
+                                                    // checked={selectedUser}
+                                                    // onChange={(event) => handleClick(event, name)}
                                                     />
                                                 </TableCell>
 

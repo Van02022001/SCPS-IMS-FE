@@ -259,7 +259,7 @@ const ExportsReceipt = () => {
     const isNotFound = !filteredUsers.length && !!filterName;
 
     useEffect(() => {
-        getAllSubCategory()
+        getAllProduct()
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {

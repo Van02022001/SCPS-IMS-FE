@@ -30,6 +30,7 @@ import GoodsReceiptPage from './pages/inventory_staff/transaction/GoodsReceiptPa
 import ViewReceiptPage from './pages/inventory_staff/transaction/ViewReceiptPage';
 import ExportsReceipt from './pages/inventory_staff/transaction/ExportsReceipt';
 import BadsReceiptPage from './pages/inventory_staff/transaction/BadsReceiptPage';
+import UnitPage from './pages/manager/unit/UnitPage';
 
 // ----------------------------------------------------------------------
 
@@ -55,6 +56,7 @@ const Router = () => {
                 { path: 'odersManager', element: <OdersManagerPage /> },
                 { path: 'category', element: <CategoryPage /> },
                 { path: 'brand', element: <BrandPage /> },
+                { path: 'unit', element: <UnitPage/> },
                 { path: 'blog', element: <BlogPage /> },
                 { path: 'warehouse', element: <WarehousePage /> },
                 {

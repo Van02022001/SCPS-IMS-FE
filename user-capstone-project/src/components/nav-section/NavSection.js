@@ -60,7 +60,7 @@ function NavItem({ item, isReportMenuOpen }) {
           marginBottom: open ? '170px' : 0,
         }),
         ...(item.title === 'Quản lý mục' && !isReportMenuOpen && {
-          marginBottom: open ? '200px' : 0,
+          marginBottom: open ? '250px' : 0,
         }),
       }}
     >
