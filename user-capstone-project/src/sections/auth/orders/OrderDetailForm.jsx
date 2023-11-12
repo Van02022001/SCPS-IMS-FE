@@ -20,11 +20,27 @@ import {
 } from '@mui/material';
 
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import { editItem } from '~/data/mutation/items/item-mutation';
+import SuccessAlerts from '~/components/alert/SuccessAlert';
+import ErrorAlerts from '~/components/alert/ErrorAlert';
 
-const OrderDetailForm = ({ orders, orderId, onClose, isOpen }) => {
+const OrderDetailForm = ({ orders, orderId, onClose, isOpen, updateItemInList }) => {
     const [expandedItem, setExpandedItem] = useState(orderId);
     const [formHeight, setFormHeight] = useState(0);
     const [selectedTab, setSelectedTab] = useState(0); // Ban đầu chọn tab "Thông tin"
+
+    const [editedItem, setEditedItem] = useState(null);
+
+    const [sub_category_id, setSub_category_id] = useState([]);
+    const [brand_id, setBrand_id] = useState([]);
+    const [supplier_id, setSupplier_id] = useState([]);
+    const [origin_id, setOrigin_id] = useState([]);
+
+    //thông báo
+    const [isSuccess, setIsSuccess] = useState(false);
+    const [isError, setIsError] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
         if (isOpen) {
@@ -46,6 +62,68 @@ const OrderDetailForm = ({ orders, orderId, onClose, isOpen }) => {
 
     const handleDelete = () => {
         // Xử lý xóa
+    };
+
+    // useEffect(() => {
+    //     if (mode === 'create') {
+    //         setEditedProduct({
+    //             minStockLevel: 0,
+    //             maxStockLevel: 0,
+    //             sub_category_id: [],
+    //             brand_id: [],
+    //             supplier_id: [],
+    //             origin_id: [],
+                
+    //         });
+    //     } else {
+    //         const item = orders.find((o) => o.id === orderId);
+    //         console.log(item);
+    //         if (product) {
+    //             const categoryIds = product.categories ? product.categories.map((category) => category.id) : [];
+    //             const unitId = product.unit ? product.unit.id : 0;
+    //             const unitMeaId = product.size.unitMeasurement ? product.size.unitMeasurement.id : 0;
+
+    //             const editedProduct = {
+    //                 categories_id: categoryIds,
+    //                 unit_id: unitId,
+    //                 length: product.size.length ? product.size.length : 0,
+    //                 width: product.size ? product.size.width : 0,
+    //                 height: product.size ? product.size.height : 0,
+    //                 diameter: product.size ? product.size.diameter : 0,
+    //                 unit_mea_id: unitMeaId,
+    //             };
+
+    //             setEditedProduct(editedProduct);
+    //             setCurrentStatus(product.status);
+    //             console.log(editedProduct);
+    //         }
+    //     }
+    // }, [productId, products, mode]);
+
+    const updateItems = async () => {
+        if (!editedItem) {
+            return;
+        }
+        try {
+            const response = await editItem(orderId, editedItem);
+
+            if (response.status === '200 OK') {
+                setIsSuccess(true);
+                setIsError(false);
+                setSuccessMessage(response.message);
+            }
+
+            updateItemInList(response.data);
+            console.log('Item updated:', response);
+        } catch (error) {
+            console.error('An error occurred while updating the item:', error);
+            setIsError(true);
+            setIsSuccess(false);
+            setErrorMessage(error.response.data.message);
+            if (error.response) {
+                console.log('Error response:', error.response);
+            }
+        }
     };
 
     return (
@@ -318,8 +396,10 @@ const OrderDetailForm = ({ orders, orderId, onClose, isOpen }) => {
                                 <Typography variant="body1">Khách đã trả: {order.amountPaid}</Typography>
                             </Grid>
                         </Grid>
-                        <Button variant="contained" color="primary" onClick={handleSave}>
-                            Cập nhập
+                        {isSuccess && <SuccessAlerts message={successMessage} />}
+                        {isError && <ErrorAlerts errorMessage={errorMessage} />}
+                        <Button variant="contained" color="primary" onClick={updateItems}>
+                            Cập nhật
                         </Button>
                         <Button variant="outlined" color="secondary" onClick={handleDelete}>
                             Xóa

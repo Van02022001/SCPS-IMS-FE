@@ -239,7 +239,7 @@ const CategoryDetailForm = ({
                     <Stack spacing={4} margin={2}>
                         <Grid container spacing={1} sx={{ gap: '10px' }}>
                             <Button variant="contained" color="primary" onClick={updateCategory}>
-                                Cập nhập
+                                Cập nhật
                             </Button>
                             <Button variant="contained" color="error" onClick={updateCategoryStatus}>
                                 Thay đổi trạng thái

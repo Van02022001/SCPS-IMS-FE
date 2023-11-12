@@ -188,6 +188,17 @@ const OdersManagerPage = () => {
             setSelectedItemId(selectedItemId.filter((id) => id !== itemId));
         }
     };
+    // Hàm để thay đổi data mỗi khi Edit xong api-------------------------------------------------------------
+    const updateItemInList = (updatedItem) => {
+        const itemIndex = itemsData.findIndex((item) => item.id === updatedItem.id);
+
+        if (itemIndex !== -1) {
+            const updatedItemData = [...itemsData];
+            updatedItemData[itemIndex] = updatedItem;
+
+            setItemData(updatedItemData);
+        }
+    };
 
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
@@ -319,6 +330,7 @@ const OdersManagerPage = () => {
                                                             orders={itemsData}
                                                             orderId={selectedItemId}
                                                             onClose={handleCloseOrderDetails}
+                                                            updateItemInList={updateItemInList}
                                                         />
                                                     </TableCell>
                                                 </TableRow>

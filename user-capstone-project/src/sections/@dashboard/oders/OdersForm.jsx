@@ -105,8 +105,8 @@ const OdersForm = (props) => {
             maxStockLevel,
             sub_category_id: tab1Data.sub_category_id,
             brand_id: tab1Data.brand_id,
-            // supplier_id: tab1Data.categories_id,
-            // origin_id: tab1Data.categories_id,
+            supplier_id: tab1Data.supplier_id,
+            origin_id: tab1Data.origin_id,
         };
         try {
             const response = await createItem(itemParams);
