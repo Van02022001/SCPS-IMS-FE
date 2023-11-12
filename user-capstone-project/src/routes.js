@@ -13,7 +13,6 @@ import CreateProduct from './sections/@dashboard/products/crudProducts/CreatePro
 import ProductDetail from './pages/productDetail/ProductDetail';
 import OdersManagerPage from './pages/manager/items/ItemsManager';
 import CategoryPage from './pages/manager/category/CategoryPage';
-import BrandPage from './pages/manager/brand/BrandPage';
 import UpdateProduct from './sections/@dashboard/products/crudProducts/UpdateProduct';
 import ReportPage from './pages/manager/report/ReportPage';
 import ReportProductPage from './pages/manager/report/ReportProductPage';
@@ -31,6 +30,8 @@ import ViewReceiptPage from './pages/inventory_staff/transaction/ViewReceiptPage
 import ExportsReceipt from './pages/inventory_staff/transaction/ExportsReceipt';
 import BadsReceiptPage from './pages/inventory_staff/transaction/BadsReceiptPage';
 import UnitPage from './pages/manager/unit/UnitPage';
+import OriginPage from './pages/manager/origin/OriginPage';
+import BrandPage from './pages/manager/brand/BrandPage';
 
 // ----------------------------------------------------------------------
 
@@ -55,6 +56,7 @@ const Router = () => {
                 { path: 'productsDetail', element: <ProductDetail /> },
                 { path: 'odersManager', element: <OdersManagerPage /> },
                 { path: 'category', element: <CategoryPage /> },
+                { path: 'origin', element: <OriginPage /> },
                 { path: 'brand', element: <BrandPage /> },
                 { path: 'unit', element: <UnitPage/> },
                 { path: 'blog', element: <BlogPage /> },

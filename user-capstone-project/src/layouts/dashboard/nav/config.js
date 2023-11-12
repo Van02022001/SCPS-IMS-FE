@@ -42,6 +42,11 @@ const navConfig = [
       icon: <CategoryOutlined />,
     },
     {
+      title: 'Quản lý nguồn gốc',
+      path: '/dashboard/origin',
+      icon: <LocalOfferOutlined />,
+    },
+    {
       title: 'Quản lý thương hiệu',
       path: '/dashboard/brand',
       icon: <LocalOfferOutlined />,

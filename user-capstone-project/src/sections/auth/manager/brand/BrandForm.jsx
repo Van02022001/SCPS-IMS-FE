@@ -1,35 +1,27 @@
 import {
     Button,
-    Checkbox,
-    Dialog,
-    DialogActions,
     DialogContent,
-    DialogContentText,
-    DialogTitle,
-    FormControlLabel,
-    IconButton,
-    List,
-    ListItem,
-    ListItemText,
     Stack,
     TextField,
-    Typography,
+
 } from '@mui/material';
 import { useState } from 'react';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { createOrigins } from '~/data/mutation/origins/origins-mutation';
+// api
+import { createBrands } from '~/data/mutation/brand/brands-mutation';
 
 const BrandForm = () => {
     const [name, setName] = useState('');
+    const [description, setDescription] = useState('');
 
-    const handleCreateOrigins = async () => {
-        const originParams = {
+
+    const handleCreateBrand = async () => {
+        const unitParams = {
             name,
+            description,
         };
         try {
-            const response = await createOrigins(originParams);
-            console.log('Create origin response:', response);
+            const response = await createBrands(unitParams);
+            console.log('Create brand response:', response);
         } catch (error) {
             console.error('Error creating origin:', error);
         }
@@ -44,18 +36,22 @@ const BrandForm = () => {
                         <TextField
                             variant="outlined"
                             value={name}
-                            label="Tên thương hiệu"
+                            label="Tên đơn vị"
                             onChange={(e) => setName(e.target.value)}
                         />
-                        <Button color="primary" variant="contained" onClick={handleCreateOrigins}>
+                        <TextField
+                            variant="outlined"
+                            value={description}
+                            multiline
+                            rows={3}
+                            label="Mô tả"
+                            onChange={(e) => setDescription(e.target.value)}
+                        />
+                        <Button color="primary" variant="contained" onClick={handleCreateBrand}>
                             Tạo
                         </Button>
                     </Stack>
                 </DialogContent>
-                <DialogActions>
-                    {/* <Button color="success" variant="contained">Yes</Button>
-                    <Button onClick={closepopup} color="error" variant="contained">Close</Button> */}
-                </DialogActions>
             </div>
         </>
     );

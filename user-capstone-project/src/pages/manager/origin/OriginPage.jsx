@@ -34,18 +34,13 @@ import CloseIcon from '@mui/icons-material/Close';
 import { UserListHead, UserListToolbar } from '../../../sections/@dashboard/user';
 // mock
 import USERLIST from '../../../_mock/user';
+import BrandForm from '~/sections/@dashboard/origin/OriginForm';
 import { getAllOrigins } from '~/data/mutation/origins/origins-mutation';
 import OriginDetailForm from '~/sections/auth/origin/OriginDetailForm';
-import { getAllBrands } from '~/data/mutation/brand/brands-mutation';
-import BrandForm from '~/sections/auth/manager/brand/BrandForm';
-import BrandDetailForm from '~/sections/auth/manager/brand/BrandDetailForm';
 
 // ----------------------------------------------------------------------
 
-const TABLE_HEAD = [
-    { id: 'name', label: 'Tên', alignRight: false },
-    { id: 'description', label: 'Mô tả', alignRight: false },
-];
+const TABLE_HEAD = [{ id: 'name', label: 'Tên', alignRight: false }, { id: '' }];
 
 // ----------------------------------------------------------------------
 
@@ -78,8 +73,8 @@ function applySortFilter(array, comparator, query) {
     return stabilizedThis.map((el) => el[0]);
 }
 
-const BrandPage = () => {
-    const [selectedBrandId, setSelectedBrandId] = useState(null);
+const OriginPage = () => {
+    const [selectedOriginId, setSelectedOriginId] = useState(null);
 
     const [open, setOpen] = useState(null);
 
@@ -97,14 +92,14 @@ const BrandPage = () => {
 
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
-    const [brandData, setBrandData] = useState([]);
+    const [originData, setOriginData] = useState([]);
 
     useEffect(() => {
-        getAllBrands()
+        getAllOrigins()
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
-                    setBrandData(data);
+                    setOriginData(data);
                 } else {
                     console.error('API response is not an array:', data);
                 }
@@ -152,17 +147,17 @@ const BrandPage = () => {
         setSelected(newSelected);
     };
 
-    const handleBrandClick = (brand) => {
-        if (selectedBrandId === brand.id) {
-            console.log(selectedBrandId);
-            setSelectedBrandId(null); // Đóng nếu đã mở
+    const handleOriginClick = (origin) => {
+        if (selectedOriginId === origin.id) {
+            console.log(selectedOriginId);
+            setSelectedOriginId(null); // Đóng nếu đã mở
         } else {
-            setSelectedBrandId(brand.id); // Mở hoặc chuyển sang hóa đơn khác
+            setSelectedOriginId(origin.id); // Mở hoặc chuyển sang hóa đơn khác
         }
     };
 
-    const handleCloseBrandDetails = () => {
-        setSelectedBrandId(null);
+    const handleCloseOriginDetails = () => {
+        setSelectedOriginId(null);
     };
 
     const handleChangePage = (event, newPage) => {
@@ -192,24 +187,24 @@ const BrandPage = () => {
     return (
         <>
             <Helmet>
-                <title> Quản lý thương hiệu | Minimal UI </title>
+                <title> Quản lý nguồn gốc | Minimal UI </title>
             </Helmet>
 
             <Container>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                     <Typography variant="h4" gutterBottom>
-                        Quản lý thương hiệu
+                        Quản lý nguồn gốc
                     </Typography>
                     <Button
                         variant="contained"
                         startIcon={<Iconify icon="eva:plus-fill" />}
                         onClick={() => setOpenOderForm(true)}
                     >
-                        Thêm thương hiệu
+                        Thêm nguồn gốc
                     </Button>
                     <Dialog fullWidth maxWidth="sm" open={openOderForm}>
                         <DialogTitle>
-                            Tạo thương hiệu{' '}
+                            Tạo nguồn gốc{' '}
                             <IconButton style={{ float: 'right' }} onClick={handleCloseOdersForm}>
                                 <CloseIcon color="primary" />
                             </IconButton>{' '}
@@ -238,20 +233,20 @@ const BrandPage = () => {
                                     onSelectAllClick={handleSelectAllClick}
                                 />
                                 <TableBody>
-                                    {brandData.map((brand) => {
+                                    {originData.map((origin) => {
                                         return (
-                                            <React.Fragment key={brand.id}>
+                                            <React.Fragment key={origin.id}>
                                                 <TableRow
                                                     hover
-                                                    key={brand.id}
+                                                    key={origin.id}
                                                     tabIndex={-1}
                                                     role="checkbox"
-                                                    selected={selectedBrandId === brand.id}
-                                                    onClick={() => handleBrandClick(brand)}
+                                                    selected={selectedOriginId === origin.id}
+                                                    onClick={() => handleOriginClick(origin)}
                                                 >
                                                     <TableCell padding="checkbox">
                                                         <Checkbox
-                                                            onChange={(event) => handleClick(event, brand.name)}
+                                                            onChange={(event) => handleClick(event, origin.name)}
                                                         />
                                                     </TableCell>
 
@@ -260,25 +255,18 @@ const BrandPage = () => {
                                                         <Stack direction="row" alignItems="center" spacing={2}>
                                                             {/* <Avatar alt={name} src={avatarUrl} /> */}
                                                             <Typography variant="subtitle2" noWrap>
-                                                                {brand.name}
-                                                            </Typography>
-                                                        </Stack>
-                                                    </TableCell>
-                                                    <TableCell component="th" scope="row" padding="none">
-                                                        <Stack direction="row" alignItems="center" spacing={2}>
-                                                            <Typography variant="subtitle2" noWrap>
-                                                                {brand.description}
+                                                                {origin.name}
                                                             </Typography>
                                                         </Stack>
                                                     </TableCell>
                                                 </TableRow>
-                                                {selectedBrandId === brand.id && (
+                                                {selectedOriginId === origin.id && (
                                                     <TableRow>
                                                         <TableCell colSpan={8}>
-                                                            <BrandDetailForm
-                                                                brands={brandData}
-                                                                brandsId={selectedBrandId}
-                                                                onClose={handleCloseBrandDetails}
+                                                            <OriginDetailForm
+                                                                origins={originData}
+                                                                originsId={selectedOriginId}
+                                                                onClose={handleCloseOriginDetails}
                                                             />
                                                         </TableCell>
                                                     </TableRow>
@@ -353,4 +341,4 @@ const BrandPage = () => {
         </>
     );
 };
-export default BrandPage;
+export default OriginPage;
