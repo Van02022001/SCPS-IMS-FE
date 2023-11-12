@@ -1,10 +1,13 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 // @mui
 import { alpha } from '@mui/material/styles';
-import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover } from '@mui/material';
+import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover, Dialog, DialogTitle } from '@mui/material';
+import CloseIcon from "@mui/icons-material/Close"
 // mocks_
 import account from '../../../_mock/account';
-
+import UserInfoForm from '../../../sections/auth/home/UserInfoForm';
+import { logout } from '~/data/mutation/login/login-mutation';
 // ----------------------------------------------------------------------
 
 const MENU_OPTIONS = [
@@ -13,7 +16,7 @@ const MENU_OPTIONS = [
     icon: 'eva:home-fill',
   },
   {
-    label: 'Profile',
+    label: 'Hồ sơ',
     icon: 'eva:person-fill',
   },
   {
@@ -25,15 +28,50 @@ const MENU_OPTIONS = [
 // ----------------------------------------------------------------------
 
 export default function AccountPopover() {
-  const [open, setOpen] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
 
+  // const [openUseProfileForm, setOpenUseProfileForm] = useState(false);
+  const [profilePopupOpen, setProfilePopupOpen] = useState(false);
+  const [popoverOpen, setPopoverOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [refreshToken, setRefreshToken] = useState('');
+
+  const navigate = useNavigate();
   const handleOpen = (event) => {
-    setOpen(event.currentTarget);
+    setAnchorEl(event.currentTarget);
+    if (event.currentTarget.id === 'profile-label') {
+      setProfilePopupOpen(true);
+      setDialogOpen(true);
+      setOpen(true);
+    } else {
+      setOpen(true);
+    }
   };
 
   const handleClose = () => {
-    setOpen(null);
+    setAnchorEl(null);
   };
+
+  const handleCloseUserProfileForm = () => {
+    setOpen(false);
+    setProfilePopupOpen(false);
+    setDialogOpen(false);
+  };
+  const handleLogout = async () => {
+    try {
+        const rftoken = localStorage.getItem('refreshToken');
+        const schemaParams = { refreshToken: rftoken, };
+        const response = await logout(schemaParams);
+        if (response.status === 202) {
+            navigate('/login');
+        } else {
+            // Xử lý lỗi nếu cần.
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+};
 
   return (
     <>
@@ -41,7 +79,7 @@ export default function AccountPopover() {
         onClick={handleOpen}
         sx={{
           p: 0,
-          ...(open && {
+          ...(anchorEl && {
             '&:before': {
               zIndex: 1,
               content: "''",
@@ -49,7 +87,6 @@ export default function AccountPopover() {
               height: '100%',
               borderRadius: '50%',
               position: 'absolute',
-              bgcolor: (theme) => alpha(theme.palette.grey[900], 0.8),
             },
           }),
         }}
@@ -58,8 +95,8 @@ export default function AccountPopover() {
       </IconButton>
 
       <Popover
-        open={Boolean(open)}
-        anchorEl={open}
+        open={Boolean(anchorEl) && open}
+        anchorEl={anchorEl}
         onClose={handleClose}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
@@ -89,7 +126,11 @@ export default function AccountPopover() {
 
         <Stack sx={{ p: 1 }}>
           {MENU_OPTIONS.map((option) => (
-            <MenuItem key={option.label} onClick={handleClose}>
+            <MenuItem
+              key={option.label}
+              onClick={handleOpen}
+              id={option.label === 'Hồ sơ' ? 'profile-label' : ''}
+            >
               {option.label}
             </MenuItem>
           ))}
@@ -97,10 +138,19 @@ export default function AccountPopover() {
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
-        <MenuItem onClick={handleClose} sx={{ m: 1 }}>
-          Logout
+        <MenuItem onClick={handleLogout} sx={{ m: 1 }}>
+          Đăng xuất
         </MenuItem>
       </Popover>
+
+      <Dialog fullWidth maxWidth open={dialogOpen} onClose={handleCloseUserProfileForm}>
+        <DialogTitle>Hồ sơ tài khoản{' '}
+          <IconButton style={{ float: 'right' }} onClick={handleCloseUserProfileForm}>
+            <CloseIcon color="primary" />
+          </IconButton>
+        </DialogTitle>
+        <UserInfoForm onClose={handleCloseUserProfileForm} />
+      </Dialog>
     </>
   );
 }

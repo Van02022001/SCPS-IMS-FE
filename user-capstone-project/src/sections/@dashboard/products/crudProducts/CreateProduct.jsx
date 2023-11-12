@@ -27,7 +27,7 @@ function CreateProduct() {
     return (
         <>
             <Helmet>
-                <title> Dashboard: Products | Minimal UI </title>
+                <title> Create Products | Minimal UI </title>
             </Helmet>
 
             <Container>
@@ -64,7 +64,7 @@ function CreateProduct() {
                     <Grid item xs={8}>
                         <Box
                             sx={{
-                                width: 500,
+                                width: 600,
                                 maxWidth: '100%',
                                 marginBottom: '10px',
                             }}
@@ -73,7 +73,7 @@ function CreateProduct() {
                         </Box>
                         <Box
                             sx={{
-                                width: 500,
+                                width: 600,
                                 maxWidth: '100%',
                                 marginBottom: '10px',
                             }}
