@@ -5,8 +5,8 @@ export const getAllCustomer = async () => {
     return response.data;
 }
 
-export const createProduct = async (productParams) => {
-    const response = await axiosInstance.post("/products", productParams);
+export const createCustomer = async (customerParams) => {
+    const response = await axiosInstance.post("/customers", customerParams);
     return response.data;
 }
 

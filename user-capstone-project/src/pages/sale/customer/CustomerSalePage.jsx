@@ -32,14 +32,14 @@ import CloseIcon from '@mui/icons-material/Close';
 
 // sections
 import { ProductsListHead, ProductsListToolbar } from '~/sections/@dashboard/products';
+import CreateCustomerForm from '~/sections/auth/sale/manageCustomer/CreateCustomerForm';
+import CustomerDetailForm from '~/sections/auth/sale/manageCustomer/CustomerDetailForm';
 // mock
 import PRODUCTSLIST from '../../../_mock/products';
-import CategoryForm from '~/sections/auth/product/CategoryForm';
 // api
-import { getAllItems } from '~/data/mutation/items/items-mutation';
-import ProductDetailForm from '~/sections/auth/product/ProductDetailForm';
 import EditCategoryForm from '~/sections/auth/categories/EditCategoryForm';
 import { getAllCustomer } from '~/data/mutation/customer/customer-mutation';
+
 
 
 // ----------------------------------------------------------------------
@@ -55,8 +55,7 @@ const TABLE_HEAD = [
     { id: 'type', label: 'Vị trí', alignRight: false },
     // { id: 'isVerified', label: 'Phân loại', alignRight: false },
     { id: 'description', label: 'Mô tả', alignRight: false },
-    // { id: 'sold', label: 'Đã bán', alignRight: false },
-    // { id: 'defective', label: 'Trả hàng', alignRight: false },
+    { id: 'status', label: 'Trạng thái', alignRight: false },
     { id: '' },
 ];
 
@@ -107,7 +106,7 @@ const CustomerSalePage = () => {
     const [openEditForm, setOpenEditForm] = useState(false);
 
     const [selected, setSelected] = useState([]);
-    const [selectedProductId, setSelectedProductId] = useState([]);
+    const [selectedCustomerId, setSelectedCustomerId] = useState([]);
 
     // State cho phần soft theo name-------------------------------------------------------
     const [filterName, setFilterName] = useState('');
@@ -148,7 +147,7 @@ const CustomerSalePage = () => {
         }
     };
 
-    const handleCreateProductSuccess = (newProduct) => {
+    const handleCreateCustomerSuccess = (newProduct) => {
         // Close the form
         setOpenOderForm(false);
         setCustomerData((prevProductData) => [...prevProductData, newProduct]);
@@ -189,16 +188,16 @@ const CustomerSalePage = () => {
         setSelected(newSelected);
     };
 
-    const handleProductClick = (product) => {
-        if (selectedProductId === product.id) {
-            setSelectedProductId(null); // Đóng nếu đã mở
+    const handleCustomerClick = (customer) => {
+        if (selectedCustomerId === customer.id) {
+            setSelectedCustomerId(null); // Đóng nếu đã mở
         } else {
-            setSelectedProductId(product.id); // Mở hoặc chuyển sang sản phẩm khác
+            setSelectedCustomerId(customer.id); // Mở hoặc chuyển sang sản phẩm khác
         }
     };
 
-    const handleCloseProductDetails = () => {
-        setSelectedProductId(null);
+    const handleCloseCustomerDetails = () => {
+        setSelectedCustomerId(null);
     };
 
 
@@ -211,13 +210,13 @@ const CustomerSalePage = () => {
         setRowsPerPage(parseInt(event.target.value, 10));
     };
     // Các hàm xử lý soft theo name--------------------------------------------------------------------------------------------------------------------------------
-    const handleCheckboxChange = (event, productId) => {
+    const handleCheckboxChange = (event, customerId) => {
         if (event.target.checked) {
             // Nếu người dùng chọn checkbox, thêm sản phẩm vào danh sách đã chọn.
-            setSelectedProductId([...selectedProductId, productId]);
+            setSelectedCustomerId([...selectedCustomerId, customerId]);
         } else {
             // Nếu người dùng bỏ chọn checkbox, loại bỏ sản phẩm khỏi danh sách đã chọn.
-            setSelectedProductId(selectedProductId.filter((id) => id !== productId));
+            setSelectedCustomerId(selectedCustomerId.filter((id) => id !== customerId));
         }
     };
     const handleRequestSort = (property) => {
@@ -291,6 +290,22 @@ const CustomerSalePage = () => {
                 <Typography variant="h4" gutterBottom>
                     Danh sách khách hàng
                 </Typography>
+                <Button
+                    variant="contained"
+                    startIcon={<Iconify icon="eva:plus-fill" />}
+                    onClick={() => setOpenOderForm(true)}
+                >
+                    Thêm khách hàng
+                </Button>
+                <Dialog maxWidth="md" fullWidth open={openOderForm}>
+                    <DialogTitle>
+                        Tạo thông tin khách hàng{' '}
+                        <IconButton style={{ float: 'right' }} onClick={handleCloseOdersForm}>
+                            <CloseIcon color="primary" />
+                        </IconButton>{' '}
+                    </DialogTitle>
+                    <CreateCustomerForm onClose={handleCreateCustomerSuccess} open={openOderForm} />
+                </Dialog>
             </Stack>
 
             <Card>
@@ -313,21 +328,21 @@ const CustomerSalePage = () => {
                                 onSelectAllClick={handleSelectAllClick}
                             />
                             <TableBody>
-                                {customerData.map((item) => {
+                                {customerData.map((customer) => {
                                     return (
-                                        <React.Fragment key={item.id}>
+                                        <React.Fragment key={customer.id}>
                                             <TableRow
                                                 hover
-                                                key={item.id}
+                                                key={customer.id}
                                                 tabIndex={-1}
                                                 role="checkbox"
-                                                selected={selectedProductId === item.id}
-                                                onClick={() => handleProductClick(item)}
+                                                selected={selectedCustomerId === customer.id}
+                                                onClick={() => handleCustomerClick(customer)}
                                             >
                                                 <TableCell padding="checkbox">
                                                     <Checkbox
-                                                        checked={selectedProductId === item.id}
-                                                        onChange={(event) => handleCheckboxChange(event, item.id)}
+                                                        checked={selectedCustomerId === customer.id}
+                                                        onChange={(event) => handleCheckboxChange(event, customer.id)}
                                                     // checked={selectedUser}
                                                     // onChange={(event) => handleClick(event, name)}
                                                     />
@@ -341,7 +356,7 @@ const CustomerSalePage = () => {
 
                                                 <TableCell align="left">
                                                     <Typography variant="subtitle2" noWrap>
-                                                        {item.id}
+                                                        {customer.code}
                                                     </Typography>
                                                 </TableCell>
 
@@ -349,52 +364,34 @@ const CustomerSalePage = () => {
                                                     <Stack direction="row" alignItems="center" spacing={2}>
                                                         {/* <Avatar alt={name} src={avatarUrl} /> */}
                                                         <Typography variant="subtitle2" noWrap>
-                                                            {item.name}
+                                                            {customer.name}
                                                         </Typography>
                                                     </Stack>
                                                 </TableCell>
-                                                <TableCell align="left">{item.description}</TableCell>
-                                                <TableCell align="left">{item.createdAt}</TableCell>
-                                                <TableCell align="left">{item.updatedAt}</TableCell>
-                                                {/* <TableCell align="left">{product.origins[0].name}</TableCell>
-                                            <TableCell align="left">
-                                                {product.warehouses.length > 0 ? product.warehouses[0].name : " "}
-                                            </TableCell> */}
-                                                <TableCell align="left">
-                                                    <Typography variant="subtitle2" noWrap>
-                                                        {item.categories.map((category, index) => {
-                                                            return index === item.categories.length - 1
-                                                                ? category.name
-                                                                : `${category.name}, `;
-                                                        })}
-                                                    </Typography>
-                                                </TableCell>
-
-                                                {/* <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell> */}
+                                                <TableCell align="left">{customer.phone}</TableCell>
+                                                <TableCell align="left">{customer.email}</TableCell>
+                                                <TableCell align="left">{customer.taxCode}</TableCell>
+                                                <TableCell align="left">{customer.address}</TableCell>
+                                                <TableCell align="left">{customer.type}</TableCell>
+                                                <TableCell align="left">{customer.description}</TableCell>
 
                                                 <TableCell align="left">
-                                                    <Label color={(item.status === 'Inactive' && 'error') || 'success'}>
-                                                        {(item.status === 'Active') ? 'Đang hoạt động' : 'Ngừng hoạt động'}
+                                                    <Label color={(customer.status === 'Inactive' && 'error') || 'success'}>
+                                                        {(customer.status === 'Active') ? 'Đang hoạt động' : 'Ngừng hoạt động'}
                                                     </Label>
                                                 </TableCell>
-
-                                                {/* <TableCell align="right">
-                                                    <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
-                                                        <Iconify icon={'eva:more-vertical-fill'} />
-                                                    </IconButton>
-                                                </TableCell> */}
                                             </TableRow>
 
-                                            {selectedProductId === item.id && (
+                                            {selectedCustomerId === customer.id && (
                                                 <TableRow>
                                                     <TableCell colSpan={8}>
-                                                        <ProductDetailForm
-                                                            products={customerData}
+                                                        <CustomerDetailForm
+                                                            customer={customerData}
                                                             productStatus={productStatus}
-                                                            productId={selectedProductId}
+                                                            customerId={selectedCustomerId}
                                                             updateProductInList={updateProductInList}
                                                             updateProductStatusInList={updateProductStatusInList}
-                                                            onClose={handleCloseProductDetails} />
+                                                            onClose={handleCloseCustomerDetails} />
                                                     </TableCell>
                                                 </TableRow>
                                             )}
