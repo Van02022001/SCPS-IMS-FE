@@ -1,14 +1,13 @@
 import { Helmet } from 'react-helmet-async';
-import { filter, sortBy } from 'lodash';
+import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 // @mui
 import {
   Card,
   Table,
   Stack,
   Paper,
-  Avatar,
   Button,
   Popover,
   Checkbox,
@@ -33,23 +32,23 @@ import Label from '../../components/label';
 import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
 // sections
-import { UserListHead, UserListToolbar } from '../../sections/@dashboard/user';
+import { ProductListHead, ProductListToolbar } from '../../sections/@dashboard/products';
 // mock
 import USERLIST from '../../_mock/user';
-import UserForm from '../../sections/auth/home/UserForm';
-import { getAllUser, deleteUser } from '../../data/mutation/user/user-mutation';
+// api
+import { getAllProducts } from '../../data/mutation/product/product-mutation';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Họ và tên', alignRight: false },
-  { id: 'phone', label: 'Số điện thoại', alignRight: false },
-  { id: 'email', label: 'Email', alignRight: false },
-  { id: 'role', label: 'Vị trí', alignRight: false },
-  { id: 'registeredAt', label: 'Ngày tạo tài khoản', alignRight: false },
+  { id: 'id', label: 'Mã sản phẩm', alignRight: false },
+  { id: 'name', label: 'Tên sản phẩm', alignRight: false },
+  { id: 'description', label: 'Mô tả', alignRight: false },
+  { id: 'createdAt', label: 'Ngày tạo', alignRight: false },
+  { id: 'updatedAt', label: 'Ngày cập nhập', alignRight: false },
   { id: 'status', label: 'Status', alignRight: false },
-  { id: 'company', label: 'Công ty', alignRight: false },
-  { id: '' },
+  { id: 'warehouses', label: 'Kho', alignRight: false },
+  { id: 'categories', label: 'Loại sản phẩm', alignRight: false },
 ];
 
 // ----------------------------------------------------------------------
@@ -82,36 +81,23 @@ function applySortFilter(array, comparator, query) {
   }
   return stabilizedThis.map((el) => el[0]);
 }
-function formatDate(dateString) {
-  const date = new Date(dateString);
-  const day = date.getDate();
-  const month = date.getMonth() + 1;
-  const year = date.getFullYear();
 
-  return `${day}/${month}/${year}`;
-}
-
-const UserPage = () => {
+const ProductPage = () => {
   const [open, setOpen] = useState(null);
-  const [openUserForm, setOpenUserForm] = useState(false);
-
+  const [openForm, setOpenForm] = useState(false);
   const [page, setPage] = useState(0);
+  const [selectedProducts, setSelectedProducts] = useState([]);
+  const [selectedProductIds, setSelectedProductIds] = useState([]);
+  const [sortedProducts, setSortedProducts] = useState([]);
   const [sortBy, setSortBy] = useState('createdAt');
   const [order, setOrder] = useState('asc');
 
-  const [selected, setSelected] = useState([]);
-
   const [orderBy, setOrderBy] = useState('name');
 
-
+  const [filterName, setFilterName] = useState('');
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
-  const [users, setUsers] = useState([]);
-  const [filterName, setFilterName] = useState('');
-  const [sortedUsers, setSortedUsers] = useState([]);
-
-  const [selectedUserIds, setSelectedUserIds] = useState([]);
+  const [products, setProducts] = useState([]);
 
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);
@@ -121,25 +107,14 @@ const UserPage = () => {
     setOpen(null);
   };
   const handleCloseUserForm = () => {
-    setOpenUserForm(false);
+    setOpenForm(false);
   };
-
-  const handleCheckboxChange = (event, userId) => {
-    if (event.target.checked) {
-      // Nếu người dùng chọn checkbox, thêm sản phẩm vào danh sách đã chọn.
-      setSelectedUserIds([...selectedUserIds, userId]);
-    } else {
-      // Nếu người dùng bỏ chọn checkbox, loại bỏ sản phẩm khỏi danh sách đã chọn.
-      setSelectedUserIds(selectedUserIds.filter((id) => id !== userId));
-    }
-  };
-
   const handleRequestSort = (property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
     // Sắp xếp danh sách sản phẩm dựa trên trường và hướng đã chọn
-    const sortedUsers = [...users].sort((a, b) => {
+    const sortedProducts = [...products].sort((a, b) => {
       const valueA = a[property];
       const valueB = b[property];
       if (valueA < valueB) {
@@ -150,31 +125,29 @@ const UserPage = () => {
       }
       return 0;
     });
-    setSortedUsers(sortedUsers);
+    setSortedProducts(sortedProducts);
   };
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = USERLIST.map((n) => n.name);
-      setSelected(newSelecteds);
-      return;
+      // Nếu người dùng chọn checkbox "Chọn tất cả", lấy danh sách ID của tất cả sản phẩm.
+      const newSelectedIds = products.map((product) => product.id);
+      setSelectedProductIds(newSelectedIds);
+    } else {
+      // Nếu người dùng bỏ chọn checkbox "Chọn tất cả", loại bỏ tất cả sản phẩm khỏi danh sách đã chọn.
+      setSelectedProductIds([]);
     }
-    setSelected([]);
   };
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
+
+  const handleCheckboxChange = (event, productId) => {
+    if (event.target.checked) {
+      // Nếu người dùng chọn checkbox, thêm sản phẩm vào danh sách đã chọn.
+      setSelectedProductIds([...selectedProductIds, productId]);
+    } else {
+      // Nếu người dùng bỏ chọn checkbox, loại bỏ sản phẩm khỏi danh sách đã chọn.
+      setSelectedProductIds(selectedProductIds.filter((id) => id !== productId));
     }
-    setSelected(newSelected);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -190,9 +163,9 @@ const UserPage = () => {
     setPage(0);
     const query = event.target.value;
     setFilterName(query);
-
-    const filteredUsers = applySortFilter(sortedUsers, getComparator(order, sortBy), query);
-    setSortedUsers(filteredUsers)
+    // Lọc danh sách sản phẩm theo tên và trường đang được sắp xếp
+    const filteredProducts = applySortFilter(sortedProducts, getComparator(order, sortBy), query);
+    setSortedProducts(filteredProducts);
   };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
@@ -201,103 +174,81 @@ const UserPage = () => {
 
   const isNotFound = !filteredUsers.length && !!filterName;
 
-  const handleDeleteUser = (id) => {
-    deleteUser(id)
-    console.log(id);
-  }
-
   useEffect(() => {
-    getAllUser()
-      .then((respone) => {
-        const data = respone.data
-        if (data && data.length > 0) {
-          setUsers(data)
-          setSortedUsers(data)
-        } else {
-          console.error('No users found')
-        }
-
+    getAllProducts()
+      .then((response) => {
+        const data = response.data;
+        setProducts(data);
+        setSortedProducts(data);
       })
       .catch((error) => {
-        console.error("Error fetching users:", error);
-      })
-  }, [])
+        console.error("Error fetching products:", error);
+      });
+  }, []);
 
   return (
     <>
       <Helmet>
-        <title> Tài khoản </title>
+        <title> Product | Minimal UI </title>
       </Helmet>
 
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Tài khoản người dùng
+            Danh sách sản phẩm
           </Typography>
           <Button
             variant="contained"
             startIcon={<Iconify icon="eva:plus-fill" />}
-            onClick={() => setOpenUserForm(true)}
+            onClick={() => setOpenForm(true)}
           >
-            Tạo tài khoản
+            Thêm sản phẩm
           </Button>
-          <Dialog fullWidth maxWidth="md" open={openUserForm}>
-            <DialogTitle>
-              Tạo tài khoản{' '}
-              <IconButton style={{ float: 'right' }} onClick={handleCloseUserForm}>
-                <CloseIcon color="primary" />
-              </IconButton>{' '}
-            </DialogTitle>
-            <UserForm />
-          </Dialog>
+
         </Stack>
 
         <Card>
-          <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+          <ProductListToolbar numSelected={selectedProductIds.length} filterName={filterName} onFilterName={handleFilterByName} />
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
               <Table>
-                <UserListHead
+                <ProductListHead
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={users.length}
-                  numSelected={selected.length}
+                  rowCount={products.length}
+                  numSelected={selectedProductIds.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-                  {/* {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, name, role, status, company, avatarUrl, isVerified } = row;
-                    const selectedUser = selected.indexOf(name) !== -1; */}
-                  {sortedUsers.map((users) => {
-                    console.log(users);
+                  {sortedProducts.map((product) => {
+                    console.log("Product:", product);
                     return (
-                      <TableRow hover key={users.id} tabIndex={-1} role="checkbox">
+                      <TableRow hover key={product.id} tabIndex={-1} role="checkbox">
                         <TableCell padding="checkbox">
-                          <Checkbox checked={selectedUserIds.includes(users.id)}
-                            onChange={(event) => handleCheckboxChange(event, users.id)} />
+                          <Checkbox checked={selectedProductIds.includes(product.id)}
+                            onChange={(event) => handleCheckboxChange(event, product.id)} />
                         </TableCell>
 
                         <TableCell component="th" scope="row" padding="none">
-                          <Stack direction="row" alignItems="center" spacing={2}>
-                            {users.middleName} {users.lastName} {users.firstName}
-                          </Stack>
+                          <Stack direction="row" alignItems="center" spacing={2}>{product.id}</Stack>
                         </TableCell>
 
-                        <TableCell align="left">{users.phone}</TableCell>
-
-                        <TableCell align="left">{users.email}</TableCell>
-
-                        <TableCell align="left">{users.role.name}</TableCell>
-
-                        <TableCell align="left">{formatDate(users.registeredAt)}</TableCell>
-
+                        <TableCell align="left">{product.name}</TableCell>
+                        <TableCell align="left">{product.description}</TableCell>
+                        <TableCell align="left">{product.createdAt}</TableCell>
+                        <TableCell align="left">{product.updatedAt}</TableCell>
                         <TableCell align="left">
-                          <Label color={(users.role.status === 'banned' && 'error') || 'success'}>{sentenceCase(users.role.status)}</Label>
+                          <Label color={(product.status === 'banned' && 'error') || 'success'}>{sentenceCase(product.status)}</Label>
                         </TableCell>
-                        <TableCell align="left">{users.company}</TableCell>
+                        <TableCell align="left">{product.warehouses}</TableCell>
+                        <TableCell>
+                          {product.categories.map((category, index) => (
+                            <span key={index}>{category.name}</span>
+                          ))}
+                        </TableCell>
                         <TableCell align="right">
                           <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
                             <Iconify icon={'eva:more-vertical-fill'} />
@@ -305,7 +256,6 @@ const UserPage = () => {
                         </TableCell>
                       </TableRow>
                     );
-                    // })}
                   })}
                   {emptyRows > 0 && (
                     <TableRow style={{ height: 53 * emptyRows }}>
@@ -373,15 +323,15 @@ const UserPage = () => {
       >
         <MenuItem>
           <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-          Chỉnh sửa
+          Edit
         </MenuItem>
 
         <MenuItem sx={{ color: 'error.main' }}>
-          <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} onClick={() => handleDeleteUser(users.id)} />
-          Xóa
+          <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
+          Delete
         </MenuItem>
       </Popover>
     </>
   );
 }
-export default UserPage
+export default ProductPage

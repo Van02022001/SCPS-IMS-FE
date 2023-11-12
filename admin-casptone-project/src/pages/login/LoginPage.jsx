@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 // @mui
 import { styled } from '@mui/material/styles';
@@ -43,11 +43,13 @@ const StyledContent = styled('div')(({ theme }) => ({
 
 const LoginPage = () => {
   const mdUp = useResponsive('up', 'md');
-
+  useEffect(() => {
+    localStorage.clear();
+  }, [])
   return (
     <>
       <Helmet>
-        <title> Login | Minimal UI </title>
+        <title> Đăng nhập | Minimal UI </title>
       </Helmet>
 
       <StyledRoot>
@@ -71,11 +73,11 @@ const LoginPage = () => {
         <Container maxWidth="sm">
           <StyledContent>
             <Typography variant="h4" gutterBottom>
-              Sign in to Minimal
+              Đăng nhập
             </Typography>
 
             <Typography variant="body2" sx={{ mb: 5 }}>
-              Don’t have an account? {''}
+              Bạn không có tài khoản? {''}
               <Link variant="subtitle2">Get started</Link>
             </Typography>
 
