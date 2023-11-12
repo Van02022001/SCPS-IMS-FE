@@ -6,9 +6,9 @@ import { useTheme } from '@mui/material/styles';
 import { Grid, Container, Typography, Menu, MenuItem, Button, Checkbox, FormControlLabel, RadioGroup, Radio, FormControl } from '@mui/material';
 
 // components
-import Iconify from '../../components/iconify';
+import Iconify from '../../../components/iconify';
 // sections
-import { AppConversionRates } from '../../sections/@dashboard/app';
+import { AppConversionRates } from '../../../sections/@dashboard/app';
 
 // ----------------------------------------------------------------------
 

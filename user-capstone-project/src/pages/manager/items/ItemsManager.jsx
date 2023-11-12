@@ -25,15 +25,15 @@ import {
     DialogTitle,
 } from '@mui/material';
 // components
-import Label from '../../components/label';
-import Iconify from '../../components/iconify';
-import Scrollbar from '../../components/scrollbar';
+import Label from '../../../components/label';
+import Iconify from '../../../components/iconify';
+import Scrollbar from '../../../components/scrollbar';
 import CloseIcon from '@mui/icons-material/Close';
 // sections
-import { UserListHead, UserListToolbar } from '../../sections/@dashboard/user';
-import OdersForm from '~/sections/@dashboard/oders/OdersForm';
-import OrderDetailForm from '~/sections/auth/orders/OrderDetailForm';
-import USERLIST from '../../_mock/user';
+import { UserListHead, UserListToolbar } from '../../../sections/@dashboard/user';
+import OdersForm from '~/sections/@dashboard/items/ItemsForm';
+import OrderDetailForm from '~/sections/auth/orders/ItemDetailForm';
+import USERLIST from '../../../_mock/user';
 import { getAllItem } from '~/data/mutation/items/item-mutation';
 
 // ----------------------------------------------------------------------
@@ -327,8 +327,8 @@ const OdersManagerPage = () => {
                                                 <TableRow>
                                                     <TableCell colSpan={8}>
                                                         <OrderDetailForm
-                                                            orders={itemsData}
-                                                            orderId={selectedItemId}
+                                                            items={itemsData}
+                                                            itemId={selectedItemId}
                                                             onClose={handleCloseOrderDetails}
                                                             updateItemInList={updateItemInList}
                                                         />

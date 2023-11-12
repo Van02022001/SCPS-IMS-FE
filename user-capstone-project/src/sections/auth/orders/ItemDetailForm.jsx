@@ -23,9 +23,13 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { editItem } from '~/data/mutation/items/item-mutation';
 import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
+import { getAllSubCategory } from '~/data/mutation/subCategory/subCategory-mutation';
+import { getAllBrands } from '~/data/mutation/brand/brands-mutation';
+import { getAllOrigins } from '~/data/mutation/origins/origins-mutation';
+import { getAllSuppliers } from '~/data/mutation/supplier/suppliers-mutation';
 
-const OrderDetailForm = ({ orders, orderId, onClose, isOpen, updateItemInList }) => {
-    const [expandedItem, setExpandedItem] = useState(orderId);
+const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode }) => {
+    const [expandedItem, setExpandedItem] = useState(itemId);
     const [formHeight, setFormHeight] = useState(0);
     const [selectedTab, setSelectedTab] = useState(0); // Ban đầu chọn tab "Thông tin"
 
@@ -50,9 +54,67 @@ const OrderDetailForm = ({ orders, orderId, onClose, isOpen, updateItemInList })
         }
     }, [isOpen]);
 
-    const order = orders.find((o) => o.id === orderId);
+    useEffect(() => {
+        if (mode === 'create') {
+            setEditedItem({
+                minStockLevel: 0,
+                maxStockLevel: 0,
+                sub_category_id: [],
+                brand_id: [],
+                supplier_id: [],
+                origin_id: [],
+            });
+        } else {
+            const item = items.find((o) => o.id === itemId);
+            console.log(item);
+            if (item) {
 
-    if (!order) {
+                const editedItem = {
+                    // minStockLevel: product.size.length ? product.size.length : 0,
+                    // maxStockLevel: product.size ? product.size.width : 0,
+                    sub_category_id: item.subCategory.id,
+                    brand_id: item.brand.id,
+                    supplier_id: item.supplier.id,
+                    origin_id: item.origin.id,
+                };
+
+                setEditedItem(editedItem);
+                // setCurrentStatus(item.status);
+                console.log(editedItem);
+            }
+        }
+    }, [items, itemId, mode]);
+
+    useEffect(() => {
+        getAllSubCategory()
+            .then((respone) => {
+                const data = respone.data;
+                setSub_category_id(data);
+            })
+            .catch((error) => console.error('Error fetching Sub_category:', error));
+        getAllBrands()
+            .then((respone) => {
+                const data = respone.data;
+                setBrand_id(data);
+            })
+            .catch((error) => console.error('Error fetching Brands:', error));
+        getAllSuppliers()
+            .then((respone) => {
+                const data = respone.data;
+                setSupplier_id(data);
+            })
+            .catch((error) => console.error('Error fetching Supplier:', error));
+        getAllOrigins()
+            .then((respone) => {
+                const data = respone.data;
+                setOrigin_id(data);
+            })
+            .catch((error) => console.error('Error fetching Origins:', error));
+    }, []);
+
+    const item = items.find((o) => o.id === itemId);
+
+    if (!item) {
         return null;
     }
 
@@ -64,48 +126,12 @@ const OrderDetailForm = ({ orders, orderId, onClose, isOpen, updateItemInList })
         // Xử lý xóa
     };
 
-    // useEffect(() => {
-    //     if (mode === 'create') {
-    //         setEditedProduct({
-    //             minStockLevel: 0,
-    //             maxStockLevel: 0,
-    //             sub_category_id: [],
-    //             brand_id: [],
-    //             supplier_id: [],
-    //             origin_id: [],
-                
-    //         });
-    //     } else {
-    //         const item = orders.find((o) => o.id === orderId);
-    //         console.log(item);
-    //         if (product) {
-    //             const categoryIds = product.categories ? product.categories.map((category) => category.id) : [];
-    //             const unitId = product.unit ? product.unit.id : 0;
-    //             const unitMeaId = product.size.unitMeasurement ? product.size.unitMeasurement.id : 0;
-
-    //             const editedProduct = {
-    //                 categories_id: categoryIds,
-    //                 unit_id: unitId,
-    //                 length: product.size.length ? product.size.length : 0,
-    //                 width: product.size ? product.size.width : 0,
-    //                 height: product.size ? product.size.height : 0,
-    //                 diameter: product.size ? product.size.diameter : 0,
-    //                 unit_mea_id: unitMeaId,
-    //             };
-
-    //             setEditedProduct(editedProduct);
-    //             setCurrentStatus(product.status);
-    //             console.log(editedProduct);
-    //         }
-    //     }
-    // }, [productId, products, mode]);
-
     const updateItems = async () => {
         if (!editedItem) {
             return;
         }
         try {
-            const response = await editItem(orderId, editedItem);
+            const response = await editItem(itemId, editedItem);
 
             if (response.status === '200 OK') {
                 setIsSuccess(true);
@@ -128,8 +154,8 @@ const OrderDetailForm = ({ orders, orderId, onClose, isOpen, updateItemInList })
 
     return (
         <div
-            id="orderDetailForm"
-            className="OrderDetailForm"
+            id="itemDetailForm"
+            className="ItemDetailForm"
             style={{
                 backgroundColor: 'white',
                 zIndex: 999,
@@ -159,7 +185,7 @@ const OrderDetailForm = ({ orders, orderId, onClose, isOpen, updateItemInList })
                                         variant="outlined"
                                         label="Mã sản phẩm"
                                         sx={{ width: '70%', marginRight: 5 }}
-                                        value={order.code}
+                                        value={item.code}
                                     />
                                 </Grid>
                                 <Grid
@@ -176,7 +202,7 @@ const OrderDetailForm = ({ orders, orderId, onClose, isOpen, updateItemInList })
                                         variant="outlined"
                                         label="Ngày tạo"
                                         sx={{ width: '70%', marginRight: 5 }}
-                                        value={order.createdAt}
+                                        value={item.createdAt}
                                     />
                                 </Grid>
                                 <Grid
@@ -193,7 +219,7 @@ const OrderDetailForm = ({ orders, orderId, onClose, isOpen, updateItemInList })
                                         variant="outlined"
                                         label="Ngày cập nhật"
                                         sx={{ width: '70%', marginRight: 5 }}
-                                        value={order.updatedAt}
+                                        value={item.updatedAt}
                                     />
                                 </Grid>
                                 <Grid
@@ -210,7 +236,7 @@ const OrderDetailForm = ({ orders, orderId, onClose, isOpen, updateItemInList })
                                         variant="outlined"
                                         label="Khách hàng"
                                         sx={{ width: '70%', marginRight: 5 }}
-                                        value={order.customer}
+                                        value={item.customer}
                                     />
                                 </Grid>
 
@@ -228,7 +254,7 @@ const OrderDetailForm = ({ orders, orderId, onClose, isOpen, updateItemInList })
                                         variant="outlined"
                                         label="Bảng giá"
                                         sx={{ width: '70%', marginRight: 5 }}
-                                        value={order.priceList}
+                                        value={item.priceList}
                                     />
                                 </Grid>
                                 <Grid
@@ -245,7 +271,7 @@ const OrderDetailForm = ({ orders, orderId, onClose, isOpen, updateItemInList })
                                         variant="outlined"
                                         label="Mã đặt hàng"
                                         sx={{ width: '70%', marginRight: 5 }}
-                                        value={order.orderCode}
+                                        value={item.orderCode}
                                     />
                                 </Grid>
                             </Grid>
@@ -266,7 +292,7 @@ const OrderDetailForm = ({ orders, orderId, onClose, isOpen, updateItemInList })
                                         variant="outlined"
                                         label="Trạng thái"
                                         sx={{ width: '70%', marginRight: 5 }}
-                                        value={order.status}
+                                        value={item.status}
                                     />
                                 </Grid>
                                 <Grid
@@ -283,7 +309,7 @@ const OrderDetailForm = ({ orders, orderId, onClose, isOpen, updateItemInList })
                                         variant="outlined"
                                         label="Chi nhánh"
                                         sx={{ width: '70%', marginRight: 5 }}
-                                        value={order.brand.name}
+                                        value={item.brand.name}
                                     />
                                 </Grid>
                                 <Grid
@@ -300,7 +326,7 @@ const OrderDetailForm = ({ orders, orderId, onClose, isOpen, updateItemInList })
                                         variant="outlined"
                                         label="Người bán:"
                                         sx={{ width: '70%', marginRight: 5 }}
-                                        value={order.supplier.name}
+                                        value={item.supplier.name}
                                     />
                                 </Grid>
                                 <Grid
@@ -318,11 +344,11 @@ const OrderDetailForm = ({ orders, orderId, onClose, isOpen, updateItemInList })
                                         label="Người tạo"
                                         sx={{ width: '70%', marginRight: 5 }}
                                         value={
-                                            order.createdBy.firstName +
+                                            item.createdBy.firstName +
                                             ' ' +
-                                            order.createdBy.middleName +
+                                            item.createdBy.middleName +
                                             ' ' +
-                                            order.createdBy.lastName
+                                            item.createdBy.lastName
                                         }
                                     />
                                 </Grid>
@@ -340,7 +366,7 @@ const OrderDetailForm = ({ orders, orderId, onClose, isOpen, updateItemInList })
                                         variant="outlined"
                                         label="Xuất xứ"
                                         sx={{ width: '70%', marginRight: 5 }}
-                                        value={order.origin.name}
+                                        value={item.origin.name}
                                     />
                                 </Grid>
                             </Grid>
@@ -373,13 +399,13 @@ const OrderDetailForm = ({ orders, orderId, onClose, isOpen, updateItemInList })
                                                 <TableCell>Thành tiền</TableCell>
                                             </TableRow>
                                             <TableRow>
-                                                <TableCell>{order.name}</TableCell>
-                                                <TableCell>{order.productName}</TableCell>
-                                                <TableCell>{order.quantity}</TableCell>
-                                                <TableCell>{order.unitPrice}</TableCell>
-                                                <TableCell>{order.discount}</TableCell>
-                                                <TableCell>{order.price}</TableCell>
-                                                <TableCell>{order.total}</TableCell>
+                                                <TableCell>{item.name}</TableCell>
+                                                <TableCell>{item.productName}</TableCell>
+                                                <TableCell>{item.quantity}</TableCell>
+                                                <TableCell>{item.unitPrice}</TableCell>
+                                                <TableCell>{item.discount}</TableCell>
+                                                <TableCell>{item.price}</TableCell>
+                                                <TableCell>{item.total}</TableCell>
                                             </TableRow>
                                         </TableBody>
                                     </Table>
@@ -391,9 +417,9 @@ const OrderDetailForm = ({ orders, orderId, onClose, isOpen, updateItemInList })
                             <Grid item xs={6}>
                                 <Typography variant="body1">Tổng số hàng: </Typography>
                                 <Typography variant="body1">Tổng số tiền: </Typography>
-                                <Typography variant="body1">Giảm giá hóa đơn: {order.discount}</Typography>
+                                <Typography variant="body1">Giảm giá hóa đơn: {item.discount}</Typography>
                                 <Typography variant="body1">Khách cần trả:</Typography>
-                                <Typography variant="body1">Khách đã trả: {order.amountPaid}</Typography>
+                                <Typography variant="body1">Khách đã trả: {item.amountPaid}</Typography>
                             </Grid>
                         </Grid>
                         {isSuccess && <SuccessAlerts message={successMessage} />}
@@ -417,4 +443,4 @@ const OrderDetailForm = ({ orders, orderId, onClose, isOpen, updateItemInList })
     );
 };
 
-export default OrderDetailForm;
+export default ItemDetailForm;

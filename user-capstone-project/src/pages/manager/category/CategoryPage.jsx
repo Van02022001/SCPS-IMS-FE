@@ -26,21 +26,30 @@ import {
     DialogTitle,
 } from '@mui/material';
 // components
-import Iconify from '../../components/iconify';
-import Scrollbar from '../../components/scrollbar';
+import Label from '../../../components/label';
+import Iconify from '../../../components/iconify';
+import Scrollbar from '../../../components/scrollbar';
 import CloseIcon from '@mui/icons-material/Close';
 
 // sections
-import { UserListHead, UserListToolbar } from '../../sections/@dashboard/user';
+import { UserListHead, UserListToolbar } from '../../../sections/@dashboard/user';
 // mock
-import USERLIST from '../../_mock/user';
-import BrandForm from '~/sections/@dashboard/brand/BrandForm';
-import { getAllOrigins } from '~/data/mutation/origins/origins-mutation';
-import OriginDetailForm from '~/sections/auth/origin/OriginDetailForm';
+import USERLIST from '../../../_mock/user';
+import { getAllCategories } from '~/data/mutation/categories/categories-mutation';
+// form validation
+import CategoryDetailForm from '~/sections/auth/categories/CategoryDetailForm';
+import CreateCategoriesForm from '~/sections/auth/categories/CreateCategoryForm';
 
 // ----------------------------------------------------------------------
 
-const TABLE_HEAD = [{ id: 'name', label: 'Tên', alignRight: false }, { id: '' }];
+const TABLE_HEAD = [
+    { id: 'name', label: 'Tên', alignRight: false },
+    { id: 'company', label: 'Mô tả', alignRight: false },
+    { id: 'role', label: 'Ngày tạo', alignRight: false },
+    { id: 'isVerified', label: 'Ngày cập nhật', alignRight: false },
+    { id: 'status', label: 'Trạng thái', alignRight: false },
+    { id: '' },
+];
 
 // ----------------------------------------------------------------------
 
@@ -73,8 +82,8 @@ function applySortFilter(array, comparator, query) {
     return stabilizedThis.map((el) => el[0]);
 }
 
-const BrandPage = () => {
-    const [selectedOriginId, setSelectedOriginId] = useState(null);
+const CategoryPage = () => {
+    const [selectedCategoryId, setSelectedCategoryId] = useState(null);
 
     const [open, setOpen] = useState(null);
 
@@ -92,23 +101,33 @@ const BrandPage = () => {
 
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
-    const [originData, setOriginData] = useState([]);
+    const [categoryData, setCategoryData] = useState([]);
+    const [categoryStatus, setCategoryStatus] = useState('');
 
-    useEffect(() => {
-        getAllOrigins()
-            .then((respone) => {
-                const data = respone.data;
-                if (Array.isArray(data)) {
-                    setOriginData(data);
-                } else {
-                    console.error('API response is not an array:', data);
-                }
-            })
-            .catch((error) => {
-                console.error('Error fetching users:', error);
-            });
-    }, []);
+    // Hàm để thay đổi data mỗi khi Edit xong api-------------------------------------------------------------
+    const updateCategoryInList = (updatedCategory) => {
+        const categoryIndex = categoryData.findIndex((category) => category.id === updatedCategory.id);
 
+        if (categoryIndex !== -1) {
+            const updatedCategoryData = [...categoryData];
+            updatedCategoryData[categoryIndex] = updatedCategory;
+
+            setCategoryData(updatedCategoryData);
+        }
+    };
+
+    const updateCategoryStatusInList = (categoryId, newStatus) => {
+        const categoryIndex = categoryData.findIndex((category) => category.id === categoryId);
+
+        if (categoryIndex !== -1) {
+            const updatedCategoryData = [...categoryData];
+            updatedCategoryData[categoryIndex].status = newStatus;
+
+            setCategoryData(updatedCategoryData);
+        }
+    };
+
+    //----------------------------------------------------------------
     const handleOpenMenu = (event) => {
         setOpen(event.currentTarget);
     };
@@ -147,19 +166,6 @@ const BrandPage = () => {
         setSelected(newSelected);
     };
 
-    const handleOriginClick = (origin) => {
-        if (selectedOriginId === origin.id) {
-            console.log(selectedOriginId);
-            setSelectedOriginId(null); // Đóng nếu đã mở
-        } else {
-            setSelectedOriginId(origin.id); // Mở hoặc chuyển sang hóa đơn khác
-        }
-    };
-
-    const handleCloseOriginDetails = () => {
-        setSelectedOriginId(null);
-    };
-
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
@@ -178,38 +184,65 @@ const BrandPage = () => {
         setOpenOderForm(false);
     };
 
+    const handleCategoryClick = (category) => {
+        if (selectedCategoryId === category.id) {
+            console.log(selectedCategoryId);
+            setSelectedCategoryId(null); // Đóng nếu đã mở
+        } else {
+            setSelectedCategoryId(category.id); // Mở hoặc chuyển sang hóa đơn khác
+        }
+    };
+
+    const handleCloseCategoryDetails = () => {
+        setSelectedCategoryId(null);
+    };
+
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
     const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
 
     const isNotFound = !filteredUsers.length && !!filterName;
+    useEffect(() => {
+        getAllCategories()
+            .then((respone) => {
+                const data = respone.data;
+                if (Array.isArray(data)) {
+                    setCategoryData(data);
+                } else {
+                    console.error('API response is not an array:', data);
+                }
+            })
+            .catch((error) => {
+                console.error('Error fetching users:', error);
+            });
+    }, []);
 
     return (
         <>
             <Helmet>
-                <title> Quản lý thương hiệu | Minimal UI </title>
+                <title> Quản lý thể loại | Minimal UI </title>
             </Helmet>
 
             <Container>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                     <Typography variant="h4" gutterBottom>
-                        Quản lý thương hiệu
+                        Quản lý thể loại
                     </Typography>
                     <Button
                         variant="contained"
                         startIcon={<Iconify icon="eva:plus-fill" />}
                         onClick={() => setOpenOderForm(true)}
                     >
-                        Thêm thương hiệu
+                        Thêm thể loại
                     </Button>
                     <Dialog fullWidth maxWidth="sm" open={openOderForm}>
                         <DialogTitle>
-                            Tạo thương hiệu{' '}
+                            Tạo Thể Loại{' '}
                             <IconButton style={{ float: 'right' }} onClick={handleCloseOdersForm}>
                                 <CloseIcon color="primary" />
                             </IconButton>{' '}
                         </DialogTitle>
-                        <BrandForm />
+                        <CreateCategoriesForm />
                     </Dialog>
                 </Stack>
 
@@ -233,40 +266,74 @@ const BrandPage = () => {
                                     onSelectAllClick={handleSelectAllClick}
                                 />
                                 <TableBody>
-                                    {originData.map((origin) => {
+                                    {/* {filteredUsers
+                                        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                        .map((row) => {
+                                            const { id, name, role, status, company, avatarUrl, isVerified } = row;
+                                            const selectedUser = selected.indexOf(name) !== -1; */}
+                                    {categoryData.map((category) => {
                                         return (
-                                            <React.Fragment key={origin.id}>
+                                            <React.Fragment key={category.id}>
                                                 <TableRow
                                                     hover
-                                                    key={origin.id}
+                                                    key={category.id}
                                                     tabIndex={-1}
                                                     role="checkbox"
-                                                    selected={selectedOriginId === origin.id}
-                                                    onClick={() => handleOriginClick(origin)}
+                                                    selected={selectedCategoryId === category.id}
+                                                    onClick={() => handleCategoryClick(category)}
                                                 >
                                                     <TableCell padding="checkbox">
                                                         <Checkbox
-                                                            onChange={(event) => handleClick(event, origin.name)}
+                                                            onChange={(event) => handleClick(event, category.name)}
                                                         />
                                                     </TableCell>
-
                                                     {/* tên  */}
                                                     <TableCell component="th" scope="row" padding="none">
                                                         <Stack direction="row" alignItems="center" spacing={2}>
                                                             {/* <Avatar alt={name} src={avatarUrl} /> */}
                                                             <Typography variant="subtitle2" noWrap>
-                                                                {origin.name}
+                                                                {category.name}
                                                             </Typography>
                                                         </Stack>
                                                     </TableCell>
+                                                    {/* mô tả */}
+                                                    <TableCell align="left">{category.description}</TableCell>
+                                                    {/* ngày tạo */}
+                                                    <TableCell align="left">{category.createdAt}</TableCell>
+                                                    {/* ngày cập nhật */}
+                                                    <TableCell align="left">{category.updatedAt}</TableCell>
+                                                    {/* trạng thái */}
+                                                    <TableCell align="left">
+                                                        <Label
+                                                            color={
+                                                                (category.status === 'Inactive' && 'error') || 'success'
+                                                            }
+                                                        >
+                                                            {(category.status === 'Active') ? 'Đang hoạt động' : 'Ngừng hoạt động'}
+                                                        </Label>
+                                                    </TableCell>
+
+                                                    {/* <TableCell align="right">
+                                                        <IconButton
+                                                            size="large"
+                                                            color="inherit"
+                                                            onClick={handleOpenMenu}
+                                                        >
+                                                            <Iconify icon={'eva:more-vertical-fill'} />
+                                                        </IconButton>
+                                                    </TableCell> */}
                                                 </TableRow>
-                                                {selectedOriginId === origin.id && (
+
+                                                {selectedCategoryId === category.id && (
                                                     <TableRow>
                                                         <TableCell colSpan={8}>
-                                                            <OriginDetailForm
-                                                                origins={originData}
-                                                                originsId={selectedOriginId}
-                                                                onClose={handleCloseOriginDetails}
+                                                            <CategoryDetailForm
+                                                                categories={categoryData}
+                                                                categoryStatus={categoryStatus}
+                                                                categoriesId={selectedCategoryId}
+                                                                updateCategoryInList={updateCategoryInList}
+                                                                updateCategoryStatusInList={updateCategoryStatusInList}
+                                                                onClose={handleCloseCategoryDetails}
                                                             />
                                                         </TableCell>
                                                     </TableRow>
@@ -337,8 +404,18 @@ const BrandPage = () => {
                         },
                     },
                 }}
-            ></Popover>
+            >
+                <MenuItem>
+                    <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
+                    Edit
+                </MenuItem>
+
+                <MenuItem sx={{ color: 'error.main' }}>
+                    <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
+                    Delete
+                </MenuItem>
+            </Popover>
         </>
     );
 };
-export default BrandPage;
+export default CategoryPage;
