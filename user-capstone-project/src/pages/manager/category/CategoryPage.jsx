@@ -37,8 +37,8 @@ import { UserListHead, UserListToolbar } from '../../../sections/@dashboard/user
 import USERLIST from '../../../_mock/user';
 import { getAllCategories } from '~/data/mutation/categories/categories-mutation';
 // form validation
-import CategoryDetailForm from '~/sections/auth/categories/CategoryDetailForm';
-import CreateCategoriesForm from '~/sections/auth/categories/CreateCategoryForm';
+import CategoryDetailForm from '~/sections/auth/manager/categories/CategoryDetailForm';
+import CreateCategoriesForm from '~/sections/auth/manager/categories/CreateCategoryForm';
 
 // ----------------------------------------------------------------------
 

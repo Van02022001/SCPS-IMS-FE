@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Button, Tab, Tabs, Stack, Grid, TextField, FormControl, Select, MenuItem } from '@mui/material';
+import { Typography, Button, Stack, Grid, TextField } from '@mui/material';
 
 import { editCategories, editStatusCategories } from '~/data/mutation/categories/categories-mutation';
 import SuccessAlerts from '~/components/alert/SuccessAlert';

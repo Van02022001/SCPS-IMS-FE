@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
-import { sentenceCase } from 'change-case';
+
 import React, { useEffect, useState } from 'react';
 // @mui
 import {
@@ -33,12 +33,13 @@ import CloseIcon from '@mui/icons-material/Close';
 // sections
 import { ProductsListHead, ProductsListToolbar } from '~/sections/@dashboard/products';
 // mock
-import PRODUCTSLIST from '../../_mock/products';
-import CategoryForm from '~/sections/auth/product/CategoryForm';
+import PRODUCTSLIST from '../../../_mock/products';
+import CategoryForm from '~/sections/auth/manager/subCategory/SubCategoryForm';
 // api
 import { getAllProduct } from '~/data/mutation/subCategory/subCategory-mutation';
-import ProductDetailForm from '~/sections/auth/product/ProductDetailForm';
-import EditCategoryForm from '~/sections/auth/categories/EditCategoryForm';
+
+import EditCategoryForm from '~/sections/auth/manager/categories/EditCategoryForm';
+import SubCategoryDetailForm from '~/sections/auth/manager/subCategory/SubCategoryDetailForm';
 
 // ----------------------------------------------------------------------
 
@@ -50,11 +51,7 @@ const TABLE_HEAD = [
     { id: 'createdAt', label: 'Ngày tạo', alignRight: false },
     { id: 'updatedAt', label: 'Ngày cập nhập', alignRight: false },
     { id: 'categories', label: 'Nhóm hàng', alignRight: false },
-    // { id: 'company', label: 'Kho hàng', alignRight: false },
-    // { id: 'isVerified', label: 'Phân loại', alignRight: false },
     { id: 'status', label: 'Trạng thái', alignRight: false },
-    // { id: 'sold', label: 'Đã bán', alignRight: false },
-    // { id: 'defective', label: 'Trả hàng', alignRight: false },
     { id: '' },
 ];
 
@@ -89,23 +86,23 @@ function applySortFilter(array, comparator, query) {
     return stabilizedThis.map((el) => el[0]);
 }
 
-function formatDate(dateString) {
-    const date = new Date(dateString);
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
+// function formatDate(dateString) {
+//     const date = new Date(dateString);
+//     const day = date.getDate();
+//     const month = date.getMonth() + 1;
+//     const year = date.getFullYear();
 
-    return `${day}/${month}/${year}`;
-}
+//     return `${day}/${month}/${year}`;
+// }
 
-const ProductsPage = () => {
+const SubCategoryPage = () => {
     // State mở các form----------------------------------------------------------------
     const [open, setOpen] = useState(null);
     const [openOderForm, setOpenOderForm] = useState(false);
     const [openEditForm, setOpenEditForm] = useState(false);
 
     const [selected, setSelected] = useState([]);
-    const [selectedProductId, setSelectedProductId] = useState([]);
+    const [selectedSubCategoryId, setSelectedSubCategoryId] = useState([]);
 
     // State cho phần soft theo name-------------------------------------------------------
     const [filterName, setFilterName] = useState('');
@@ -118,45 +115,45 @@ const ProductsPage = () => {
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
     // State data và xử lý data
-    const [productsData, setProductData] = useState([]);
-    const [productStatus, setProductStatus] = useState('');
+    const [subCategoryData, setSubCategoryData] = useState([]);
+    const [subCategoryStatus, setSubCategoryStatus] = useState('');
 
     const [selectedProduct, setSelectedProduct] = useState(null);
 
     // Hàm để thay đổi data mỗi khi Edit xong api-------------------------------------------------------------
-    const updateProductInList = (updatedProduct) => {
-        const productIndex = productsData.findIndex((product) => product.id === updatedProduct.id);
+    const updateSubCategoryInList = (updatedSubCategory) => {
+        const subCategoryIndex = subCategoryData.findIndex((sub_category) => sub_category.id === updatedSubCategory.id);
 
-        if (productIndex !== -1) {
-            const updatedProductData = [...productsData];
-            updatedProductData[productIndex] = updatedProduct;
+        if (subCategoryIndex !== -1) {
+            const UpdatedSubCategory = [...subCategoryData];
+            UpdatedSubCategory[subCategoryIndex] = updatedSubCategory;
 
-            setProductData(updatedProductData);
+            setSubCategoryData(UpdatedSubCategory);
         }
     };
 
-    const updateProductStatusInList = (productId, newStatus) => {
-        const productIndex = productsData.findIndex((product) => product.id === productId);
+    const updateSubCategoryStatusInList = (subCategoryId, newStatus) => {
+        const subCategoryIndex = subCategoryData.findIndex((sub_category) => sub_category.id === subCategoryId);
 
-        if (productIndex !== -1) {
-            const updatedProductData = [...productsData];
-            updatedProductData[productIndex].status = newStatus;
+        if (subCategoryIndex !== -1) {
+            const UpdatedSubCategory = [...subCategoryData];
+            UpdatedSubCategory[subCategoryIndex].status = newStatus;
 
-            setProductData(updatedProductData);
+            setSubCategoryData(UpdatedSubCategory);
         }
     };
 
-    const handleCreateProductSuccess = (newProduct) => {
+    const handleCreateSubCategorySuccess = (newSubCategory) => {
         // Close the form
         setOpenOderForm(false);
-        setProductData((prevProductData) => [...prevProductData, newProduct]);
+        setSubCategoryData((prevSubCategoryData) => [...prevSubCategoryData, newSubCategory]);
     };
 
     //----------------------------------------------------------------
-    const handleOpenMenu = (event, product) => {
-        setSelectedProduct(product);
-        setOpen(event.currentTarget);
-    };
+    // const handleOpenMenu = (event, subCategory) => {
+    //     setSelectedProduct(subCategory);
+    //     setOpen(event.currentTarget);
+    // };
 
     const handleCloseMenu = () => {
         setOpen(null);
@@ -164,39 +161,39 @@ const ProductsPage = () => {
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelecteds = productsData.map((n) => n.name);
+            const newSelecteds = subCategoryData.map((n) => n.name);
             setSelected(newSelecteds);
             return;
         }
         setSelected([]);
     };
 
-    const handleClick = (event, name) => {
-        const selectedIndex = selected.indexOf(name);
-        let newSelected = [];
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, name);
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-        }
-        setSelected(newSelected);
-    };
+    // const handleClick = (event, name) => {
+    //     const selectedIndex = selected.indexOf(name);
+    //     let newSelected = [];
+    //     if (selectedIndex === -1) {
+    //         newSelected = newSelected.concat(selected, name);
+    //     } else if (selectedIndex === 0) {
+    //         newSelected = newSelected.concat(selected.slice(1));
+    //     } else if (selectedIndex === selected.length - 1) {
+    //         newSelected = newSelected.concat(selected.slice(0, -1));
+    //     } else if (selectedIndex > 0) {
+    //         newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
+    //     }
+    //     setSelected(newSelected);
+    // };
 
-    const handleProductClick = (product) => {
-        console.log(product);
-        if (selectedProductId === product.id) {
-            setSelectedProductId(null); // Đóng nếu đã mở
+    const handleSubCategoryClick = (subCategory) => {
+        console.log(subCategory);
+        if (selectedSubCategoryId === subCategory.id) {
+            setSelectedSubCategoryId(null); // Đóng nếu đã mở
         } else {
-            setSelectedProductId(product.id); // Mở hoặc chuyển sang sản phẩm khác
+            setSelectedSubCategoryId(subCategory.id); // Mở hoặc chuyển sang sản phẩm khác
         }
     };
 
-    const handleCloseProductDetails = () => {
-        setSelectedProductId(null);
+    const handleCloseSubCategoryDetails = () => {
+        setSelectedSubCategoryId(null);
     };
 
     const handleChangePage = (event, newPage) => {
@@ -208,13 +205,13 @@ const ProductsPage = () => {
         setRowsPerPage(parseInt(event.target.value, 10));
     };
     // Các hàm xử lý soft theo name--------------------------------------------------------------------------------------------------------------------------------
-    const handleCheckboxChange = (event, productId) => {
+    const handleCheckboxChange = (event, subCategoryId) => {
         if (event.target.checked) {
             // Nếu người dùng chọn checkbox, thêm sản phẩm vào danh sách đã chọn.
-            setSelectedProductId([...selectedProductId, productId]);
+            setSelectedSubCategoryId([...selectedSubCategoryId, subCategoryId]);
         } else {
             // Nếu người dùng bỏ chọn checkbox, loại bỏ sản phẩm khỏi danh sách đã chọn.
-            setSelectedProductId(selectedProductId.filter((id) => id !== productId));
+            setSelectedSubCategoryId(selectedSubCategoryId.filter((id) => id !== subCategoryId));
         }
     };
     const handleRequestSort = (property) => {
@@ -222,7 +219,7 @@ const ProductsPage = () => {
         setOrder(isAsc ? 'desc' : 'asc');
         setOrderBy(property);
         // Sắp xếp danh sách sản phẩm dựa trên trường và hướng đã chọn
-        const sortedProduct = [...productsData].sort((a, b) => {
+        const sortedProduct = [...subCategoryData].sort((a, b) => {
             const valueA = a[property];
             const valueB = b[property];
             if (valueA < valueB) {
@@ -264,7 +261,7 @@ const ProductsPage = () => {
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
-                    setProductData(data);
+                    setSubCategoryData(data);
                     setSortedProduct(data);
                 } else {
                     console.error('API response is not an array:', data);
@@ -300,7 +297,7 @@ const ProductsPage = () => {
                             <CloseIcon color="primary" />
                         </IconButton>{' '}
                     </DialogTitle>
-                    <CategoryForm onClose={handleCreateProductSuccess} open={openOderForm} />
+                    <CategoryForm onClose={handleCreateSubCategorySuccess} open={openOderForm} />
                 </Dialog>
             </Stack>
 
@@ -318,27 +315,27 @@ const ProductsPage = () => {
                                 order={order}
                                 orderBy={orderBy}
                                 headLabel={TABLE_HEAD}
-                                rowCount={productsData.length}
+                                rowCount={subCategoryData.length}
                                 numSelected={selected.length}
                                 onRequestSort={handleRequestSort}
                                 onSelectAllClick={handleSelectAllClick}
                             />
                             <TableBody>
-                                {productsData.map((product) => {
+                                {subCategoryData.map((sub_category) => {
                                     return (
-                                        <React.Fragment key={product.id}>
+                                        <React.Fragment key={sub_category.id}>
                                             <TableRow
                                                 hover
-                                                key={product.id}
+                                                key={sub_category.id}
                                                 tabIndex={-1}
                                                 role="checkbox"
-                                                selected={selectedProductId === product.id}
-                                                onClick={() => handleProductClick(product)}
+                                                selected={selectedSubCategoryId === sub_category.id}
+                                                onClick={() => handleSubCategoryClick(sub_category)}
                                             >
                                                 <TableCell padding="checkbox">
                                                     <Checkbox
-                                                        checked={selectedProductId === product.id}
-                                                        onChange={(event) => handleCheckboxChange(event, product.id)}
+                                                        checked={selectedSubCategoryId === sub_category.id}
+                                                        onChange={(event) => handleCheckboxChange(event, sub_category.id)}
                                                     // checked={selectedUser}
                                                     // onChange={(event) => handleClick(event, name)}
                                                     />
@@ -352,7 +349,7 @@ const ProductsPage = () => {
 
                                                 <TableCell align="left">
                                                     <Typography variant="subtitle2" noWrap>
-                                                        {product.id}
+                                                        {sub_category.id}
                                                     </Typography>
                                                 </TableCell>
 
@@ -360,17 +357,17 @@ const ProductsPage = () => {
                                                     <Stack direction="row" alignItems="center" spacing={2}>
                                                         {/* <Avatar alt={name} src={avatarUrl} /> */}
                                                         <Typography variant="subtitle2" noWrap>
-                                                            {product.name}
+                                                            {sub_category.name}
                                                         </Typography>
                                                     </Stack>
                                                 </TableCell>
-                                                <TableCell align="left">{product.description}</TableCell>
-                                                <TableCell align="left">{product.createdAt}</TableCell>
-                                                <TableCell align="left">{product.updatedAt}</TableCell>
+                                                <TableCell align="left">{sub_category.description}</TableCell>
+                                                <TableCell align="left">{sub_category.createdAt}</TableCell>
+                                                <TableCell align="left">{sub_category.updatedAt}</TableCell>
                                                 <TableCell align="left">
                                                     <Typography variant="subtitle2" noWrap>
-                                                        {product.categories.map((category, index) => {
-                                                            return index === product.categories.length - 1
+                                                        {sub_category.categories.map((category, index) => {
+                                                            return index === sub_category.categories.length - 1
                                                                 ? category.name
                                                                 : `${category.name}, `;
                                                         })}
@@ -379,25 +376,25 @@ const ProductsPage = () => {
 
                                                 <TableCell align="left">
                                                     <Label
-                                                        color={(product.status === 'Inactive' && 'error') || 'success'}
+                                                        color={(sub_category.status === 'Inactive' && 'error') || 'success'}
                                                     >
-                                                        {product.status === 'Active'
+                                                        {sub_category.status === 'Active'
                                                             ? 'Đang hoạt động'
                                                             : 'Ngừng hoạt động'}
                                                     </Label>
                                                 </TableCell>
                                             </TableRow>
 
-                                            {selectedProductId === product.id && (
+                                            {selectedSubCategoryId === sub_category.id && (
                                                 <TableRow>
                                                     <TableCell colSpan={8}>
-                                                        <ProductDetailForm
-                                                            products={productsData}
-                                                            productStatus={productStatus}
-                                                            productId={selectedProductId}
-                                                            updateProductInList={updateProductInList}
-                                                            updateProductStatusInList={updateProductStatusInList}
-                                                            onClose={handleCloseProductDetails}
+                                                        <SubCategoryDetailForm
+                                                            subCategory={subCategoryData}
+                                                            subCategoryStatus={subCategoryStatus}
+                                                            subCategoryId={selectedSubCategoryId}
+                                                            updateSubCategoryInList={updateSubCategoryInList}
+                                                            updateSubCategoryStatusInList={updateSubCategoryStatusInList}
+                                                            onClose={handleCloseSubCategoryDetails}
                                                         />
                                                     </TableCell>
                                                 </TableRow>
@@ -495,4 +492,4 @@ const ProductsPage = () => {
         </>
     );
 };
-export default ProductsPage;
+export default SubCategoryPage;

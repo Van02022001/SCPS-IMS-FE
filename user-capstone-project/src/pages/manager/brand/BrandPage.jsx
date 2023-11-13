@@ -35,7 +35,7 @@ import { UserListHead, UserListToolbar } from '../../../sections/@dashboard/user
 // mock
 import USERLIST from '../../../_mock/user';
 import { getAllOrigins } from '~/data/mutation/origins/origins-mutation';
-import OriginDetailForm from '~/sections/auth/origin/OriginDetailForm';
+import OriginDetailForm from '~/sections/auth/manager/origin/OriginDetailForm';
 import { getAllBrands } from '~/data/mutation/brand/brands-mutation';
 import BrandForm from '~/sections/auth/manager/brand/BrandForm';
 import BrandDetailForm from '~/sections/auth/manager/brand/BrandDetailForm';

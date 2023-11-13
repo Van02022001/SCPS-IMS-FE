@@ -15,7 +15,7 @@ export const createSubCategoryMeta = async (subCategoryMetaId, subCategoryMetaPa
 //     return response.data;
 // }
 
-export const editSubCategoryMeta = async (subCategoryMetaId, editSubCategoryMetaParams) => {
+export const editSubCategorysMeta = async (subCategoryMetaId, editSubCategoryMetaParams) => {
     const response = await axiosInstance.put(`/sub-category-metas/${subCategoryMetaId}`, editSubCategoryMetaParams);
     return response.data;
 }

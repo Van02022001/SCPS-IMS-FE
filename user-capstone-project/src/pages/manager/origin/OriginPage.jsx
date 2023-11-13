@@ -35,12 +35,12 @@ import { UserListHead, UserListToolbar } from '../../../sections/@dashboard/user
 // mock
 import USERLIST from '../../../_mock/user';
 import { getAllOrigins } from '~/data/mutation/origins/origins-mutation';
-import OriginDetailForm from '~/sections/auth/origin/OriginDetailForm';
+import OriginDetailForm from '~/sections/auth/manager/origin/OriginDetailForm';
 import OriginForm from '~/sections/@dashboard/origin/OriginForm';
 
 // ----------------------------------------------------------------------
 
-const TABLE_HEAD = [{ id: 'name', label: 'Tên', alignRight: false }, ];
+const TABLE_HEAD = [{ id: 'name', label: 'Tên', alignRight: false },];
 
 // ----------------------------------------------------------------------
 

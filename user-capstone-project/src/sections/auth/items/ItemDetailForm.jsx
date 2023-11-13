@@ -349,11 +349,11 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
-                                    <Typography variant="body1">Người bán:</Typography>
+                                    <Typography variant="body1">Nhà cung cấp:</Typography>
                                     <TextField
                                         size="small"
                                         variant="outlined"
-                                        label="Người bán:"
+                                        label="Nhà cung cấp:"
                                         sx={{ width: '70%', marginRight: 5 }}
                                         value={item.supplier.name}
                                     />

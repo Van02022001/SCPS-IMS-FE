@@ -34,11 +34,11 @@ import CloseIcon from '@mui/icons-material/Close';
 import { ProductsListHead, ProductsListToolbar } from '~/sections/@dashboard/products';
 // mock
 import PRODUCTSLIST from '../../../_mock/products';
-import CategoryForm from '~/sections/auth/product/CategoryForm';
+import CategoryForm from '~/sections/auth/manager/subCategory/SubCategoryForm';
 // api
 import { getAllProduct } from '~/data/mutation/subCategory/subCategory-mutation';
-import ProductDetailForm from '~/sections/auth/product/ProductDetailForm';
-import EditCategoryForm from '~/sections/auth/categories/EditCategoryForm';
+import ProductDetailForm from '~/sections/auth/manager/subCategory/SubCategoryDetailForm';
+import EditCategoryForm from '~/sections/auth/manager/categories/EditCategoryForm';
 
 
 // ----------------------------------------------------------------------

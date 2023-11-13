@@ -32,7 +32,7 @@ import CloseIcon from "@mui/icons-material/Close"
 // sections
 import { UserListHead, UserListToolbar } from '../../../sections/@dashboard/user';
 import OdersForm from '~/sections/@dashboard/items/ItemsForm';
-import OrderDetailForm from '~/sections/auth/orders/ItemDetailForm';
+import OrderDetailForm from '~/sections/auth/items/ItemDetailForm';
 import USERLIST from '../../../_mock/user';
 import CustomerRequestForm from '~/sections/auth/sale/customerRequest/CustomerRequestForm';
 

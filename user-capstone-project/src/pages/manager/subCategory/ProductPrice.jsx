@@ -35,10 +35,10 @@ import Scrollbar from '~/components/scrollbar/Scrollbar';
 import CloseIcon from "@mui/icons-material/Close"
 
 // sections
-import { ProductsListHead } from '../../sections/@dashboard/products';
+import { ProductsListHead } from '../../../sections/@dashboard/products';
 // mock
-import PRODUCTSLIST from '../../_mock/products';
-import CategoryForm from '~/sections/auth/product/CategoryForm';
+import PRODUCTSLIST from '../../../_mock/products';
+import CategoryForm from '~/sections/auth/manager/subCategory/SubCategoryForm';
 import ProductsPriceToolbar from '~/sections/@dashboard/products/productsPrice/ProductsPriceToolbar';
 
 // ----------------------------------------------------------------------

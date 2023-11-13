@@ -24,3 +24,8 @@ export const editStatusItem = async (itemId, status) => {
     const response = await axiosInstance.put(`/items/item-status/${itemId}?status=${status}`);
     return response.data;
 }
+
+export const getItemsBySubCategory = async (subCategoyId) => {
+    const response = await axiosInstance.get(`/items/items-by-sub-category/${subCategoyId}`);
+    return response.data;
+}

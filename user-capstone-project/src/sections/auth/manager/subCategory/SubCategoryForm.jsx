@@ -3,7 +3,6 @@ import {
     DialogContent,
     FormControl,
     Grid,
-    IconButton,
     MenuItem,
     Select,
     Stack,
@@ -14,7 +13,7 @@ import {
     Card,
     CardContent,
 } from '@mui/material';
-import InputBase from '@mui/material/InputBase';
+
 import { useEffect, useState } from 'react';
 //icons
 import AddIcon from '@mui/icons-material/Add';
@@ -41,7 +40,7 @@ import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
 import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
 
-const CategoryForm = (props) => {
+const SubCategoryForm = (props) => {
     const [currentTab, setCurrentTab] = useState(0);
     const [tab1Data, setTab1Data] = useState({ categories_id: [] });
     const [tab2Data, setTab2Data] = useState({});
@@ -576,143 +575,4 @@ const CategoryForm = (props) => {
     );
 };
 
-export default CategoryForm;
-
-{/* <Grid
-                                            container
-                                            spacing={1}
-                                            direction="row"
-                                            justifyContent="space-between"
-                                            alignItems="center"
-                                            sx={{ marginBottom: 4, gap: 2 }}
-                                        >
-                                            <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
-                                                Giá tiền:{' '}
-                                            </Typography>
-                                            <TextField size="small" variant="outlined" sx={{ width: '70%' }} />
-                                        </Grid>
-                                        {/* <Grid
-                                            container
-                                            spacing={1}
-                                            direction="row"
-                                            justifyContent="space-between"
-                                            alignItems="center"
-                                            sx={{ marginBottom: 4, gap: 2 }}
-                                        >
-                                            <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
-                                                Giá bán:{' '}
-                                            </Typography>
-                                            <TextField size="small" variant="outlined" sx={{ width: '70%' }} />
-                                        </Grid> */}
-
-//  {/* <Card sx={{ minWidth: 275, marginTop: 5 }} spacing={2}>
-//                                 <Typography
-//                                     variant="subtitle1"
-//                                     sx={{
-//                                         fontSize: '18px',
-//                                         backgroundColor: '#f0f1f3',
-//                                         height: 50,
-//                                         textAlign: 'start',
-//                                         padding: '10px 0 0 20px',
-//                                     }}
-//                                 >
-//                                     Định mức tồn
-//                                 </Typography>
-//                                 <CardContent>
-//                                     <Grid container spacing={2}>
-//                                         <Grid item xs={6}>
-//                                             <Grid
-//                                                 container
-//                                                 direction="row"
-//                                                 justifyContent="space-between"
-//                                                 alignItems="center"
-//                                             >
-//                                                 <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
-//                                                     Ít nhất
-//                                                     <Button sx={{ padding: 0, minWidth: 0, marginLeft: 1 }}>
-//                                                         <ErrorOutlineIcon color="disabled" />
-//                                                     </Button>
-//                                                 </Typography>
-//                                                 <TextField
-//                                                     size="small"
-//                                                     variant="outlined"
-//                                                     sx={{ width: '50%', marginRight: 30 }}
-//                                                     placeholder="0"
-//                                                     value={minStockLevel}
-//                                                     onChange={(e) => setMinStockLevel(e.target.value)}
-//                                                 />
-//                                             </Grid>
-//                                         </Grid>
-//                                         <Grid item xs={6}>
-//                                             <Grid
-//                                                 container
-//                                                 direction="row"
-//                                                 justifyContent="space-between"
-//                                                 alignItems="center"
-//                                             >
-//                                                 <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
-//                                                     Nhiều nhất
-//                                                     <Button sx={{ padding: 0, minWidth: 0, marginLeft: 1 }}>
-//                                                         <ErrorOutlineIcon color="disabled" />
-//                                                     </Button>
-//                                                 </Typography>
-//                                                 <TextField
-//                                                     size="small"
-//                                                     variant="outlined"
-//                                                     sx={{ width: '50%', marginRight: 30 }}
-//                                                     placeholder="999,999,999"
-//                                                     value={maxStockLevel}
-//                                                     onChange={(e) => setMaxStockLevel(e.target.value)}
-//                                                 />
-//                                             </Grid>
-//                                         </Grid>
-//                                     </Grid>
-//                                 </CardContent>
-//                             </Card> */}
-
-// <LocalizationProvider dateAdapter={AdapterDayjs}>
-//                                             <Grid
-//                                                 container
-//                                                 spacing={1}
-//                                                 direction="row"
-//                                                 justifyContent="space-between"
-//                                                 alignItems="center"
-//                                                 sx={{ marginBottom: 4, gap: 5 }}
-//                                             >
-//                                                 <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
-//                                                     Ngày tạo:{' '}
-//                                                 </Typography>
-//                                                 <DatePicker
-//                                                     sx={{
-//                                                         width: '70%',
-//                                                         '& .MuiInputBase-input': {
-//                                                             fontSize: '1rem',
-//                                                             padding: '10px',
-//                                                         },
-//                                                     }}
-//                                                 />
-//                                             </Grid>
-//                                         </LocalizationProvider>
-//                                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-//                                             <Grid
-//                                                 container
-//                                                 spacing={1}
-//                                                 direction="row"
-//                                                 justifyContent="space-between"
-//                                                 alignItems="center"
-//                                                 sx={{ marginBottom: 4, gap: 5 }}
-//                                             >
-//                                                 <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
-//                                                     Ngày cập nhật:{' '}
-//                                                 </Typography>
-//                                                 <DatePicker
-//                                                     sx={{
-//                                                         width: '70%',
-//                                                         '& .MuiInputBase-input': {
-//                                                             fontSize: '1rem',
-//                                                             padding: '10px',
-//                                                         },
-//                                                     }}
-//                                                 />
-//                                             </Grid>
-//                                         </LocalizationProvider>
+export default SubCategoryForm;
