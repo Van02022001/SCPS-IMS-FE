@@ -309,10 +309,10 @@ const SupplierDetailForm = ({ suppliers, suppliersId, onClose, isOpen, mode, upd
                             <Button variant="contained" color="primary" onClick={updateSupplier}>
                                 Cập nhập
                             </Button>
-                            <Button variant="outlined" color="secondary" onClick={updateSupplierStatus}>
+                            <Button variant="contained" color="error" onClick={updateSupplierStatus}>
                                 Thay đổi trạng thái
                             </Button>
-                            <Button variant="outlined" color="secondary" >
+                            <Button variant="outlined" color="error" >
                                 Hủy bỏ
                             </Button>
                         </Grid>

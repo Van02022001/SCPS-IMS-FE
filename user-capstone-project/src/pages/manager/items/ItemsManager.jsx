@@ -199,6 +199,15 @@ const OdersManagerPage = () => {
             setItemData(updatedItemData);
         }
     };
+    const updateItemStatusInList = (itemId, newStatus) => {
+        const itemIndex = itemsData.findIndex((item) => item.id === itemId);
+
+        if (itemIndex !== -1) {
+            const updatedItemData = [...itemsData];
+            updatedItemData[itemIndex].status = newStatus;
+            setItemData(updatedItemData);
+        }
+    };
 
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
@@ -331,6 +340,7 @@ const OdersManagerPage = () => {
                                                             itemId={selectedItemId}
                                                             onClose={handleCloseOrderDetails}
                                                             updateItemInList={updateItemInList}
+                                                            updateItemStatusInList={updateItemStatusInList}
                                                         />
                                                     </TableCell>
                                                 </TableRow>

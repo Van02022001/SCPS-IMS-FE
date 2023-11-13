@@ -124,6 +124,8 @@ const OriginDetailForm = ({ origins, originsId, onClose, isOpen, mode }) => {
                             </Grid>
                         </Grid>
                     </Stack>
+                    <Stack spacing={4} margin={2}>
+                        <Grid container spacing={1} sx={{ gap: '10px' }}>
                     <Button variant="contained" color="primary" onClick={updateOrigin}>
                         Cập nhập
                     </Button>
@@ -133,6 +135,8 @@ const OriginDetailForm = ({ origins, originsId, onClose, isOpen, mode }) => {
                     <Button variant="outlined" color="secondary" onClick={handleDelete}>
                         Hủy bỏ
                     </Button>
+                    </Grid>
+                    </Stack>
                 </div>
             )}
             {selectedTab === 1 && (

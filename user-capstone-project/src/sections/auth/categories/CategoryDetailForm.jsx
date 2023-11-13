@@ -153,7 +153,7 @@ const CategoryDetailForm = ({
                 <div>
                     <Stack spacing={4} margin={2}>
                         <Grid container spacing={2}>
-                            <Grid item xs={6}>
+                            <Grid item xs={10}>
                                 <Grid
                                     container
                                     spacing={1}
@@ -185,7 +185,7 @@ const CategoryDetailForm = ({
                                     <TextField
                                         id="outlined-multiline-static"
                                         multiline
-                                        rows={4}
+                                        rows={10}
                                         size="small"
                                         variant="outlined"
                                         label="Mô tả"

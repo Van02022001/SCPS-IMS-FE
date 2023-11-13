@@ -20,7 +20,7 @@ import {
 } from '@mui/material';
 
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import { editItem } from '~/data/mutation/items/item-mutation';
+import { editItem, editStatusItem } from '~/data/mutation/items/item-mutation';
 import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
 import { getAllProduct } from '~/data/mutation/subCategory/subCategory-mutation';
@@ -28,7 +28,7 @@ import { getAllBrands } from '~/data/mutation/brand/brands-mutation';
 import { getAllOrigins } from '~/data/mutation/origins/origins-mutation';
 import { getAllSuppliers } from '~/data/mutation/supplier/suppliers-mutation';
 
-const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode }) => {
+const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode, updateItemStatusInList }) => {
     const [expandedItem, setExpandedItem] = useState(itemId);
     const [formHeight, setFormHeight] = useState(0);
     const [selectedTab, setSelectedTab] = useState(0); // Ban đầu chọn tab "Thông tin"
@@ -39,6 +39,8 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
     const [brand_id, setBrand_id] = useState([]);
     const [supplier_id, setSupplier_id] = useState([]);
     const [origin_id, setOrigin_id] = useState([]);
+
+    const [currentStatus, setCurrentStatus] = useState('');
 
     //thông báo
     const [isSuccess, setIsSuccess] = useState(false);
@@ -68,7 +70,6 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
             const item = items.find((o) => o.id === itemId);
             console.log(item);
             if (item) {
-
                 const editedItem = {
                     // minStockLevel: product.size.length ? product.size.length : 0,
                     // maxStockLevel: product.size ? product.size.width : 0,
@@ -120,6 +121,34 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
 
     const handleSave = () => {
         // Xử lý lưu
+    };
+
+    const updateItemStatus = async () => {
+        try {
+            let newStatus = currentStatus === 'Active' ? 'Inactive' : 'Active';
+
+            const response = await editStatusItem(itemId, newStatus);
+
+            if (response.status === '200 OK') {
+                setIsSuccess(true);
+                setIsError(false);
+                setSuccessMessage(response.message);
+            }
+
+            // Sử dụng hàm để cập nhật trạng thái trong danh sách categories trong CategoryPage
+            updateItemStatusInList(itemId, newStatus);
+            setCurrentStatus(newStatus);
+
+            console.log('Item status updated:', response);
+        } catch (error) {
+            console.error('Error updating category status:', error);
+            setIsError(true);
+            setIsSuccess(false);
+            setErrorMessage(error.response.data.message);
+            if (error.response) {
+                console.log('Error response:', error.response);
+            }
+        }
     };
 
     const handleDelete = () => {
@@ -424,15 +453,19 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                         </Grid>
                         {isSuccess && <SuccessAlerts message={successMessage} />}
                         {isError && <ErrorAlerts errorMessage={errorMessage} />}
-                        <Button variant="contained" color="primary" onClick={updateItems}>
-                            Cập nhật
-                        </Button>
-                        <Button variant="outlined" color="secondary" onClick={handleDelete}>
-                            Xóa
-                        </Button>
-                        <Button variant="outlined" color="secondary" onClick={handleDelete}>
-                            Hủy bỏ
-                        </Button>
+                        <Stack spacing={4} margin={2}>
+                            <Grid container spacing={1} sx={{ gap: '20px' }}>
+                                <Button variant="contained" color="primary" onClick={updateItems}>
+                                    Cập nhật
+                                </Button>
+                                <Button variant="contained" color="error" onClick={updateItemStatus}>
+                                    Thay đổi trạng thái
+                                </Button>
+                                <Button variant="outlined" color="error" onClick={handleDelete}>
+                                    Hủy bỏ
+                                </Button>
+                            </Grid>
+                        </Stack>
                     </div>
                 </div>
             )}

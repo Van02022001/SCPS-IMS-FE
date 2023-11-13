@@ -34,13 +34,13 @@ import CloseIcon from '@mui/icons-material/Close';
 import { UserListHead, UserListToolbar } from '../../../sections/@dashboard/user';
 // mock
 import USERLIST from '../../../_mock/user';
-import BrandForm from '~/sections/@dashboard/origin/OriginForm';
 import { getAllOrigins } from '~/data/mutation/origins/origins-mutation';
 import OriginDetailForm from '~/sections/auth/origin/OriginDetailForm';
+import OriginForm from '~/sections/@dashboard/origin/OriginForm';
 
 // ----------------------------------------------------------------------
 
-const TABLE_HEAD = [{ id: 'name', label: 'Tên', alignRight: false }, { id: '' }];
+const TABLE_HEAD = [{ id: 'name', label: 'Tên', alignRight: false }, ];
 
 // ----------------------------------------------------------------------
 
@@ -209,7 +209,7 @@ const OriginPage = () => {
                                 <CloseIcon color="primary" />
                             </IconButton>{' '}
                         </DialogTitle>
-                        <BrandForm />
+                        <OriginForm />
                     </Dialog>
                 </Stack>
 
