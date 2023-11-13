@@ -1,13 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Button, Tab, Tabs, Stack, Grid, TextField, FormControl, Select, MenuItem } from '@mui/material';
-
+import { Typography, Button, Tab, Tabs, Stack, Grid, TextField, FormControl, Select, MenuItem, CardContent, Card } from '@mui/material';
+// icons
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import ClearIcon from '@mui/icons-material/Clear';
+import SaveIcon from '@mui/icons-material/Save';
 
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+// api
 import { editProduct, editStatusProduct } from '~/data/mutation/subCategory/subCategory-mutation';
 import { getAllCategories } from '~/data/mutation/categories/categories-mutation';
 import { getAllUnit, getAllUnitMeasurement } from '~/data/mutation/unit/unit-mutation';
 import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
+import AddSubCategoryMetaForm from './AddSubCategoryMetaForm';
+import { editSubCategoryMeta, getAllSubCategoryMeta } from '~/data/mutation/subCategoryMeta/subCategoryMeta-mutation';
 
 const ProductDetailForm = ({
     products,
@@ -30,12 +37,16 @@ const ProductDetailForm = ({
     const [categories_id, setCategories_id] = useState([]);
     const [unit_id, setUnits_id] = useState([]);
     const [unit_mea_id, setUnit_mea_id] = useState([]);
+    const [subCategoryMeta, setSubCategoryMeta] = useState([]);
 
     const [editedProduct, setEditedProduct] = useState(null);
+    const [editSubCategoryMeta, setEditSubCategoryMeta] = useState(null);
     const [currentStatus, setCurrentStatus] = useState('');
 
     const [positionedSnackbarOpen, setPositionedSnackbarOpen] = useState(false);
     const [positionedSnackbarError, setPositionedSnackbarError] = useState(false);
+    // form
+    const [openAddSubCategoryMetaForm, setOpenAddSubCategoryMetaForm] = useState(false);
 
     //thông báo
     const [isSuccess, setIsSuccess] = useState(false);
@@ -55,6 +66,15 @@ const ProductDetailForm = ({
     const handleChangeTab = (event, newValue) => {
         setCurrentTab(newValue);
     };
+
+    const handleOpenAddSubCategoryMetaForm = () => {
+        setOpenAddSubCategoryMetaForm(true);
+    };
+
+    const handleCloseAddSubCategoryMetaForm = () => {
+        setOpenAddSubCategoryMetaForm(false);
+    };
+
     useEffect(() => {
         if (isOpen) {
             setFormHeight(1000);
@@ -124,6 +144,11 @@ const ProductDetailForm = ({
             .then((respone) => {
                 const data = respone.data;
                 setUnit_mea_id(data);
+            })
+        getAllSubCategoryMeta(productId)
+            .then((respone) => {
+                const data = respone.data;
+                setSubCategoryMeta(data);
             })
             .catch((error) => console.error('Error fetching units measurement:', error));
     }, []);
@@ -215,6 +240,41 @@ const ProductDetailForm = ({
     const handleDelete = () => {
         // Xử lý xóa
     };
+    const handleEditSubCategoryMeta = (field, value) => {
+        setEditSubCategoryMeta((prevSubCategoryMeta) => ({
+            ...prevSubCategoryMeta,
+            [field]: value,
+        }));
+
+    };
+
+    const updateSubCategoryMeta = async () => {
+
+        const editSubCategoryMetaParams = {
+            key: subCategoryMeta.key,
+            description: subCategoryMeta.description,
+        };
+        setEditSubCategoryMeta(editSubCategoryMetaParams)
+
+        try {
+            const response = await editSubCategoryMeta(productId, editSubCategoryMetaParams);
+
+            if (response.status === '200 OK') {
+                setIsSuccess(true);
+                setIsError(false);
+                setSuccessMessage(response.message);
+            }
+
+        } catch (error) {
+            console.error('An error occurred while updating the product:', error);
+            setIsError(true);
+            setIsSuccess(false);
+            setErrorMessage(error.response.data.message);
+            if (error.response) {
+                console.log('Error response:', error.response);
+            }
+        }
+    };
 
     return editedProduct ? (
         <div
@@ -227,7 +287,7 @@ const ProductDetailForm = ({
         >
             <Tabs value={currentTab} onChange={handleChangeTab} indicatorColor="primary" textColor="primary">
                 <Tab label="Thông tin" />
-                <Tab label="Thẻ kho" />
+                <Tab label="Thông tin thêm" />
                 <Tab label="Tồn kho" />
             </Tabs>
 
@@ -501,15 +561,12 @@ const ProductDetailForm = ({
                     {isError && <ErrorAlerts errorMessage={errorMessage} />}
                     <Stack spacing={4} margin={2}>
                         <Grid container spacing={1} sx={{ gap: '10px' }}>
-                            <Button variant="contained" color="primary" onClick={updateProduct}>
+                            <Button variant="contained" color="primary" startIcon={<SaveIcon />} onClick={updateProduct}>
                                 Cập nhật
                             </Button>
                             <Button variant="contained" color="error" onClick={updateProductStatus}>
                                 Thay đổi trạng thái
                             </Button>
-                            {/* <Button variant="contained" color="error" onClick={handleDelete}>
-                                Xóa
-                            </Button> */}
                             <Button variant="outlined" color="error" onClick={handleClear}>
                                 Hủy bỏ
                             </Button>
@@ -519,7 +576,78 @@ const ProductDetailForm = ({
             )}
 
             {currentTab === 1 && (
-                <div style={{ flex: 1 }}>{/* Hiển thị nội dung cho tab "Lịch sử thanh toán" ở đây */}</div>
+                <div style={{ flex: 1 }}>
+
+                    <Card sx={{ minWidth: 275, marginTop: 5 }} spacing={2}>
+                        <Typography
+                            variant="subtitle1"
+                            sx={{
+                                fontSize: '18px',
+                                backgroundColor: '#f0f1f3',
+                                height: 50,
+                                textAlign: 'start',
+                                padding: '10px 0 0 20px',
+                            }}
+                        >
+                            Mô tả sơ lược
+                        </Typography>
+                        <CardContent>
+                            <TextField
+                                id="outlined-multiline-static"
+                                multiline
+                                rows={4}
+                                defaultValue="Mô tả sơ lược"
+                                sx={{ width: '100%', border: 'none' }}
+                                value={subCategoryMeta.key}
+                                onChange={(e) => handleEditSubCategoryMeta('key', e.target.value)}
+                            />
+                        </CardContent>
+                    </Card>
+                    <Card sx={{ minWidth: 275, marginTop: 5 }} spacing={2}>
+                        <Typography
+                            variant="subtitle1"
+                            sx={{
+                                fontSize: '18px',
+                                backgroundColor: '#f0f1f3',
+                                height: 50,
+                                textAlign: 'start',
+                                padding: '10px 0 0 20px',
+
+                            }}
+                        >
+                            Mẫu ghi chú (hóa đơn, đặt hàng)
+                        </Typography>
+                        <CardContent>
+                            <TextField
+                                id="outlined-multiline-static"
+                                multiline
+                                rows={4}
+                                defaultValue="Mô tả"
+                                sx={{ width: '100%', border: 'none' }}
+                                value={subCategoryMeta.description}
+                                onChange={(e) => handleEditSubCategoryMeta('description', e.target.value)}
+                            />
+                        </CardContent>
+                    </Card>
+                    <Stack spacing={4} margin={2}>
+                        <Grid container spacing={1} sx={{ gap: '20px' }}>
+                            <Button variant="contained" color="success" onClick={handleOpenAddSubCategoryMetaForm}>
+                                Thêm mô tả
+                            </Button>
+                            <AddSubCategoryMetaForm
+                                subCategoryMetaId={product.id}
+                                open={openAddSubCategoryMetaForm}
+                                onClose={handleCloseAddSubCategoryMetaForm}
+                            />
+                            <Button color="primary" variant="contained" startIcon={<SaveIcon />} onClick={updateSubCategoryMeta}>
+                                Cập nhập
+                            </Button>
+                            <Button color="primary" variant="outlined" startIcon={<ClearIcon />}>
+                                Hủy
+                            </Button>
+                        </Grid>
+                    </Stack>
+                </div>
             )}
         </div>
     ) : null;

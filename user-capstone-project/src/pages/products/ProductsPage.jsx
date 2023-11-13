@@ -367,10 +367,6 @@ const ProductsPage = () => {
                                                 <TableCell align="left">{product.description}</TableCell>
                                                 <TableCell align="left">{product.createdAt}</TableCell>
                                                 <TableCell align="left">{product.updatedAt}</TableCell>
-                                                {/* <TableCell align="left">{product.origins[0].name}</TableCell>
-                                            <TableCell align="left">
-                                                {product.warehouses.length > 0 ? product.warehouses[0].name : " "}
-                                            </TableCell> */}
                                                 <TableCell align="left">
                                                     <Typography variant="subtitle2" noWrap>
                                                         {product.categories.map((category, index) => {
@@ -381,8 +377,6 @@ const ProductsPage = () => {
                                                     </Typography>
                                                 </TableCell>
 
-                                                {/* <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell> */}
-
                                                 <TableCell align="left">
                                                     <Label
                                                         color={(product.status === 'Inactive' && 'error') || 'success'}
@@ -392,12 +386,6 @@ const ProductsPage = () => {
                                                             : 'Ngừng hoạt động'}
                                                     </Label>
                                                 </TableCell>
-
-                                                {/* <TableCell align="right">
-                                                    <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
-                                                        <Iconify icon={'eva:more-vertical-fill'} />
-                                                    </IconButton>
-                                                </TableCell> */}
                                             </TableRow>
 
                                             {selectedProductId === product.id && (
