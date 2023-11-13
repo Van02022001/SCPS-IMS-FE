@@ -23,7 +23,7 @@ const BrandForm = () => {
             const response = await createBrands(unitParams);
             console.log('Create brand response:', response);
         } catch (error) {
-            console.error('Error creating origin:', error);
+            console.error('Error creating brand:', error);
         }
     };
 

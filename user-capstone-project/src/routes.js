@@ -32,6 +32,7 @@ import BadsReceiptPage from './pages/inventory_staff/transaction/BadsReceiptPage
 import UnitPage from './pages/manager/unit/UnitPage';
 import OriginPage from './pages/manager/origin/OriginPage';
 import BrandPage from './pages/manager/brand/BrandPage';
+import SupplierPage from './pages/manager/supplier/SupplierPage';
 
 // ----------------------------------------------------------------------
 
@@ -58,6 +59,7 @@ const Router = () => {
                 { path: 'category', element: <CategoryPage /> },
                 { path: 'origin', element: <OriginPage /> },
                 { path: 'brand', element: <BrandPage /> },
+                { path: 'supplier', element: <SupplierPage /> },
                 { path: 'unit', element: <UnitPage/> },
                 { path: 'blog', element: <BlogPage /> },
                 { path: 'warehouse', element: <WarehousePage /> },

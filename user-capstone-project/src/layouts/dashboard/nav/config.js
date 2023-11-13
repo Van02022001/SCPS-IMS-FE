@@ -52,6 +52,11 @@ const navConfig = [
       icon: <LocalOfferOutlined />,
     },
     {
+      title: 'Quản lý người bán',
+      path: '/dashboard/supplier',
+      icon: <LocalOfferOutlined />,
+    },
+    {
       title: 'Quản lý kho',
       path: '/dashboard/warehouse',
       icon: <Inventory2Outlined/>,

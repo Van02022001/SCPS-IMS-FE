@@ -19,4 +19,8 @@ export const editSuppliers = async (suppliersId, editSuppliersParams) => {
     const response = await axiosInstance.put(`/suppliers/${suppliersId}`, editSuppliersParams);
     return response.data;
 }
+export const editStatusSuppliers = async (suppliersId, status) => {
+    const response = await axiosInstance.put(`/suppliers/status/${suppliersId}?status=${status}`);
+    return response.data;
+}
 
