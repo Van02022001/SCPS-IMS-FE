@@ -31,8 +31,8 @@ import Scrollbar from '../../../components/scrollbar';
 import CloseIcon from '@mui/icons-material/Close';
 // sections
 import { UserListHead, UserListToolbar } from '../../../sections/@dashboard/user';
-import OdersForm from '~/sections/@dashboard/items/ItemsForm';
-import OrderDetailForm from '~/sections/auth/items/ItemDetailForm';
+import ItemsForm from '~/sections/auth/items/ItemsForm';
+import ItemDetailForm from '~/sections/auth/items/ItemDetailForm';
 import USERLIST from '../../../_mock/user';
 import { getAllItem } from '~/data/mutation/items/item-mutation';
 
@@ -48,11 +48,11 @@ const TABLE_HEAD = [
     { id: 'status', label: 'Trạng thái', alignRight: false },
     { id: '' },
 ];
-const orderDetailFormStyles = {
-    maxHeight: 0,
-    overflow: 'hidden',
-    transition: 'max-height 0.3s ease-in-out',
-};
+// const orderDetailFormStyles = {
+//     maxHeight: 0,
+//     overflow: 'hidden',
+//     transition: 'max-height 0.3s ease-in-out',
+// };
 
 // ----------------------------------------------------------------------
 
@@ -85,7 +85,7 @@ function applySortFilter(array, comparator, query) {
     return stabilizedThis.map((el) => el[0]);
 }
 
-const OdersManagerPage = () => {
+const ItemsManagerPage = () => {
     const [open, setOpen] = useState(null);
 
     const [openOderForm, setOpenOderForm] = useState(false);
@@ -257,7 +257,7 @@ const OdersManagerPage = () => {
                             <CloseIcon color="primary" />
                         </IconButton>{' '}
                     </DialogTitle>
-                    <OdersForm />
+                    <ItemsForm />
                 </Dialog>
             </Stack>
 
@@ -335,7 +335,7 @@ const OdersManagerPage = () => {
                                             {selectedItemId === item.id && (
                                                 <TableRow>
                                                     <TableCell colSpan={8}>
-                                                        <OrderDetailForm
+                                                        <ItemDetailForm
                                                             items={itemsData}
                                                             itemId={selectedItemId}
                                                             onClose={handleCloseOrderDetails}
@@ -388,7 +388,7 @@ const OdersManagerPage = () => {
                 />
             </Card>
 
-            <Popover
+            {/* <Popover
                 open={Boolean(open)}
                 anchorEl={open}
                 onClose={handleCloseMenu}
@@ -415,8 +415,8 @@ const OdersManagerPage = () => {
                     <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
                     Delete
                 </MenuItem>
-            </Popover>
+            </Popover> */}
         </>
     );
 };
-export default OdersManagerPage;
+export default ItemsManagerPage;

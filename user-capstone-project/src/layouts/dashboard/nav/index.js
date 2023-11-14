@@ -71,7 +71,7 @@ const managerNavConfig = [
     icon: <Person />,
     children: [{
       title: 'Quản lý sản phẩm',
-      path: '/dashboard/odersManager',
+      path: '/dashboard/itemsManager',
       icon: <Payments />,
     },
     {

@@ -3,7 +3,6 @@ import {
     DialogContent,
     FormControl,
     Grid,
-    IconButton,
     MenuItem,
     Select,
     Stack,
@@ -11,8 +10,6 @@ import {
     Tabs,
     TextField,
     Typography,
-    Card,
-    CardContent,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 //icons
@@ -28,20 +25,20 @@ import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
 import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
 import { createItem } from '~/data/mutation/items/item-mutation';
-import { getAllProduct } from '~/data/mutation/subCategory/subCategory-mutation';
+import { getAllSubCategoryActive } from '~/data/mutation/subCategory/subCategory-mutation';
 import { getAllBrands } from '~/data/mutation/brand/brands-mutation';
 import { getAllOrigins } from '~/data/mutation/origins/origins-mutation';
 import { getAllSuppliers } from '~/data/mutation/supplier/suppliers-mutation';
 
-const OdersForm = (props) => {
+const ItemsForm = (props) => {
     const [currentTab, setCurrentTab] = useState(0);
     const [tab1Data, setTab1Data] = useState({ sub_category_id: [], brand_id: [], supplier_id: [], origin_id: [] });
     const [tab2Data, setTab2Data] = useState({});
 
     // mở popup form
-    const [openAddCategoryDialog, setOpenAddCategoryDialog] = useState(false);
-    const [openAddOriginForm, setOpenAddOriginForm] = useState(false);
-    const [openAddUnitForm, setOpenAddUnitForm] = useState(false);
+    // const [openAddCategoryDialog, setOpenAddCategoryDialog] = useState(false);
+    // const [openAddOriginForm, setOpenAddOriginForm] = useState(false);
+    // const [openAddUnitForm, setOpenAddUnitForm] = useState(false);
 
     // form để call api
     const [minStockLevel, setMinStockLevel] = useState([]);
@@ -73,13 +70,13 @@ const OdersForm = (props) => {
     };
 
     // hàm xử lý đóng mở popup form
-    const handleOpenAddCategoryDialog = () => {
-        setOpenAddCategoryDialog(true);
-    };
+    // const handleOpenAddCategoryDialog = () => {
+    //     setOpenAddCategoryDialog(true);
+    // };
 
-    const handleCloseAddCategoryDialog = () => {
-        setOpenAddCategoryDialog(false);
-    };
+    // const handleCloseAddCategoryDialog = () => {
+    //     setOpenAddCategoryDialog(false);
+    // };
 
     // const handleOpenAddOriginForm = () => {
     //     setOpenAddOriginForm(true);
@@ -89,13 +86,13 @@ const OdersForm = (props) => {
     //     setOpenAddOriginForm(false);
     // };
 
-    const handleOpenAddUnitForm = () => {
-        setOpenAddUnitForm(true);
-    };
+    // const handleOpenAddUnitForm = () => {
+    //     setOpenAddUnitForm(true);
+    // };
 
-    const handleCloseAddUnitFormm = () => {
-        setOpenAddUnitForm(false);
-    };
+    // const handleCloseAddUnitFormm = () => {
+    //     setOpenAddUnitForm(false);
+    // };
     // Hàm delete của trang ---------------------------------------------------------------------
 
     // hàm create category-----------------------------------------
@@ -146,7 +143,7 @@ const OdersForm = (props) => {
     const handleAddCategories = async () => { };
 
     useEffect(() => {
-        getAllProduct()
+        getAllSubCategoryActive()
             .then((respone) => {
                 const data = respone.data;
                 setSub_category_id(data);
@@ -372,4 +369,4 @@ const OdersForm = (props) => {
     );
 };
 
-export default OdersForm;
+export default ItemsForm;

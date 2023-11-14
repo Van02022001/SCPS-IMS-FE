@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
-import { sentenceCase } from 'change-case';
+
 import React, { useEffect, useState } from 'react';
 
 // @mui
@@ -223,171 +223,160 @@ const CategoryPage = () => {
                 <title> Quản lý thể loại | Minimal UI </title>
             </Helmet>
 
-            <Container>
-                <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-                    <Typography variant="h4" gutterBottom>
-                        Quản lý thể loại
-                    </Typography>
-                    <Button
-                        variant="contained"
-                        startIcon={<Iconify icon="eva:plus-fill" />}
-                        onClick={() => setOpenOderForm(true)}
-                    >
-                        Thêm thể loại
-                    </Button>
-                    <Dialog fullWidth maxWidth="sm" open={openOderForm}>
-                        <DialogTitle>
-                            Tạo Thể Loại{' '}
-                            <IconButton style={{ float: 'right' }} onClick={handleCloseOdersForm}>
-                                <CloseIcon color="primary" />
-                            </IconButton>{' '}
-                        </DialogTitle>
-                        <CreateCategoriesForm />
-                    </Dialog>
-                </Stack>
 
-                <Card>
-                    <UserListToolbar
-                        numSelected={selected.length}
-                        filterName={filterName}
-                        onFilterName={handleFilterByName}
-                    />
+            <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+                <Typography variant="h4" gutterBottom>
+                    Quản lý thể loại
+                </Typography>
+                <Button
+                    variant="contained"
+                    startIcon={<Iconify icon="eva:plus-fill" />}
+                    onClick={() => setOpenOderForm(true)}
+                >
+                    Thêm thể loại
+                </Button>
+                <Dialog fullWidth maxWidth="sm" open={openOderForm}>
+                    <DialogTitle>
+                        Tạo Thể Loại{' '}
+                        <IconButton style={{ float: 'right' }} onClick={handleCloseOdersForm}>
+                            <CloseIcon color="primary" />
+                        </IconButton>{' '}
+                    </DialogTitle>
+                    <CreateCategoriesForm />
+                </Dialog>
+            </Stack>
 
-                    <Scrollbar>
-                        <TableContainer sx={{ minWidth: 800 }}>
-                            <Table>
-                                <UserListHead
-                                    order={order}
-                                    orderBy={orderBy}
-                                    headLabel={TABLE_HEAD}
-                                    rowCount={USERLIST.length}
-                                    numSelected={selected.length}
-                                    onRequestSort={handleRequestSort}
-                                    onSelectAllClick={handleSelectAllClick}
-                                />
-                                <TableBody>
-                                    {/* {filteredUsers
-                                        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                        .map((row) => {
-                                            const { id, name, role, status, company, avatarUrl, isVerified } = row;
-                                            const selectedUser = selected.indexOf(name) !== -1; */}
-                                    {categoryData.map((category) => {
-                                        return (
-                                            <React.Fragment key={category.id}>
-                                                <TableRow
-                                                    hover
-                                                    key={category.id}
-                                                    tabIndex={-1}
-                                                    role="checkbox"
-                                                    selected={selectedCategoryId === category.id}
-                                                    onClick={() => handleCategoryClick(category)}
-                                                >
-                                                    <TableCell padding="checkbox">
-                                                        <Checkbox
-                                                            onChange={(event) => handleClick(event, category.name)}
+            <Card>
+                <UserListToolbar
+                    numSelected={selected.length}
+                    filterName={filterName}
+                    onFilterName={handleFilterByName}
+                />
+
+                <Scrollbar>
+                    <TableContainer sx={{ minWidth: 800 }}>
+                        <Table>
+                            <UserListHead
+                                order={order}
+                                orderBy={orderBy}
+                                headLabel={TABLE_HEAD}
+                                rowCount={USERLIST.length}
+                                numSelected={selected.length}
+                                onRequestSort={handleRequestSort}
+                                onSelectAllClick={handleSelectAllClick}
+                            />
+                            <TableBody>
+
+                                {categoryData.map((category) => {
+                                    return (
+                                        <React.Fragment key={category.id}>
+                                            <TableRow
+                                                hover
+                                                key={category.id}
+                                                tabIndex={-1}
+                                                role="checkbox"
+                                                selected={selectedCategoryId === category.id}
+                                                onClick={() => handleCategoryClick(category)}
+                                            >
+                                                <TableCell padding="checkbox">
+                                                    <Checkbox
+                                                        onChange={(event) => handleClick(event, category.name)}
+                                                    />
+                                                </TableCell>
+                                                {/* tên  */}
+                                                <TableCell component="th" scope="row" padding="none">
+                                                    <Stack direction="row" alignItems="center" spacing={2}>
+                                                        {/* <Avatar alt={name} src={avatarUrl} /> */}
+                                                        <Typography variant="subtitle2" noWrap>
+                                                            {category.name}
+                                                        </Typography>
+                                                    </Stack>
+                                                </TableCell>
+                                                {/* mô tả */}
+                                                <TableCell align="left">
+                                                    {category.description.length > 25 ? `${category.description.slice(0, 25)}...` : category.description}
+                                                </TableCell>
+                                                {/* ngày tạo */}
+                                                <TableCell align="left">{category.createdAt}</TableCell>
+                                                {/* ngày cập nhật */}
+                                                <TableCell align="left">{category.updatedAt}</TableCell>
+                                                {/* trạng thái */}
+                                                <TableCell align="left">
+                                                    <Label
+                                                        color={
+                                                            (category.status === 'Inactive' && 'error') || 'success'
+                                                        }
+                                                    >
+                                                        {(category.status === 'Active') ? 'Đang hoạt động' : 'Ngừng hoạt động'}
+                                                    </Label>
+                                                </TableCell>
+
+                                            </TableRow>
+
+                                            {selectedCategoryId === category.id && (
+                                                <TableRow>
+                                                    <TableCell colSpan={8}>
+                                                        <CategoryDetailForm
+                                                            categories={categoryData}
+                                                            categoryStatus={categoryStatus}
+                                                            categoriesId={selectedCategoryId}
+                                                            updateCategoryInList={updateCategoryInList}
+                                                            updateCategoryStatusInList={updateCategoryStatusInList}
+                                                            onClose={handleCloseCategoryDetails}
                                                         />
                                                     </TableCell>
-                                                    {/* tên  */}
-                                                    <TableCell component="th" scope="row" padding="none">
-                                                        <Stack direction="row" alignItems="center" spacing={2}>
-                                                            {/* <Avatar alt={name} src={avatarUrl} /> */}
-                                                            <Typography variant="subtitle2" noWrap>
-                                                                {category.name}
-                                                            </Typography>
-                                                        </Stack>
-                                                    </TableCell>
-                                                    {/* mô tả */}
-                                                    <TableCell align="left">{category.description}</TableCell>
-                                                    {/* ngày tạo */}
-                                                    <TableCell align="left">{category.createdAt}</TableCell>
-                                                    {/* ngày cập nhật */}
-                                                    <TableCell align="left">{category.updatedAt}</TableCell>
-                                                    {/* trạng thái */}
-                                                    <TableCell align="left">
-                                                        <Label
-                                                            color={
-                                                                (category.status === 'Inactive' && 'error') || 'success'
-                                                            }
-                                                        >
-                                                            {(category.status === 'Active') ? 'Đang hoạt động' : 'Ngừng hoạt động'}
-                                                        </Label>
-                                                    </TableCell>
-
-                                                    {/* <TableCell align="right">
-                                                        <IconButton
-                                                            size="large"
-                                                            color="inherit"
-                                                            onClick={handleOpenMenu}
-                                                        >
-                                                            <Iconify icon={'eva:more-vertical-fill'} />
-                                                        </IconButton>
-                                                    </TableCell> */}
                                                 </TableRow>
-
-                                                {selectedCategoryId === category.id && (
-                                                    <TableRow>
-                                                        <TableCell colSpan={8}>
-                                                            <CategoryDetailForm
-                                                                categories={categoryData}
-                                                                categoryStatus={categoryStatus}
-                                                                categoriesId={selectedCategoryId}
-                                                                updateCategoryInList={updateCategoryInList}
-                                                                updateCategoryStatusInList={updateCategoryStatusInList}
-                                                                onClose={handleCloseCategoryDetails}
-                                                            />
-                                                        </TableCell>
-                                                    </TableRow>
-                                                )}
-                                            </React.Fragment>
-                                        );
-                                    })}
-                                    {emptyRows > 0 && (
-                                        <TableRow style={{ height: 53 * emptyRows }}>
-                                            <TableCell colSpan={6} />
-                                        </TableRow>
-                                    )}
-                                </TableBody>
-
-                                {isNotFound && (
-                                    <TableBody>
-                                        <TableRow>
-                                            <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                                                <Paper
-                                                    sx={{
-                                                        textAlign: 'center',
-                                                    }}
-                                                >
-                                                    <Typography variant="h6" paragraph>
-                                                        Not found
-                                                    </Typography>
-
-                                                    <Typography variant="body2">
-                                                        No results found for &nbsp;
-                                                        <strong>&quot;{filterName}&quot;</strong>.
-                                                        <br /> Try checking for typos or using complete words.
-                                                    </Typography>
-                                                </Paper>
-                                            </TableCell>
-                                        </TableRow>
-                                    </TableBody>
+                                            )}
+                                        </React.Fragment>
+                                    );
+                                })}
+                                {emptyRows > 0 && (
+                                    <TableRow style={{ height: 53 * emptyRows }}>
+                                        <TableCell colSpan={6} />
+                                    </TableRow>
                                 )}
-                            </Table>
-                        </TableContainer>
-                    </Scrollbar>
+                            </TableBody>
 
-                    <TablePagination
-                        rowsPerPageOptions={[5, 10, 25]}
-                        component="div"
-                        count={USERLIST.length}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        onPageChange={handleChangePage}
-                        onRowsPerPageChange={handleChangeRowsPerPage}
-                    />
-                </Card>
-            </Container>
+                            {isNotFound && (
+                                <TableBody>
+                                    <TableRow>
+                                        <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                                            <Paper
+                                                sx={{
+                                                    textAlign: 'center',
+                                                }}
+                                            >
+                                                <Typography variant="h6" paragraph>
+                                                    Not found
+                                                </Typography>
 
-            <Popover
+                                                <Typography variant="body2">
+                                                    No results found for &nbsp;
+                                                    <strong>&quot;{filterName}&quot;</strong>.
+                                                    <br /> Try checking for typos or using complete words.
+                                                </Typography>
+                                            </Paper>
+                                        </TableCell>
+                                    </TableRow>
+                                </TableBody>
+                            )}
+                        </Table>
+                    </TableContainer>
+                </Scrollbar>
+
+                <TablePagination
+                    rowsPerPageOptions={[5, 10, 25]}
+                    component="div"
+                    count={USERLIST.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+            </Card>
+
+
+            {/* <Popover
                 open={Boolean(open)}
                 anchorEl={open}
                 onClose={handleCloseMenu}
@@ -414,7 +403,7 @@ const CategoryPage = () => {
                     <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
                     Delete
                 </MenuItem>
-            </Popover>
+            </Popover> */}
         </>
     );
 };

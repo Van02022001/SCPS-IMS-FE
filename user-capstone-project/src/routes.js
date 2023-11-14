@@ -11,7 +11,7 @@ import ProductsPage from './pages/manager/subCategory/SubCategoryPage';
 import DashboardAppPage from './pages/dashboard/DashboardAppPage';
 import CreateProduct from './sections/@dashboard/products/crudProducts/CreateProduct';
 import ProductDetail from './pages/manager/productDetail/ProductDetail';
-import OdersManagerPage from './pages/manager/items/ItemsManager';
+import ItemsManagerPage from './pages/manager/items/ItemsManager';
 import CategoryPage from './pages/manager/category/CategoryPage';
 import UpdateProduct from './sections/@dashboard/products/crudProducts/UpdateProduct';
 import ReportPage from './pages/manager/report/ReportPage';
@@ -55,7 +55,7 @@ const Router = () => {
                 },
 
                 { path: 'productsDetail', element: <ProductDetail /> },
-                { path: 'odersManager', element: <OdersManagerPage /> },
+                { path: 'itemsManager', element: <ItemsManagerPage /> },
                 { path: 'category', element: <CategoryPage /> },
                 { path: 'origin', element: <OriginPage /> },
                 { path: 'brand', element: <BrandPage /> },

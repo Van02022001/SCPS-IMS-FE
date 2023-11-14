@@ -4,7 +4,14 @@ export const getAllProduct = async () => {
     const response = await axiosInstance.get("/sub-categories");
     return response.data;
 }
-
+export const getAllSubCategory = async () => {
+    const response = await axiosInstance.get("/sub-categories");
+    return response.data;
+}
+export const getAllSubCategoryActive = async () => {
+    const response = await axiosInstance.get("/sub-categories/active-sub-category");
+    return response.data;
+}
 export const createProduct = async (productParams) => {
     const response = await axiosInstance.post("/sub-categories", productParams);
     return response.data;
