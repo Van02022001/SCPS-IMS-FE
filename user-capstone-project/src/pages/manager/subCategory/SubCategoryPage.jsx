@@ -23,6 +23,8 @@ import {
     TablePagination,
     Dialog,
     DialogTitle,
+    Grid,
+    Menu,
 } from '@mui/material';
 // components
 import Label from '~/components/label/Label';
@@ -95,6 +97,8 @@ function applySortFilter(array, comparator, query) {
 //     return `${day}/${month}/${year}`;
 // }
 
+const filterOptions = ['Tất cả', 'Ren', 'Ron'];
+
 const SubCategoryPage = () => {
     // State mở các form----------------------------------------------------------------
     const [open, setOpen] = useState(null);
@@ -119,6 +123,12 @@ const SubCategoryPage = () => {
     const [subCategoryStatus, setSubCategoryStatus] = useState('');
 
     const [selectedProduct, setSelectedProduct] = useState(null);
+
+    const [filteredCategory, setFilteredCategory] = useState(null);
+
+    const [anchorElOptions, setAnchorElOptions] = useState(null);
+
+    const [selectedFilterOptions, setSelectedFilterOptions] = useState(null);
 
     // Hàm để thay đổi data mỗi khi Edit xong api-------------------------------------------------------------
     const updateSubCategoryInList = (updatedSubCategory) => {
@@ -272,6 +282,29 @@ const SubCategoryPage = () => {
             });
     }, []);
 
+    //==============================* filter *==============================
+    const renderedTodoList = subCategoryData.filter((sub_category) => {
+        if (!filteredCategory) {
+            return true;
+        }
+        return sub_category.categories.some((category) => category.name === filteredCategory);
+    });
+
+    const handleFilterOptionsClick = (event) => {
+        setAnchorElOptions(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorElOptions(null);
+    };
+
+    const handleMenuOptionsClick = (filter) => {
+        setFilteredCategory(filter);
+        setSelectedFilterOptions(filter);
+        setAnchorElOptions(null);
+    };
+    //==============================* filter *==============================
+
     return (
         <>
             <Helmet>
@@ -301,6 +334,22 @@ const SubCategoryPage = () => {
                 </Dialog>
             </Stack>
 
+            <Grid container sx={{ marginBottom: '30px' }}>
+                <Grid item xs={2}>
+                    <Button variant="outlined" onClick={handleFilterOptionsClick}>
+                        {selectedFilterOptions || 'Nhóm hàng'}
+                    </Button>
+
+                    <Menu anchorEl={anchorElOptions} open={Boolean(anchorElOptions)} onClose={handleClose}>
+                        {filterOptions.map((filter, index) => (
+                            <MenuItem key={index} onClick={() => handleMenuOptionsClick(filter)}>
+                                {filter}
+                            </MenuItem>
+                        ))}
+                    </Menu>
+                </Grid>
+            </Grid>
+
             <Card>
                 <ProductsListToolbar
                     numSelected={selected.length}
@@ -321,7 +370,7 @@ const SubCategoryPage = () => {
                                 onSelectAllClick={handleSelectAllClick}
                             />
                             <TableBody>
-                                {subCategoryData.map((sub_category) => {
+                                {renderedTodoList.map((sub_category) => {
                                     return (
                                         <React.Fragment key={sub_category.id}>
                                             <TableRow
@@ -335,9 +384,11 @@ const SubCategoryPage = () => {
                                                 <TableCell padding="checkbox">
                                                     <Checkbox
                                                         checked={selectedSubCategoryId === sub_category.id}
-                                                        onChange={(event) => handleCheckboxChange(event, sub_category.id)}
-                                                    // checked={selectedUser}
-                                                    // onChange={(event) => handleClick(event, name)}
+                                                        onChange={(event) =>
+                                                            handleCheckboxChange(event, sub_category.id)
+                                                        }
+                                                        // checked={selectedUser}
+                                                        // onChange={(event) => handleClick(event, name)}
                                                     />
                                                 </TableCell>
 
@@ -376,7 +427,9 @@ const SubCategoryPage = () => {
 
                                                 <TableCell align="left">
                                                     <Label
-                                                        color={(sub_category.status === 'Inactive' && 'error') || 'success'}
+                                                        color={
+                                                            (sub_category.status === 'Inactive' && 'error') || 'success'
+                                                        }
                                                     >
                                                         {sub_category.status === 'Active'
                                                             ? 'Đang hoạt động'
@@ -393,7 +446,9 @@ const SubCategoryPage = () => {
                                                             subCategoryStatus={subCategoryStatus}
                                                             subCategoryId={selectedSubCategoryId}
                                                             updateSubCategoryInList={updateSubCategoryInList}
-                                                            updateSubCategoryStatusInList={updateSubCategoryStatusInList}
+                                                            updateSubCategoryStatusInList={
+                                                                updateSubCategoryStatusInList
+                                                            }
                                                             onClose={handleCloseSubCategoryDetails}
                                                         />
                                                     </TableCell>
