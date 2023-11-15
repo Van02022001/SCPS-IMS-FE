@@ -259,7 +259,7 @@ const ItemsForm = (props) => {
                                             sx={{ marginBottom: 4, gap: 5 }}
                                         >
                                             <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
-                                                Người bán:{' '}
+                                                Nhà cung cấp:{' '}
                                             </Typography>
                                             <Grid xs={8.5}>
                                                 <Select

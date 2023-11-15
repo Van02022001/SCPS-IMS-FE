@@ -48,7 +48,7 @@ import SubCategoryDetailForm from '~/sections/auth/manager/subCategory/SubCatego
 
 const TABLE_HEAD = [
     { id: 'image', label: '', alignRight: false },
-    { id: 'id', label: 'Mã hàng', alignRight: false },
+    // { id: 'id', label: 'Mã hàng', alignRight: false },
     { id: 'name', label: 'Tên sản phẩm', alignRight: false },
     { id: 'description', label: 'Mô tả', alignRight: false },
     { id: 'createdAt', label: 'Ngày tạo', alignRight: false },
@@ -407,11 +407,11 @@ const SubCategoryPage = () => {
                                                     </Stack>
                                                 </TableCell>
 
-                                                <TableCell align="left">
+                                                {/* <TableCell align="left">
                                                     <Typography variant="subtitle2" noWrap>
                                                         {sub_category.id}
                                                     </Typography>
-                                                </TableCell>
+                                                </TableCell> */}
 
                                                 <TableCell component="th" scope="row" padding="none">
                                                     <Stack direction="row" alignItems="center" spacing={2}>

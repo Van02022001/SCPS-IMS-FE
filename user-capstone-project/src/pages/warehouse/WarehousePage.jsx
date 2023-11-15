@@ -40,6 +40,7 @@ import { getAllWarehouse } from '~/data/mutation/warehouse/warehouse-mutation';
 import CreateWarehouseForm from '~/sections/auth/warehouse/CreateWarehouseForm';
 
 
+
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -81,7 +82,7 @@ function applySortFilter(array, comparator, query) {
 }
 
 const WarehousePage = () => {
-    const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+    const [selectedWarehouseId, setSelectedWarehouseId] = useState(null);
 
     const [open, setOpen] = useState(null);
 
@@ -182,17 +183,17 @@ const WarehousePage = () => {
         setOpenOderForm(false);
     };
 
-    const handleCategoryClick = (category) => {
-        if (selectedCategoryId === category.id) {
-            console.log(selectedCategoryId);
-            setSelectedCategoryId(null); // Đóng nếu đã mở
+    const handleWarehouseClick = (warehouse) => {
+        if (selectedWarehouseId === warehouse.id) {
+            console.log(selectedWarehouseId);
+            setSelectedWarehouseId(null); // Đóng nếu đã mở
         } else {
-            setSelectedCategoryId(category.id); // Mở hoặc chuyển sang hóa đơn khác
+            setSelectedWarehouseId(warehouse.id); // Mở hoặc chuyển sang hóa đơn khác
         }
     };
 
-    const handleCloseCategoryDetails = () => {
-        setSelectedCategoryId(null);
+    const handleCloseWarehouseDetails = () => {
+        setSelectedWarehouseId(null);
     };
 
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
@@ -277,8 +278,8 @@ const WarehousePage = () => {
                                                     key={warehouse.id}
                                                     tabIndex={-1}
                                                     role="checkbox"
-                                                    selected={selectedCategoryId === warehouse.id}
-                                                    onClick={() => handleCategoryClick(warehouse)}
+                                                    selected={selectedWarehouseId === warehouse.id}
+                                                    onClick={() => handleWarehouseClick(warehouse)}
                                                 >
                                                     <TableCell padding="checkbox">
                                                         <Checkbox
@@ -318,16 +319,13 @@ const WarehousePage = () => {
                                                     </TableCell>
                                                 </TableRow>
 
-                                                {/* {selectedCategoryId === category.id && (
+                                                {/* {selectedWarehouseId === warehouse.id && (
                                                     <TableRow>
                                                         <TableCell colSpan={8}>
-                                                            <CategoryDetailForm
-                                                                categories={categoryData}
-                                                                categoryStatus={categoryStatus}
-                                                                categoriesId={selectedCategoryId}
-                                                                updateCategoryInList={updateCategoryInList}
-                                                                updateCategoryStatusInList={updateCategoryStatusInList}
-                                                                onClose={handleCloseCategoryDetails}
+                                                            <WarehouseDetailForm
+                                                                warehouses={warehouseData}
+                                                                warehousesId={selectedWarehouseId}
+                                                                onClose={handleCloseWarehouseDetails}
                                                             />
                                                         </TableCell>
                                                     </TableRow>

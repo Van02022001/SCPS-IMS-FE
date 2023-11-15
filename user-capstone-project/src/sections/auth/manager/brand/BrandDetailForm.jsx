@@ -2,10 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { Typography, Button, Tab, Tabs, Stack, Grid, TextField, FormControl, Select, MenuItem } from '@mui/material';
 import { deleteOrigins, editOrigins } from '~/data/mutation/origins/origins-mutation';
 import { deleteBrands, editBrands } from '~/data/mutation/brand/brands-mutation';
+import SuccessAlerts from '~/components/alert/SuccessAlert';
+import ErrorAlerts from '~/components/alert/ErrorAlert';
 
 const BrandDetailForm = ({ brands, brandsId, onClose, isOpen, mode }) => {
     const [formHeight, setFormHeight] = useState(0);
     const [selectedTab, setSelectedTab] = useState(0);
+    //thông báo
+    const [isSuccess, setIsSuccess] = useState(false);
+    const [isError, setIsError] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
     const [editedBrand, setEditedBrand] = useState(null);
 
@@ -55,13 +62,23 @@ const BrandDetailForm = ({ brands, brandsId, onClose, isOpen, mode }) => {
 
                 // Call your API to update the category
                 const response = await editBrands(brandsId, updateData);
-
+                if (response.status === '200 OK') {
+                    setIsSuccess(true);
+                    setIsError(false);
+                    setSuccessMessage(response.message);
+                }
                 // Handle the response as needed
                 console.log('Category updated:', response);
             }
         } catch (error) {
             // Handle errors
             console.error('Error updating brand:', error);
+            setIsError(true);
+            setIsSuccess(false);
+            setErrorMessage(error.response.data.message);
+            if (error.response) {
+                console.log('Error response:', error.response);
+            }
         }
     };
 
@@ -142,14 +159,10 @@ const BrandDetailForm = ({ brands, brandsId, onClose, isOpen, mode }) => {
                             </Grid>
                         </Grid>
                     </Stack>
+                    {isSuccess && <SuccessAlerts />}
+                    {isError && <ErrorAlerts errorMessage={errorMessage} />}
                     <Button variant="contained" color="primary" onClick={updateBrand}>
                         Cập nhập
-                    </Button>
-                    <Button variant="outlined" color="secondary" onClick={deleteBrand}>
-                        Xóa
-                    </Button>
-                    <Button variant="outlined" color="secondary" onClick={handleDelete}>
-                        Hủy bỏ
                     </Button>
                 </div>
             )}

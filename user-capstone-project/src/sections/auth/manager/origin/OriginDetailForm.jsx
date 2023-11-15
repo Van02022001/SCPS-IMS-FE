@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { Typography, Button, Tab, Tabs, Stack, Grid, TextField, FormControl, Select, MenuItem } from '@mui/material';
 import { deleteOrigins, editOrigins } from '~/data/mutation/origins/origins-mutation';
-
+import SuccessAlerts from '~/components/alert/SuccessAlert';
+import ErrorAlerts from '~/components/alert/ErrorAlert';
 
 const OriginDetailForm = ({ origins, originsId, onClose, isOpen, mode }) => {
     const [expandedItem, setExpandedItem] = useState(originsId);
     const [formHeight, setFormHeight] = useState(0);
     const [selectedTab, setSelectedTab] = useState(0);
+    //thông báo
+    const [isSuccess, setIsSuccess] = useState(false);
+    const [isError, setIsError] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
     const [editedOrigin, setEditedOrigin] = useState(null);
 
@@ -55,6 +61,11 @@ const OriginDetailForm = ({ origins, originsId, onClose, isOpen, mode }) => {
 
                 // Call your API to update the category
                 const response = await editOrigins(originsId, updateData);
+                if (response.status === '200 OK') {
+                    setIsSuccess(true);
+                    setIsError(false);
+                    setSuccessMessage(response.message);
+                }
 
                 // Handle the response as needed
                 console.log('Category updated:', response);
@@ -62,20 +73,25 @@ const OriginDetailForm = ({ origins, originsId, onClose, isOpen, mode }) => {
         } catch (error) {
             // Handle errors
             console.error('Error updating category:', error);
+            setIsError(true);
+            setIsSuccess(false);
+            setErrorMessage(error.response.data.message);
+            if (error.response) {
+                console.log('Error response:', error.response);
+            }
         }
     };
 
     const deleteOrigin = async () => {
         try {
             await deleteOrigins(originsId);
-            onClose(); 
+            onClose();
         } catch (error) {
             console.error('Error deleting origin:', error);
         }
     };
 
     const handleEdit = (field, value) => {
-        
         setEditedOrigin((prevOrigin) => ({
             ...prevOrigin,
             [field]: value,
@@ -124,18 +140,14 @@ const OriginDetailForm = ({ origins, originsId, onClose, isOpen, mode }) => {
                             </Grid>
                         </Grid>
                     </Stack>
+                    {isSuccess && <SuccessAlerts />}
+                    {isError && <ErrorAlerts errorMessage={errorMessage} />}
                     <Stack spacing={4} margin={2}>
                         <Grid container spacing={1} sx={{ gap: '10px' }}>
-                    <Button variant="contained" color="primary" onClick={updateOrigin}>
-                        Cập nhập
-                    </Button>
-                    <Button variant="outlined" color="secondary" onClick={deleteOrigin}>
-                        Xóa
-                    </Button>
-                    <Button variant="outlined" color="secondary" onClick={handleDelete}>
-                        Hủy bỏ
-                    </Button>
-                    </Grid>
+                            <Button variant="contained" color="primary" onClick={updateOrigin}>
+                                Cập nhập
+                            </Button>
+                        </Grid>
                     </Stack>
                 </div>
             )}

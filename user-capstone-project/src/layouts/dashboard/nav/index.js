@@ -90,7 +90,7 @@ const managerNavConfig = [
       icon: <LocalOfferOutlined />,
     },
     {
-      title: 'Quản lý người bán',
+      title: 'Quản lý nhà cung cấp',
       path: '/dashboard/supplier',
       icon: <LocalOfferOutlined />,
     },

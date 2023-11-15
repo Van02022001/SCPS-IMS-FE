@@ -225,103 +225,13 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
-                                    <Typography variant="body1">Ngày tạo:</Typography>
+                                    <Typography variant="body1">Danh mục sản phẩm:</Typography>
                                     <TextField
                                         size="small"
                                         variant="outlined"
-                                        label="Ngày tạo"
-                                        sx={{ width: '70%', marginRight: 5 }}
-                                        value={item.createdAt}
-                                    />
-                                </Grid>
-                                <Grid
-                                    container
-                                    spacing={1}
-                                    direction="row"
-                                    justifyContent="space-between"
-                                    alignItems="center"
-                                    sx={{ marginBottom: 4, gap: 5 }}
-                                >
-                                    <Typography variant="body1">Ngày cập nhật:</Typography>
-                                    <TextField
-                                        size="small"
-                                        variant="outlined"
-                                        label="Ngày cập nhật"
-                                        sx={{ width: '70%', marginRight: 5 }}
-                                        value={item.updatedAt}
-                                    />
-                                </Grid>
-                                <Grid
-                                    container
-                                    spacing={1}
-                                    direction="row"
-                                    justifyContent="space-between"
-                                    alignItems="center"
-                                    sx={{ marginBottom: 4, gap: 5 }}
-                                >
-                                    <Typography variant="body1">Khách hàng:</Typography>
-                                    <TextField
-                                        size="small"
-                                        variant="outlined"
-                                        label="Khách hàng"
-                                        sx={{ width: '70%', marginRight: 5 }}
-                                        value={item.customer}
-                                    />
-                                </Grid>
-
-                                <Grid
-                                    container
-                                    spacing={1}
-                                    direction="row"
-                                    justifyContent="space-between"
-                                    alignItems="center"
-                                    sx={{ marginBottom: 4, gap: 5 }}
-                                >
-                                    <Typography variant="body1">Bảng giá:</Typography>
-                                    <TextField
-                                        size="small"
-                                        variant="outlined"
-                                        label="Bảng giá"
-                                        sx={{ width: '70%', marginRight: 5 }}
-                                        value={item.priceList}
-                                    />
-                                </Grid>
-                                <Grid
-                                    container
-                                    spacing={1}
-                                    direction="row"
-                                    justifyContent="space-between"
-                                    alignItems="center"
-                                    sx={{ marginBottom: 4, gap: 5 }}
-                                >
-                                    <Typography variant="body1">Mã đặt hàng:</Typography>
-                                    <TextField
-                                        size="small"
-                                        variant="outlined"
-                                        label="Mã đặt hàng"
-                                        sx={{ width: '70%', marginRight: 5 }}
-                                        value={item.orderCode}
-                                    />
-                                </Grid>
-                            </Grid>
-
-                            {/* 5 field bên phải*/}
-                            <Grid item xs={6}>
-                                <Grid
-                                    container
-                                    spacing={1}
-                                    direction="row"
-                                    justifyContent="space-between"
-                                    alignItems="center"
-                                    sx={{ marginBottom: 4, gap: 5 }}
-                                >
-                                    <Typography variant="body1">Trạng thái:</Typography>
-                                    <TextField
-                                        size="small"
-                                        variant="outlined"
-                                        label="Trạng thái"
-                                        sx={{ width: '70%', marginRight: 5 }}
-                                        value={item.status}
+                                        label="Mã sản phẩm"
+                                        sx={{ width: '60%', marginRight: 5 }}
+                                        value={item.subCategory.name}
                                     />
                                 </Grid>
                                 <Grid
@@ -389,13 +299,186 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
-                                    <Typography variant="body1">Xuất xứ:</Typography>
+                                    <Typography variant="body1">Nguồn gốc:</Typography>
                                     <TextField
                                         size="small"
                                         variant="outlined"
-                                        label="Xuất xứ"
+                                        label="Nguồn gốc"
                                         sx={{ width: '70%', marginRight: 5 }}
                                         value={item.origin.name}
+                                    />
+                                </Grid>
+                                <Grid
+                                    container
+                                    spacing={1}
+                                    direction="row"
+                                    justifyContent="space-between"
+                                    alignItems="center"
+                                    sx={{ marginBottom: 4, gap: 5 }}
+                                >
+                                    <Typography variant="body1">Vị trí :</Typography>
+                                    <TextField
+                                        size="small"
+                                        variant="outlined"
+                                        label="Vị trí"
+                                        sx={{ width: '70%', marginRight: 5 }}
+                                        value={item.locations}
+                                    />
+                                </Grid>
+                                <Grid
+                                    container
+                                    spacing={1}
+                                    direction="row"
+                                    justifyContent="space-between"
+                                    alignItems="center"
+                                    sx={{ marginBottom: 4, gap: 5 }}
+                                >
+                                    <Typography variant="body1">Ngày tạo:</Typography>
+                                    <TextField
+                                        size="small"
+                                        variant="outlined"
+                                        label="Ngày tạo"
+                                        sx={{ width: '70%', marginRight: 5 }}
+                                        value={item.createdAt}
+                                    />
+                                </Grid>
+                            </Grid>
+                            {/* 5 field bên phải*/}
+                            <Grid item xs={6}>
+                                <Grid
+                                    container
+                                    spacing={1}
+                                    direction="row"
+                                    justifyContent="space-between"
+                                    alignItems="center"
+                                    sx={{ marginBottom: 4, gap: 5 }}
+                                >
+                                    <Typography variant="body1">Trạng thái:</Typography>
+                                    <TextField
+                                        size="small"
+                                        variant="outlined"
+                                        label="Trạng thái"
+                                        sx={{ width: '70%', marginRight: 5 }}
+                                        value={item.status === 'Active' ? 'Đang hoạt động' : 'Ngừng hoạt động'}
+                                    />
+                                </Grid>
+                                <Grid
+                                    container
+                                    spacing={1}
+                                    direction="row"
+                                    justifyContent="space-between"
+                                    alignItems="center"
+                                    sx={{ marginBottom: 4, gap: 5 }}
+                                >
+                                    <Typography variant="body1">Số lượng:</Typography>
+                                    <TextField
+                                        size="small"
+                                        variant="outlined"
+                                        label="Số lượng"
+                                        sx={{ width: '70%', marginRight: 5 }}
+                                        value={item.quantity}
+                                    />
+                                </Grid>
+                                <Grid
+                                    container
+                                    spacing={1}
+                                    direction="row"
+                                    justifyContent="space-between"
+                                    alignItems="center"
+                                    sx={{ marginBottom: 4, gap: 5 }}
+                                >
+                                    <Typography variant="body1">Hàng có sẵn:</Typography>
+                                    <TextField
+                                        size="small"
+                                        variant="outlined"
+                                        label="Hàng có sẵn"
+                                        sx={{ width: '70%', marginRight: 5 }}
+                                        value={item.available}
+                                    />
+                                </Grid>
+                                <Grid
+                                    container
+                                    spacing={1}
+                                    direction="row"
+                                    justifyContent="space-between"
+                                    alignItems="center"
+                                    sx={{ marginBottom: 4, gap: 5 }}
+                                >
+                                    <Typography variant="body1">Giá bán :</Typography>
+                                    <TextField
+                                        size="small"
+                                        variant="outlined"
+                                        label="Giá bán"
+                                        sx={{ width: '70%', marginRight: 5 }}
+                                        value={item.pricing}
+                                    />
+                                </Grid>
+                                <Grid
+                                    container
+                                    spacing={1}
+                                    direction="row"
+                                    justifyContent="space-between"
+                                    alignItems="center"
+                                    sx={{ marginBottom: 4, gap: 5 }}
+                                >
+                                    <Typography variant="body1">Giá nhập:</Typography>
+                                    <TextField
+                                        size="small"
+                                        variant="outlined"
+                                        label="Giá nhập"
+                                        sx={{ width: '70%', marginRight: 5 }}
+                                        value={item.purchasePrice}
+                                    />
+                                </Grid>
+                                <Grid
+                                    container
+                                    spacing={1}
+                                    direction="row"
+                                    justifyContent="space-between"
+                                    alignItems="center"
+                                    sx={{ marginBottom: 4, gap: 5 }}
+                                >
+                                    <Typography variant="body1">Đã bán:</Typography>
+                                    <TextField
+                                        size="small"
+                                        variant="outlined"
+                                        label="Đã bán"
+                                        sx={{ width: '70%', marginRight: 5 }}
+                                        value={item.sold}
+                                    />
+                                </Grid>
+                                <Grid
+                                    container
+                                    spacing={1}
+                                    direction="row"
+                                    justifyContent="space-between"
+                                    alignItems="center"
+                                    sx={{ marginBottom: 4, gap: 5 }}
+                                >
+                                    <Typography variant="body1">Hàng trả lại:</Typography>
+                                    <TextField
+                                        size="small"
+                                        variant="outlined"
+                                        label="Hàng trả lại"
+                                        sx={{ width: '70%', marginRight: 5 }}
+                                        value={item.defective}
+                                    />
+                                </Grid>
+                                <Grid
+                                    container
+                                    spacing={1}
+                                    direction="row"
+                                    justifyContent="space-between"
+                                    alignItems="center"
+                                    sx={{ marginBottom: 4, gap: 5 }}
+                                >
+                                    <Typography variant="body1">Ngày cập nhật:</Typography>
+                                    <TextField
+                                        size="small"
+                                        variant="outlined"
+                                        label="Ngày cập nhật"
+                                        sx={{ width: '70%', marginRight: 5 }}
+                                        value={item.updatedAt}
                                     />
                                 </Grid>
                             </Grid>
@@ -403,7 +486,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                     </Stack>
 
                     <div>
-                        <Card sx={{ marginTop: 5 }}>
+                        {/* <Card sx={{ marginTop: 5 }}>
                             <CardContent>
                                 <TableContainer>
                                     <Table>
@@ -440,9 +523,9 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                     </Table>
                                 </TableContainer>
                             </CardContent>
-                        </Card>
+                        </Card> */}
                         {/* Đoạn tổng kết */}
-                        <Grid container spacing={2} sx={{ marginTop: 2 }}>
+                        {/* <Grid container spacing={2} sx={{ marginTop: 2 }}>
                             <Grid item xs={6}>
                                 <Typography variant="body1">Tổng số hàng: </Typography>
                                 <Typography variant="body1">Tổng số tiền: </Typography>
@@ -450,7 +533,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                 <Typography variant="body1">Khách cần trả:</Typography>
                                 <Typography variant="body1">Khách đã trả: {item.amountPaid}</Typography>
                             </Grid>
-                        </Grid>
+                        </Grid> */}
                         {isSuccess && <SuccessAlerts message={successMessage} />}
                         {isError && <ErrorAlerts errorMessage={errorMessage} />}
                         <Stack spacing={4} margin={2}>
@@ -460,9 +543,6 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                 </Button>
                                 <Button variant="contained" color="error" onClick={updateItemStatus}>
                                     Thay đổi trạng thái
-                                </Button>
-                                <Button variant="outlined" color="error" onClick={handleDelete}>
-                                    Hủy bỏ
                                 </Button>
                             </Grid>
                         </Stack>

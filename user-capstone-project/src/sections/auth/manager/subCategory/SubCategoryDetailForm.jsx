@@ -310,7 +310,7 @@ const SubCategoryDetailForm = ({
                     <Stack spacing={4} margin={2}>
                         <Grid container spacing={2}>
                             <Grid item xs={6}>
-                                <Grid
+                                {/* <Grid
                                     container
                                     spacing={1}
                                     direction="row"
@@ -326,7 +326,7 @@ const SubCategoryDetailForm = ({
                                         sx={{ width: '70%' }}
                                         value={subCategorys ? subCategorys.id : ''}
                                     />
-                                </Grid>
+                                </Grid> */}
                                 <Grid
                                     container
                                     spacing={1}
@@ -441,7 +441,7 @@ const SubCategoryDetailForm = ({
                                                 size="small"
                                                 labelId="group-label"
                                                 id="group-select"
-                                                sx={{ width: '90%', fontSize: '14px' }}
+                                                sx={{ width: '100%', fontSize: '14px' }}
                                                 multiple
                                                 value={editedSubCategory.categories_id}
                                                 onChange={(e) => handleEdit('categories_id', e.target.value)}
