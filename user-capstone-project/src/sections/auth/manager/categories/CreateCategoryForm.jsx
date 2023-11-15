@@ -29,6 +29,11 @@ const CreateCategoriesForm = () => {
                 setIsSuccess(true);
                 setIsError(false);
                 setSuccessMessage(response.data.message);
+
+                //clear
+                setCategoryName('')
+                setCategoryDescription('')
+
             }
         } catch (error) {
             console.error("Can't fetch category", error);

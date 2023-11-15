@@ -292,7 +292,7 @@ const SubCategoryPage = () => {
 
     //==============================* filter *==============================
     const renderedTodoList = subCategoryData.filter((sub_category) => {
-        if (!filteredCategory) {
+        if (!filteredCategory || filteredCategory === 'Tất cả') {
             return true;
         }
         return sub_category.categories.some((category) => category.name === filteredCategory);

@@ -107,12 +107,19 @@ const ItemsForm = (props) => {
         };
         try {
             const response = await createItem(itemParams);
-            if (response.status === '200 OK') {
+            if (response.status === "200 OK") {
                 setIsSuccess(true);
                 setIsError(false);
-                setSuccessMessage(response.message);
+                setSuccessMessage(response.data.message);
+                //clear 
+                setMinStockLevel([]);
+                setMaxStockLevel([]);
+                setSub_category_id([]);
+                setBrands_id([]);
+                setSuppliers_id([]);
+                setOrigins_id([]);
 
-                props.onClose(response.data); // Call the callback function
+                console.log(response.data.message);
             }
         } catch (error) {
             console.error('Error creating product:', error);

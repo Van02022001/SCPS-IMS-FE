@@ -40,6 +40,9 @@ const CreateWarehouseForm = ({ open, onClose, onSave }) => {
                 setIsError(false);
                 setSuccessMessage(response.message);
                 console.log(response);
+                //clear 
+                setWarehouseName('');
+                setWarehouseAddress('');
             }
         } catch (error) {
             console.error("can't feaching category", error);

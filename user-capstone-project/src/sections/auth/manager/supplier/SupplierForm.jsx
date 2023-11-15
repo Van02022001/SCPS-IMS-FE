@@ -1,11 +1,7 @@
-import {
-    Button,
-    DialogContent,
-    Stack,
-    TextField,
-
-} from '@mui/material';
+import { Button, DialogContent, Stack, TextField } from '@mui/material';
 import { useState } from 'react';
+import ErrorAlerts from '~/components/alert/ErrorAlert';
+import SuccessAlerts from '~/components/alert/SuccessAlert';
 // api
 import { createSuppliers } from '~/data/mutation/supplier/suppliers-mutation';
 
@@ -16,7 +12,11 @@ const SupplierForm = () => {
     const [email, setEmail] = useState('');
     const [taxCode, setTaxCode] = useState('');
     const [address, setAddress] = useState('');
-
+    //thông báo
+    const [isSuccess, setIsSuccess] = useState(false);
+    const [isError, setIsError] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
     const handleCreateSupplier = async () => {
         const unitParams = {
@@ -30,8 +30,28 @@ const SupplierForm = () => {
         try {
             const response = await createSuppliers(unitParams);
             console.log('Create supplier response:', response);
+            if (response.status === '201 CREATED') {
+                setIsSuccess(true);
+                setIsError(false);
+                setSuccessMessage(response.data.message);
+                // Clear the form fields after a successful creation
+                setCode('');
+                setName('');
+                setPhone('');
+                setEmail('');
+                setTaxCode('');
+                setAddress('');
+                
+                console.log(response.data.message);
+            }
         } catch (error) {
             console.error('Error creating supplier:', error);
+            setIsError(true);
+            setIsSuccess(false);
+            setErrorMessage(error.response.data.message);
+            if (error.response) {
+                console.log('Error response:', error.response.data.message);
+            }
         }
     };
 
@@ -77,6 +97,8 @@ const SupplierForm = () => {
                             label="Địa chỉ"
                             onChange={(e) => setAddress(e.target.value)}
                         />
+                        {isSuccess && <SuccessAlerts message={successMessage} />}
+                        {isError && <ErrorAlerts errorMessage={errorMessage} />}
                         <Button color="primary" variant="contained" onClick={handleCreateSupplier}>
                             Tạo
                         </Button>
