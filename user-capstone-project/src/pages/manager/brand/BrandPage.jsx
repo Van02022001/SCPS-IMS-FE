@@ -96,7 +96,8 @@ const BrandPage = () => {
     const [filterName, setFilterName] = useState('');
 
     const [rowsPerPage, setRowsPerPage] = useState(5);
-
+    // Search data
+    const [displayedBrandData, setDisplayedBrandData] = useState([]);
     const [brandData, setBrandData] = useState([]);
 
     useEffect(() => {
@@ -183,6 +184,12 @@ const BrandPage = () => {
         setOpenOderForm(false);
     };
 
+    const handleDataSearch = (searchResult) => {
+        // Cập nhật state của trang chính với dữ liệu từ tìm kiếm
+        setBrandData(searchResult);
+        setDisplayedBrandData(searchResult);
+    };
+
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
     const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
@@ -223,6 +230,7 @@ const BrandPage = () => {
                         numSelected={selected.length}
                         filterName={filterName}
                         onFilterName={handleFilterByName}
+                        onDataSearch={handleDataSearch}
                     />
 
                     <Scrollbar>

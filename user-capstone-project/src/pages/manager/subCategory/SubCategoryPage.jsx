@@ -33,15 +33,16 @@ import Scrollbar from '~/components/scrollbar/Scrollbar';
 import CloseIcon from '@mui/icons-material/Close';
 
 // sections
-import { ProductsListHead, ProductsListToolbar } from '~/sections/@dashboard/products';
+import { SubCategoryListHead, SubCategoryToolbar } from '~/sections/@dashboard/manager/subCategory';
 // mock
 import PRODUCTSLIST from '../../../_mock/products';
 import CategoryForm from '~/sections/auth/manager/subCategory/SubCategoryForm';
 // api
-import { getAllProduct } from '~/data/mutation/subCategory/subCategory-mutation';
+import { getAllSubCategory } from '~/data/mutation/subCategory/subCategory-mutation';
 
 import EditCategoryForm from '~/sections/auth/manager/categories/EditCategoryForm';
 import SubCategoryDetailForm from '~/sections/auth/manager/subCategory/SubCategoryDetailForm';
+
 
 // ----------------------------------------------------------------------
 
@@ -117,7 +118,8 @@ const SubCategoryPage = () => {
     const [sortedProduct, setSortedProduct] = useState([]);
 
     const [rowsPerPage, setRowsPerPage] = useState(5);
-
+    // Search data
+    const [displayedSubCategoryData, setDisplayedSubCategoryData] = useState([]);
     // State data và xử lý data
     const [subCategoryData, setSubCategoryData] = useState([]);
     const [subCategoryStatus, setSubCategoryStatus] = useState('');
@@ -252,6 +254,12 @@ const SubCategoryPage = () => {
         setSortedProduct(filteredUsers);
     };
 
+    const handleDataSearch = (searchResult) => {
+        // Cập nhật state của trang chính với dữ liệu từ tìm kiếm
+        setSubCategoryData(searchResult);
+        setDisplayedSubCategoryData(searchResult);
+    };
+
     const handleCloseOdersForm = () => {
         setOpenOderForm(false);
     };
@@ -267,7 +275,7 @@ const SubCategoryPage = () => {
     const isNotFound = !filteredUsers.length && !!filterName;
 
     useEffect(() => {
-        getAllProduct()
+        getAllSubCategory()
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
@@ -351,16 +359,17 @@ const SubCategoryPage = () => {
             </Grid>
 
             <Card>
-                <ProductsListToolbar
+                <SubCategoryToolbar
                     numSelected={selected.length}
                     filterName={filterName}
                     onFilterName={handleFilterByName}
+                    onDataSearch={handleDataSearch}
                 />
 
                 <Scrollbar>
                     <TableContainer sx={{ minWidth: 800 }}>
                         <Table>
-                            <ProductsListHead
+                            <SubCategoryListHead
                                 order={order}
                                 orderBy={orderBy}
                                 headLabel={TABLE_HEAD}
@@ -387,8 +396,8 @@ const SubCategoryPage = () => {
                                                         onChange={(event) =>
                                                             handleCheckboxChange(event, sub_category.id)
                                                         }
-                                                        // checked={selectedUser}
-                                                        // onChange={(event) => handleClick(event, name)}
+                                                    // checked={selectedUser}
+                                                    // onChange={(event) => handleClick(event, name)}
                                                     />
                                                 </TableCell>
 

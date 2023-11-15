@@ -35,7 +35,7 @@ import { ProductsListHead, ProductsListToolbar } from '~/sections/@dashboard/pro
 import PRODUCTSLIST from '../../../_mock/products';
 import CategoryForm from '~/sections/auth/manager/subCategory/SubCategoryForm';
 // api
-import { getAllProduct, getAllSubCategory } from '~/data/mutation/subCategory/subCategory-mutation';
+import { getAllSubCategory } from '~/data/mutation/subCategory/subCategory-mutation';
 import ProductDetailForm from '~/sections/auth/manager/subCategory/SubCategoryDetailForm';
 import EditCategoryForm from '~/sections/auth/manager/categories/EditCategoryForm';
 import GoodsReceiptPage from './GoodsReceiptPage';
@@ -259,7 +259,7 @@ const ViewReceiptPage = () => {
     const isNotFound = !filteredUsers.length && !!filterName;
 
     useEffect(() => {
-        getAllProduct()
+        getAllSubCategory()
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {

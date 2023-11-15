@@ -25,7 +25,7 @@ import BoxComponent from '~/components/box/BoxComponent';
 import { getAllCategories } from '~/data/mutation/categories/categories-mutation';
 import { getAllUnit, getAllUnitMeasurement } from '~/data/mutation/unit/unit-mutation';
 import { getAllOrigins } from '~/data/mutation/origins/origins-mutation';
-import { editProduct } from '~/data/mutation/subCategory/subCategory-mutation';
+import { editSubCategory } from '~/data/mutation/subCategory/subCategory-mutation';
 
 // api
 
@@ -111,7 +111,7 @@ const EditCategoryForm = ({ open, product, handleClose }) => {
             unit_mea_id,
         };
 
-        editProduct(updatedProduct)
+        editSubCategory(updatedProduct)
             .then((response) => {
                 console.log('Product updated successfully', response);
                 handleClose();

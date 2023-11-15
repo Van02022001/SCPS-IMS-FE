@@ -32,7 +32,7 @@ import AddCategoryForm from './AddCategoryForm';
 import AddUnitForm from './AddUnitForm';
 
 // api
-import { createProduct } from '~/data/mutation/subCategory/subCategory-mutation';
+import { createSubCategory } from '~/data/mutation/subCategory/subCategory-mutation';
 import { getAllCategories } from '~/data/mutation/categories/categories-mutation';
 import { deleteUnits, getAllUnit, getAllUnitMeasurement } from '~/data/mutation/unit/unit-mutation';
 import { deleteOrigins, getAllOrigins } from '~/data/mutation/origins/origins-mutation';
@@ -150,7 +150,7 @@ const SubCategoryForm = (props) => {
             unit_mea_id: tab1Data.unit_mea_id,
         };
         try {
-            const response = await createProduct(productParams);
+            const response = await createSubCategory(productParams);
             if (response.status === '200 OK') {
                 setIsSuccess(true);
                 setIsError(false);

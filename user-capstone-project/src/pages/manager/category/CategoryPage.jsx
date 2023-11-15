@@ -32,13 +32,14 @@ import Scrollbar from '../../../components/scrollbar';
 import CloseIcon from '@mui/icons-material/Close';
 
 // sections
-import { UserListHead, UserListToolbar } from '../../../sections/@dashboard/user';
+import { CategoryListHead, CategoryToolbar } from '~/sections/@dashboard/manager/categoy';
 // mock
 import USERLIST from '../../../_mock/user';
 import { getAllCategories } from '~/data/mutation/categories/categories-mutation';
 // form validation
 import CategoryDetailForm from '~/sections/auth/manager/categories/CategoryDetailForm';
 import CreateCategoriesForm from '~/sections/auth/manager/categories/CreateCategoryForm';
+
 
 // ----------------------------------------------------------------------
 
@@ -100,6 +101,8 @@ const CategoryPage = () => {
     const [filterName, setFilterName] = useState('');
 
     const [rowsPerPage, setRowsPerPage] = useState(5);
+    // Search data
+    const [displayedCategoryData, setDisplayedCategoryData] = useState([]);
 
     const [categoryData, setCategoryData] = useState([]);
     const [categoryStatus, setCategoryStatus] = useState('');
@@ -197,6 +200,12 @@ const CategoryPage = () => {
         setSelectedCategoryId(null);
     };
 
+    const handleDataSearch = (searchResult) => {
+        // Cập nhật state của trang chính với dữ liệu từ tìm kiếm
+        setCategoryData(searchResult);
+        setDisplayedCategoryData(searchResult);
+    };
+
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
     const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
@@ -247,16 +256,17 @@ const CategoryPage = () => {
             </Stack>
 
             <Card>
-                <UserListToolbar
+                <CategoryToolbar
                     numSelected={selected.length}
                     filterName={filterName}
                     onFilterName={handleFilterByName}
+                    onDataSearch={handleDataSearch}
                 />
 
                 <Scrollbar>
                     <TableContainer sx={{ minWidth: 800 }}>
                         <Table>
-                            <UserListHead
+                            <CategoryListHead
                                 order={order}
                                 orderBy={orderBy}
                                 headLabel={TABLE_HEAD}

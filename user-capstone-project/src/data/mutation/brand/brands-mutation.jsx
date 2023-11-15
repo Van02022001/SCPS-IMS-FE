@@ -11,7 +11,7 @@ export const createBrands = async (originParams) => {
 }
 
 export const deleteBrands = async (id) => {
-    const response = await axiosInstance.delete(`/brands/${id}`, );
+    const response = await axiosInstance.delete(`/brands/${id}`,);
     return response.data;
 }
 
@@ -20,3 +20,7 @@ export const editBrands = async (brandsId, editBrandsParams) => {
     return response.data;
 }
 
+export const getBrandSearch = async (keyWordBrand) => {
+    const response = await axiosInstance.get(`/brands/search?keyword=${keyWordBrand}`);
+    return response.data;
+}

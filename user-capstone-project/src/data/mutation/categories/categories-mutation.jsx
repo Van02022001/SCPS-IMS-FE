@@ -22,3 +22,8 @@ export const editStatusCategories = async (categoriesId, status) => {
     const response = await axiosInstance.put(`/categories/category-status/${categoriesId}?status=${status}`);
     return response.data;
 }
+
+export const getCategoriesSearch = async (keyWordCategory) => {
+    const response = await axiosInstance.get(`/categories/search?keyword=${keyWordCategory}`);
+    return response.data;
+}

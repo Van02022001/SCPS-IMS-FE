@@ -6,7 +6,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import SaveIcon from '@mui/icons-material/Save';
 
 // api
-import { editProduct, editStatusProduct } from '~/data/mutation/subCategory/subCategory-mutation';
+import { editSubCategory, editStatusCategory } from '~/data/mutation/subCategory/subCategory-mutation';
 import { getAllCategories } from '~/data/mutation/categories/categories-mutation';
 import { getAllUnit, getAllUnitMeasurement } from '~/data/mutation/unit/unit-mutation';
 import SuccessAlerts from '~/components/alert/SuccessAlert';
@@ -153,6 +153,11 @@ const SubCategoryDetailForm = ({
                 const data = respone.data;
                 setSubCategoryMeta(data);
             })
+            .catch((error) => {
+                console.error('Error fetching subcategory meta:', error);
+                setSubCategoryMeta(null);
+            });
+
         getItemsBySubCategory(subCategoryId)
             .then((respone) => {
                 const data = respone.data;
@@ -173,7 +178,7 @@ const SubCategoryDetailForm = ({
             return;
         }
         try {
-            const response = await editProduct(subCategoryId, editedSubCategory);
+            const response = await editSubCategory(subCategoryId, editedSubCategory);
 
             if (response.status === '200 OK') {
                 setIsSuccess(true);
@@ -198,7 +203,7 @@ const SubCategoryDetailForm = ({
         try {
             let newStatus = currentStatus === 'Active' ? 'Inactive' : 'Active';
 
-            const response = await editStatusProduct(subCategoryId, newStatus);
+            const response = await editStatusCategory(subCategoryId, newStatus);
 
             if (response.status === '200 OK') {
                 setIsSuccess(true);

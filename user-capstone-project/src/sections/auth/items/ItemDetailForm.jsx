@@ -23,7 +23,7 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { editItem, editStatusItem } from '~/data/mutation/items/item-mutation';
 import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
-import { getAllProduct } from '~/data/mutation/subCategory/subCategory-mutation';
+import { getAllSubCategory } from '~/data/mutation/subCategory/subCategory-mutation';
 import { getAllBrands } from '~/data/mutation/brand/brands-mutation';
 import { getAllOrigins } from '~/data/mutation/origins/origins-mutation';
 import { getAllSuppliers } from '~/data/mutation/supplier/suppliers-mutation';
@@ -87,7 +87,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
     }, [items, itemId, mode]);
 
     useEffect(() => {
-        getAllProduct()
+        getAllSubCategory()
             .then((respone) => {
                 const data = respone.data;
                 setSub_category_id(data);
