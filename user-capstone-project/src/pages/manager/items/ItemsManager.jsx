@@ -23,6 +23,11 @@ import {
     TablePagination,
     Dialog,
     DialogTitle,
+    Select,
+    FormControl,
+    InputLabel,
+    OutlinedInput,
+    ListItemText,
 } from '@mui/material';
 // components
 import Label from '../../../components/label';
@@ -35,6 +40,8 @@ import ItemsForm from '~/sections/auth/items/ItemsForm';
 import ItemDetailForm from '~/sections/auth/items/ItemDetailForm';
 import USERLIST from '../../../_mock/user';
 import { getAllItem } from '~/data/mutation/items/item-mutation';
+//icons
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
 
 // ----------------------------------------------------------------------
 
@@ -55,6 +62,22 @@ const TABLE_HEAD = [
 // };
 
 // ----------------------------------------------------------------------
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+    PaperProps: {
+        style: {
+            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+            width: 250,
+        },
+    },
+};
+
+const filterOptions = ['Sai Gon Golden', 'Ha Noi golden'];
+const filterSubCategories = ['Bạc lót', 'Thép'];
+const filterSuppliers = ['Tùng', 'Tùngggg'];
+const filterOrigins = ['Cái', 'Test'];
 
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -111,6 +134,21 @@ const ItemsManagerPage = () => {
     const [itemsData, setItemData] = useState([]);
     const [itemStatus, setItemStatus] = useState('');
     const [sortedItem, setSortedItem] = useState([]);
+    //--------------------Filter------------------------
+    const [personName, setPersonName] = React.useState([]);
+    const [selectedSubCategories, setSelectedSubCategories] = React.useState([]);
+    const [selectedFilterOptions, setSelectedFilterOptions] = useState(null);
+    const [selectedSuppliers, setSelectedSuppliers] = React.useState([]);
+    const [selectedOrigins, setSelectedOrigins] = React.useState([]);
+
+    const handleChange = (event) => {
+        setPersonName(event.target.value);
+        const selectedValues = event.target.value.length > 0 ? event.target.value : null;
+        setSelectedFilterOptions(selectedValues);
+    };
+    const handleChangeCategories = (event) => {
+        setSelectedSubCategories(event.target.value);
+    };
 
     const handleCloseOrderDetails = () => {
         setSelectedOrder(null);
@@ -233,6 +271,31 @@ const ItemsManagerPage = () => {
 
     console.log(itemsData);
 
+    //==============================* filter *==============================//
+    const applyFilters = (item) => {
+        const isSubCategoryMatch =
+            !selectedSubCategories ||
+            selectedSubCategories.length === 0 ||
+            selectedSubCategories.includes(item.subCategory.name);
+
+        const isBrandMatch =
+            !selectedFilterOptions ||
+            selectedFilterOptions.length === 0 ||
+            (Array.isArray(item.brand) && item.brand.some((brand) => selectedFilterOptions.includes(brand.name))) ||
+            (!Array.isArray(item.brand) && selectedFilterOptions.includes(item.brand.name));
+
+        const isSupplierMatch =
+            !selectedSuppliers || selectedSuppliers.length === 0 || selectedSuppliers.includes(item.supplier.name);
+
+        const isOriginMatch =
+            !selectedOrigins || selectedOrigins.length === 0 || selectedOrigins.includes(item.origin.name);
+
+        return isSubCategoryMatch && isBrandMatch && isSupplierMatch && isOriginMatch;
+    };
+
+    const filteredItems = itemsData.filter(applyFilters);
+    //==============================* filter *==============================//
+
     return (
         <>
             <Helmet>
@@ -261,6 +324,99 @@ const ItemsManagerPage = () => {
                 </Dialog>
             </Stack>
 
+            {/* ===========================================filter=========================================== */}
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+                <FilterAltIcon color="action" />
+                <Typography gutterBottom variant="h6" color="text.secondary" component="div" sx={{ m: 1 }}>
+                    Bộ lọc tìm kiếm
+                </Typography>
+            </div>
+            <FormControl sx={{ m: 1, width: 300, mb: 2 }}>
+                <InputLabel id="demo-multiple-checkbox-label">Danh mục sản phẩm</InputLabel>
+                <Select
+                    labelId="demo-multiple-checkbox-label"
+                    id="demo-multiple-checkbox"
+                    multiple
+                    value={selectedSubCategories}
+                    onChange={handleChangeCategories}
+                    input={<OutlinedInput label="Danh mục sản phẩm" />}
+                    renderValue={(selected) => selected.join(', ')}
+                    MenuProps={MenuProps}
+                >
+                    {filterSubCategories.map((name) => (
+                        <MenuItem key={name} value={name}>
+                            <Checkbox checked={selectedSubCategories.indexOf(name) > -1} />
+                            <ListItemText primary={name} />
+                        </MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
+
+            <FormControl sx={{ m: 1, width: 300, mb: 2 }}>
+                <InputLabel id="demo-multiple-checkbox-label">Thương hiệu</InputLabel>
+                <Select
+                    labelId="demo-multiple-checkbox-label"
+                    id="demo-multiple-checkbox"
+                    multiple
+                    value={personName}
+                    onChange={handleChange}
+                    input={<OutlinedInput label="Thương hiệu" />}
+                    renderValue={(selected) => selected.join(', ')}
+                    MenuProps={MenuProps}
+                >
+                    {filterOptions.map((name) => (
+                        <MenuItem key={name} value={name}>
+                            <Checkbox checked={personName.indexOf(name) > -1} />
+                            <ListItemText primary={name} />
+                        </MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
+
+            <FormControl sx={{ m: 1, width: 300, mb: 2 }}>
+                <InputLabel id="demo-multiple-checkbox-label">Nhà cung cấp</InputLabel>
+                <Select
+                    labelId="demo-multiple-checkbox-label"
+                    id="demo-multiple-checkbox"
+                    multiple
+                    value={selectedSuppliers}
+                    onChange={(event) => setSelectedSuppliers(event.target.value)}
+                    input={<OutlinedInput label="Nhà cung cấp" />}
+                    renderValue={(selected) => selected.join(', ')}
+                    MenuProps={MenuProps}
+                >
+                    {filterSuppliers.map((name) => (
+                        <MenuItem key={name} value={name}>
+                            <Checkbox checked={selectedSuppliers.indexOf(name) > -1} />
+                            <ListItemText primary={name} />
+                        </MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
+
+            <FormControl sx={{ m: 1, width: 300, mb: 2 }}>
+                <InputLabel id="demo-multiple-checkbox-label">Nguồn gốc</InputLabel>
+                <Select
+                    labelId="demo-multiple-checkbox-label"
+                    id="demo-multiple-checkbox"
+                    multiple
+                    value={selectedOrigins}
+                    onChange={(event) => setSelectedOrigins(event.target.value)}
+                    input={<OutlinedInput label="Nguồn gốc" />}
+                    renderValue={(selected) => selected.join(', ')}
+                    MenuProps={MenuProps}
+                >
+                    {filterOrigins.map((name) => (
+                        <MenuItem key={name} value={name}>
+                            <Checkbox checked={selectedOrigins.indexOf(name) > -1} />
+                            <ListItemText primary={name} />
+                        </MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
+
+            {/* ===========================================filter=========================================== */}
+
             <Card>
                 <UserListToolbar
                     numSelected={selected.length}
@@ -281,7 +437,7 @@ const ItemsManagerPage = () => {
                                 onSelectAllClick={handleSelectAllClick}
                             />
                             <TableBody>
-                                {itemsData.map((item) => {
+                                {filteredItems.map((item) => {
                                     return (
                                         <React.Fragment key={item.id}>
                                             <TableRow
@@ -296,8 +452,8 @@ const ItemsManagerPage = () => {
                                                     <Checkbox
                                                         checked={selectedItemId === item.id}
                                                         onChange={(event) => handleCheckboxChange(event, item.id)}
-                                                    // checked={selectedUser}
-                                                    // onChange={(event) => handleClick(event, name)}
+                                                        // checked={selectedUser}
+                                                        // onChange={(event) => handleClick(event, name)}
                                                     />
                                                 </TableCell>
 

@@ -47,6 +47,8 @@ import { getAllSubCategory } from '~/data/mutation/subCategory/subCategory-mutat
 
 import EditCategoryForm from '~/sections/auth/manager/categories/EditCategoryForm';
 import SubCategoryDetailForm from '~/sections/auth/manager/subCategory/SubCategoryDetailForm';
+//icons
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
 
 // ----------------------------------------------------------------------
 
@@ -314,6 +316,8 @@ const SubCategoryPage = () => {
             });
     }, []);
 
+    console.log(subCategoryData);
+
     //==============================* filter *==============================
     const renderedTodoList = subCategoryData.filter((sub_category) => {
         if (!selectedFilterOptions || selectedFilterOptions.length === 0) {
@@ -321,20 +325,6 @@ const SubCategoryPage = () => {
         }
         return sub_category.categories.some((category) => selectedFilterOptions.includes(category.name));
     });
-
-    const handleFilterOptionsClick = (event) => {
-        setAnchorElOptions(event.currentTarget);
-    };
-
-    const handleClose = () => {
-        setAnchorElOptions(null);
-    };
-
-    const handleMenuOptionsClick = (filter) => {
-        setFilteredCategory(filter);
-        setSelectedFilterOptions(filter);
-        setAnchorElOptions(null);
-    };
     //==============================* filter *==============================
 
     return (
@@ -344,7 +334,7 @@ const SubCategoryPage = () => {
             </Helmet>
 
             {/* <Container> */}
-            <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+            <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
                 <Typography variant="h4" gutterBottom>
                     Quản lý danh mục
                 </Typography>
@@ -365,46 +355,34 @@ const SubCategoryPage = () => {
                     <CategoryForm onClose={handleCreateSubCategorySuccess} open={openOderForm} />
                 </Dialog>
             </Stack>
-
-            {/* <Grid container sx={{ marginBottom: '30px' }}>
-                <Grid item xs={2}>
-                    <Button variant="outlined" onClick={handleFilterOptionsClick}>
-                        {selectedFilterOptions || 'Nhóm hàng'}
-                    </Button>
-
-                    <Menu anchorEl={anchorElOptions} open={Boolean(anchorElOptions)} onClose={handleClose}>
-                        {filterOptions.map((filter, index) => (
-                            <MenuItem key={index} onClick={() => handleMenuOptionsClick(filter)}>
-                                {filter}
-                            </MenuItem>
-                        ))}
-                    </Menu>
-                </Grid>
-            </Grid> */}
-
-            <div>
-                <FormControl sx={{ m: 1, width: 300 }}>
-                    <InputLabel id="demo-multiple-checkbox-label">Nhóm hàng</InputLabel>
-                    <Select
-                        labelId="demo-multiple-checkbox-label"
-                        id="demo-multiple-checkbox"
-                        multiple
-                        value={personName}
-                        onChange={handleChange}
-                        input={<OutlinedInput label="Nhóm hàng" />}
-                        renderValue={(selected) => selected.join(', ')}
-                        MenuProps={MenuProps}
-                    >
-                        {filterOptions.map((name) => (
-                            <MenuItem key={name} value={name}>
-                                <Checkbox checked={personName.indexOf(name) > -1} />
-                                <ListItemText primary={name} />
-                            </MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
+            {/* ===========================================filter=========================================== */}
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+                <FilterAltIcon color="action" />
+                <Typography gutterBottom variant="h6" color="text.secondary" component="div" sx={{ m: 1 }}>
+                    Bộ lọc tìm kiếm
+                </Typography>
             </div>
-
+            <FormControl sx={{ m: 1, width: 300, mb: 2 }}>
+                <InputLabel id="demo-multiple-checkbox-label">Nhóm hàng</InputLabel>
+                <Select
+                    labelId="demo-multiple-checkbox-label"
+                    id="demo-multiple-checkbox"
+                    multiple
+                    value={personName}
+                    onChange={handleChange}
+                    input={<OutlinedInput label="Nhóm hàng" />}
+                    renderValue={(selected) => selected.join(', ')}
+                    MenuProps={MenuProps}
+                >
+                    {filterOptions.map((name) => (
+                        <MenuItem key={name} value={name}>
+                            <Checkbox checked={personName.indexOf(name) > -1} />
+                            <ListItemText primary={name} />
+                        </MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
+            {/* ===========================================filter=========================================== */}
             <Card>
                 <SubCategoryToolbar
                     numSelected={selected.length}
