@@ -4,7 +4,10 @@ import { Typography, Button, Tab, Tabs, Stack, Grid, TextField, FormControl, Sel
 // import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import ClearIcon from '@mui/icons-material/Clear';
 import SaveIcon from '@mui/icons-material/Save';
-
+//notification
+import Snackbar from '@mui/material/Snackbar';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 // api
 import { editSubCategory, editStatusCategory } from '~/data/mutation/subCategory/subCategory-mutation';
 import { getAllCategories } from '~/data/mutation/categories/categories-mutation';
@@ -24,6 +27,8 @@ const SubCategoryDetailForm = ({
     isOpen,
     mode,
 }) => {
+    const [open, setOpen] = React.useState(false);
+
     const [tab1Data, setTab1Data] = useState({ categories_id: [] });
     const [tab2Data, setTab2Data] = useState({});
     const [tab3Data, setTab3Data] = useState({});
@@ -52,6 +57,44 @@ const SubCategoryDetailForm = ({
     const [isError, setIsError] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+
+    const handleClick = () => {
+        setOpen(true);
+    };
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpen(false);
+
+        // Đặt logic hiển thị nội dung thông báo từ API ở đây
+        if (isSuccess) {
+            console.log('Success message:', successMessage);
+        } else if (isError) {
+            console.error('Error message:', errorMessage);
+        }
+    };
+
+    const action = (
+        <React.Fragment>
+            <Button color="secondary" size="small" onClick={handleClose}>
+                UNDO
+            </Button>
+            <IconButton
+                size="small"
+                aria-label="close"
+                color="inherit"
+                onClick={handleClose}
+            >
+                <CloseIcon fontSize="lage" />
+            </IconButton>
+        </React.Fragment>
+    );
+
+
+
 
     const handleTab1DataChange = (event) => {
         // Cập nhật dữ liệu cho tab 1 tại đây
@@ -83,7 +126,6 @@ const SubCategoryDetailForm = ({
         }
     }, [isOpen]);
 
-    console.log(formHeight);
 
 
     useEffect(() => {
@@ -134,6 +176,7 @@ const SubCategoryDetailForm = ({
             .then((respone) => {
                 const data = respone.data;
                 setCategories_id(data);
+
             })
             .catch((error) => console.error('Error fetching categories:', error));
 
@@ -166,14 +209,14 @@ const SubCategoryDetailForm = ({
 
             .catch((error) => console.error('Error fetching units measurement:', error));
     }, []);
-
+    console.log(categories_id);
     const subCategorys = subCategory.find((o) => o.id === subCategoryId);
 
     if (!subCategorys) {
         return null;
     }
 
-    const updateProduct = async () => {
+    const updateSubCategory = async () => {
         if (!editedSubCategory) {
             return;
         }
@@ -199,7 +242,7 @@ const SubCategoryDetailForm = ({
         }
     };
 
-    const updateProductStatus = async () => {
+    const updateSubCategoryStatus = async () => {
         try {
             let newStatus = currentStatus === 'Active' ? 'Inactive' : 'Active';
 
@@ -209,6 +252,7 @@ const SubCategoryDetailForm = ({
                 setIsSuccess(true);
                 setIsError(false);
                 setSuccessMessage(response.message);
+                handleClick();
             }
 
             // Sử dụng hàm để cập nhật trạng thái trong danh sách categories trong CategoryPage
@@ -621,12 +665,26 @@ const SubCategoryDetailForm = ({
                     {isError && <ErrorAlerts errorMessage={errorMessage} />}
                     <Stack spacing={4} margin={2}>
                         <Grid container spacing={1} sx={{ gap: '10px' }}>
-                            <Button variant="contained" color="primary" startIcon={<SaveIcon />} onClick={updateProduct}>
+                            <Button variant="contained" color="primary" startIcon={<SaveIcon />} onClick={updateSubCategory}>
                                 Cập nhật
                             </Button>
-                            <Button variant="contained" color="error" onClick={updateProductStatus}>
-                                Thay đổi trạng thái
-                            </Button>
+                            <div>
+                                <Button variant="contained" color="error" onClick={updateSubCategoryStatus}>
+                                    Thay đổi trạng thái
+                                </Button>
+                                <Snackbar
+                                    open={open}
+                                    autoHideDuration={6000}
+                                    onClose={handleClose}
+                                    anchorOrigin={{
+                                        vertical: 'bottom',
+                                        horizontal: 'right',
+                                    }}
+                                    message={isSuccess ? successMessage : errorMessage}
+                                    action={action}
+                                    style={{ bottom: '16px', right: '16px' }}
+                                />
+                            </div>
                             <Button variant="outlined" color="error" onClick={handleClear}>
                                 Hủy bỏ
                             </Button>

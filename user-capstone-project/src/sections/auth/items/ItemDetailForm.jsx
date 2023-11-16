@@ -17,6 +17,8 @@ import {
     TableCell,
     TableBody,
     Table,
+    Select,
+    MenuItem,
 } from '@mui/material';
 
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
@@ -31,9 +33,11 @@ import { getAllSuppliers } from '~/data/mutation/supplier/suppliers-mutation';
 const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode, updateItemStatusInList }) => {
     const [expandedItem, setExpandedItem] = useState(itemId);
     const [formHeight, setFormHeight] = useState(0);
-    const [selectedTab, setSelectedTab] = useState(0); // Ban đầu chọn tab "Thông tin"
+    const [selectedTab, setSelectedTab] = useState(0);
+    const [tab1Data, setTab1Data] = useState({ categories_id: [] });
 
-    const [editedItem, setEditedItem] = useState(null);
+    const [editedItem, setEditedItem] = useState({
+    });
 
     const [sub_category_id, setSub_category_id] = useState([]);
     const [brand_id, setBrand_id] = useState([]);
@@ -68,11 +72,10 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
             });
         } else {
             const item = items.find((o) => o.id === itemId);
-            console.log(item);
+            console.log(item, 'Itemss day');
             if (item) {
+
                 const editedItem = {
-                    // minStockLevel: product.size.length ? product.size.length : 0,
-                    // maxStockLevel: product.size ? product.size.width : 0,
                     sub_category_id: item.subCategory.id,
                     brand_id: item.brand.id,
                     supplier_id: item.supplier.id,
@@ -81,7 +84,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
 
                 setEditedItem(editedItem);
                 // setCurrentStatus(item.status);
-                console.log(editedItem);
+                console.log(editedItem, 'Itemss day');
             }
         }
     }, [items, itemId, mode]);
@@ -93,6 +96,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                 setSub_category_id(data);
             })
             .catch((error) => console.error('Error fetching Sub_category:', error));
+
         getAllBrands()
             .then((respone) => {
                 const data = respone.data;
@@ -112,7 +116,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
             })
             .catch((error) => console.error('Error fetching Origins:', error));
     }, []);
-
+    console.log(sub_category_id);
     const item = items.find((o) => o.id === itemId);
 
     if (!item) {
@@ -180,7 +184,21 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
             }
         }
     };
-
+    const handleEdit = (field, value) => {
+        console.log(`Field: ${field}, Value: ${value}`);
+        if (field === 'sub_category_id') {
+            const subCategoryIds = Array.isArray(value) ? value[0] : value;
+            setEditedItem((prevItems) => ({
+                ...prevItems,
+                [field]: subCategoryIds,
+            }));
+        } else {
+            setEditedItem((prevItems) => ({
+                ...prevItems,
+                [field]: value,
+            }));
+        }
+    };
     return (
         <div
             id="itemDetailForm"
@@ -226,14 +244,27 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
                                     <Typography variant="body1">Danh mục sản phẩm:</Typography>
-                                    <TextField
-                                        size="small"
-                                        variant="outlined"
-                                        label="Mã sản phẩm"
-                                        sx={{ width: '60%', marginRight: 5 }}
-                                        value={item.subCategory.name}
-                                    />
+                                    <Grid xs={8.5}>
+                                        <Select
+                                            size="small"
+                                            labelId="group-label"
+                                            id="group-select"
+                                            label="Danh mục"
+                                            sx={{ width: '100%', fontSize: '14px' }}
+                                            value={editedItem.sub_category_id ? editedItem.sub_category_id : ''}
+                                            onChange={(e) => handleEdit('sub_category_id', e.target.value)}
+                                            name="sub_category_id"
+                                        >
+                                            {sub_category_id.map((subCategory) => (
+                                                <MenuItem key={subCategory.id} value={subCategory.id}>
+                                                    {subCategory.name}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </Grid>
                                 </Grid>
+
+
                                 <Grid
                                     container
                                     spacing={1}
@@ -243,14 +274,26 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
                                     <Typography variant="body1">Thương hiệu:</Typography>
-                                    <TextField
-                                        size="small"
-                                        variant="outlined"
-                                        label="Chi nhánh"
-                                        sx={{ width: '70%', marginRight: 5 }}
-                                        value={item.brand.name}
-                                    />
+                                    <Grid xs={8.5}>
+                                        <Select
+                                            size="small"
+                                            labelId="group-label"
+                                            id="group-select"
+                                            label="Chi nhánh"
+                                            sx={{ width: '100%', fontSize: '14px' }}
+                                            value={editedItem.brand_id ? editedItem.brand_id : ''}
+                                            onChange={(e) => handleEdit('brand_id', e.target.value)}
+                                            name="brand_id"
+                                        >
+                                            {brand_id.map((brand) => (
+                                                <MenuItem key={brand.id} value={brand.id}>
+                                                    {brand.name}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </Grid>
                                 </Grid>
+
                                 <Grid
                                     container
                                     spacing={1}
@@ -260,14 +303,26 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
                                     <Typography variant="body1">Nhà cung cấp:</Typography>
-                                    <TextField
-                                        size="small"
-                                        variant="outlined"
-                                        label="Nhà cung cấp:"
-                                        sx={{ width: '70%', marginRight: 5 }}
-                                        value={item.supplier.name}
-                                    />
+                                    <Grid xs={8.5}>
+                                        <Select
+                                            size="small"
+                                            labelId="group-label"
+                                            id="group-select"
+                                            label="Nhà cung cấp"
+                                            sx={{ width: '100%', fontSize: '14px' }}
+                                            value={editedItem.supplier_id ? editedItem.supplier_id : ''}
+                                            onChange={(e) => handleEdit('supplier_id', e.target.value)}
+                                            name="supplier_id"
+                                        >
+                                            {supplier_id.map((supplier) => (
+                                                <MenuItem key={supplier.id} value={supplier.id}>
+                                                    {supplier.name}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </Grid>
                                 </Grid>
+
                                 <Grid
                                     container
                                     spacing={1}
@@ -300,14 +355,26 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
                                     <Typography variant="body1">Nguồn gốc:</Typography>
-                                    <TextField
-                                        size="small"
-                                        variant="outlined"
-                                        label="Nguồn gốc"
-                                        sx={{ width: '70%', marginRight: 5 }}
-                                        value={item.origin.name}
-                                    />
+                                    <Grid xs={8.5}>
+                                        <Select
+                                            size="small"
+                                            labelId="group-label"
+                                            id="group-select"
+                                            label="Nguồn gốc"
+                                            sx={{ width: '100%', fontSize: '14px' }}
+                                            value={editedItem.origin_id ? editedItem.origin_id : ''}
+                                            onChange={(e) => handleEdit('origin_id', e.target.value)}
+                                            name="origin_id"
+                                        >
+                                            {origin_id.map((origin) => (
+                                                <MenuItem key={origin.id} value={origin.id}>
+                                                    {origin.name}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </Grid>
                                 </Grid>
+
                                 <Grid
                                     container
                                     spacing={1}

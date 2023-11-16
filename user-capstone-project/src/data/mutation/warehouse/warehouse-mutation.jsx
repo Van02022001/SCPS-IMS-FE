@@ -14,3 +14,13 @@ export const deleteWarehouse = async (id) => {
     const response = await axiosInstance.delete(`/units/${id}`,);
     return response.data;
 }
+
+export const editWarehouse = async (categoryId, editWarehouseParams) => {
+    const response = await axiosInstance.put(`/warehouses${categoryId}`, editWarehouseParams);
+    return response.data;
+}
+
+// export const editStatusWarehouse = async (categoryId, status) => {
+//     const response = await axiosInstance.put(`/warehouses${categoryId}`, editWarehouseParams);
+//     return response.data;
+// }

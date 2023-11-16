@@ -37,7 +37,8 @@ import { UserListHead, UserListToolbar } from '../../sections/@dashboard/user';
 import USERLIST from '../../_mock/user';
 import { getAllWarehouse } from '~/data/mutation/warehouse/warehouse-mutation';
 // form validation
-import CreateWarehouseForm from '~/sections/auth/warehouse/CreateWarehouseForm';
+import CreateWarehouseForm from '~/sections/auth/manager/warehouse/CreateWarehouseForm';
+import WarehouseDetailForm from '~/sections/auth/manager/warehouse/WarehouseDetailForm';
 
 
 
@@ -101,30 +102,30 @@ const WarehousePage = () => {
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
     const [warehouseData, setWarehouseData] = useState([]);
-    const [categoryStatus, setCategoryStatus] = useState('');
+    const [warehouseStatus, setWarehouseStatus] = useState('');
 
-    // Hàm để thay đổi data mỗi khi Edit xong api-------------------------------------------------------------
-    // const updateCategoryInList = (updatedCategory) => {
-    //     const categoryIndex = categoryData.findIndex((category) => category.id === updatedCategory.id);
+    //Hàm để thay đổi data mỗi khi Edit xong api-------------------------------------------------------------
+    const updateWarehouseInList = (updatedWarehouse) => {
+        const warehouseIndex = warehouseData.findIndex((warehouse) => warehouse.id === updatedWarehouse.id);
 
-    //     if (categoryIndex !== -1) {
-    //         const updatedCategoryData = [...categoryData];
-    //         updatedCategoryData[categoryIndex] = updatedCategory;
+        if (warehouseIndex !== -1) {
+            const updatedWarehouseData = [...warehouseData];
+            updatedWarehouseData[warehouseIndex] = updatedWarehouse;
 
-    //         setCategoryData(updatedCategoryData);
-    //     }
-    // };
+            setWarehouseData(updatedWarehouseData);
+        }
+    };
 
-    // const updateCategoryStatusInList = (categoryId, newStatus) => {
-    //     const categoryIndex = categoryData.findIndex((category) => category.id === categoryId);
+    const updateWarehouseStatusInList = (warehouseId, newStatus) => {
+        const warehouseIndex = warehouseData.findIndex((warehouse) => warehouse.id === warehouseId);
 
-    //     if (categoryIndex !== -1) {
-    //         const updatedCategoryData = [...categoryData];
-    //         updatedCategoryData[categoryIndex].status = newStatus;
+        if (warehouseIndex !== -1) {
+            const updatedWarehouseData = [...warehouseData];
+            updatedWarehouseData[warehouseIndex].status = newStatus;
 
-    //         setCategoryData(updatedCategoryData);
-    //     }
-    // };
+            setWarehouseData(updatedWarehouseData);
+        }
+    };
 
     //----------------------------------------------------------------
     const handleOpenMenu = (event) => {
@@ -265,11 +266,6 @@ const WarehousePage = () => {
                                     onSelectAllClick={handleSelectAllClick}
                                 />
                                 <TableBody>
-                                    {/* {filteredUsers
-                                        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                        .map((row) => {
-                                            const { id, name, role, status, company, avatarUrl, isVerified } = row;
-                                            const selectedUser = selected.indexOf(name) !== -1; */}
                                     {warehouseData.map((warehouse) => {
                                         return (
                                             <React.Fragment key={warehouse.id}>
@@ -318,18 +314,19 @@ const WarehousePage = () => {
                                                         </IconButton>
                                                     </TableCell>
                                                 </TableRow>
-
-                                                {/* {selectedWarehouseId === warehouse.id && (
+                                                {selectedWarehouseId === warehouse.id && (
                                                     <TableRow>
                                                         <TableCell colSpan={8}>
                                                             <WarehouseDetailForm
                                                                 warehouses={warehouseData}
-                                                                warehousesId={selectedWarehouseId}
+                                                                warehouseId={selectedWarehouseId}
+                                                                updateWarehouseInList={updateWarehouseInList}
+                                                                updateWarehouseStatusInList={updateWarehouseStatusInList}
                                                                 onClose={handleCloseWarehouseDetails}
                                                             />
                                                         </TableCell>
                                                     </TableRow>
-                                                )} */}
+                                                )}
                                             </React.Fragment>
                                         );
                                     })}
@@ -379,34 +376,6 @@ const WarehousePage = () => {
                 </Card>
             </Container>
 
-            <Popover
-                open={Boolean(open)}
-                anchorEl={open}
-                onClose={handleCloseMenu}
-                anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                PaperProps={{
-                    sx: {
-                        p: 1,
-                        width: 140,
-                        '& .MuiMenuItem-root': {
-                            px: 1,
-                            typography: 'body2',
-                            borderRadius: 0.75,
-                        },
-                    },
-                }}
-            >
-                <MenuItem>
-                    <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-                    Edit
-                </MenuItem>
-
-                <MenuItem sx={{ color: 'error.main' }}>
-                    <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
-                    Delete
-                </MenuItem>
-            </Popover>
         </>
     );
 };
