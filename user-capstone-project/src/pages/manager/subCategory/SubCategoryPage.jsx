@@ -25,6 +25,11 @@ import {
     DialogTitle,
     Grid,
     Menu,
+    FormControl,
+    InputLabel,
+    Select,
+    OutlinedInput,
+    ListItemText,
 } from '@mui/material';
 // components
 import Label from '~/components/label/Label';
@@ -42,7 +47,6 @@ import { getAllSubCategory } from '~/data/mutation/subCategory/subCategory-mutat
 
 import EditCategoryForm from '~/sections/auth/manager/categories/EditCategoryForm';
 import SubCategoryDetailForm from '~/sections/auth/manager/subCategory/SubCategoryDetailForm';
-
 
 // ----------------------------------------------------------------------
 
@@ -98,7 +102,18 @@ function applySortFilter(array, comparator, query) {
 //     return `${day}/${month}/${year}`;
 // }
 
-const filterOptions = ['Tất cả', 'Ren', 'Ron'];
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+    PaperProps: {
+        style: {
+            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+            width: 250,
+        },
+    },
+};
+
+const filterOptions = ['Ren', 'Ron', 'Abc', 'Test1', 'Test12', 'Test123'];
 
 const SubCategoryPage = () => {
     // State mở các form----------------------------------------------------------------
@@ -131,6 +146,15 @@ const SubCategoryPage = () => {
     const [anchorElOptions, setAnchorElOptions] = useState(null);
 
     const [selectedFilterOptions, setSelectedFilterOptions] = useState(null);
+
+    const [personName, setPersonName] = React.useState([]);
+
+    const handleChange = (event) => {
+        setPersonName(event.target.value);
+        const selectedValues = event.target.value.length > 0 ? event.target.value : null;
+        setFilteredCategory(selectedValues);
+        setSelectedFilterOptions(selectedValues);
+    };
 
     // Hàm để thay đổi data mỗi khi Edit xong api-------------------------------------------------------------
     const updateSubCategoryInList = (updatedSubCategory) => {
@@ -292,10 +316,10 @@ const SubCategoryPage = () => {
 
     //==============================* filter *==============================
     const renderedTodoList = subCategoryData.filter((sub_category) => {
-        if (!filteredCategory || filteredCategory === 'Tất cả') {
+        if (!selectedFilterOptions || selectedFilterOptions.length === 0) {
             return true;
         }
-        return sub_category.categories.some((category) => category.name === filteredCategory);
+        return sub_category.categories.some((category) => selectedFilterOptions.includes(category.name));
     });
 
     const handleFilterOptionsClick = (event) => {
@@ -342,7 +366,7 @@ const SubCategoryPage = () => {
                 </Dialog>
             </Stack>
 
-            <Grid container sx={{ marginBottom: '30px' }}>
+            {/* <Grid container sx={{ marginBottom: '30px' }}>
                 <Grid item xs={2}>
                     <Button variant="outlined" onClick={handleFilterOptionsClick}>
                         {selectedFilterOptions || 'Nhóm hàng'}
@@ -356,7 +380,30 @@ const SubCategoryPage = () => {
                         ))}
                     </Menu>
                 </Grid>
-            </Grid>
+            </Grid> */}
+
+            <div>
+                <FormControl sx={{ m: 1, width: 300 }}>
+                    <InputLabel id="demo-multiple-checkbox-label">Nhóm hàng</InputLabel>
+                    <Select
+                        labelId="demo-multiple-checkbox-label"
+                        id="demo-multiple-checkbox"
+                        multiple
+                        value={personName}
+                        onChange={handleChange}
+                        input={<OutlinedInput label="Nhóm hàng" />}
+                        renderValue={(selected) => selected.join(', ')}
+                        MenuProps={MenuProps}
+                    >
+                        {filterOptions.map((name) => (
+                            <MenuItem key={name} value={name}>
+                                <Checkbox checked={personName.indexOf(name) > -1} />
+                                <ListItemText primary={name} />
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+            </div>
 
             <Card>
                 <SubCategoryToolbar
@@ -396,8 +443,8 @@ const SubCategoryPage = () => {
                                                         onChange={(event) =>
                                                             handleCheckboxChange(event, sub_category.id)
                                                         }
-                                                    // checked={selectedUser}
-                                                    // onChange={(event) => handleClick(event, name)}
+                                                        // checked={selectedUser}
+                                                        // onChange={(event) => handleClick(event, name)}
                                                     />
                                                 </TableCell>
 
