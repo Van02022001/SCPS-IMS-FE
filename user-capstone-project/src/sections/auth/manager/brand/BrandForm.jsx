@@ -44,9 +44,11 @@ const BrandForm = () => {
             console.error('Error creating brand:', error);
             setIsError(true);
             setIsSuccess(false);
-            setErrorMessage(error.response.data.message);
-            if (error.response) {
-                console.log('Error response:', error.response.data.message);
+            if (error.response?.data?.message === 'Invalid request') {
+                setErrorMessage('Yêu cầu không hợp lệ');
+            }
+            if (error.response?.data?.error === '404 NOT_FOUND') {
+                setErrorMessage('Mô tả quá dài');
             }
         }
     };

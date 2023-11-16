@@ -4,6 +4,7 @@ import { deleteOrigins, editOrigins } from '~/data/mutation/origins/origins-muta
 import { deleteBrands, editBrands } from '~/data/mutation/brand/brands-mutation';
 import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
+import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
 
 const BrandDetailForm = ({ brands, brandsId, onClose, isOpen, mode }) => {
     const [formHeight, setFormHeight] = useState(0);
@@ -75,9 +76,11 @@ const BrandDetailForm = ({ brands, brandsId, onClose, isOpen, mode }) => {
             console.error('Error updating brand:', error);
             setIsError(true);
             setIsSuccess(false);
-            setErrorMessage(error.response.data.message);
-            if (error.response) {
-                console.log('Error response:', error.response);
+            if (error.response?.data?.message === 'Invalid request') {
+                setErrorMessage('Yêu cầu không hợp lệ');
+            }
+            if (error.response?.data?.error === '404 NOT_FOUND') {
+                setErrorMessage('Mô tả quá dài');
             }
         }
     };
@@ -134,7 +137,7 @@ const BrandDetailForm = ({ brands, brandsId, onClose, isOpen, mode }) => {
                                         label="Tên thương hiệu"
                                         sx={{ width: '70%' }}
                                         value={editedBrand ? editedBrand.name : ''}
-                                        onChange={(e) => handleEdit('name', e.target.value)}
+                                        onChange={(e) => handleEdit('name', capitalizeFirstLetter(e.target.value))}
                                     />
                                 </Grid>
 
@@ -151,9 +154,13 @@ const BrandDetailForm = ({ brands, brandsId, onClose, isOpen, mode }) => {
                                         size="small"
                                         variant="outlined"
                                         label="Mô tả"
+                                        multiline
+                                        rows={4}
                                         sx={{ width: '70%' }}
                                         value={editedBrand ? editedBrand.description : ''}
-                                        onChange={(e) => handleEdit('description', e.target.value)}
+                                        onChange={(e) =>
+                                            handleEdit('description', capitalizeFirstLetter(e.target.value))
+                                        }
                                     />
                                 </Grid>
                             </Grid>

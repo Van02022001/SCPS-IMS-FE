@@ -1,5 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Button, Tab, Tabs, Stack, Grid, TextField, FormControl, Select, MenuItem, CardContent, Card, TableContainer, Table, TableBody, TableRow, TableCell } from '@mui/material';
+import {
+    Typography,
+    Button,
+    Tab,
+    Tabs,
+    Stack,
+    Grid,
+    TextField,
+    FormControl,
+    Select,
+    MenuItem,
+    CardContent,
+    Card,
+    TableContainer,
+    Table,
+    TableBody,
+    TableRow,
+    TableCell,
+} from '@mui/material';
 // icons
 // import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -82,19 +100,11 @@ const SubCategoryDetailForm = ({
             <Button color="secondary" size="small" onClick={handleClose}>
                 UNDO
             </Button>
-            <IconButton
-                size="small"
-                aria-label="close"
-                color="inherit"
-                onClick={handleClose}
-            >
+            <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
                 <CloseIcon fontSize="lage" />
             </IconButton>
         </React.Fragment>
     );
-
-
-
 
     const handleTab1DataChange = (event) => {
         // Cập nhật dữ liệu cho tab 1 tại đây
@@ -120,13 +130,10 @@ const SubCategoryDetailForm = ({
     useEffect(() => {
         if (isOpen) {
             setFormHeight(1000);
-
         } else {
             setFormHeight(0);
         }
     }, [isOpen]);
-
-
 
     useEffect(() => {
         if (mode === 'create') {
@@ -148,7 +155,9 @@ const SubCategoryDetailForm = ({
             const subCategorys = subCategory.find((o) => o.id === subCategoryId);
             console.log(subCategorys);
             if (subCategorys) {
-                const categoryIds = subCategorys.categories ? subCategorys.categories.map((category) => category.id) : [];
+                const categoryIds = subCategorys.categories
+                    ? subCategorys.categories.map((category) => category.id)
+                    : [];
                 const unitId = subCategorys.unit ? subCategorys.unit.id : 0;
                 const unitMeaId = subCategorys.size.unitMeasurement ? subCategorys.size.unitMeasurement.id : 0;
 
@@ -176,7 +185,6 @@ const SubCategoryDetailForm = ({
             .then((respone) => {
                 const data = respone.data;
                 setCategories_id(data);
-
             })
             .catch((error) => console.error('Error fetching categories:', error));
 
@@ -186,11 +194,10 @@ const SubCategoryDetailForm = ({
                 setUnits_id(data);
             })
             .catch((error) => console.error('Error fetching units:', error));
-        getAllUnitMeasurement()
-            .then((respone) => {
-                const data = respone.data;
-                setUnit_mea_id(data);
-            })
+        getAllUnitMeasurement().then((respone) => {
+            const data = respone.data;
+            setUnit_mea_id(data);
+        });
         getAllSubCategoryMeta(subCategoryId)
             .then((respone) => {
                 const data = respone.data;
@@ -235,9 +242,11 @@ const SubCategoryDetailForm = ({
             console.error('An error occurred while updating the product:', error);
             setIsError(true);
             setIsSuccess(false);
-            setErrorMessage(error.response.data.message);
-            if (error.response) {
-                console.log('Error response:', error.response);
+            if (error.response?.data?.message === 'Invalid request') {
+                setErrorMessage('Yêu cầu không hợp lệ');
+            }
+            if (error.response?.data?.error === '404 NOT_FOUND') {
+                setErrorMessage('Mô tả quá dài');
             }
         }
     };
@@ -271,7 +280,7 @@ const SubCategoryDetailForm = ({
         }
     };
 
-    const handleClear = () => { };
+    const handleClear = () => {};
 
     const handleEdit = (field, value) => {
         console.log(`Field: ${field}, Value: ${value}`);
@@ -303,16 +312,14 @@ const SubCategoryDetailForm = ({
             ...prevSubCategoryMeta,
             [field]: value,
         }));
-
     };
 
     const updateSubCategoryMeta = async () => {
-
         const editSubCategoryMetaParams = {
             key: subCategoryMeta.key,
             description: subCategoryMeta.description,
         };
-        setEditSubCategoryMeta(editSubCategoryMetaParams)
+        setEditSubCategoryMeta(editSubCategoryMetaParams);
 
         try {
             const response = await editSubCategorysMeta(subCategoryId, editSubCategoryMetaParams);
@@ -322,7 +329,6 @@ const SubCategoryDetailForm = ({
                 setIsError(false);
                 setSuccessMessage(response.message);
             }
-
         } catch (error) {
             console.error('An error occurred while updating the product:', error);
             setIsError(true);
@@ -421,11 +427,11 @@ const SubCategoryDetailForm = ({
                                 >
                                     <Typography variant="body1">Ngày tạo:</Typography>
                                     <TextField
-
+                                        disabled
                                         size="small"
                                         variant="outlined"
                                         label="Ngày tạo"
-                                        sx={{ width: '70%', cursor: 'none' }}
+                                        sx={{ width: '70%' }}
                                         value={subCategorys.createdAt}
                                     />
                                 </Grid>
@@ -440,6 +446,7 @@ const SubCategoryDetailForm = ({
                                 >
                                     <Typography variant="body1">Ngày cập nhập:</Typography>
                                     <TextField
+                                        disabled
                                         size="small"
                                         variant="outlined"
                                         label="Ngày cập nhập"
@@ -665,7 +672,12 @@ const SubCategoryDetailForm = ({
                     {isError && <ErrorAlerts errorMessage={errorMessage} />}
                     <Stack spacing={4} margin={2}>
                         <Grid container spacing={1} sx={{ gap: '10px' }}>
-                            <Button variant="contained" color="primary" startIcon={<SaveIcon />} onClick={updateSubCategory}>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                startIcon={<SaveIcon />}
+                                onClick={updateSubCategory}
+                            >
                                 Cập nhật
                             </Button>
                             <div>
@@ -695,7 +707,6 @@ const SubCategoryDetailForm = ({
 
             {currentTab === 1 && (
                 <div style={{ flex: 1 }}>
-
                     <Card sx={{ minWidth: 275, marginTop: 5 }} spacing={2}>
                         <Typography
                             variant="subtitle1"
@@ -730,7 +741,6 @@ const SubCategoryDetailForm = ({
                                 height: 50,
                                 textAlign: 'start',
                                 padding: '10px 0 0 20px',
-
                             }}
                         >
                             Mẫu ghi chú (hóa đơn, đặt hàng)
@@ -757,7 +767,12 @@ const SubCategoryDetailForm = ({
                                 open={openAddSubCategoryMetaForm}
                                 onClose={handleCloseAddSubCategoryMetaForm}
                             />
-                            <Button color="primary" variant="contained" startIcon={<SaveIcon />} onClick={updateSubCategoryMeta}>
+                            <Button
+                                color="primary"
+                                variant="contained"
+                                startIcon={<SaveIcon />}
+                                onClick={updateSubCategoryMeta}
+                            >
                                 Cập nhập
                             </Button>
                             <Button color="primary" variant="outlined" startIcon={<ClearIcon />}>

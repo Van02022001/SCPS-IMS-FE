@@ -50,9 +50,8 @@ const OriginForm = () => {
             console.error('Error creating origin:', error);
             setIsError(true);
             setIsSuccess(false);
-            setErrorMessage(error.response.data.message);
-            if (error.response) {
-                console.log('Error response:', error.response.data.message);
+            if (error.response?.data?.message === 'Invalid request') {
+                setErrorMessage('Yêu cầu không hợp lệ');
             }
         }
     };

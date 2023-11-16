@@ -3,8 +3,17 @@ import { Typography, Button, Tab, Tabs, Stack, Grid, TextField, FormControl, Sel
 import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
 import { editWarehouse } from '~/data/mutation/warehouse/warehouse-mutation';
+import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
 
-const WarehouseDetailForm = ({ warehouses, warehouseId, updateWarehouseInList, updateWarehouseStatusInList, onClose, isOpen, mode }) => {
+const WarehouseDetailForm = ({
+    warehouses,
+    warehouseId,
+    updateWarehouseInList,
+    updateWarehouseStatusInList,
+    onClose,
+    isOpen,
+    mode,
+}) => {
     const [formHeight, setFormHeight] = useState(0);
     const [selectedTab, setSelectedTab] = useState(0);
     //thông báo
@@ -68,7 +77,7 @@ const WarehouseDetailForm = ({ warehouses, warehouseId, updateWarehouseInList, u
                     setIsError(false);
                     setSuccessMessage(response.message);
                 }
-                updateWarehouseInList(response.data)
+                updateWarehouseInList(response.data);
                 // Handle the response as needed
                 console.log('Category updated:', response);
             }
@@ -77,9 +86,8 @@ const WarehouseDetailForm = ({ warehouses, warehouseId, updateWarehouseInList, u
             console.error('Error updating brand:', error);
             setIsError(true);
             setIsSuccess(false);
-            setErrorMessage(error.response.data.message);
-            if (error.response) {
-                console.log('Error response:', error.response);
+            if (error.response?.data?.message === 'Invalid request') {
+                setErrorMessage('Yêu cầu không hợp lệ');
             }
         }
     };
@@ -163,7 +171,7 @@ const WarehouseDetailForm = ({ warehouses, warehouseId, updateWarehouseInList, u
                                         label="Tên kho"
                                         sx={{ width: '70%' }}
                                         value={editedWarehouse ? editedWarehouse.name : ''}
-                                        onChange={(e) => handleEdit('name', e.target.value)}
+                                        onChange={(e) => handleEdit('name', capitalizeFirstLetter(e.target.value))}
                                     />
                                 </Grid>
 
@@ -182,7 +190,7 @@ const WarehouseDetailForm = ({ warehouses, warehouseId, updateWarehouseInList, u
                                         label="Địa chỉ"
                                         sx={{ width: '70%' }}
                                         value={editedWarehouse ? editedWarehouse.address : ''}
-                                        onChange={(e) => handleEdit('address', e.target.value)}
+                                        onChange={(e) => handleEdit('address', capitalizeFirstLetter(e.target.value))}
                                     />
                                 </Grid>
                             </Grid>

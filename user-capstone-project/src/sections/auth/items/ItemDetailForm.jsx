@@ -36,8 +36,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
     const [selectedTab, setSelectedTab] = useState(0);
     const [tab1Data, setTab1Data] = useState({ categories_id: [] });
 
-    const [editedItem, setEditedItem] = useState({
-    });
+    const [editedItem, setEditedItem] = useState({});
 
     const [sub_category_id, setSub_category_id] = useState([]);
     const [brand_id, setBrand_id] = useState([]);
@@ -74,7 +73,6 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
             const item = items.find((o) => o.id === itemId);
             console.log(item, 'Itemss day');
             if (item) {
-
                 const editedItem = {
                     sub_category_id: item.subCategory.id,
                     brand_id: item.brand.id,
@@ -231,7 +229,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                         size="small"
                                         variant="outlined"
                                         label="Mã sản phẩm"
-                                        sx={{ width: '70%', marginRight: 5 }}
+                                        sx={{ width: '65%', marginRight: 5 }}
                                         value={item.code}
                                     />
                                 </Grid>
@@ -241,7 +239,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                     direction="row"
                                     justifyContent="space-between"
                                     alignItems="center"
-                                    sx={{ marginBottom: 4, gap: 5 }}
+                                    sx={{ marginBottom: 4, gap: 2 }}
                                 >
                                     <Typography variant="body1">Danh mục sản phẩm:</Typography>
                                     <Grid xs={8.5}>
@@ -250,7 +248,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                             labelId="group-label"
                                             id="group-select"
                                             label="Danh mục"
-                                            sx={{ width: '100%', fontSize: '14px' }}
+                                            sx={{ width: '91%', fontSize: '14px' }}
                                             value={editedItem.sub_category_id ? editedItem.sub_category_id : ''}
                                             onChange={(e) => handleEdit('sub_category_id', e.target.value)}
                                             name="sub_category_id"
@@ -263,7 +261,6 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                         </Select>
                                     </Grid>
                                 </Grid>
-
 
                                 <Grid
                                     container
@@ -280,7 +277,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                             labelId="group-label"
                                             id="group-select"
                                             label="Chi nhánh"
-                                            sx={{ width: '100%', fontSize: '14px' }}
+                                            sx={{ width: '91%', fontSize: '14px' }}
                                             value={editedItem.brand_id ? editedItem.brand_id : ''}
                                             onChange={(e) => handleEdit('brand_id', e.target.value)}
                                             name="brand_id"
@@ -309,7 +306,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                             labelId="group-label"
                                             id="group-select"
                                             label="Nhà cung cấp"
-                                            sx={{ width: '100%', fontSize: '14px' }}
+                                            sx={{ width: '91%', fontSize: '14px' }}
                                             value={editedItem.supplier_id ? editedItem.supplier_id : ''}
                                             onChange={(e) => handleEdit('supplier_id', e.target.value)}
                                             name="supplier_id"
@@ -336,7 +333,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                         size="small"
                                         variant="outlined"
                                         label="Người tạo"
-                                        sx={{ width: '70%', marginRight: 5 }}
+                                        sx={{ width: '65%', marginRight: 5 }}
                                         value={
                                             item.createdBy.firstName +
                                             ' ' +
@@ -361,7 +358,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                             labelId="group-label"
                                             id="group-select"
                                             label="Nguồn gốc"
-                                            sx={{ width: '100%', fontSize: '14px' }}
+                                            sx={{ width: '91%', fontSize: '14px' }}
                                             value={editedItem.origin_id ? editedItem.origin_id : ''}
                                             onChange={(e) => handleEdit('origin_id', e.target.value)}
                                             name="origin_id"
@@ -388,7 +385,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                         size="small"
                                         variant="outlined"
                                         label="Vị trí"
-                                        sx={{ width: '70%', marginRight: 5 }}
+                                        sx={{ width: '65%', marginRight: 5 }}
                                         value={item.locations}
                                     />
                                 </Grid>
@@ -402,10 +399,11 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                 >
                                     <Typography variant="body1">Ngày tạo:</Typography>
                                     <TextField
+                                        disabled
                                         size="small"
                                         variant="outlined"
                                         label="Ngày tạo"
-                                        sx={{ width: '70%', marginRight: 5 }}
+                                        sx={{ width: '65%', marginRight: 5 }}
                                         value={item.createdAt}
                                     />
                                 </Grid>
@@ -541,6 +539,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                 >
                                     <Typography variant="body1">Ngày cập nhật:</Typography>
                                     <TextField
+                                        disabled
                                         size="small"
                                         variant="outlined"
                                         label="Ngày cập nhật"

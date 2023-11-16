@@ -159,12 +159,14 @@ const SubCategoryForm = (props) => {
                 props.onClose(response.data); // Call the callback function
             }
         } catch (error) {
-            console.error('Error creating product:', error);
+            console.error('Error creating product:', error.response);
             setIsError(true);
             setIsSuccess(false);
-            setErrorMessage(error.response?.data?.message);
-            if (error.response) {
-                console.error('Error response:', error.response);
+            if (error.response?.data?.message === 'Invalid request') {
+                setErrorMessage('Yêu cầu không hợp lệ');
+            }
+            if (error.response?.data?.error === '404 NOT_FOUND') {
+                setErrorMessage('Mô tả quá dài');
             }
         }
     };
@@ -184,7 +186,7 @@ const SubCategoryForm = (props) => {
         setUnit_mea_id([]);
     };
 
-    const handleAddCategories = async () => { };
+    const handleAddCategories = async () => {};
 
     useEffect(() => {
         getAllCategories()
@@ -239,6 +241,7 @@ const SubCategoryForm = (props) => {
                                                 Tên hàng hóa:{' '}
                                             </Typography>
                                             <TextField
+                                                helperText="Nhập tối đa 100 ký tự"
                                                 size="small"
                                                 variant="outlined"
                                                 label="Tên hàng"
@@ -293,6 +296,7 @@ const SubCategoryForm = (props) => {
                                                         value={[...tab1Data.categories_id]}
                                                         onChange={handleTab1DataChange}
                                                         name="categories_id"
+                                                        required
                                                     >
                                                         {categories_id.map((category) => (
                                                             <MenuItem key={category.id} value={category.id}>
@@ -336,6 +340,7 @@ const SubCategoryForm = (props) => {
                                                         value={tab1Data.unit_id}
                                                         onChange={handleTab1DataChange}
                                                         name="unit_id"
+                                                        required
                                                     >
                                                         {unit_id.map((unit) => (
                                                             <MenuItem
@@ -371,10 +376,8 @@ const SubCategoryForm = (props) => {
                                                 </Grid>
                                             </Grid>
                                         </FormControl>
-
                                     </Grid>
                                     <Grid item xs={5} sx={{ marginLeft: 8 }}>
-
                                         <FormControl size="small" variant="outlined" sx={{ width: '100%' }}>
                                             <Grid
                                                 container
@@ -499,7 +502,6 @@ const SubCategoryForm = (props) => {
 
                     {currentTab === 1 && (
                         <div style={{ marginLeft: 100 }}>
-
                             <Card sx={{ minWidth: 275, marginTop: 5 }} spacing={2}>
                                 <Typography
                                     variant="subtitle1"

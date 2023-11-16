@@ -36,13 +36,13 @@ const CreateCategoriesForm = () => {
 
             }
         } catch (error) {
-            console.error("Can't fetch category", error);
+            console.error("Can't fetch category", error.response);
             setIsError(true);
             setIsSuccess(false);
-            setErrorMessage(error.response.data.message);
-            if (error.response) {
-                console.log('Error response:', error.response);
+            if (error.response?.data?.message === 'Invalid request') {
+                setErrorMessage('Yêu cầu không hợp lệ');
             }
+            
         }
     };
 

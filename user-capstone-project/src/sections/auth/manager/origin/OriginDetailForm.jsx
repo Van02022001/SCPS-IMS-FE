@@ -3,6 +3,7 @@ import { Typography, Button, Tab, Tabs, Stack, Grid, TextField, FormControl, Sel
 import { deleteOrigins, editOrigins } from '~/data/mutation/origins/origins-mutation';
 import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
+import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
 
 const OriginDetailForm = ({ origins, originsId, onClose, isOpen, mode }) => {
     const [expandedItem, setExpandedItem] = useState(originsId);
@@ -134,7 +135,7 @@ const OriginDetailForm = ({ origins, originsId, onClose, isOpen, mode }) => {
                                         label="Tên thương hiệu"
                                         sx={{ width: '70%' }}
                                         value={editedOrigin ? editedOrigin.name : ''}
-                                        onChange={(e) => handleEdit('name', e.target.value)}
+                                        onChange={(e) => handleEdit('name', capitalizeFirstLetter(e.target.value))}
                                     />
                                 </Grid>
                             </Grid>

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Typography, Button, Tab, Tabs, Stack, Grid, TextField, FormControl, Select, MenuItem } from '@mui/material';
 import { deleteOrigins, editOrigins } from '~/data/mutation/origins/origins-mutation';
-
+import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
+import SuccessAlerts from '~/components/alert/SuccessAlert';
+import ErrorAlerts from '~/components/alert/ErrorAlert';
 
 const UnitDetailForm = ({ units, unitsId, onClose, isOpen, mode }) => {
     const [expandedItem, setExpandedItem] = useState(unitsId);
@@ -9,6 +11,12 @@ const UnitDetailForm = ({ units, unitsId, onClose, isOpen, mode }) => {
     const [selectedTab, setSelectedTab] = useState(0);
 
     const [editedUnit, setEditedUnit] = useState(null);
+
+    //thông báo
+    const [isSuccess, setIsSuccess] = useState(false);
+    const [isError, setIsError] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
         if (isOpen) {
@@ -56,10 +64,20 @@ const UnitDetailForm = ({ units, unitsId, onClose, isOpen, mode }) => {
 
                 // Handle the response as needed
                 console.log('Category updated:', response);
+                if (response.status === '200 OK') {
+                    setIsSuccess(true);
+                    setIsError(false);
+                    setSuccessMessage(response.message);
+                }
             }
         } catch (error) {
             // Handle errors
             console.error('Error updating unit:', error);
+            setIsError(true);
+            setIsSuccess(false);
+            if (error.response?.data?.message === 'Invalid request') {
+                setErrorMessage('Yêu cầu không hợp lệ');
+            }
         }
     };
 
@@ -73,7 +91,6 @@ const UnitDetailForm = ({ units, unitsId, onClose, isOpen, mode }) => {
     };
 
     const handleEdit = (field, value) => {
-
         setEditedUnit((prevUnit) => ({
             ...prevUnit,
             [field]: value,
@@ -109,27 +126,24 @@ const UnitDetailForm = ({ units, unitsId, onClose, isOpen, mode }) => {
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
-                                    <Typography variant="body1">Tên thương hiệu:</Typography>
+                                    <Typography variant="body1">Tên đơn vị:</Typography>
                                     <TextField
+                                        helperText="Kích thước phải nằm trong khoảng từ 1 đến 100!"
                                         size="small"
                                         variant="outlined"
                                         label="Tên thương hiệu"
                                         sx={{ width: '70%' }}
                                         value={editedUnit ? editedUnit.name : ''}
-                                        onChange={(e) => handleEdit('name', e.target.value)}
+                                        onChange={(e) => handleEdit('name', capitalizeFirstLetter(e.target.value))}
                                     />
                                 </Grid>
                             </Grid>
                         </Grid>
                     </Stack>
+                    {isSuccess && <SuccessAlerts message={successMessage} />}
+                    {isError && <ErrorAlerts errorMessage={errorMessage} />}
                     <Button variant="contained" color="primary" onClick={updateUnit}>
                         Cập nhập
-                    </Button>
-                    <Button variant="outlined" color="secondary" onClick={deleteUnit}>
-                        Xóa
-                    </Button>
-                    <Button variant="outlined" color="secondary" onClick={handleDelete}>
-                        Hủy bỏ
                     </Button>
                 </div>
             )}

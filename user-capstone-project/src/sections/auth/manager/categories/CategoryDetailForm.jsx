@@ -4,6 +4,7 @@ import { Typography, Button, Stack, Grid, TextField } from '@mui/material';
 import { editCategories, editStatusCategories } from '~/data/mutation/categories/categories-mutation';
 import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
+import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
 
 const CategoryDetailForm = ({
     categories,
@@ -169,7 +170,7 @@ const CategoryDetailForm = ({
                                         label="Tên sản phẩm"
                                         sx={{ width: '70%' }}
                                         value={editedCategory ? editedCategory.name : ''}
-                                        onChange={(e) => handleEdit('name', e.target.value)}
+                                        onChange={(e) => handleEdit('name', capitalizeFirstLetter(e.target.value))}
                                     />
                                 </Grid>
 
@@ -191,7 +192,7 @@ const CategoryDetailForm = ({
                                         label="Mô tả"
                                         sx={{ width: '70%' }}
                                         value={editedCategory ? editedCategory.description : ''}
-                                        onChange={(e) => handleEdit('description', e.target.value)}
+                                        onChange={(e) => handleEdit('description', capitalizeFirstLetter(e.target.value))}
                                     />
                                 </Grid>
                                 <Grid
@@ -243,12 +244,6 @@ const CategoryDetailForm = ({
                             </Button>
                             <Button variant="contained" color="error" onClick={updateCategoryStatus}>
                                 Thay đổi trạng thái
-                            </Button>
-                            {/* <Button variant="outlined" color="secondary" onClick={handleDelete}>
-                                Xóa
-                            </Button> */}
-                            <Button variant="outlined" color="error" onClick={handleDelete}>
-                                Hủy bỏ
                             </Button>
                         </Grid>
                     </Stack>

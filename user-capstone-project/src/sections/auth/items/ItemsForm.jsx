@@ -122,12 +122,11 @@ const ItemsForm = (props) => {
                 console.log(response.data.message);
             }
         } catch (error) {
-            console.error('Error creating product:', error);
+            console.error('Error creating product:', error.response.status);
             setIsError(true);
             setIsSuccess(false);
-            setErrorMessage(error.response?.data?.message);
-            if (error.response) {
-                console.error('Error response:', error.response);
+            if (error.response?.data?.message === "Min stock cannot be greater than max stock") {
+                setErrorMessage('Số lượng tồn kho tối thiểu không thể lớn hơn lượng hàng tồn kho tối đa');
             }
         }
     };
