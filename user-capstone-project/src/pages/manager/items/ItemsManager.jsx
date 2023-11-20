@@ -216,7 +216,7 @@ const ItemsManagerPage = () => {
             setSelectedItemId(item.id); // Mở hoặc chuyển sang sản phẩm khác
         }
     };
-    // Các hàm xử lý soft theo name--------------------------------------------------------------------------------------------------------------------------------
+    // ============================================== Các hàm xử lý soft theo name==============================================
     const handleCheckboxChange = (event, itemId) => {
         if (event.target.checked) {
             // Nếu người dùng chọn checkbox, thêm sản phẩm vào danh sách đã chọn.
@@ -226,7 +226,8 @@ const ItemsManagerPage = () => {
             setSelectedItemId(selectedItemId.filter((id) => id !== itemId));
         }
     };
-    // Hàm để thay đổi data mỗi khi Edit xong api-------------------------------------------------------------
+
+    //============================================== Hàm để thay đổi data mỗi khi Edit xong api=============================================
     const updateItemInList = (updatedItem) => {
         const itemIndex = itemsData.findIndex((item) => item.id === updatedItem.id);
 
@@ -246,8 +247,14 @@ const ItemsManagerPage = () => {
             setItemData(updatedItemData);
         }
     };
+    const handleCreateItemsSuccess = (newItems) => {
+        // Close the form
+        setOpenOderForm(false);
+        setItemData((prevItemsData) => [...prevItemsData, newItems]);
+    };
+    //===========================================================================================
 
-    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
+    // const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
     const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
 
@@ -320,7 +327,7 @@ const ItemsManagerPage = () => {
                             <CloseIcon color="primary" />
                         </IconButton>{' '}
                     </DialogTitle>
-                    <ItemsForm />
+                    <ItemsForm onClose={handleCreateItemsSuccess} open={openOderForm} />
                 </Dialog>
             </Stack>
 
@@ -452,8 +459,8 @@ const ItemsManagerPage = () => {
                                                     <Checkbox
                                                         checked={selectedItemId === item.id}
                                                         onChange={(event) => handleCheckboxChange(event, item.id)}
-                                                        // checked={selectedUser}
-                                                        // onChange={(event) => handleClick(event, name)}
+                                                    // checked={selectedUser}
+                                                    // onChange={(event) => handleClick(event, name)}
                                                     />
                                                 </TableCell>
 

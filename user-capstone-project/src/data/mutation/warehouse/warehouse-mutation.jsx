@@ -24,3 +24,7 @@ export const editWarehouse = async (categoryId, editWarehouseParams) => {
 //     const response = await axiosInstance.put(`/warehouses${categoryId}`, editWarehouseParams);
 //     return response.data;
 // }
+export const getWarehouseSearch = async (keyWordWarehouse) => {
+    const response = await axiosInstance.get(`/warehouses/search?keyword=${keyWordWarehouse}`);
+    return response.data;
+}

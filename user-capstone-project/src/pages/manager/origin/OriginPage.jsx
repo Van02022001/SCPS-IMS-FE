@@ -36,7 +36,7 @@ import { UserListHead, UserListToolbar } from '../../../sections/@dashboard/user
 import USERLIST from '../../../_mock/user';
 import { getAllOrigins } from '~/data/mutation/origins/origins-mutation';
 import OriginDetailForm from '~/sections/auth/manager/origin/OriginDetailForm';
-import OriginForm from '~/sections/@dashboard/origin/OriginForm';
+import CreateOriginForm from '~/sections/auth/manager/origin/CreateOriginForm';
 
 // ----------------------------------------------------------------------
 
@@ -209,7 +209,7 @@ const OriginPage = () => {
                                 <CloseIcon color="primary" />
                             </IconButton>{' '}
                         </DialogTitle>
-                        <OriginForm />
+                        <CreateOriginForm />
                     </Dialog>
                 </Stack>
 

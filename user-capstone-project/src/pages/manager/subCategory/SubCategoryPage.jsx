@@ -16,15 +16,12 @@ import {
     MenuItem,
     TableBody,
     TableCell,
-    Container,
     Typography,
     IconButton,
     TableContainer,
     TablePagination,
     Dialog,
     DialogTitle,
-    Grid,
-    Menu,
     FormControl,
     InputLabel,
     Select,
@@ -41,7 +38,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { SubCategoryListHead, SubCategoryToolbar } from '~/sections/@dashboard/manager/subCategory';
 // mock
 import PRODUCTSLIST from '../../../_mock/products';
-import CategoryForm from '~/sections/auth/manager/subCategory/SubCategoryForm';
+import CreateSubCategoryForm from '~/sections/auth/manager/subCategory/CreateSubCategoryForm';
 // api
 import { getAllSubCategory } from '~/data/mutation/subCategory/subCategory-mutation';
 
@@ -145,7 +142,7 @@ const SubCategoryPage = () => {
 
     const [filteredCategory, setFilteredCategory] = useState(null);
 
-    const [anchorElOptions, setAnchorElOptions] = useState(null);
+    // const [anchorElOptions, setAnchorElOptions] = useState(null);
 
     const [selectedFilterOptions, setSelectedFilterOptions] = useState(null);
 
@@ -158,7 +155,7 @@ const SubCategoryPage = () => {
         setSelectedFilterOptions(selectedValues);
     };
 
-    // Hàm để thay đổi data mỗi khi Edit xong api-------------------------------------------------------------
+    // ========================== Hàm để thay đổi data mỗi khi Edit xong api=======================================
     const updateSubCategoryInList = (updatedSubCategory) => {
         const subCategoryIndex = subCategoryData.findIndex((sub_category) => sub_category.id === updatedSubCategory.id);
 
@@ -187,7 +184,7 @@ const SubCategoryPage = () => {
         setSubCategoryData((prevSubCategoryData) => [...prevSubCategoryData, newSubCategory]);
     };
 
-    //----------------------------------------------------------------
+    //===========================================================================================
     // const handleOpenMenu = (event, subCategory) => {
     //     setSelectedProduct(subCategory);
     //     setOpen(event.currentTarget);
@@ -316,7 +313,6 @@ const SubCategoryPage = () => {
             });
     }, []);
 
-    console.log(subCategoryData);
 
     //==============================* filter *==============================
     const renderedTodoList = subCategoryData.filter((sub_category) => {
@@ -352,9 +348,10 @@ const SubCategoryPage = () => {
                             <CloseIcon color="primary" />
                         </IconButton>{' '}
                     </DialogTitle>
-                    <CategoryForm onClose={handleCreateSubCategorySuccess} open={openOderForm} />
+                    <CreateSubCategoryForm onClose={handleCreateSubCategorySuccess} open={openOderForm} />
                 </Dialog>
             </Stack>
+
             {/* ===========================================filter=========================================== */}
             <div style={{ display: 'flex', alignItems: 'center' }}>
                 <FilterAltIcon color="action" />
@@ -421,8 +418,8 @@ const SubCategoryPage = () => {
                                                         onChange={(event) =>
                                                             handleCheckboxChange(event, sub_category.id)
                                                         }
-                                                        // checked={selectedUser}
-                                                        // onChange={(event) => handleClick(event, name)}
+                                                    // checked={selectedUser}
+                                                    // onChange={(event) => handleClick(event, name)}
                                                     />
                                                 </TableCell>
 

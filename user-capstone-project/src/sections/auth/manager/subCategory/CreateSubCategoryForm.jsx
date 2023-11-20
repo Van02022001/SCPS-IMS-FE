@@ -40,7 +40,7 @@ import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
 import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
 
-const SubCategoryForm = (props) => {
+const CreateSubCategoryForm = (props) => {
     const [currentTab, setCurrentTab] = useState(0);
     const [tab1Data, setTab1Data] = useState({ categories_id: [] });
     const [tab2Data, setTab2Data] = useState({});
@@ -186,7 +186,7 @@ const SubCategoryForm = (props) => {
         setUnit_mea_id([]);
     };
 
-    const handleAddCategories = async () => {};
+    const handleAddCategories = async () => { };
 
     useEffect(() => {
         getAllCategories()
@@ -577,4 +577,4 @@ const SubCategoryForm = (props) => {
     );
 };
 
-export default SubCategoryForm;
+export default CreateSubCategoryForm;

@@ -19,7 +19,7 @@ import ReportProductPage from './pages/manager/report/ReportProductPage';
 import ReportSalePage from './pages/manager/report/ReportSalePage';
 import ProductsPricePage from './pages/manager/subCategory/ProductPrice';
 import ForgotPassword from './pages/login/ForgotPassword';
-import WarehousePage from './pages/warehouse/WarehousePage';
+import WarehousePage from './pages/manager/warehouse/WarehousePage';
 import SaleProductPage from './pages/sale/SaleProductPage';
 import OrderSalePage from './pages/sale/order/OrderSalePage';
 import ProductInventoryPage from './pages/inventory_staff/product/ProductInventoryPage';

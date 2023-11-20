@@ -37,7 +37,7 @@ import USERLIST from '../../../_mock/user';
 import { getAllOrigins } from '~/data/mutation/origins/origins-mutation';
 import OriginDetailForm from '~/sections/auth/manager/origin/OriginDetailForm';
 import { getAllBrands } from '~/data/mutation/brand/brands-mutation';
-import BrandForm from '~/sections/auth/manager/brand/BrandForm';
+import BrandForm from '~/sections/auth/manager/brand/CreateBrandForm';
 import BrandDetailForm from '~/sections/auth/manager/brand/BrandDetailForm';
 
 // ----------------------------------------------------------------------
@@ -114,6 +114,14 @@ const BrandPage = () => {
                 console.error('Error fetching users:', error);
             });
     }, []);
+    //===========================================================================================
+
+    const handleCreateBrandSuccess = (newBrand) => {
+        // Close the form
+        setOpenOderForm(false);
+        setBrandData((prevBrandData) => [...prevBrandData, newBrand]);
+    };
+    //===========================================================================================
 
     const handleOpenMenu = (event) => {
         setOpen(event.currentTarget);
@@ -221,7 +229,7 @@ const BrandPage = () => {
                                 <CloseIcon color="primary" />
                             </IconButton>{' '}
                         </DialogTitle>
-                        <BrandForm />
+                        <BrandForm onClose={handleCreateBrandSuccess} open={openOderForm} />
                     </Dialog>
                 </Stack>
 

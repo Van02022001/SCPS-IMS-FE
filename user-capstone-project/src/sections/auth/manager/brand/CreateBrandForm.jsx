@@ -12,7 +12,7 @@ import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter
 // api
 import { createBrands } from '~/data/mutation/brand/brands-mutation';
 
-const BrandForm = () => {
+const BrandForm = (props) => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     //thông báo
@@ -29,15 +29,15 @@ const BrandForm = () => {
         };
         try {
             const response = await createBrands(unitParams);
-            console.log('Create brand response:', response);
+            console.log('Create brand response:', response.data);
             if (response.status === "200 OK") {
                 setIsSuccess(true);
                 setIsError(false);
                 setSuccessMessage(response.data.message);
-                console.log(response.data.message);
+                props.onClose(response.data);
                 //clear
-                setName('');
-                setDescription('');
+                // setName('');
+                // setDescription('');
 
             }
         } catch (error) {

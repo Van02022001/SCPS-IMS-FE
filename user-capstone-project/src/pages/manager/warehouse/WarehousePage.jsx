@@ -26,19 +26,20 @@ import {
     DialogTitle,
 } from '@mui/material';
 // components
-import Label from '../../components/label';
-import Iconify from '../../components/iconify';
-import Scrollbar from '../../components/scrollbar';
+import Label from '../../../components/label';
+import Iconify from '../../../components/iconify';
+import Scrollbar from '../../../components/scrollbar';
 import CloseIcon from '@mui/icons-material/Close';
 
 // sections
-import { UserListHead, UserListToolbar } from '../../sections/@dashboard/user';
+import { WarehouseListHead, WarehouseToolbar } from '~/sections/@dashboard/manager/warehouse';
 // mock
-import USERLIST from '../../_mock/user';
+import USERLIST from '../../../_mock/user';
 import { getAllWarehouse } from '~/data/mutation/warehouse/warehouse-mutation';
 // form validation
 import CreateWarehouseForm from '~/sections/auth/manager/warehouse/CreateWarehouseForm';
 import WarehouseDetailForm from '~/sections/auth/manager/warehouse/WarehouseDetailForm';
+
 
 
 
@@ -196,6 +197,10 @@ const WarehousePage = () => {
     const handleCloseWarehouseDetails = () => {
         setSelectedWarehouseId(null);
     };
+    const handleDataSearch = (searchResult) => {
+        // Cập nhật state của trang chính với dữ liệu từ tìm kiếm
+        setWarehouseData(searchResult);
+    };
 
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
@@ -247,16 +252,17 @@ const WarehousePage = () => {
                 </Stack>
 
                 <Card>
-                    <UserListToolbar
+                    <WarehouseToolbar
                         numSelected={selected.length}
                         filterName={filterName}
                         onFilterName={handleFilterByName}
+                        onDataSearch={handleDataSearch}
                     />
 
                     <Scrollbar>
                         <TableContainer sx={{ minWidth: 800 }}>
                             <Table>
-                                <UserListHead
+                                <WarehouseListHead
                                     order={order}
                                     orderBy={orderBy}
                                     headLabel={TABLE_HEAD}

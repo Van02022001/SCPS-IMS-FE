@@ -23,7 +23,7 @@ import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
 import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
 
-const OriginForm = () => {
+const CreateOriginForm = () => {
     const [name, setName] = useState('');
     //thông báo
     const [isSuccess, setIsSuccess] = useState(false);
@@ -75,13 +75,9 @@ const OriginForm = () => {
                         </Button>
                     </Stack>
                 </DialogContent>
-                <DialogActions>
-                    {/* <Button color="success" variant="contained">Yes</Button>
-                    <Button onClick={closepopup} color="error" variant="contained">Close</Button> */}
-                </DialogActions>
             </div>
         </>
     );
 };
 
-export default OriginForm;
+export default CreateOriginForm;

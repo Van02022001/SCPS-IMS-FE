@@ -7,7 +7,7 @@ import ErrorAlerts from '~/components/alert/ErrorAlert';
 // api
 import { createWarehouse } from '~/data/mutation/warehouse/warehouse-mutation';
 
-const CreateWarehouseForm = ({ open, onClose, onSave }) => {
+const CreateWarehouseForm = ({ open, onClose, onSave, props }) => {
     const [warehouseName, setWarehouseName] = useState('');
     const [warehouseAddress, setWarehouseAddress] = useState('');
     const [showNotification, setShowNotification] = useState(false);
@@ -30,10 +30,10 @@ const CreateWarehouseForm = ({ open, onClose, onSave }) => {
                 setIsSuccess(true);
                 setIsError(false);
                 setSuccessMessage(response.message);
-                console.log(response);
+                props.onClose(response.data);
                 //clear
-                setWarehouseName('');
-                setWarehouseAddress('');
+                // setWarehouseName('');
+                // setWarehouseAddress('');
             }
         } catch (error) {
             console.error("can't feaching category", error);
@@ -76,22 +76,6 @@ const CreateWarehouseForm = ({ open, onClose, onSave }) => {
                     lưu
                 </Button>
             </div>
-            {/* Notification */}
-            {/* <Snackbar
-                open={showNotification || errorMessage.length > 0}
-                autoHideDuration={6000}
-                onClose={closeNotification}
-            >
-                {errorMessage ? (
-                    <Alert onClose={closeNotification} severity="error">
-                        {errorMessage}
-                    </Alert>
-                ) : (
-                    <Alert onClose={closeNotification} severity="success">
-                        Đơn vị đã được tạo thành công.
-                    </Alert>
-                )}
-            </Snackbar> */}
         </>
     );
 };

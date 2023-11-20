@@ -11,13 +11,10 @@ import {
     Paper,
     Avatar,
     Button,
-    Popover,
     Checkbox,
     TableRow,
-    MenuItem,
     TableBody,
     TableCell,
-    Container,
     Typography,
     IconButton,
     TableContainer,
@@ -45,9 +42,7 @@ import CreateCategoriesForm from '~/sections/auth/manager/categories/CreateCateg
 
 const TABLE_HEAD = [
     { id: 'name', label: 'Tên', alignRight: false },
-    { id: 'company', label: 'Mô tả', alignRight: false },
-    { id: 'role', label: 'Ngày tạo', alignRight: false },
-    { id: 'isVerified', label: 'Ngày cập nhật', alignRight: false },
+    { id: 'description', label: 'Mô tả', alignRight: false },
     { id: 'status', label: 'Trạng thái', alignRight: false },
     { id: '' },
 ];
@@ -86,7 +81,7 @@ function applySortFilter(array, comparator, query) {
 const CategoryPage = () => {
     const [selectedCategoryId, setSelectedCategoryId] = useState(null);
 
-    const [open, setOpen] = useState(null);
+    // const [open, setOpen] = useState(null);
 
     const [openOderForm, setOpenOderForm] = useState(false);
 
@@ -101,13 +96,11 @@ const CategoryPage = () => {
     const [filterName, setFilterName] = useState('');
 
     const [rowsPerPage, setRowsPerPage] = useState(5);
-    // Search data
-    const [displayedCategoryData, setDisplayedCategoryData] = useState([]);
 
     const [categoryData, setCategoryData] = useState([]);
     const [categoryStatus, setCategoryStatus] = useState('');
 
-    // Hàm để thay đổi data mỗi khi Edit xong api-------------------------------------------------------------
+    //=============================================== Hàm để thay đổi data mỗi khi Edit xong api===============================================
     const updateCategoryInList = (updatedCategory) => {
         const categoryIndex = categoryData.findIndex((category) => category.id === updatedCategory.id);
 
@@ -129,15 +122,20 @@ const CategoryPage = () => {
             setCategoryData(updatedCategoryData);
         }
     };
-
-    //----------------------------------------------------------------
-    const handleOpenMenu = (event) => {
-        setOpen(event.currentTarget);
+    const handleCreateCategorySuccess = (newCategory) => {
+        // Close the form
+        setOpenOderForm(false);
+        setCategoryData((prevCategoryData) => [...prevCategoryData, newCategory]);
     };
+    //===========================================================================================
 
-    const handleCloseMenu = () => {
-        setOpen(null);
-    };
+    // const handleOpenMenu = (event) => {
+    //     setOpen(event.currentTarget);
+    // };
+
+    // const handleCloseMenu = () => {
+    //     setOpen(null);
+    // };
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -203,7 +201,6 @@ const CategoryPage = () => {
     const handleDataSearch = (searchResult) => {
         // Cập nhật state của trang chính với dữ liệu từ tìm kiếm
         setCategoryData(searchResult);
-        setDisplayedCategoryData(searchResult);
     };
 
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
@@ -211,6 +208,7 @@ const CategoryPage = () => {
     const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
 
     const isNotFound = !filteredUsers.length && !!filterName;
+
     useEffect(() => {
         getAllCategories()
             .then((respone) => {
@@ -251,7 +249,7 @@ const CategoryPage = () => {
                             <CloseIcon color="primary" />
                         </IconButton>{' '}
                     </DialogTitle>
-                    <CreateCategoriesForm />
+                    <CreateCategoriesForm onClose={handleCreateCategorySuccess} open={openOderForm} />
                 </Dialog>
             </Stack>
 
@@ -270,7 +268,7 @@ const CategoryPage = () => {
                                 order={order}
                                 orderBy={orderBy}
                                 headLabel={TABLE_HEAD}
-                                rowCount={USERLIST.length}
+                                rowCount={categoryData.length}
                                 numSelected={selected.length}
                                 onRequestSort={handleRequestSort}
                                 onSelectAllClick={handleSelectAllClick}
@@ -304,12 +302,13 @@ const CategoryPage = () => {
                                                 </TableCell>
                                                 {/* mô tả */}
                                                 <TableCell align="left">
-                                                    {category.description.length > 25 ? `${category.description.slice(0, 25)}...` : category.description}
+                                                    {category.description ? (
+                                                        category.description.length > 25 ? `${category.description.slice(0, 25)}...` : category.description
+                                                    ) : (
+                                                        "Không có mô tả"
+                                                    )}
                                                 </TableCell>
-                                                {/* ngày tạo */}
-                                                <TableCell align="left">{category.createdAt}</TableCell>
-                                                {/* ngày cập nhật */}
-                                                <TableCell align="left">{category.updatedAt}</TableCell>
+
                                                 {/* trạng thái */}
                                                 <TableCell align="left">
                                                     <Label
@@ -377,7 +376,7 @@ const CategoryPage = () => {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={USERLIST.length}
+                    count={categoryData.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}
@@ -385,35 +384,6 @@ const CategoryPage = () => {
                 />
             </Card>
 
-
-            {/* <Popover
-                open={Boolean(open)}
-                anchorEl={open}
-                onClose={handleCloseMenu}
-                anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                PaperProps={{
-                    sx: {
-                        p: 1,
-                        width: 140,
-                        '& .MuiMenuItem-root': {
-                            px: 1,
-                            typography: 'body2',
-                            borderRadius: 0.75,
-                        },
-                    },
-                }}
-            >
-                <MenuItem>
-                    <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-                    Edit
-                </MenuItem>
-
-                <MenuItem sx={{ color: 'error.main' }}>
-                    <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
-                    Delete
-                </MenuItem>
-            </Popover> */}
         </>
     );
 };

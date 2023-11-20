@@ -34,7 +34,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { ProductsListHead, ProductsListToolbar } from '~/sections/@dashboard/products';
 // mock
 import PRODUCTSLIST from '../../../_mock/products';
-import CategoryForm from '~/sections/auth/manager/subCategory/SubCategoryForm';
+import CategoryForm from '~/sections/auth/manager/subCategory/CreateSubCategoryForm';
 // api
 import { getAllItems } from '~/data/mutation/items/item-mutation';
 import ProductDetailForm from '~/sections/auth/manager/subCategory/SubCategoryDetailForm';

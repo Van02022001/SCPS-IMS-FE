@@ -73,11 +73,19 @@ const SubCategoryDetailForm = ({
     //thông báo
     const [isSuccess, setIsSuccess] = useState(false);
     const [isError, setIsError] = useState(false);
+    const [message, setMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
-    const handleClick = () => {
+    const handleMessage = (message) => {
         setOpen(true);
+        // Đặt logic hiển thị nội dung thông báo từ API ở đây
+        if (message === 'Update SubCategory status successfully.') {
+            setMessage('Cập nhập trạng thái danh mục thành công')
+        } else if (message === 'Update SubCategory successfully.') {
+            setMessage('Cập nhập danh mục thành công')
+            console.error('Error message:', errorMessage);
+        }
     };
 
     const handleClose = (event, reason) => {
@@ -87,18 +95,11 @@ const SubCategoryDetailForm = ({
 
         setOpen(false);
 
-        // Đặt logic hiển thị nội dung thông báo từ API ở đây
-        if (isSuccess) {
-            console.log('Success message:', successMessage);
-        } else if (isError) {
-            console.error('Error message:', errorMessage);
-        }
     };
 
     const action = (
         <React.Fragment>
             <Button color="secondary" size="small" onClick={handleClose}>
-                UNDO
             </Button>
             <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
                 <CloseIcon fontSize="lage" />
@@ -216,7 +217,8 @@ const SubCategoryDetailForm = ({
 
             .catch((error) => console.error('Error fetching units measurement:', error));
     }, []);
-    console.log(categories_id);
+
+
     const subCategorys = subCategory.find((o) => o.id === subCategoryId);
 
     if (!subCategorys) {
@@ -234,6 +236,7 @@ const SubCategoryDetailForm = ({
                 setIsSuccess(true);
                 setIsError(false);
                 setSuccessMessage(response.message);
+                handleMessage(response.message);
             }
 
             updateSubCategoryInList(response.data);
@@ -261,10 +264,9 @@ const SubCategoryDetailForm = ({
                 setIsSuccess(true);
                 setIsError(false);
                 setSuccessMessage(response.message);
-                handleClick();
+                handleMessage(response.message);
             }
 
-            // Sử dụng hàm để cập nhật trạng thái trong danh sách categories trong CategoryPage
             updateSubCategoryStatusInList(subCategoryId, newStatus);
             setCurrentStatus(newStatus);
 
@@ -360,23 +362,6 @@ const SubCategoryDetailForm = ({
                     <Stack spacing={4} margin={2}>
                         <Grid container spacing={2}>
                             <Grid item xs={6}>
-                                {/* <Grid
-                                    container
-                                    spacing={1}
-                                    direction="row"
-                                    justifyContent="space-between"
-                                    alignItems="center"
-                                    sx={{ marginBottom: 4, gap: 5 }}
-                                >
-                                    <Typography variant="body1">Mã hàng:</Typography>
-                                    <TextField
-                                        size="small"
-                                        variant="outlined"
-                                        label="Mã hàng"
-                                        sx={{ width: '70%' }}
-                                        value={subCategorys ? subCategorys.id : ''}
-                                    />
-                                </Grid> */}
                                 <Grid
                                     container
                                     spacing={1}
@@ -692,7 +677,7 @@ const SubCategoryDetailForm = ({
                                         vertical: 'bottom',
                                         horizontal: 'right',
                                     }}
-                                    message={isSuccess ? successMessage : errorMessage}
+                                    message={message}
                                     action={action}
                                     style={{ bottom: '16px', right: '16px' }}
                                 />
