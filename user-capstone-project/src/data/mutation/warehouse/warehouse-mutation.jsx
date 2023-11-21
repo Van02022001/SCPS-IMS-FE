@@ -28,3 +28,8 @@ export const getWarehouseSearch = async (keyWordWarehouse) => {
     const response = await axiosInstance.get(`/warehouses/search?keyword=${keyWordWarehouse}`);
     return response.data;
 }
+
+export const getInventoryStaffByWarehouse = async (warehouseId) => {
+    const response = await axiosInstance.get(`/warehouses/${warehouseId}/inventory-staff`);
+    return response.data;
+};

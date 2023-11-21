@@ -33,6 +33,10 @@ import UnitPage from './pages/manager/unit/UnitPage';
 import OriginPage from './pages/manager/origin/OriginPage';
 import BrandPage from './pages/manager/brand/BrandPage';
 import SupplierPage from './pages/manager/supplier/SupplierPage';
+import GoodReceiptManagerPage from './pages/manager/transaction/goodReceipt/GoodReceiptManagerPage';
+import CreateGoodReceipt from './pages/manager/transaction/goodReceipt/CreateGoodReceipt';
+import ExportReceiptManagerPage from './pages/manager/transaction/exportReceipt/ExportReceiptManagerPage';
+import CreateExportReceipt from './pages/manager/transaction/exportReceipt/CreateExportReceipt';
 
 // ----------------------------------------------------------------------
 
@@ -63,6 +67,10 @@ const Router = () => {
                 { path: 'unit', element: <UnitPage/> },
                 { path: 'blog', element: <BlogPage /> },
                 { path: 'warehouse', element: <WarehousePage /> },
+                { path: 'goods-receipt', element: <GoodReceiptManagerPage /> }, 
+                { path: 'create-good-receipt', element: <CreateGoodReceipt/> },
+                { path: 'export-receipt', element: <ExportReceiptManagerPage /> },
+                { path: 'create-export-receipt', element: <CreateExportReceipt/> },
                 {
                     path: 'report',
                     children: [
@@ -79,6 +87,7 @@ const Router = () => {
             element: <LoginPage />,
         },
         {
+            path: '/sale-staff',
             element: <DashboardLayout />,
             children: [
                 { path: 'items-sale', element: <ItemsSalePage /> },

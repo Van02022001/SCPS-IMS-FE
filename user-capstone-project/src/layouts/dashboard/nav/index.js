@@ -129,6 +129,27 @@ const managerNavConfig = [
     ],
   },
   {
+    title: 'Giao dịch',
+    icon: <ShoppingCart />,
+    children: [
+      {
+        title: 'Nhập kho',
+        path: '/dashboard/goods-receipt',
+        icon: <ClassOutlined />,
+      },
+      {
+        title: 'Xuất kho',
+        path: '/dashboard/export-receipt',
+        icon: <PriceChangeOutlined />, 
+      },
+      {
+        title: 'Kiểm kho  ',
+        path: '/dashboard/products/products-check',
+        icon: <DomainVerification />,
+      },
+    ],
+  },
+  {
     title: 'login',
     path: '/login',
     icon: icon('ic_lock'),
