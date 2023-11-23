@@ -11,7 +11,7 @@ export const createUser = async (usersParams) => {
 }
 
 export const updateUser = async (usersParams) => {
-    const response = await axiosInstance.post("/admin/users", usersParams);
+    const response = await axiosInstance.put("/admin/users", usersParams);
     return response.data;
 }
 

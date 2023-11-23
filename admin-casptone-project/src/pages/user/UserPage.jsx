@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { filter, sortBy } from 'lodash';
 import { sentenceCase } from 'change-case';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 // @mui
 import {
   Card,
@@ -35,9 +35,11 @@ import Scrollbar from '../../components/scrollbar';
 // sections
 import { UserListHead, UserListToolbar } from '../../sections/@dashboard/user';
 // mock
+import UserDetailForm from 'src/sections/auth/admin/user/UserDetailForm';
 import USERLIST from '../../_mock/user';
 import UserForm from '../../sections/auth/home/UserForm';
 import { getAllUser, deleteUser } from '../../data/mutation/user/user-mutation';
+
 
 // ----------------------------------------------------------------------
 
@@ -48,7 +50,6 @@ const TABLE_HEAD = [
   { id: 'role', label: 'Vị trí', alignRight: false },
   { id: 'registeredAt', label: 'Ngày tạo tài khoản', alignRight: false },
   { id: 'status', label: 'Status', alignRight: false },
-  { id: 'company', label: 'Công ty', alignRight: false },
   { id: '' },
 ];
 
@@ -107,7 +108,7 @@ const UserPage = () => {
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const [users, setUsers] = useState([]);
+  const [userData, setUserData] = useState([]);
   const [filterName, setFilterName] = useState('');
   const [sortedUsers, setSortedUsers] = useState([]);
 
@@ -123,7 +124,17 @@ const UserPage = () => {
   const handleCloseUserForm = () => {
     setOpenUserForm(false);
   };
+  const handleCloseUserDetails = () => {
+    setSelectedUserIds(null);
+  };
+  const handleUserClick = (user) => {
 
+    if (selectedUserIds === user.id) {
+      setSelectedUserIds(null); // Đóng nếu đã mở
+    } else {
+      setSelectedUserIds(user.id); // Mở hoặc chuyển sang sản phẩm khác
+    }
+  };
   const handleCheckboxChange = (event, userId) => {
     if (event.target.checked) {
       // Nếu người dùng chọn checkbox, thêm sản phẩm vào danh sách đã chọn.
@@ -139,7 +150,7 @@ const UserPage = () => {
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
     // Sắp xếp danh sách sản phẩm dựa trên trường và hướng đã chọn
-    const sortedUsers = [...users].sort((a, b) => {
+    const sortedUsers = [...userData].sort((a, b) => {
       const valueA = a[property];
       const valueB = b[property];
       if (valueA < valueB) {
@@ -211,7 +222,7 @@ const UserPage = () => {
       .then((respone) => {
         const data = respone.data
         if (data && data.length > 0) {
-          setUsers(data)
+          setUserData(data)
           setSortedUsers(data)
         } else {
           console.error('No users found')
@@ -229,54 +240,60 @@ const UserPage = () => {
         <title> Tài khoản </title>
       </Helmet>
 
-      <Container>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-          <Typography variant="h4" gutterBottom>
-            Tài khoản người dùng
-          </Typography>
-          <Button
-            variant="contained"
-            startIcon={<Iconify icon="eva:plus-fill" />}
-            onClick={() => setOpenUserForm(true)}
-          >
-            Tạo tài khoản
-          </Button>
-          <Dialog fullWidth maxWidth="md" open={openUserForm}>
-            <DialogTitle>
-              Tạo tài khoản{' '}
-              <IconButton style={{ float: 'right' }} onClick={handleCloseUserForm}>
-                <CloseIcon color="primary" />
-              </IconButton>{' '}
-            </DialogTitle>
-            <UserForm />
-          </Dialog>
-        </Stack>
 
-        <Card>
-          <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+      <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+        <Typography variant="h4" gutterBottom>
+          Tài khoản người dùng
+        </Typography>
+        <Button
+          variant="contained"
+          startIcon={<Iconify icon="eva:plus-fill" />}
+          onClick={() => setOpenUserForm(true)}
+        >
+          Tạo tài khoản
+        </Button>
+        <Dialog fullWidth maxWidth="md" open={openUserForm}>
+          <DialogTitle>
+            Tạo tài khoản{' '}
+            <IconButton style={{ float: 'right' }} onClick={handleCloseUserForm}>
+              <CloseIcon color="primary" />
+            </IconButton>{' '}
+          </DialogTitle>
+          <UserForm />
+        </Dialog>
+      </Stack>
 
-          <Scrollbar>
-            <TableContainer sx={{ minWidth: 800 }}>
-              <Table>
-                <UserListHead
-                  order={order}
-                  orderBy={orderBy}
-                  headLabel={TABLE_HEAD}
-                  rowCount={users.length}
-                  numSelected={selected.length}
-                  onRequestSort={handleRequestSort}
-                  onSelectAllClick={handleSelectAllClick}
-                />
-                <TableBody>
-                  {/* {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, name, role, status, company, avatarUrl, isVerified } = row;
-                    const selectedUser = selected.indexOf(name) !== -1; */}
-                  {sortedUsers.map((users) => {
-                    console.log(users);
-                    return (
-                      <TableRow hover key={users.id} tabIndex={-1} role="checkbox">
+      <Card>
+        <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+
+        <Scrollbar>
+          <TableContainer sx={{ minWidth: 800 }}>
+            <Table>
+              <UserListHead
+                order={order}
+                orderBy={orderBy}
+                headLabel={TABLE_HEAD}
+                rowCount={userData.length}
+                numSelected={selected.length}
+                onRequestSort={handleRequestSort}
+                onSelectAllClick={handleSelectAllClick}
+              />
+              <TableBody>
+
+                {userData.map((users) => {
+                  return (
+                    <React.Fragment key={users.id}>
+
+                      <TableRow
+                        hover
+                        key={users.id}
+                        tabIndex={-1}
+                        role="checkbox"
+                        selected={selectedUserIds === users.id}
+                        onClick={() => handleUserClick(users)}
+                      >
                         <TableCell padding="checkbox">
-                          <Checkbox checked={selectedUserIds.includes(users.id)}
+                          <Checkbox checked={selectedUserIds === users.id}
                             onChange={(event) => handleCheckboxChange(event, users.id)} />
                         </TableCell>
 
@@ -304,56 +321,69 @@ const UserPage = () => {
                           </IconButton>
                         </TableCell>
                       </TableRow>
-                    );
-                    // })}
-                  })}
-                  {emptyRows > 0 && (
-                    <TableRow style={{ height: 53 * emptyRows }}>
-                      <TableCell colSpan={6} />
-                    </TableRow>
-                  )}
-                </TableBody>
 
-                {isNotFound && (
-                  <TableBody>
-                    <TableRow>
-                      <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                        <Paper
-                          sx={{
-                            textAlign: 'center',
-                          }}
-                        >
-                          <Typography variant="h6" paragraph>
-                            Not found
-                          </Typography>
+                      {selectedUserIds === users.id && (
+                        <TableRow>
+                          <TableCell colSpan={8}>
+                            <UserDetailForm
+                              users={userData}
+                              usersId={selectedUserIds}
+                              onClose={handleCloseUserDetails}
+                            />
+                          </TableCell>
+                        </TableRow>
+                      )}
 
-                          <Typography variant="body2">
-                            No results found for &nbsp;
-                            <strong>&quot;{filterName}&quot;</strong>.
-                            <br /> Try checking for typos or using complete words.
-                          </Typography>
-                        </Paper>
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
+                    </React.Fragment>
+                  );
+                })}
+                {emptyRows > 0 && (
+                  <TableRow style={{ height: 53 * emptyRows }}>
+                    <TableCell colSpan={6} />
+                  </TableRow>
                 )}
-              </Table>
-            </TableContainer>
-          </Scrollbar>
+              </TableBody>
 
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={USERLIST.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-        </Card>
-      </Container>
+              {isNotFound && (
+                <TableBody>
+                  <TableRow>
+                    <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                      <Paper
+                        sx={{
+                          textAlign: 'center',
+                        }}
+                      >
+                        <Typography variant="h6" paragraph>
+                          Not found
+                        </Typography>
 
-      <Popover
+                        <Typography variant="body2">
+                          No results found for &nbsp;
+                          <strong>&quot;{filterName}&quot;</strong>.
+                          <br /> Try checking for typos or using complete words.
+                        </Typography>
+                      </Paper>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              )}
+            </Table>
+          </TableContainer>
+        </Scrollbar>
+
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={USERLIST.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </Card>
+
+
+      {/* <Popover
         open={Boolean(open)}
         anchorEl={open}
         onClose={handleCloseMenu}
@@ -380,7 +410,7 @@ const UserPage = () => {
           <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} onClick={() => handleDeleteUser(users.id)} />
           Xóa
         </MenuItem>
-      </Popover>
+      </Popover> */}
     </>
   );
 }
