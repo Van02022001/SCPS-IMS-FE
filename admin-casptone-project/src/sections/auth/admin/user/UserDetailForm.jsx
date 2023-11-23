@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Typography, Button, Tab, Tabs, Stack, Grid, TextField, FormControl, Select, MenuItem } from '@mui/material';
 
 import SuccessAlerts from '../../../../components/alert/SuccessAlerts';
-import ErrorAlerts from '../../../../components/alert/ErrorAlerts';
+
 import { getAllWarehouse } from '../../../../data/mutation/warehouse/warehouse-mutation';
 import { updateUser } from '../../../../data/mutation/user/user-mutation';
+import ErrorAlerts from '~/components/alert/ErrorAlerts';
 
 
 
