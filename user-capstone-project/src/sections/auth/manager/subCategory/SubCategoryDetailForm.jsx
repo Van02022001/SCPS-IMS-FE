@@ -181,6 +181,7 @@ const SubCategoryDetailForm = ({
         }
     }, [subCategoryId, subCategory, mode]);
 
+
     useEffect(() => {
         getAllCategories()
             .then((respone) => {
@@ -218,6 +219,25 @@ const SubCategoryDetailForm = ({
             .catch((error) => console.error('Error fetching units measurement:', error));
     }, []);
 
+    useEffect(() => {
+        if (mode === 'create') {
+
+            setEditSubCategoryMeta({
+                key: '',
+                description: '',
+
+            });
+        } else {
+            if (subCategoryMeta) {
+
+                const editedSubCategoryMeta = {
+                    key: subCategoryMeta.key,
+                    description: subCategoryMeta.description,
+                };
+                setEditSubCategoryMeta(editedSubCategoryMeta);
+            }
+        }
+    }, []);
 
     const subCategorys = subCategory.find((o) => o.id === subCategoryId);
 
@@ -282,7 +302,7 @@ const SubCategoryDetailForm = ({
         }
     };
 
-    const handleClear = () => {};
+    const handleClear = () => { };
 
     const handleEdit = (field, value) => {
         console.log(`Field: ${field}, Value: ${value}`);
@@ -317,14 +337,12 @@ const SubCategoryDetailForm = ({
     };
 
     const updateSubCategoryMeta = async () => {
-        const editSubCategoryMetaParams = {
-            key: subCategoryMeta.key,
-            description: subCategoryMeta.description,
-        };
-        setEditSubCategoryMeta(editSubCategoryMetaParams);
+        if (!editSubCategoryMeta) {
+            return;
+        }
 
         try {
-            const response = await editSubCategorysMeta(subCategoryId, editSubCategoryMetaParams);
+            const response = await editSubCategorysMeta(subCategoryId, editSubCategoryMeta);
 
             if (response.status === '200 OK') {
                 setIsSuccess(true);
