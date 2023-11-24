@@ -574,8 +574,6 @@ const ItemsManagerPage = () => {
 
                                                 <TableCell align="left">{item.origin.name}</TableCell>
 
-                                                <TableCell align="left">{item.createdAt}</TableCell>
-
                                                 <TableCell align="left">
                                                     <Label color={(item.status === 'Inactive' && 'error') || 'success'}>
                                                         {item.status === 'Active'

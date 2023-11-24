@@ -46,6 +46,17 @@ import EditCategoryForm from '~/sections/auth/manager/categories/EditCategoryFor
 import SubCategoryDetailForm from '~/sections/auth/manager/subCategory/SubCategoryDetailForm';
 //icons
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
+//calendar
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { LocalizationProvider } from '@mui/x-date-pickers-pro';
+import { AdapterDayjs } from '@mui/x-date-pickers-pro/AdapterDayjs';
+import { DateRangePicker } from '@mui/x-date-pickers-pro/DateRangePicker';
+import dayjs from 'dayjs';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+import { getAllCategories } from '~/data/mutation/categories/categories-mutation';
+dayjs.extend(isSameOrAfter);
+dayjs.extend(isSameOrBefore);
 
 // ----------------------------------------------------------------------
 
@@ -112,8 +123,6 @@ const MenuProps = {
     },
 };
 
-const filterOptions = ['Ren', 'Ron', 'Abc', 'Test1', 'Test12', 'Test123'];
-
 const SubCategoryPage = () => {
     // State mở các form----------------------------------------------------------------
     const [open, setOpen] = useState(null);
@@ -147,6 +156,13 @@ const SubCategoryPage = () => {
     const [selectedFilterOptions, setSelectedFilterOptions] = useState(null);
 
     const [personName, setPersonName] = React.useState([]);
+    //--------------------Filter------------------------
+    const [selectedCategories, setSelectedCategories] = React.useState([]);
+    const [categoryData, setCategoryData] = useState([]);
+    const filterCategories = categoryData.map((category) => category.name);
+    // fiter createdAt //
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
 
     const handleChange = (event) => {
         setPersonName(event.target.value);
@@ -311,16 +327,37 @@ const SubCategoryPage = () => {
             .catch((error) => {
                 console.error('Error fetching users:', error);
             });
+        getAllCategories()
+            .then((respone) => {
+                const data = respone.data;
+                if (Array.isArray(data)) {
+                    setCategoryData(data);
+                } else {
+                    console.error('API response is not an array:', data);
+                }
+            })
+            .catch((error) => {
+                console.error('Error fetching users:', error);
+            });
     }, []);
 
-
     //==============================* filter *==============================
-    const renderedTodoList = subCategoryData.filter((sub_category) => {
-        if (!selectedFilterOptions || selectedFilterOptions.length === 0) {
-            return true;
-        }
-        return sub_category.categories.some((category) => selectedFilterOptions.includes(category.name));
-    });
+    const applyFilters = (sub_category) => {
+        const isCategoriesMatch =
+            !selectedCategories ||
+            selectedCategories.length === 0 ||
+            (Array.isArray(sub_category.categories) &&
+                sub_category.categories.some((categories) => selectedCategories.includes(categories.name))) ||
+            (!Array.isArray(sub_category.categories) && selectedCategories.includes(sub_category.categories.name));
+
+        const isDateInRange =
+            (!startDate || dayjs(sub_category.createdAt, 'DD/MM/YYYY HH:mm:ss').isSameOrAfter(dayjs(startDate), 'day')) &&
+            (!endDate || dayjs(sub_category.createdAt, 'DD/MM/YYYY HH:mm:ss').isSameOrBefore(dayjs(endDate), 'day'));
+
+        return isCategoriesMatch && isDateInRange;
+    };
+
+    const filteredSubcate = subCategoryData.filter(applyFilters);
     //==============================* filter *==============================
 
     return (
@@ -365,19 +402,34 @@ const SubCategoryPage = () => {
                     labelId="demo-multiple-checkbox-label"
                     id="demo-multiple-checkbox"
                     multiple
-                    value={personName}
-                    onChange={handleChange}
+                    value={selectedCategories}
+                    onChange={(event) => setSelectedCategories(event.target.value)}
                     input={<OutlinedInput label="Nhóm hàng" />}
                     renderValue={(selected) => selected.join(', ')}
                     MenuProps={MenuProps}
                 >
-                    {filterOptions.map((name) => (
+                    {filterCategories.map((name) => (
                         <MenuItem key={name} value={name}>
-                            <Checkbox checked={personName.indexOf(name) > -1} />
+                            <Checkbox checked={selectedCategories.indexOf(name) > -1} />
                             <ListItemText primary={name} />
                         </MenuItem>
                     ))}
                 </Select>
+            </FormControl>
+            <FormControl sx={{ ml: 114, width: 300 }}>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DemoContainer components={['DateRangePicker']}>
+                        <DateRangePicker
+                            startText="Check-in"
+                            endText="Check-out"
+                            value={[startDate, endDate]}
+                            onChange={(newValue) => {
+                                setStartDate(newValue[0]);
+                                setEndDate(newValue[1]);
+                            }}
+                        />
+                    </DemoContainer>
+                </LocalizationProvider>
             </FormControl>
             {/* ===========================================filter=========================================== */}
             <Card>
@@ -401,7 +453,7 @@ const SubCategoryPage = () => {
                                 onSelectAllClick={handleSelectAllClick}
                             />
                             <TableBody>
-                                {renderedTodoList.map((sub_category) => {
+                                {filteredSubcate.map((sub_category) => {
                                     return (
                                         <React.Fragment key={sub_category.id}>
                                             <TableRow
@@ -418,8 +470,8 @@ const SubCategoryPage = () => {
                                                         onChange={(event) =>
                                                             handleCheckboxChange(event, sub_category.id)
                                                         }
-                                                    // checked={selectedUser}
-                                                    // onChange={(event) => handleClick(event, name)}
+                                                        // checked={selectedUser}
+                                                        // onChange={(event) => handleClick(event, name)}
                                                     />
                                                 </TableCell>
 
