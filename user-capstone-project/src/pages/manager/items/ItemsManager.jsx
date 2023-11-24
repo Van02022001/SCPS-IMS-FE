@@ -42,6 +42,20 @@ import USERLIST from '../../../_mock/user';
 import { getAllItem } from '~/data/mutation/items/item-mutation';
 //icons
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import { getAllBrands } from '~/data/mutation/brand/brands-mutation';
+import { getAllSubCategory } from '~/data/mutation/subCategory/subCategory-mutation';
+import { getAllSuppliers } from '~/data/mutation/supplier/suppliers-mutation';
+import { getAllOrigins } from '~/data/mutation/origins/origins-mutation';
+//calendar
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { LocalizationProvider } from '@mui/x-date-pickers-pro';
+import { AdapterDayjs } from '@mui/x-date-pickers-pro/AdapterDayjs';
+import { DateRangePicker } from '@mui/x-date-pickers-pro/DateRangePicker';
+import dayjs from 'dayjs';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+dayjs.extend(isSameOrAfter);
+dayjs.extend(isSameOrBefore);
 
 // ----------------------------------------------------------------------
 
@@ -73,11 +87,6 @@ const MenuProps = {
         },
     },
 };
-
-const filterOptions = ['Sai Gon Golden', 'Ha Noi golden'];
-const filterSubCategories = ['Bạc lót', 'Thép'];
-const filterSuppliers = ['Tùng', 'Tùngggg'];
-const filterOrigins = ['Cái', 'Test'];
 
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -140,6 +149,21 @@ const ItemsManagerPage = () => {
     const [selectedFilterOptions, setSelectedFilterOptions] = useState(null);
     const [selectedSuppliers, setSelectedSuppliers] = React.useState([]);
     const [selectedOrigins, setSelectedOrigins] = React.useState([]);
+    // fiter brand //
+    const [brandData, setBrandData] = useState([]);
+    const filterOptions = brandData.map((brand) => brand.name);
+    // fiter subcate //
+    const [subCategoryData, setSubCategoryData] = useState([]);
+    const filterSubCategories = subCategoryData.map((subcate) => subcate.name);
+    // fiter Suppliers //
+    const [suppliersData, setSupplierData] = useState([]);
+    const filterSuppliers = suppliersData.map((supplier) => supplier.name);
+    // fiter Suppliers //
+    const [originData, setOriginData] = useState([]);
+    const filterOrigins = originData.map((origin) => origin.name);
+    // fiter createdAt //
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
 
     const handleChange = (event) => {
         setPersonName(event.target.value);
@@ -274,6 +298,54 @@ const ItemsManagerPage = () => {
             .catch((error) => {
                 console.error('Error fetching users:', error);
             });
+        getAllBrands()
+            .then((respone) => {
+                const data = respone.data;
+                if (Array.isArray(data)) {
+                    setBrandData(data);
+                } else {
+                    console.error('API response is not an array:', data);
+                }
+            })
+            .catch((error) => {
+                console.error('Error fetching users:', error);
+            });
+        getAllSubCategory()
+            .then((respone) => {
+                const data = respone.data;
+                if (Array.isArray(data)) {
+                    setSubCategoryData(data);
+                } else {
+                    console.error('API response is not an array:', data);
+                }
+            })
+            .catch((error) => {
+                console.error('Error fetching users:', error);
+            });
+        getAllSuppliers()
+            .then((respone) => {
+                const data = respone.data;
+                if (Array.isArray(data)) {
+                    setSupplierData(data);
+                } else {
+                    console.error('API response is not an array:', data);
+                }
+            })
+            .catch((error) => {
+                console.error('Error fetching users:', error);
+            });
+        getAllOrigins()
+            .then((respone) => {
+                const data = respone.data;
+                if (Array.isArray(data)) {
+                    setOriginData(data);
+                } else {
+                    console.error('API response is not an array:', data);
+                }
+            })
+            .catch((error) => {
+                console.error('Error fetching users:', error);
+            });
     }, []);
 
     console.log(itemsData);
@@ -297,7 +369,15 @@ const ItemsManagerPage = () => {
         const isOriginMatch =
             !selectedOrigins || selectedOrigins.length === 0 || selectedOrigins.includes(item.origin.name);
 
-        return isSubCategoryMatch && isBrandMatch && isSupplierMatch && isOriginMatch;
+        const isDateInRange =
+            (!startDate || dayjs(item.createdAt, 'DD/MM/YYYY HH:mm:ss').isSameOrAfter(dayjs(startDate), 'day')) &&
+            (!endDate || dayjs(item.createdAt, 'DD/MM/YYYY HH:mm:ss').isSameOrBefore(dayjs(endDate), 'day'));
+
+        console.log('startDate:', startDate);
+        console.log('endDate:', endDate);
+        console.log('item.createdAt:', item.createdAt);
+
+        return isSubCategoryMatch && isBrandMatch && isSupplierMatch && isOriginMatch && isDateInRange;
     };
 
     const filteredItems = itemsData.filter(applyFilters);
@@ -338,7 +418,7 @@ const ItemsManagerPage = () => {
                     Bộ lọc tìm kiếm
                 </Typography>
             </div>
-            <FormControl sx={{ m: 1, width: 300, mb: 2 }}>
+            <FormControl sx={{ m: 1, width: 200, mb: 2 }}>
                 <InputLabel id="demo-multiple-checkbox-label">Danh mục sản phẩm</InputLabel>
                 <Select
                     labelId="demo-multiple-checkbox-label"
@@ -359,7 +439,7 @@ const ItemsManagerPage = () => {
                 </Select>
             </FormControl>
 
-            <FormControl sx={{ m: 1, width: 300, mb: 2 }}>
+            <FormControl sx={{ m: 1, width: 200, mb: 2 }}>
                 <InputLabel id="demo-multiple-checkbox-label">Thương hiệu</InputLabel>
                 <Select
                     labelId="demo-multiple-checkbox-label"
@@ -380,7 +460,7 @@ const ItemsManagerPage = () => {
                 </Select>
             </FormControl>
 
-            <FormControl sx={{ m: 1, width: 300, mb: 2 }}>
+            <FormControl sx={{ m: 1, width: 200, mb: 2 }}>
                 <InputLabel id="demo-multiple-checkbox-label">Nhà cung cấp</InputLabel>
                 <Select
                     labelId="demo-multiple-checkbox-label"
@@ -401,7 +481,7 @@ const ItemsManagerPage = () => {
                 </Select>
             </FormControl>
 
-            <FormControl sx={{ m: 1, width: 300, mb: 2 }}>
+            <FormControl sx={{ m: 1, width: 200, mb: 2 }}>
                 <InputLabel id="demo-multiple-checkbox-label">Nguồn gốc</InputLabel>
                 <Select
                     labelId="demo-multiple-checkbox-label"
@@ -421,7 +501,21 @@ const ItemsManagerPage = () => {
                     ))}
                 </Select>
             </FormControl>
-
+            <FormControl sx={{ ml: 44, width: 300 }}>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DemoContainer components={['DateRangePicker']}>
+                        <DateRangePicker
+                            startText="Check-in"
+                            endText="Check-out"
+                            value={[startDate, endDate]}
+                            onChange={(newValue) => {
+                                setStartDate(newValue[0]);
+                                setEndDate(newValue[1]);
+                            }}
+                        />
+                    </DemoContainer>
+                </LocalizationProvider>
+            </FormControl>
             {/* ===========================================filter=========================================== */}
 
             <Card>
@@ -459,8 +553,8 @@ const ItemsManagerPage = () => {
                                                     <Checkbox
                                                         checked={selectedItemId === item.id}
                                                         onChange={(event) => handleCheckboxChange(event, item.id)}
-                                                    // checked={selectedUser}
-                                                    // onChange={(event) => handleClick(event, name)}
+                                                        // checked={selectedUser}
+                                                        // onChange={(event) => handleClick(event, name)}
                                                     />
                                                 </TableCell>
 
@@ -479,6 +573,8 @@ const ItemsManagerPage = () => {
                                                 <TableCell align="left">{item.supplier.name}</TableCell>
 
                                                 <TableCell align="left">{item.origin.name}</TableCell>
+
+                                                <TableCell align="left">{item.createdAt}</TableCell>
 
                                                 <TableCell align="left">
                                                     <Label color={(item.status === 'Inactive' && 'error') || 'success'}>
