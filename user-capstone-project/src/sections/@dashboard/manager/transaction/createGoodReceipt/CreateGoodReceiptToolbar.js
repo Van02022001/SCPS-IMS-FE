@@ -6,7 +6,7 @@ import { Toolbar, Tooltip, IconButton, Typography, OutlinedInput, InputAdornment
 import Iconify from '../../../../../components/iconify';
 import { useEffect, useState } from 'react';
 
-import { getAllWarehouse, getInventoryStaffByWarehouse } from '~/data/mutation/warehouse/warehouse-mutation';
+import { getAllWarehouse, getInventoryStaffByWarehouseId } from '~/data/mutation/warehouse/warehouse-mutation';
 
 // ----------------------------------------------------------------------
 
@@ -35,34 +35,34 @@ const StyledSearch = styled(OutlinedInput)(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-CreateGoodReceiptListHead.propTypes = {
+CreateGoodReceiptToolbar.propTypes = {
   numSelected: PropTypes.number,
   filterName: PropTypes.string,
   onFilterName: PropTypes.func,
+  onSearch: PropTypes.func,
+  selectedWarehouseId: PropTypes.number,
+  selectedInventoryStaffId: PropTypes.number,
 };
 
-export default function CreateGoodReceiptListHead({ numSelected, onFilterName, onDataSearch }) {
-  const [anchorEl, setAnchorEl] = useState(null);
+export default function CreateGoodReceiptToolbar({ numSelected, onFilterName, onSearch}) {
   const [filterName, setFilterName] = useState('');
   const [selectedWarehouse, setSelectedWarehouse] = useState(null);
+  const [selectedWarehouseId, setSelectedWarehouseId] = useState(null);
   const [selectedInventoryStaff, setSelectedInventoryStaff] = useState(null);
   const [warehouseList, setWarehouseList] = useState([]);
   const [inventoryStaffList, setInventoryStaffList] = useState([]);
-  
-  const handleSelectWarehouse = (warehouse) => {
-    setSelectedWarehouse(warehouse);
-    // Lấy danh sách nhân viên inventory staff của kho hàng được chọn (thay bằng hàm tương ứng của bạn)
-    const inventoryStaffList = getInventoryStaffByWarehouse(warehouse);
-    // Cập nhật danh sách nhân viên inventory staff
-    setInventoryStaffList(inventoryStaffList);
-  };
+
+  const handleSearch = (selectedWarehouseId, selectedInventoryStaffId) => {
+    // Chỉ truyền giá trị đầu tiên
+    onSearch(selectedWarehouseId[0], selectedInventoryStaffId[0]);
+};
   
   useEffect(() => {
     const fetchWarehouseList = async () => {
       try {
         const warehouses = await getAllWarehouse();
         setWarehouseList(warehouses.data);
-        console.log(warehouseList,'Warehouse');
+        console.log(warehouseList, 'Warehouse');
       } catch (error) {
         console.error('Error fetching warehouse list:', error);
       }
@@ -75,8 +75,11 @@ export default function CreateGoodReceiptListHead({ numSelected, onFilterName, o
     const fetchInventoryStaff = async () => {
       try {
         if (selectedWarehouse) {
-          const inventoryStaffList = await getInventoryStaffByWarehouse(selectedWarehouse.id);
-          setInventoryStaffList(inventoryStaffList);
+          const inventoryStaffList = await getInventoryStaffByWarehouseId(selectedWarehouse.id);
+          setInventoryStaffList(inventoryStaffList.data);
+
+          // Call onSearch with selected values
+          onSearch(selectedWarehouse.id, selectedInventoryStaff);
         }
       } catch (error) {
         console.error('Error fetching inventory staff:', error);
@@ -84,9 +87,11 @@ export default function CreateGoodReceiptListHead({ numSelected, onFilterName, o
     };
 
     fetchInventoryStaff();
-  }, [selectedWarehouse]);
+  }, [selectedWarehouse, onSearch, selectedInventoryStaff]);
 
-    return (
+
+ 
+  return (
     <StyledRoot
       sx={{
         ...(numSelected > 0 && {
@@ -101,58 +106,43 @@ export default function CreateGoodReceiptListHead({ numSelected, onFilterName, o
         </Typography>
       ) : (
         <>
-          <StyledSearch
-  value={filterName}
-  onChange={(e) => setFilterName(e.target.value)}
-  onClick={() => {
-    console.log("Clicked on search button");
-    setAnchorEl(true);
-    // Nếu selectedWarehouse chưa được chọn, hãy chọn kho hàng đầu tiên trong danh sách (nếu có)
-    if (!selectedWarehouse && warehouseList.length > 0) {
-      setSelectedWarehouse(warehouseList[0]);
-    }
-  }}
-  placeholder="Chọn kho hàng..."
-  startAdornment={
-    <InputAdornment position="start">
-      <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled', width: 20, height: 20 }} />
-    </InputAdornment>
-  }
-></StyledSearch>
-{selectedWarehouse && (
-  <FormControl fullWidth>
-    <InputLabel id="warehouse-label">{selectedWarehouse.name}</InputLabel>
-    <Select
-      labelId="warehouse-label"
-      id="warehouse"
-      value={selectedWarehouse.id}
-      onChange={(e) => setSelectedWarehouse(warehouseList.find(warehouse => warehouse.id === e.target.value))}
-    >
-      {warehouseList.map((warehouse) => (
-        <MenuItem key={warehouse.id} value={warehouse.id}>
-          {warehouse.name}
-        </MenuItem>
-      ))}
-    </Select>
-  </FormControl>
-)}
-{selectedWarehouse && (
-  <FormControl fullWidth>
-    <InputLabel id="inventory-staff-label">Chọn Nhân Viên</InputLabel>
-    <Select
-      labelId="inventory-staff-label"
-      id="inventory-staff"
-      value={selectedInventoryStaff}
-      onChange={(e) => setSelectedInventoryStaff(e.target.value)}
-    >
-      {inventoryStaffList.map((staff) => (
-        <MenuItem key={staff.id} value={staff.id}>
-          {staff.name}
-        </MenuItem>
-      ))}
-    </Select>
-  </FormControl>
-)}
+          <FormControl fullWidth>
+            <InputLabel id="warehouse-label">Chọn kho hàng...</InputLabel>
+            <Select
+              labelId="warehouse-label"
+              id="warehouse"
+              value={selectedWarehouse ? selectedWarehouse.id : ''}
+              onChange={(e) =>
+                setSelectedWarehouse(
+                  warehouseList.find((warehouse) => warehouse.id === e.target.value)
+                )
+              }
+            >
+              {warehouseList.map((warehouse) => (
+                <MenuItem key={warehouse.id} value={warehouse.id}>
+                  {warehouse.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          {selectedWarehouse && (
+            <FormControl fullWidth>
+              <InputLabel id="inventory-staff-label">Chọn Nhân Viên</InputLabel>
+              <Select
+                labelId="inventory-staff-label"
+                id="inventory-staff"
+                value={selectedInventoryStaff}
+                onChange={(e) => setSelectedInventoryStaff(e.target.value)}
+              >
+                {inventoryStaffList.map((staff) => (
+                  <MenuItem key={staff.id} value={staff.id}>
+                    {staff.lastName} {staff.middleName} {staff.firstName}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
         </>
       )}
     </StyledRoot>

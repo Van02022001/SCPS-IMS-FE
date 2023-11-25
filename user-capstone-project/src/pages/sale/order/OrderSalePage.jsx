@@ -31,8 +31,8 @@ import Scrollbar from '../../../components/scrollbar';
 import CloseIcon from "@mui/icons-material/Close"
 // sections
 import { UserListHead, UserListToolbar } from '../../../sections/@dashboard/user';
-import OdersForm from '~/sections/auth/items/ItemsForm';
-import OrderDetailForm from '~/sections/auth/items/ItemDetailForm';
+import OdersForm from '~/sections/auth/manager/items/CreateItemsForm';
+import OrderDetailForm from '~/sections/auth/manager/items/ItemDetailForm';
 import USERLIST from '../../../_mock/user';
 import CustomerRequestForm from '~/sections/auth/sale/customerRequest/CustomerRequestForm';
 

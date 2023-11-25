@@ -29,7 +29,7 @@ export const getWarehouseSearch = async (keyWordWarehouse) => {
     return response.data;
 }
 
-export const getInventoryStaffByWarehouse = async (warehouseId) => {
-    const response = await axiosInstance.get(`/warehouses/${warehouseId}/inventory-staff`);
+export const getInventoryStaffByWarehouseId = async (warehouseId) => {
+    const response = await axiosInstance.get(`/warehouses/inventory-staffs/${warehouseId}`);
     return response.data;
 };

@@ -30,7 +30,7 @@ import { getAllBrands } from '~/data/mutation/brand/brands-mutation';
 import { getAllOrigins } from '~/data/mutation/origins/origins-mutation';
 import { getAllSuppliers } from '~/data/mutation/supplier/suppliers-mutation';
 
-const ItemsForm = (props) => {
+const CreateItemsForm = (props) => {
     const [currentTab, setCurrentTab] = useState(0);
     const [tab1Data, setTab1Data] = useState({ sub_category_id: [], brand_id: [], supplier_id: [], origin_id: [] });
     const [tab2Data, setTab2Data] = useState({});
@@ -375,4 +375,4 @@ const ItemsForm = (props) => {
     );
 };
 
-export default ItemsForm;
+export default CreateItemsForm;

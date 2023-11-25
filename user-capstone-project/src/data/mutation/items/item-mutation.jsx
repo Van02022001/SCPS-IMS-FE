@@ -10,10 +10,10 @@ export const createItem = async (itemParams) => {
     return response.data;
 }
 
-export const deleteItem = async (id) => {
-    const response = await axiosInstance.delete(`/origins/${id}`,);
-    return response.data;
-}
+// export const deleteItem = async (id) => {
+//     const response = await axiosInstance.delete(`/origins/${id}`,);
+//     return response.data;
+// }
 
 export const editItem = async (itemId, editItemParams) => {
     const response = await axiosInstance.put(`/items/${itemId}`, editItemParams);
@@ -25,7 +25,11 @@ export const editStatusItem = async (itemId, status) => {
     return response.data;
 }
 
-export const getItemsBySubCategory = async (subCategoyId) => {
-    const response = await axiosInstance.get(`/items/items-by-sub-category/${subCategoyId}`);
+export const getItemsBySubCategory = async (itemId) => {
+    const response = await axiosInstance.get(`/items/items-by-sub-category/${itemId}`);
+    return response.data;
+}
+export const getItemsByPriceHistory = async (itemId) => {
+    const response = await axiosInstance.get(`/items/purchase-price-history/${itemId}`);
     return response.data;
 }

@@ -22,7 +22,7 @@ import {
 } from '@mui/material';
 
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import { editItem, editStatusItem } from '~/data/mutation/items/item-mutation';
+import { editItem, editStatusItem, getItemsByPriceHistory } from '~/data/mutation/items/item-mutation';
 import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
 import { getAllSubCategory } from '~/data/mutation/subCategory/subCategory-mutation';
@@ -42,7 +42,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
     const [brand_id, setBrand_id] = useState([]);
     const [supplier_id, setSupplier_id] = useState([]);
     const [origin_id, setOrigin_id] = useState([]);
-
+    const [itemPriceData, setItemPriceData] = useState([]);
     const [currentStatus, setCurrentStatus] = useState('');
 
     //thông báo
@@ -113,6 +113,12 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                 setOrigin_id(data);
             })
             .catch((error) => console.error('Error fetching Origins:', error));
+        getItemsByPriceHistory(itemId)
+            .then((respone) => {
+                const data = respone.data;
+                setItemPriceData(data);
+            })
+            .catch((error) => console.error('Error fetching Items:', error));
     }, []);
     console.log(sub_category_id);
     const item = items.find((o) => o.id === itemId);
@@ -616,7 +622,57 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                 </div>
             )}
             {selectedTab === 1 && (
-                <div style={{ flex: 1 }}>{/* Hiển thị nội dung cho tab "Lịch sử thanh toán" ở đây */}</div>
+                <div style={{ marginLeft: 50 }}>
+                    <Stack spacing={4} margin={2}>
+                        {itemPriceData.map((items) => {
+                            return (
+                                <div key={items.id}>
+                                    <Card>
+                                        <CardContent>
+                                            <TableContainer>
+                                                <Table>
+                                                    <TableBody>
+                                                        <TableRow
+                                                            variant="subtitle1"
+                                                            sx={{
+                                                                fontSize: '20px',
+                                                                backgroundColor: '#f0f1f3',
+                                                                height: 50,
+                                                                textAlign: 'start',
+                                                                fontFamily: 'bold',
+                                                                padding: '10px 0 0 20px',
+                                                            }}
+                                                            key={items.id}
+                                                        >
+                                                            <TableCell>Tên sản phẩm</TableCell>
+                                                            <TableCell>Người thay đổi</TableCell>
+                                                            <TableCell>Ngày thay đổi</TableCell>
+                                                            <TableCell>Giá cũ</TableCell>
+                                                            <TableCell>Giá mới</TableCell>
+                                                        </TableRow>
+                                                        <TableRow key={items.id}>
+                                                            <TableCell>{items.itemName}</TableCell>
+                                                            <TableCell>{items.changedBy}</TableCell>
+                                                            <TableCell>{items.changeDate}</TableCell>
+                                                            <TableCell>{items.oldPrice}</TableCell>
+                                                            <TableCell>{items.newPrice}</TableCell>
+                                                        </TableRow>
+                                                    </TableBody>
+                                                </Table>
+                                            </TableContainer>
+                                        </CardContent>
+                                    </Card>
+                                </div>
+                            );
+                        })}
+                    </Stack>
+
+                    <div>
+
+                        {isSuccess && <SuccessAlerts message={successMessage} />}
+                        {isError && <ErrorAlerts errorMessage={errorMessage} />}
+                    </div>
+                </div>
             )}
         </div>
     );

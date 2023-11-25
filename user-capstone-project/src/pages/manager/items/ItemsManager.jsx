@@ -36,8 +36,8 @@ import Scrollbar from '../../../components/scrollbar';
 import CloseIcon from '@mui/icons-material/Close';
 // sections
 import { UserListHead, UserListToolbar } from '../../../sections/@dashboard/user';
-import ItemsForm from '~/sections/auth/items/ItemsForm';
-import ItemDetailForm from '~/sections/auth/items/ItemDetailForm';
+import CreateItemsForm from '~/sections/auth/manager/items/CreateItemsForm';
+import ItemDetailForm from '~/sections/auth/manager/items/ItemDetailForm';
 import USERLIST from '../../../_mock/user';
 import { getAllItem } from '~/data/mutation/items/item-mutation';
 //icons
@@ -407,7 +407,7 @@ const ItemsManagerPage = () => {
                             <CloseIcon color="primary" />
                         </IconButton>{' '}
                     </DialogTitle>
-                    <ItemsForm onClose={handleCreateItemsSuccess} open={openOderForm} />
+                    <CreateItemsForm onClose={handleCreateItemsSuccess} open={openOderForm} />
                 </Dialog>
             </Stack>
 
