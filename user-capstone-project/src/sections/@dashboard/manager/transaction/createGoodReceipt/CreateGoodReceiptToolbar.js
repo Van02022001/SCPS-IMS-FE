@@ -57,37 +57,37 @@ export default function CreateGoodReceiptToolbar({ numSelected, onFilterName, on
     onSearch(selectedWarehouseId[0], selectedInventoryStaffId[0]);
 };
   
-  useEffect(() => {
-    const fetchWarehouseList = async () => {
-      try {
-        const warehouses = await getAllWarehouse();
-        setWarehouseList(warehouses.data);
-        console.log(warehouseList, 'Warehouse');
-      } catch (error) {
-        console.error('Error fetching warehouse list:', error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchWarehouseList = async () => {
+  //     try {
+  //       const warehouses = await getAllWarehouse();
+  //       setWarehouseList(warehouses.data);
+  //       console.log(warehouseList, 'Warehouse');
+  //     } catch (error) {
+  //       console.error('Error fetching warehouse list:', error);
+  //     }
+  //   };
 
-    fetchWarehouseList();
-  }, []);
+  //   fetchWarehouseList();
+  // }, []);
 
-  useEffect(() => {
-    const fetchInventoryStaff = async () => {
-      try {
-        if (selectedWarehouse) {
-          const inventoryStaffList = await getInventoryStaffByWarehouseId(selectedWarehouse.id);
-          setInventoryStaffList(inventoryStaffList.data);
+  // useEffect(() => {
+  //   const fetchInventoryStaff = async () => {
+  //     try {
+  //       if (selectedWarehouse) {
+  //         const inventoryStaffList = await getInventoryStaffByWarehouseId(selectedWarehouse.id);
+  //         setInventoryStaffList(inventoryStaffList.data);
 
-          // Call onSearch with selected values
-          onSearch(selectedWarehouse.id, selectedInventoryStaff);
-        }
-      } catch (error) {
-        console.error('Error fetching inventory staff:', error);
-      }
-    };
+  //         // Call onSearch with selected values
+  //         onSearch(selectedWarehouse.id, selectedInventoryStaff);
+  //       }
+  //     } catch (error) {
+  //       console.error('Error fetching inventory staff:', error);
+  //     }
+  //   };
 
-    fetchInventoryStaff();
-  }, [selectedWarehouse, onSearch, selectedInventoryStaff]);
+  //   fetchInventoryStaff();
+  // }, [selectedWarehouse, onSearch, selectedInventoryStaff]);
 
 
  

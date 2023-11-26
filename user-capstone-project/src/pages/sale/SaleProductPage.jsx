@@ -212,7 +212,7 @@ const SaleProductPage = () => {
                                                 border: '1px solid #ccc',
                                                 borderRadius: '8px',
                                                 boxShadow: '4px 4px 10px rgba(0, 0, 0, 0.1)',
-                                                width: '150px', // Điều chỉnh chiều rộng của mỗi sản phẩm
+                                                width: '150px',
                                             }}
                                         >
                                             <img src={product.avatar} alt={product.name} width="100%" />
