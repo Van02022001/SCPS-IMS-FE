@@ -14,72 +14,71 @@ import { LoginForm } from '../../sections/auth/login';
 // ----------------------------------------------------------------------
 
 const StyledRoot = styled('div')(({ theme }) => ({
-  [theme.breakpoints.up('md')]: {
-    display: 'flex',
-  },
+    [theme.breakpoints.up('md')]: {
+        display: 'flex',
+    },
 }));
 
 const StyledSection = styled('div')(({ theme }) => ({
-  width: '100%',
-  maxWidth: 480,
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'center',
-  boxShadow: theme.customShadows.card,
-  backgroundColor: theme.palette.background.default,
+    width: '100%',
+    maxWidth: 480,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    boxShadow: theme.customShadows.card,
+    backgroundColor: theme.palette.background.default,
 }));
 
 const StyledContent = styled('div')(({ theme }) => ({
-  maxWidth: 480,
-  margin: 'auto',
-  minHeight: '100vh',
-  display: 'flex',
-  justifyContent: 'center',
-  flexDirection: 'column',
-  padding: theme.spacing(12, 0),
+    maxWidth: 480,
+    margin: 'auto',
+    minHeight: '100vh',
+    display: 'flex',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    padding: theme.spacing(12, 0),
 }));
 
 // ----------------------------------------------------------------------
 
-
 const LoginPage = () => {
-  const mdUp = useResponsive('up', 'md');
+    const mdUp = useResponsive('up', 'md');
 
-  useEffect(() => {
-    localStorage.clear()
-  })
+    useEffect(() => {
+        localStorage.clear();
+    });
 
-  return (
-    <>
-      <Helmet>
-        <title> Login | Minimal UI </title>
-      </Helmet>
+    return (
+        <>
+            <Helmet>
+                <title> Login | Minimal UI </title>
+            </Helmet>
 
-      <StyledRoot>
-        <Logo
-          sx={{
-            position: 'fixed',
-            top: { xs: 16, sm: 24, md: 40 },
-            left: { xs: 16, sm: 24, md: 40 },
-          }}
-        />
+            <StyledRoot>
+                <Logo
+                    sx={{
+                        position: 'fixed',
+                        top: { xs: 16, sm: 24, md: 40 },
+                        left: { xs: 16, sm: 24, md: 40 },
+                    }}
+                />
 
-        {mdUp && (
-          <StyledSection>
-            <Typography variant="h3" sx={{ px: 5, mt: 10, mb: 5 }}>
-              Hi, Welcome Back
-            </Typography>
-            <img src="/assets/illustrations/illustration_login.png" alt="login" />
-          </StyledSection>
-        )}
+                {mdUp && (
+                    <StyledSection>
+                        <Typography variant="h3" sx={{ px: 3, mt: 10 }}>
+                            Welcome to Công ty TNHH Sài Gòn kỹ thuật điều khiển
+                        </Typography>
+                        <img src="/assets/illustrations/IMS.png" alt="login" />
+                    </StyledSection>
+                )}
 
-        <Container maxWidth="sm">
-          <StyledContent>
-            <Typography variant="h4" gutterBottom>
-              Đăng nhập
-            </Typography>
+                <Container maxWidth="sm">
+                    <StyledContent>
+                        <Typography variant="h4" gutterBottom>
+                            Đăng nhập
+                        </Typography>
 
-            <Typography variant="body2" sx={{ mb: 5 }}>
+                        {/* <Typography variant="body2" sx={{ mb: 5 }}>
               Bạn không có tài khoản ? {''}
               <Link variant="subtitle2">Get started</Link>
             </Typography>
@@ -102,13 +101,13 @@ const LoginPage = () => {
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                 OR
               </Typography>
-            </Divider>
+            </Divider> */}
 
-            <LoginForm />
-          </StyledContent>
-        </Container>
-      </StyledRoot>
-    </>
-  );
-}
-export default LoginPage
+                        <LoginForm />
+                    </StyledContent>
+                </Container>
+            </StyledRoot>
+        </>
+    );
+};
+export default LoginPage;
