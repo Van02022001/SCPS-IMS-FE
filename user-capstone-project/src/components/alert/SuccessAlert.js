@@ -7,7 +7,7 @@ export default function SuccessAlerts() {
     return (
         <Stack sx={{ width: '100%' }} spacing={2}>
             <Alert severity="success">
-                <AlertTitle>Tạo thành công</AlertTitle>
+                <AlertTitle>Thành công</AlertTitle>
                 <strong>Hãy kiểm tra lại!</strong>
             </Alert>
         </Stack>

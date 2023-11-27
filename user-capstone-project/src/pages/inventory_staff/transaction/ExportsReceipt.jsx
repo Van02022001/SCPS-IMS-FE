@@ -33,11 +33,11 @@ import CloseIcon from '@mui/icons-material/Close';
 import { ProductsListHead, ProductsListToolbar } from '~/sections/@dashboard/products';
 // mock
 import PRODUCTSLIST from '../../../_mock/products';
-import CategoryForm from '~/sections/auth/product/CategoryForm';
+import CategoryForm from '~/sections/auth/manager/subCategory/CreateSubCategoryForm';
 // api
-import { getAllProduct, getAllSubCategory } from '~/data/mutation/subCategory/subCategory-mutation';
-import ProductDetailForm from '~/sections/auth/product/ProductDetailForm';
-import EditCategoryForm from '~/sections/auth/categories/EditCategoryForm';
+import { getAllSubCategory } from '~/data/mutation/subCategory/subCategory-mutation';
+import ProductDetailForm from '~/sections/auth/manager/subCategory/SubCategoryDetailForm';
+import EditCategoryForm from '~/sections/auth/manager/categories/EditCategoryForm';
 import GoodsReceiptPage from './GoodsReceiptPage';
 import { useNavigate } from 'react-router-dom';
 

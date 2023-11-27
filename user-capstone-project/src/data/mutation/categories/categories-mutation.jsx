@@ -7,7 +7,7 @@ export const getAllCategories = async () => {
 
 export const createCategories = async (categoriesParams) => {
     const response = await axiosInstance.post("/categories", categoriesParams);
-    return response;
+    return response.data;
 }
 export const deleteCategories = async (id) => {
     const response = await axiosInstance.delete(`/units/${id}`,);
@@ -20,5 +20,10 @@ export const editCategories = async (categoriesId, editCategoriesParams) => {
 }
 export const editStatusCategories = async (categoriesId, status) => {
     const response = await axiosInstance.put(`/categories/category-status/${categoriesId}?status=${status}`);
+    return response.data;
+}
+
+export const getCategoriesSearch = async (keyWordCategory) => {
+    const response = await axiosInstance.get(`/categories/search?keyword=${keyWordCategory}`);
     return response.data;
 }

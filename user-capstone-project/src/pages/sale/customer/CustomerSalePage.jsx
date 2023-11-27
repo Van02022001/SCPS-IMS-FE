@@ -37,7 +37,7 @@ import CustomerDetailForm from '~/sections/auth/sale/manageCustomer/CustomerDeta
 // mock
 import PRODUCTSLIST from '../../../_mock/products';
 // api
-import EditCategoryForm from '~/sections/auth/categories/EditCategoryForm';
+import EditCategoryForm from '~/sections/auth/manager/categories/EditCategoryForm';
 import { getAllCustomer } from '~/data/mutation/customer/customer-mutation';
 
 

@@ -47,7 +47,7 @@ export default function LoginForm() {
                         if (localStorage.getItem('role') === 'ADMIN') {
                             navigate('/dashboard', { replace: true });
                         } else if (localStorage.getItem('role') === 'MANAGER') {
-                            navigate('/dashboard', { replace: true });
+                            navigate('/dashboard/products/production', { replace: true });
                         } else if (localStorage.getItem('role') === 'INVENTORY_STAFF') {
                             navigate('/dashboard', { replace: true });
                         } else if (localStorage.getItem('role') === 'SALE_STAFF') {
@@ -105,9 +105,9 @@ export default function LoginForm() {
                 Đăng nhập
             </LoadingButton>
 
-            <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={handleRegister}>
+            {/* <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={handleRegister}>
                 Đăng ký
-            </LoadingButton>
+            </LoadingButton> */}
         </>
     );
 }

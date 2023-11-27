@@ -3,7 +3,7 @@ import { Typography, Button, Tab, Tabs, Stack, Grid, TextField, FormControl, Sel
 
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 
-import { editProduct, editStatusProduct } from '~/data/mutation/subCategory/subCategory-mutation';
+import { editSubCategory, editStatusCategory } from '~/data/mutation/subCategory/subCategory-mutation';
 import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
 
@@ -25,9 +25,9 @@ const CustomerDetailForm = ({
     const [formHeight, setFormHeight] = useState(0);
     const [currentTab, setCurrentTab] = useState(0);
 
-    const [categories_id, setCategories_id] = useState([]);
-    const [unit_id, setUnits_id] = useState([]);
-    const [unit_mea_id, setUnit_mea_id] = useState([]);
+    // const [categories_id, setCategories_id] = useState([]);
+    // const [unit_id, setUnits_id] = useState([]);
+    // const [unit_mea_id, setUnit_mea_id] = useState([]);
 
     const [editedCustomer, setEditedCustomer,] = useState(null);
     const [currentStatus, setCurrentStatus] = useState('');
@@ -108,7 +108,7 @@ const CustomerDetailForm = ({
             return;
         }
         try {
-            const response = await editProduct(customerId, editedCustomer);
+            const response = await editSubCategory(customerId, editedCustomer);
 
             if (response.status === '200 OK') {
                 setIsSuccess(true);
@@ -133,7 +133,7 @@ const CustomerDetailForm = ({
         try {
             let newStatus = currentStatus === 'Active' ? 'Inactive' : 'Active';
 
-            const response = await editStatusProduct(customerId, newStatus);
+            const response = await editStatusCategory(customerId, newStatus);
 
             if (response.status === '200 OK') {
                 setIsSuccess(true);
