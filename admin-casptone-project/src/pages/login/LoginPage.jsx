@@ -43,13 +43,15 @@ const StyledContent = styled('div')(({ theme }) => ({
 
 const LoginPage = () => {
   const mdUp = useResponsive('up', 'md');
+
   useEffect(() => {
     localStorage.clear();
-  }, [])
+  });
+
   return (
     <>
       <Helmet>
-        <title> Đăng nhập | Minimal UI </title>
+        <title> Login | Minimal UI </title>
       </Helmet>
 
       <StyledRoot>
@@ -63,10 +65,10 @@ const LoginPage = () => {
 
         {mdUp && (
           <StyledSection>
-            <Typography variant="h3" sx={{ px: 5, mt: 10, mb: 5 }}>
-              Hi, Welcome Back
+            <Typography variant="h3" sx={{ px: 3, mt: 10 }}>
+              Welcome to Công ty TNHH Sài Gòn kỹ thuật điều khiển
             </Typography>
-            <img src="/assets/illustrations/illustration_login.png" alt="login" />
+            <img src="/assets/illustrations/IMS.png" alt="login" />
           </StyledSection>
         )}
 
@@ -81,7 +83,7 @@ const LoginPage = () => {
               <Link variant="subtitle2">Get started</Link>
             </Typography>
 
-            <Stack direction="row" spacing={2}>
+            {/* <Stack direction="row" spacing={2}>
               <Button fullWidth size="large" color="inherit" variant="outlined">
                 <Iconify icon="eva:google-fill" color="#DF3E30" width={22} height={22} />
               </Button>
@@ -93,7 +95,7 @@ const LoginPage = () => {
               <Button fullWidth size="large" color="inherit" variant="outlined">
                 <Iconify icon="eva:twitter-fill" color="#1C9CEA" width={22} height={22} />
               </Button>
-            </Stack>
+            </Stack> */}
 
             <Divider sx={{ my: 3 }}>
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>

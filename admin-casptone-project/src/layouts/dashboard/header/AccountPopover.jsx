@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 // @mui
 import { alpha } from '@mui/material/styles';
 import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover, Dialog, DialogTitle } from '@mui/material';
@@ -6,7 +7,7 @@ import CloseIcon from "@mui/icons-material/Close"
 // mocks_
 import account from '../../../_mock/account';
 import UserInfoForm from '../../../sections/auth/home/UserInfoForm';
-
+import { logout } from '~/data/mutation/login/login-mutation';
 // ----------------------------------------------------------------------
 
 const MENU_OPTIONS = [
@@ -15,7 +16,7 @@ const MENU_OPTIONS = [
     icon: 'eva:home-fill',
   },
   {
-    label: 'Profile',
+    label: 'Hồ sơ',
     icon: 'eva:person-fill',
   },
   {
@@ -34,6 +35,7 @@ export default function AccountPopover() {
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -56,6 +58,20 @@ export default function AccountPopover() {
     setDialogOpen(false);
   };
 
+  const handleLogout = async () => {
+    try {
+      const rftoken = localStorage.getItem('refreshToken');
+      const schemaParams = { refreshToken: rftoken, };
+      const response = await logout(schemaParams);
+      if (response.status === 202) {
+        navigate('/login');
+      } else {
+        // Xử lý lỗi nếu cần.
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
 
   return (
     <>
@@ -113,7 +129,7 @@ export default function AccountPopover() {
             <MenuItem
               key={option.label}
               onClick={handleOpen}
-              id={option.label === 'Profile' ? 'profile-label' : ''}
+              id={option.label === 'Hồ sơ' ? 'profile-label' : ''}
             >
               {option.label}
             </MenuItem>
@@ -122,8 +138,8 @@ export default function AccountPopover() {
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
-        <MenuItem onClick={handleClose} sx={{ m: 1 }}>
-          Logout
+        <MenuItem onClick={handleLogout} sx={{ m: 1 }}>
+          Đăng xuất
         </MenuItem>
       </Popover>
 

@@ -58,9 +58,9 @@ export default function LoginForm() {
     }
   };
 
-  const handleRegister = () => {
-    navigate('/register');
-  };
+  // const handleRegister = () => {
+  //   navigate('/register');
+  // };
 
   return (
     <>
@@ -92,10 +92,10 @@ export default function LoginForm() {
       <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={handleClick} sx={{ my: 1 }}>
         Đăng nhập
       </LoadingButton>
-
+      {/* 
       <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={handleRegister}>
         Đăng ký
-      </LoadingButton>
+      </LoadingButton> */}
     </>
   );
 }
