@@ -51,7 +51,7 @@ const LoginPage = () => {
     return (
         <>
             <Helmet>
-                <title> Login | Minimal UI </title>
+                <title> Đăng nhập | SCPS - IMS </title>
             </Helmet>
 
             <StyledRoot>

@@ -267,8 +267,9 @@ function CreateGoodReceipt() {
         setRecieptParams(updatedRecieptParams);
     };
 
-    const handleRemoveFromCart = (selectedItem) => {
-        const updatedItems = selectedItems.filter(item => item.id !== selectedItem.id);
+    const handleRemoveFromCart = (index) => {
+        const updatedItems = [...selectedItems];
+        updatedItems.splice(index, 1);
         setSelectedItems(updatedItems);
 
         const updatedRecieptParams = {
@@ -360,8 +361,8 @@ function CreateGoodReceipt() {
                                 {/* Danh sách sản phẩm đã thêm bên trái */}
                                 <Paper>
                                     <List>
-                                        {selectedItems.map((selectedItem) => (
-                                            <ListItem key={selectedItem.id}>
+                                        {selectedItems.map((selectedItem, index) => (
+                                            <ListItem key={`${selectedItem.id}-${index}`}>
                                                 <img src={selectedItem.avatar} alt={selectedItem.name} width="48" height="48" />
                                                 <ListItemText primary={selectedItem.id} onChange={(e) => setItemId(e.target.value)} />
                                                 <ListItemText primary={selectedItem.subCategory.name} />
@@ -402,7 +403,7 @@ function CreateGoodReceipt() {
                                                         ))}
                                                     </Select>
                                                 </ListItemText>
-                                                <Button onClick={() => handleRemoveFromCart(selectedItem)}>Xóa</Button>
+                                                <Button onClick={() => handleRemoveFromCart(index)}>Xóa</Button>
                                             </ListItem>
                                         ))}
                                     </List>
