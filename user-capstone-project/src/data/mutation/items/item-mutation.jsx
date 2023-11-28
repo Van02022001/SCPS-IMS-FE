@@ -33,3 +33,8 @@ export const getItemsByPriceHistory = async (itemId) => {
     const response = await axiosInstance.get(`/items/purchase-price-history/${itemId}`);
     return response.data;
 }
+
+export const editItemLocations = async (itemId, editLocationsParams) => {
+    const response = await axiosInstance.put(`/items/item-locations/${itemId}`, editLocationsParams);
+    return response.data;
+}

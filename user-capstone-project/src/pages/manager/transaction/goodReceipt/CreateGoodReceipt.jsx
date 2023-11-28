@@ -42,6 +42,8 @@ import { useEffect } from 'react';
 import { getAllItem } from '~/data/mutation/items/item-mutation';
 import { getAllUnit } from '~/data/mutation/unit/unit-mutation';
 import { getAllWarehouse, getInventoryStaffByWarehouseId } from '~/data/mutation/warehouse/warehouse-mutation';
+import SuccessAlerts from '~/components/alert/SuccessAlert';
+import ErrorAlerts from '~/components/alert/ErrorAlert';
 
 function CreateGoodReceipt() {
     const [order, setOrder] = useState('asc');
@@ -74,6 +76,11 @@ function CreateGoodReceipt() {
         description: '',
         details: [],
     });
+    //thông báo
+    const [isSuccess, setIsSuccess] = useState(false);
+    const [isError, setIsError] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
     const navigate = useNavigate();
 
@@ -142,11 +149,25 @@ function CreateGoodReceipt() {
     const handleCreateImportReceipt = async () => {
         try {
             const response = await createImportRequestReceipt(recieptParams);
-            if (response.status === '200 OK') {
+            if (response.status === '201 CREATED') {
                 // Xử lý khi tạo phiếu nhập thành công
+                setIsSuccess(true);
+                setIsError(false);
+                setSuccessMessage(response.data.message);
             }
         } catch (error) {
             console.error('Error creating product:', error.response);
+            setIsError(true);
+            setIsSuccess(false);
+            if (error.response?.data?.message === 'Invalid request') {
+                setErrorMessage('Yêu cầu không hợp lệ');
+            }
+            if (error.response?.data?.message === 'Unit not found') {
+                setErrorMessage('Hãy chọn đơn vị !');
+            }
+            if (error.response?.data?.message === 'Warehouse not found!') {
+                setErrorMessage('Hãy chọn kho và nhân viên !');
+            }
         }
     };
 
@@ -399,6 +420,7 @@ function CreateGoodReceipt() {
                                                     <TextField
                                                         type="number"
                                                         label="Số lượng"
+                                                        sx={{ width: '50%' }}
                                                         value={selectedItem.quantity}
                                                         onChange={(e) =>
                                                             handleQuantityChange(
@@ -412,6 +434,7 @@ function CreateGoodReceipt() {
                                                     <TextField
                                                         type="number"
                                                         label="Giá"
+                                                        sx={{ width: '50%' }}
                                                         value={selectedItem.unitPrice}
                                                         onChange={(e) =>
                                                             handleUnitPriceChange(
@@ -533,6 +556,8 @@ function CreateGoodReceipt() {
                                         <Typography variant="body2">Chọn kho hàng trước khi thêm sản phẩm.</Typography>
                                     )}
                                 </List>
+                                {isSuccess && <SuccessAlerts message={successMessage} />}
+                                {isError && <ErrorAlerts errorMessage={errorMessage} />}
                                 <Button color="primary" variant="contained" onClick={handleCreateImportReceipt}>
                                     Lưu
                                 </Button>

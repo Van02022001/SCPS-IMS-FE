@@ -29,6 +29,9 @@ import { getAllSubCategory } from '~/data/mutation/subCategory/subCategory-mutat
 import { getAllBrands } from '~/data/mutation/brand/brands-mutation';
 import { getAllOrigins } from '~/data/mutation/origins/origins-mutation';
 import { getAllSuppliers } from '~/data/mutation/supplier/suppliers-mutation';
+//icons
+import AddIcon from '@mui/icons-material/Add';
+import AddLocationsForm from './AddLocationsForm';
 
 const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode, updateItemStatusInList }) => {
     const [expandedItem, setExpandedItem] = useState(itemId);
@@ -44,6 +47,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
     const [origin_id, setOrigin_id] = useState([]);
     const [itemPriceData, setItemPriceData] = useState([]);
     const [currentStatus, setCurrentStatus] = useState('');
+    const [openAddCategoryDialog, setOpenAddCategoryDialog] = useState(false);
 
     //thông báo
     const [isSuccess, setIsSuccess] = useState(false);
@@ -204,6 +208,16 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
             }));
         }
     };
+
+    // hàm xử lý đóng mở popup form
+    const handleOpenAddCategoryDialog = () => {
+        setOpenAddCategoryDialog(true);
+    };
+
+    const handleCloseAddCategoryDialog = () => {
+        setOpenAddCategoryDialog(false);
+    };
+
     return (
         <div
             id="itemDetailForm"
@@ -378,7 +392,6 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                         </Select>
                                     </Grid>
                                 </Grid>
-
                                 <Grid
                                     container
                                     spacing={1}
@@ -388,13 +401,34 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
                                     <Typography variant="body1">Vị trí :</Typography>
-                                    <TextField
-                                        size="small"
-                                        variant="outlined"
-                                        label="Vị trí"
-                                        sx={{ width: '65%', marginRight: 5 }}
-                                        value={item.locations.length > 0 ? item.locations[0].name : ''}
-                                    />
+                                    <div style={{ display: 'flex', width: '71%', alignItems: 'center' }}>
+                                        <TextField
+                                            size="small"
+                                            variant="outlined"
+                                            label="Vị trí"
+                                            disabled
+                                            multiline
+                                            sx={{ width: '81%', marginRight: 1 }}
+                                            value={item.locations
+                                                .map(
+                                                    (location) =>
+                                                        `${location.binNumber} - ${location.shelfNumber} - ${location.warehouse.name}`,
+                                                )
+                                                .join(',\n')}
+                                        />
+                                        <Button
+                                            variant="outlined"
+                                            sx={{ padding: 0.8, minWidth: 0, maxHeight: 40 }}
+                                            onClick={handleOpenAddCategoryDialog}
+                                        >
+                                            <AddIcon />
+                                        </Button>
+                                        <AddLocationsForm
+                                            open={openAddCategoryDialog}
+                                            onClose={handleCloseAddCategoryDialog}
+                                            itemId={itemId}
+                                        />
+                                    </div>
                                 </Grid>
                                 <Grid
                                     container
@@ -559,7 +593,6 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                     </Stack>
 
                     <div>
-
                         {isSuccess && <SuccessAlerts message={successMessage} />}
                         {isError && <ErrorAlerts errorMessage={errorMessage} />}
                         <Stack spacing={4} margin={2}>
@@ -579,9 +612,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                 <div style={{ marginLeft: 50 }}>
                     <Stack spacing={4} margin={2}>
                         <div>
-                            <Typography variant="h4" >
-                                Bảng Giá Mua
-                            </Typography>
+                            <Typography variant="h4">Bảng Giá Mua</Typography>
                             <Card>
                                 <CardContent>
                                     <TableContainer>
@@ -597,7 +628,6 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                                         fontFamily: 'bold',
                                                         padding: '10px 0 0 20px',
                                                     }}
-
                                                 >
                                                     <TableCell>Tên sản phẩm</TableCell>
                                                     <TableCell>Người thay đổi</TableCell>
@@ -622,11 +652,9 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                 </CardContent>
                             </Card>
                         </div>
-
                     </Stack>
 
                     <div>
-
                         {isSuccess && <SuccessAlerts message={successMessage} />}
                         {isError && <ErrorAlerts errorMessage={errorMessage} />}
                     </div>
