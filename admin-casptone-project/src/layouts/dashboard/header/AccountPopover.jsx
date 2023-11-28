@@ -60,13 +60,24 @@ export default function AccountPopover() {
 
   const handleLogout = async () => {
     try {
-      const rftoken = localStorage.getItem('refreshToken');
-      const schemaParams = { refreshToken: rftoken, };
-      const response = await logout(schemaParams);
-      if (response.status === 202) {
-        navigate('/login');
+      const refreshToken = localStorage.getItem('refreshToken');
+
+
+      if (refreshToken) {
+        const schemaParams = { refreshToken };
+        const response = await logout(schemaParams);
+
+        if (response.status === 202) {
+          navigate('/login');
+        } else {
+
+          console.error('Error logging out:', response.data.error);
+          if (response.data.error === "You must be logged in with proper permissions to access this resource") {
+            navigate('/login');
+          }
+        }
       } else {
-        // Xử lý lỗi nếu cần.
+        console.error('Refresh token not found');
       }
     } catch (error) {
       console.error('Error:', error);
