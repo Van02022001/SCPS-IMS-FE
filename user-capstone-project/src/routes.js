@@ -38,6 +38,7 @@ import CreateGoodReceipt from './pages/manager/transaction/goodReceipt/CreateGoo
 import ExportReceiptManagerPage from './pages/manager/transaction/exportReceipt/ExportReceiptManagerPage';
 import CreateExportReceipt from './pages/manager/transaction/exportReceipt/CreateExportReceipt';
 import ImportReceiptPage from './pages/inventory_staff/transaction/importReceipt/ImportReceiptPage';
+import ItemsInventoryPage from './pages/inventory_staff/itemInventory/ItemsInventoryPage';
 
 // ----------------------------------------------------------------------
 
@@ -102,6 +103,8 @@ const Router = () => {
             element: <DashboardLayout />,
             children: [
                 { path: 'product', element: <ProductInventoryPage /> },
+                { path: 'itemsInventory', element: <ItemsInventoryPage /> },
+                
                 { path: 'order-sale', element: <OrderSalePage /> },
                 { path: 'requests-import-receipt', element: <ViewReceiptPage /> },
 

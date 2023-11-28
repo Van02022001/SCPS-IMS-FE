@@ -31,9 +31,9 @@ import { getAllOrigins } from '~/data/mutation/origins/origins-mutation';
 import { getAllSuppliers } from '~/data/mutation/supplier/suppliers-mutation';
 //icons
 import AddIcon from '@mui/icons-material/Add';
-import AddLocationsForm from '../../inventory_staff/item/AddLocationsForm';
+import AddLocationsForm from './AddLocationsForm';
 
-const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode, updateItemStatusInList }) => {
+const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode, updateItemStatusInList }) => {
     const [expandedItem, setExpandedItem] = useState(itemId);
     const [formHeight, setFormHeight] = useState(0);
     const [selectedTab, setSelectedTab] = useState(0);
@@ -664,4 +664,4 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
     );
 };
 
-export default ItemDetailForm;
+export default ItemDetaiIventoryForm;

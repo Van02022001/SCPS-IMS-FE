@@ -218,6 +218,17 @@ const inventoryNavConfig = [
         ],
     },
     {
+        title: 'Quản lý kho',
+        icon: <Person />,
+        children: [
+            {
+                title: 'Quản lý sản phẩm',
+                path: '/inventory-staff/itemsInventory',
+                icon: <Payments />,
+            },
+        ],
+    },
+    {
         title: 'Giao dịch',
         icon: <ShoppingCart />,
         children: [
