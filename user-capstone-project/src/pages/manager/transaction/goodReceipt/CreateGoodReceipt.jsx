@@ -19,6 +19,8 @@ import {
     Select,
     MenuItem,
     InputLabel,
+    Card,
+    CardContent,
 } from '@mui/material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -30,6 +32,7 @@ import USERLIST from '~/_mock/user';
 import Scrollbar from '~/components/scrollbar/Scrollbar';
 // icons
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import EditIcon from '@mui/icons-material/Edit';
 
 import { useNavigate } from 'react-router-dom';
 import CreateGoodReceiptListHead from '~/sections/@dashboard/manager/transaction/createGoodReceipt/CreateGoodReceiptToolbar';
@@ -101,7 +104,6 @@ function CreateGoodReceipt() {
                 if (selectedWarehouse) {
                     const inventoryStaffList = await getInventoryStaffByWarehouseId(selectedWarehouse.id);
                     setInventoryStaffList(inventoryStaffList.data);
-
                 }
             } catch (error) {
                 console.error('Error fetching inventory staff:', error);
@@ -110,7 +112,6 @@ function CreateGoodReceipt() {
 
         fetchInventoryStaff();
     }, [selectedWarehouse, selectedInventoryStaff]);
-
 
     // const handleSearch = (selectedWarehouseId, selectedInventoryStaffId) => {
     //     setWarehouseId(selectedWarehouseId);
@@ -150,7 +151,7 @@ function CreateGoodReceipt() {
     };
 
     const handleNavigate = () => {
-        navigate("/dashboard/goods-receipt");
+        navigate('/dashboard/goods-receipt');
     };
     useEffect(() => {
         getAllItem()
@@ -171,7 +172,6 @@ function CreateGoodReceipt() {
                 setUnitId(data);
             })
             .catch((error) => console.error('Error fetching units:', error));
-
     }, []);
 
     const handleAddToCart = (selectedProduct) => {
@@ -215,7 +215,7 @@ function CreateGoodReceipt() {
         // Update recieptParams
         const updatedRecieptParams = {
             ...recieptParams,
-            details: updatedItems.map(item => ({
+            details: updatedItems.map((item) => ({
                 itemId: item.itemId,
                 quantity: item.quantity,
                 unitPrice: item.unitPrice,
@@ -235,7 +235,7 @@ function CreateGoodReceipt() {
         // Update recieptParams
         const updatedRecieptParams = {
             ...recieptParams,
-            details: updatedItems.map(item => ({
+            details: updatedItems.map((item) => ({
                 itemId: item.itemId,
                 quantity: item.quantity,
                 unitPrice: item.unitPrice,
@@ -255,7 +255,7 @@ function CreateGoodReceipt() {
         // Update recieptParams
         const updatedRecieptParams = {
             ...recieptParams,
-            details: updatedItems.map(item => ({
+            details: updatedItems.map((item) => ({
                 itemId: item.itemId,
                 quantity: item.quantity,
                 unitPrice: item.unitPrice,
@@ -274,7 +274,7 @@ function CreateGoodReceipt() {
 
         const updatedRecieptParams = {
             ...recieptParams,
-            details: updatedItems.map(item => ({
+            details: updatedItems.map((item) => ({
                 itemId: item.itemId,
                 quantity: item.quantity,
                 unitPrice: item.unitPrice,
@@ -286,6 +286,27 @@ function CreateGoodReceipt() {
         setRecieptParams(updatedRecieptParams);
     };
     console.log(unitId, 'aaaa');
+
+    const calculateTotalQuantity = () => {
+        return selectedItems.reduce((total, item) => {
+            const quantity = parseInt(item.quantity, 10);
+            return isNaN(quantity) ? total : total + quantity;
+        }, 0);
+    };
+
+    const calculateTotalAmount = () => {
+        return selectedItems.reduce((total, item) => {
+            const quantity = parseInt(item.quantity, 10);
+            const unitPrice = parseFloat(item.unitPrice);
+
+            if (!isNaN(quantity) && !isNaN(unitPrice)) {
+                return total + quantity * unitPrice;
+            }
+
+            return total;
+        }, 0);
+    };
+
     return (
         <>
             <Helmet>
@@ -314,7 +335,7 @@ function CreateGoodReceipt() {
                                 value={selectedWarehouse ? selectedWarehouse.id : ''}
                                 onChange={(e) =>
                                     setSelectedWarehouse(
-                                        warehouseList.find((warehouse) => warehouse.id === e.target.value)
+                                        warehouseList.find((warehouse) => warehouse.id === e.target.value),
                                     )
                                 }
                             >
@@ -363,15 +384,28 @@ function CreateGoodReceipt() {
                                     <List>
                                         {selectedItems.map((selectedItem, index) => (
                                             <ListItem key={`${selectedItem.id}-${index}`}>
-                                                <img src={selectedItem.avatar} alt={selectedItem.name} width="48" height="48" />
-                                                <ListItemText primary={selectedItem.id} onChange={(e) => setItemId(e.target.value)} />
+                                                {/* <img
+                                                    src={selectedItem.avatar}
+                                                    alt={selectedItem.name}
+                                                    width="48"
+                                                    height="48"
+                                                /> */}
+                                                <ListItemText
+                                                    // primary={selectedItem.id}
+                                                    onChange={(e) => setItemId(e.target.value)}
+                                                />
                                                 <ListItemText primary={selectedItem.subCategory.name} />
                                                 <ListItemText>
                                                     <TextField
                                                         type="number"
                                                         label="Số lượng"
                                                         value={selectedItem.quantity}
-                                                        onChange={(e) => handleQuantityChange(selectedItems.indexOf(selectedItem), e.target.value)}
+                                                        onChange={(e) =>
+                                                            handleQuantityChange(
+                                                                selectedItems.indexOf(selectedItem),
+                                                                e.target.value,
+                                                            )
+                                                        }
                                                     />
                                                 </ListItemText>
                                                 <ListItemText>
@@ -379,14 +413,24 @@ function CreateGoodReceipt() {
                                                         type="number"
                                                         label="Giá"
                                                         value={selectedItem.unitPrice}
-                                                        onChange={(e) => handleUnitPriceChange(selectedItems.indexOf(selectedItem), e.target.value)}
+                                                        onChange={(e) =>
+                                                            handleUnitPriceChange(
+                                                                selectedItems.indexOf(selectedItem),
+                                                                e.target.value,
+                                                            )
+                                                        }
                                                     />
                                                 </ListItemText>
                                                 <ListItemText>
                                                     <Select
                                                         label="Đơn vị"
-                                                        value={selectedItem.unitId}  // Sử dụng selectedUnitId thay vì unitId
-                                                        onChange={(e) => handleUnitIdChange(selectedItems.indexOf(selectedItem), e.target.value)}
+                                                        value={selectedItem.unitId} // Sử dụng selectedUnitId thay vì unitId
+                                                        onChange={(e) =>
+                                                            handleUnitIdChange(
+                                                                selectedItems.indexOf(selectedItem),
+                                                                e.target.value,
+                                                            )
+                                                        }
                                                     >
                                                         {unitId.map((unit) => (
                                                             <MenuItem
@@ -409,12 +453,47 @@ function CreateGoodReceipt() {
                                     </List>
                                 </Paper>
                             </TableContainer>
+                            <div>
+                                <Card sx={{ marginTop: 5 }}>
+                                    <CardContent
+                                        sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+                                    >
+                                        {/* <EditIcon /> */}
+                                        <Stack
+                                            sx={{
+                                                display: 'grid',
+                                                gridTemplateColumns: '1fr auto',
+                                                gap: 1,
+                                                alignItems: 'center',
+                                            }}
+                                        >
+                                            <EditIcon sx={{ mt: 2 }} />
+                                            <TextField
+                                                id="outlined-multiline-static"
+                                                multiline
+                                                label="Ghi chú"
+                                                sx={{ border: 'none' }}
+                                                variant="standard"
+                                                value={descriptionReceipt}
+                                                onChange={(e) => setDescriptionReceipt(e.target.value)}
+                                            />
+                                        </Stack>
+                                        <div>
+                                            <Typography variant="subtitle1" sx={{ fontSize: '16px' }}>
+                                                Tổng số lượng: {calculateTotalQuantity()}
+                                            </Typography>
+                                            <Typography variant="subtitle1" sx={{ fontSize: '16px' }}>
+                                                Tổng tiền hàng: {calculateTotalAmount().toLocaleString()}
+                                            </Typography>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            </div>
                         </Scrollbar>
-
                     </Grid>
 
                     {/* Danh sách sản phẩm bên phải */}
-                    <Grid item xs={5} >
+                    <Grid item xs={5}>
                         <div style={{ textAlign: 'center' }}>
                             <DialogContent
                                 style={{
@@ -425,85 +504,9 @@ function CreateGoodReceipt() {
                                     border: '1px solid #ccc',
                                     borderRadius: '8px',
                                     boxShadow: '4px 4px 10px rgba(0, 0, 0, 0.1)',
-                                    minHeight: '70vh'
+                                    minHeight: '70vh',
                                 }}
                             >
-                                <Stack spacing={2} margin={2}>
-                                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                                        <Grid xs={6}>
-                                            <TextField variant="standard" label="Lê Sơn Tùng" />
-                                        </Grid>
-                                        <Grid xs={6}>
-                                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                <DatePicker variant="standard" label="Today's Date" />
-                                            </LocalizationProvider>
-                                        </Grid>
-                                    </Grid>
-                                    <FormControl size="small" variant="outlined" sx={{ width: '100%' }}>
-                                        <Grid
-                                            container
-                                            direction="row"
-                                            justifyContent="space-between"
-                                            alignItems="center"
-                                        >
-                                            <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
-                                                Mã phiếu nhập:{' '}
-                                            </Typography>
-                                            <TextField
-                                                size="small"
-                                                variant="standard"
-                                                label="Mã phiếu tự động"
-                                                sx={{ width: '40%' }}
-                                            />
-                                        </Grid>
-                                    </FormControl>
-                                    <FormControl size="small" variant="outlined" sx={{ width: '100%' }}>
-                                        <Grid
-                                            container
-                                            direction="row"
-                                            justifyContent="space-between"
-                                            alignItems="center"
-                                        >
-                                            <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
-                                                Mã đặt hàng nhập:{' '}
-                                            </Typography>
-                                            <TextField
-                                                size="small"
-                                                variant="standard"
-                                                label="Tên hàng"
-                                                sx={{ width: '40%' }}
-                                            />
-                                        </Grid>
-                                    </FormControl>
-                                    <FormControl size="small" variant="outlined" sx={{ width: '100%' }}>
-                                        <Grid
-                                            container
-                                            direction="row"
-                                            justifyContent="space-between"
-                                            alignItems="center"
-                                        >
-                                            <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
-                                                Trạng thái:{' '}
-                                            </Typography>
-                                            <TextField
-                                                size="small"
-                                                variant="standard"
-                                                label="Phiếu tạm"
-                                                sx={{ width: '40%' }}
-                                            />
-                                        </Grid>
-                                    </FormControl>
-                                    <TextField
-                                        id="outlined-multiline-static"
-                                        multiline
-                                        // rows={4}
-                                        label="Ghi chú"
-                                        sx={{ width: '100%', border: 'none' }}
-                                        variant="standard"
-                                        value={descriptionReceipt}
-                                        onChange={(e) => setDescriptionReceipt(e.target.value)}
-                                    />
-                                </Stack>
                                 <List>
                                     {selectedWarehouse ? (
                                         itemsData.map((items, index) => (
@@ -519,7 +522,7 @@ function CreateGoodReceipt() {
                                                 }}
                                                 onClick={() => handleAddToCart(items)}
                                             >
-                                                <img src={items.avatar} alt={items.name} width="100%" />
+                                                <img alt={items.name} width="100%" />
                                                 <div style={{ padding: '8px' }}>
                                                     <Typography variant="body1">{items.subCategory.name}</Typography>
                                                     <Typography variant="body2">{`${items.pricing} VND`}</Typography>
@@ -534,13 +537,10 @@ function CreateGoodReceipt() {
                                     Lưu
                                 </Button>
                             </DialogContent>
-
                         </div>
-
                     </Grid>
                 </Grid>
-
-            </Box >
+            </Box>
         </>
     );
 }

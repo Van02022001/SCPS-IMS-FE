@@ -122,6 +122,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
     }, []);
     console.log(sub_category_id);
     const item = items.find((o) => o.id === itemId);
+    console.log(item);
 
     if (!item) {
         return null;
@@ -392,7 +393,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                         variant="outlined"
                                         label="Vị trí"
                                         sx={{ width: '65%', marginRight: 5 }}
-                                        value={item.locations}
+                                        value={item.locations.length > 0 ? item.locations[0].name : ''}
                                     />
                                 </Grid>
                                 <Grid
@@ -467,7 +468,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                         value={item.available}
                                     />
                                 </Grid>
-                                <Grid
+                                {/* <Grid
                                     container
                                     spacing={1}
                                     direction="row"
@@ -483,8 +484,8 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                         sx={{ width: '70%', marginRight: 5 }}
                                         value={item.pricing.price}
                                     />
-                                </Grid>
-                                <Grid
+                                </Grid> */}
+                                {/* <Grid
                                     container
                                     spacing={1}
                                     direction="row"
@@ -500,7 +501,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                         sx={{ width: '70%', marginRight: 5 }}
                                         value={item.purchasePrice.price}
                                     />
-                                </Grid>
+                                </Grid> */}
                                 <Grid
                                     container
                                     spacing={1}

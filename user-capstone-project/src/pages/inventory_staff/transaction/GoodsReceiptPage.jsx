@@ -111,7 +111,7 @@ function GoodsReceiptPage() {
                                 >
                                     {/* <DialogContentText>Do you want remove this user?</DialogContentText> */}
                                     <Stack spacing={2} margin={2}>
-                                        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                                        {/* <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                                             <Grid xs={6}>
                                                 <TextField variant="standard" label="Lê Sơn Tùng" />
                                             </Grid>
@@ -174,7 +174,7 @@ function GoodsReceiptPage() {
                                                     sx={{ width: '40%' }}
                                                 />
                                             </Grid>
-                                        </FormControl>
+                                        </FormControl> */}
                                         <TextField
                                             id="outlined-multiline-static"
                                             multiline
