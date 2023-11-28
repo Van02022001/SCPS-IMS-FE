@@ -97,6 +97,15 @@ const CreateItemsForm = (props) => {
 
     // hàm create category-----------------------------------------
     const handleCreateItem = async () => {
+        if (parseInt(minStockLevel) < 5) {
+            setIsError(true);
+            setIsSuccess(false);
+            if (isError) {
+                setErrorMessage('Số lượng tồn kho tối thiểu phải nhập ít nhất là 5');
+            }
+            return;
+        }
+
         const itemParams = {
             minStockLevel,
             maxStockLevel,
@@ -111,13 +120,15 @@ const CreateItemsForm = (props) => {
                 setIsSuccess(true);
                 setIsError(false);
                 setSuccessMessage(response.data.message);
-                //clear 
-                setMinStockLevel([]);
-                setMaxStockLevel([]);
-                setSub_category_id([]);
-                setBrands_id([]);
-                setSuppliers_id([]);
-                setOrigins_id([]);
+
+                props.onClose(response.data);
+                // //clear 
+                // setMinStockLevel([]);
+                // setMaxStockLevel([]);
+                // setSub_category_id([]);
+                // setBrands_id([]);
+                // setSuppliers_id([]);
+                // setOrigins_id([]);
 
                 console.log(response.data.message);
             }

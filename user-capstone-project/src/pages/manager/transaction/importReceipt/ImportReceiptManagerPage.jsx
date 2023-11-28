@@ -34,6 +34,7 @@ import ImportReaceiptDetailForm from '~/sections/auth/inventory_staff/importRece
 // import GoodsReceiptPage from '../GoodsReceiptPage';
 import { useNavigate } from 'react-router-dom';
 import { getAllImportReceipt } from '~/data/mutation/importReceipt/ImportReceipt-mutation';
+import ImportReceiptDetailManagerForm from '~/sections/auth/manager/transaction/importReceipt/ImportReceiptDetailManagerForm';
 
 
 
@@ -91,7 +92,7 @@ function applySortFilter(array, comparator, query) {
 //     return `${day}/${month}/${year}`;
 // }
 
-const ImportReceiptPage = () => {
+const ImportReceiptManagerPage = () => {
     // State mở các form----------------------------------------------------------------
     const [open, setOpen] = useState(null);
     const [openOderForm, setOpenOderForm] = useState(false);
@@ -374,7 +375,7 @@ const ImportReceiptPage = () => {
                                             {selectedImportReceiptId === importReceipt.id && (
                                                 <TableRow>
                                                     <TableCell colSpan={8}>
-                                                        <ImportReaceiptDetailForm
+                                                        <ImportReceiptDetailManagerForm
                                                             importReceipt={importReceiptData}
                                                             // productStatus={productStatus}
                                                             importReceiptId={selectedImportReceiptId}
@@ -438,4 +439,4 @@ const ImportReceiptPage = () => {
         </>
     );
 };
-export default ImportReceiptPage;
+export default ImportReceiptManagerPage;

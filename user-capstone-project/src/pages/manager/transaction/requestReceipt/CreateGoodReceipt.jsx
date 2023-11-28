@@ -85,10 +85,9 @@ function CreateGoodReceipt() {
     const navigate = useNavigate();
 
     const TABLE_HEAD = [
-        { id: 'id', label: 'Mã sản phẩm', alignRight: false },
         { id: 'name', label: 'Tên sản phẩm', alignRight: false },
         { id: 'quality', label: 'Số lượng', alignRight: false },
-        { id: 'pricing', label: 'Giá bán', alignRight: false },
+        { id: 'pricing', label: 'Giá mua', alignRight: false },
         { id: 'unit', label: 'Đơn vị', alignRight: false },
         { id: '' },
     ];
@@ -155,6 +154,7 @@ function CreateGoodReceipt() {
                 setIsError(false);
                 setSuccessMessage(response.data.message);
             }
+            navigate('/dashboard/goods-receipt');
         } catch (error) {
             console.error('Error creating product:', error.response);
             setIsError(true);

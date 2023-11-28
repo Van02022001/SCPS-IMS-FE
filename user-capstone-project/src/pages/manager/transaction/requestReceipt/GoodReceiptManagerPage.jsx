@@ -13,7 +13,6 @@ import {
     Popover,
     Checkbox,
     TableRow,
-    MenuItem,
     TableBody,
     TableCell,
     Typography,
@@ -22,11 +21,6 @@ import {
     TablePagination,
     Dialog,
     DialogTitle,
-    FormControl,
-    InputLabel,
-    Select,
-    OutlinedInput,
-    ListItemText,
 } from '@mui/material';
 // components
 import Label from '~/components/label/Label';
@@ -43,19 +37,19 @@ import { useNavigate } from 'react-router-dom';
 
 import SubCategoryDetailForm from '~/sections/auth/manager/subCategory/SubCategoryDetailForm';
 //icons
-import FilterAltIcon from '@mui/icons-material/FilterAlt';
+// import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import CreateGoodReceipt from './CreateGoodReceipt';
+import { getAllImportRequest } from '~/data/mutation/importRequestReceipt/ImportRequestReceipt-mutation';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
     { id: 'image', label: '', alignRight: false },
-    // { id: 'id', label: 'Mã hàng', alignRight: false },
-    { id: 'name', label: 'Tên sản phẩm', alignRight: false },
+    { id: 'id', label: 'Mã phiếu', alignRight: false },
     { id: 'description', label: 'Mô tả', alignRight: false },
+    { id: 'createdBy', label: 'Người tạo', alignRight: false },
     { id: 'createdAt', label: 'Ngày tạo', alignRight: false },
-    { id: 'updatedAt', label: 'Ngày cập nhập', alignRight: false },
-    { id: 'categories', label: 'Nhóm hàng', alignRight: false },
+    // { id: 'type', label: 'Loại yêu cầu', alignRight: false },
     { id: 'status', label: 'Trạng thái', alignRight: false },
     { id: '' },
 ];
@@ -111,7 +105,7 @@ const MenuProps = {
     },
 };
 
-const filterOptions = ['Ren', 'Ron', 'Abc', 'Test1', 'Test12', 'Test123'];
+// const filterOptions = ['Ren', 'Ron', 'Abc', 'Test1', 'Test12', 'Test123'];
 
 const GoodReceiptManagerPage = () => {
     // State mở các form----------------------------------------------------------------
@@ -300,22 +294,20 @@ const GoodReceiptManagerPage = () => {
 
     const isNotFound = !filteredUsers.length && !!filterName;
 
-    // useEffect(() => {
-    //     getAllSubCategory()
-    //         .then((respone) => {
-    //             const data = respone.data;
-    //             if (Array.isArray(data)) {
-    //                 setSubCategoryData(data);
-    //                 setSortedProduct(data);
-    //             } else {
-    //                 console.error('API response is not an array:', data);
-    //             }
-    //         })
-    //         .catch((error) => {
-    //             console.error('Error fetching users:', error);
-    //         });
-    // }, []);
-
+    useEffect(() => {
+        getAllImportRequest()
+            .then((respone) => {
+                const data = respone.data;
+                if (Array.isArray(data)) {
+                    setGoodReceiptData(data);
+                } else {
+                    console.error('API response is not an array:', data);
+                }
+            })
+            .catch((error) => {
+                console.error('Error fetching users:', error);
+            });
+    }, []);
 
     //==============================* filter *==============================
     const renderedTodoList = goodReceiptData.filter((sub_category) => {
@@ -404,23 +396,21 @@ const GoodReceiptManagerPage = () => {
                                 onSelectAllClick={handleSelectAllClick}
                             />
                             <TableBody>
-                                {renderedTodoList.map((sub_category) => {
+                                {goodReceiptData.map((importRequest) => {
                                     return (
-                                        <React.Fragment key={sub_category.id}>
+                                        <React.Fragment key={importRequest.id}>
                                             <TableRow
                                                 hover
-                                                key={sub_category.id}
+                                                key={importRequest.id}
                                                 tabIndex={-1}
                                                 role="checkbox"
-                                                selected={selectedGoodReceiptId === sub_category.id}
-                                                onClick={() => handleSubCategoryClick(sub_category)}
+                                                selected={selectedGoodReceiptId === importRequest.id}
+                                                onClick={() => handleSubCategoryClick(importRequest)}
                                             >
                                                 <TableCell padding="checkbox">
                                                     <Checkbox
-                                                        checked={selectedGoodReceiptId === sub_category.id}
-                                                        onChange={(event) =>
-                                                            handleCheckboxChange(event, sub_category.id)
-                                                        }
+                                                        checked={selectedGoodReceiptId === importRequest.id}
+                                                        onChange={(event) => handleCheckboxChange(event, importRequest.id)}
                                                     // checked={selectedUser}
                                                     // onChange={(event) => handleClick(event, name)}
                                                     />
@@ -432,41 +422,48 @@ const GoodReceiptManagerPage = () => {
                                                     </Stack>
                                                 </TableCell>
 
+                                                <TableCell align="left">
+                                                    <Typography variant="subtitle2" noWrap>
+                                                        {importRequest.code}
+                                                    </Typography>
+                                                </TableCell>
+
                                                 <TableCell component="th" scope="row" padding="none">
                                                     <Stack direction="row" alignItems="center" spacing={2}>
                                                         {/* <Avatar alt={name} src={avatarUrl} /> */}
                                                         <Typography variant="subtitle2" noWrap>
-                                                            {sub_category.name}
+                                                            {importRequest.description}
                                                         </Typography>
                                                     </Stack>
                                                 </TableCell>
-                                                <TableCell align="left">{sub_category.description}</TableCell>
-                                                <TableCell align="left">{sub_category.createdAt}</TableCell>
-                                                <TableCell align="left">{sub_category.updatedAt}</TableCell>
-                                                <TableCell align="left">
-                                                    <Typography variant="subtitle2" noWrap>
-                                                        {sub_category.categories.map((category, index) => {
-                                                            return index === sub_category.categories.length - 1
-                                                                ? category.name
-                                                                : `${category.name}, `;
-                                                        })}
-                                                    </Typography>
-                                                </TableCell>
-
+                                                <TableCell align="left">{importRequest.createdBy}</TableCell>
+                                                <TableCell align="left">{importRequest.createdAt}</TableCell>
+                                                {/* <TableCell align="left">{importReceipt.type}</TableCell> */}
                                                 <TableCell align="left">
                                                     <Label
                                                         color={
-                                                            (sub_category.status === 'Inactive' && 'error') || 'success'
+                                                            (importRequest.status === 'Pending_Approval' && 'warning') ||
+                                                            (importRequest.status === 'Approved' && 'success') ||
+                                                            (importRequest.status === ' IN_PROGRESS' && 'warning') ||
+                                                            (importRequest.status === 'Complete' && 'primary') ||
+                                                            (importRequest.status === 'Inactive' && 'error') ||
+                                                            'default'
                                                         }
                                                     >
-                                                        {sub_category.status === 'Active'
-                                                            ? 'Đang hoạt động'
-                                                            : 'Ngừng hoạt động'}
+                                                        {importRequest.status === 'Pending_Approval'
+                                                            ? 'Chờ phê duyệt'
+                                                            : importRequest.status === 'Approved'
+                                                                ? 'Đã xác nhận'
+                                                                : importRequest.status === 'IN_PROGRESS'
+                                                                    ? 'Đang tiến hành'
+                                                                    : importRequest.status === 'Complete'
+                                                                        ? 'Hoàn thành'
+                                                                        : 'Ngừng hoạt động'}
                                                     </Label>
                                                 </TableCell>
                                             </TableRow>
 
-                                            {selectedGoodReceiptId === sub_category.id && (
+                                            {selectedGoodReceiptId === importRequest.id && (
                                                 <TableRow>
                                                     <TableCell colSpan={8}>
                                                         <SubCategoryDetailForm

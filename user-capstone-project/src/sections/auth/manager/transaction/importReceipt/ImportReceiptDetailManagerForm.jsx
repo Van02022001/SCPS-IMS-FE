@@ -35,11 +35,11 @@ import { editImportReceipt, editImportReceiptConfirm, editReceiptStartImport } f
 
 import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
-import CreateImportReceiptForm from './CreateImportReceiptForm';
+// import CreateImportReceiptForm from './CreateImportReceiptForm';
 
 
 
-const ImportReceiptDetailForm = ({
+const ImportReceiptDetailManagerForm = ({
     importReceipt,
     importReceiptId,
     updateImportReceiptInList,
@@ -378,7 +378,7 @@ const ImportReceiptDetailForm = ({
             {currentTab === 0 && (
                 <div>
                     <div>
-                        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        {/* <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                             <Button variant="contained" color="primary" onClick={handleOpenForm}>
                                 Tạo phiếu nhập kho
                             </Button>
@@ -391,7 +391,7 @@ const ImportReceiptDetailForm = ({
                             </DialogTitle>
 
                             <CreateImportReceiptForm open={isOpenImportForm} importReceipst={importReceipst} />
-                        </Dialog>
+                        </Dialog> */}
                     </div>
                     <Stack spacing={4} margin={2}>
                         <Grid container spacing={2}>
@@ -587,7 +587,7 @@ const ImportReceiptDetailForm = ({
                             >
                                 Cập nhật
                             </Button> */}
-
+                            {/* 
                             <div>
                                 <Button variant="contained" color="primary" onClick={updateImportReceiptConfirm}>
                                     Xác nhận
@@ -622,7 +622,7 @@ const ImportReceiptDetailForm = ({
                                     action={action}
                                     style={{ bottom: '16px', right: '16px' }}
                                 />
-                            </div>
+                            </div> */}
                             {/* <Button variant="outlined" color="error" onClick={handleClear}>
                                 Hủy bỏ
                             </Button> */}
@@ -634,4 +634,4 @@ const ImportReceiptDetailForm = ({
     ) : null;
 };
 
-export default ImportReceiptDetailForm;
+export default ImportReceiptDetailManagerForm;

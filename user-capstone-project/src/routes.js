@@ -33,12 +33,15 @@ import UnitPage from './pages/manager/unit/UnitPage';
 import OriginPage from './pages/manager/origin/OriginPage';
 import BrandPage from './pages/manager/brand/BrandPage';
 import SupplierPage from './pages/manager/supplier/SupplierPage';
-import GoodReceiptManagerPage from './pages/manager/transaction/goodReceipt/GoodReceiptManagerPage';
-import CreateGoodReceipt from './pages/manager/transaction/goodReceipt/CreateGoodReceipt';
+import GoodReceiptManagerPage from './pages/manager/transaction/requestReceipt/GoodReceiptManagerPage';
+import CreateGoodReceipt from './pages/manager/transaction/requestReceipt/CreateGoodReceipt';
 import ExportReceiptManagerPage from './pages/manager/transaction/exportReceipt/ExportReceiptManagerPage';
 import CreateExportReceipt from './pages/manager/transaction/exportReceipt/CreateExportReceipt';
 import ImportReceiptPage from './pages/inventory_staff/transaction/importReceipt/ImportReceiptPage';
 import ItemsInventoryPage from './pages/inventory_staff/itemInventory/ItemsInventoryPage';
+import ImportReceiptManagerPage from './pages/manager/transaction/importReceipt/ImportReceiptManagerPage';
+import InventoryReportPage from './pages/manager/transaction/inventoryReport/InventoryReportPage';
+import InventoryStaffReportPage from './pages/inventory_staff/inventoryReport/InventoryStaffReportPage';
 
 // ----------------------------------------------------------------------
 
@@ -71,8 +74,10 @@ const Router = () => {
                 { path: 'warehouse', element: <WarehousePage /> },
                 { path: 'goods-receipt', element: <GoodReceiptManagerPage /> }, 
                 { path: 'create-good-receipt', element: <CreateGoodReceipt/> },
+                { path: 'import-receipt', element: <ImportReceiptManagerPage/> },
                 { path: 'export-receipt', element: <ExportReceiptManagerPage /> },
                 { path: 'create-export-receipt', element: <CreateExportReceipt/> },
+                { path: 'products-check', element: <InventoryReportPage/> },
                 {
                     path: 'report',
                     children: [
@@ -109,7 +114,9 @@ const Router = () => {
                 { path: 'requests-import-receipt', element: <ViewReceiptPage /> },
 
                 { path: 'import-receipt', element: <ImportReceiptPage /> },
-                
+
+                { path: 'inventory-check', element: <InventoryStaffReportPage /> },
+
                 { path: 'goods-receipt', element: <GoodsReceiptPage /> },
                 { path: 'requests-export-receipt', element: <ExportsReceipt /> },
                 { path: 'bads-receipt', element: <BadsReceiptPage /> },

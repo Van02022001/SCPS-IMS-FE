@@ -5,7 +5,7 @@ import SuccessAlerts from '~/components/alert/SuccessAlert';
 // api
 import { createSuppliers } from '~/data/mutation/supplier/suppliers-mutation';
 
-const SupplierForm = () => {
+const CreateSupplierForm = (props) => {
     const [code, setCode] = useState('');
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
@@ -34,14 +34,16 @@ const SupplierForm = () => {
                 setIsSuccess(true);
                 setIsError(false);
                 setSuccessMessage(response.data.message);
-                // Clear the form fields after a successful creation
-                setCode('');
-                setName('');
-                setPhone('');
-                setEmail('');
-                setTaxCode('');
-                setAddress('');
-                
+
+                props.onClose(response.data);
+                // // Clear the form fields after a successful creation
+                // setCode('');
+                // setName('');
+                // setPhone('');
+                // setEmail('');
+                // setTaxCode('');
+                // setAddress('');
+
                 console.log(response.data.message);
             }
         } catch (error) {
@@ -109,4 +111,4 @@ const SupplierForm = () => {
     );
 };
 
-export default SupplierForm;
+export default CreateSupplierForm;

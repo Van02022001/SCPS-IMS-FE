@@ -35,7 +35,7 @@ import { UserListHead, UserListToolbar } from '../../../sections/@dashboard/user
 // mock
 import USERLIST from '../../../_mock/user';
 import { getAllSuppliers } from '~/data/mutation/supplier/suppliers-mutation';
-import SupplierForm from '~/sections/auth/manager/supplier/SupplierForm';
+import CreateSupplierForm from '~/sections/auth/manager/supplier/CreateSupplierForm';
 import SupplierDetailForm from '~/sections/auth/manager/supplier/SupplierDetailForm';
 
 // ----------------------------------------------------------------------
@@ -184,7 +184,7 @@ const SupplierPage = () => {
     const handleCloseOdersForm = () => {
         setOpenOderForm(false);
     };
-
+    //===================================================== Những hàm update thay đổi data =====================================================
     const updateSupplierStatusInList = (supplierId, newStatus) => {
         const supplierIndex = suppliersData.findIndex((supplier) => supplier.id === supplierId);
 
@@ -195,7 +195,12 @@ const SupplierPage = () => {
             setSupplierData(updatedSupplierData);
         }
     };
-
+    const handleCreateSupplierSuccess = (newSupplier) => {
+        // Close the form
+        setOpenOderForm(false);
+        setSupplierData((prevSupplierData) => [...prevSupplierData, newSupplier]);
+    };
+    //==========================================================================================================
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
     const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
@@ -227,7 +232,7 @@ const SupplierPage = () => {
                                 <CloseIcon color="primary" />
                             </IconButton>{' '}
                         </DialogTitle>
-                        <SupplierForm />
+                        <CreateSupplierForm onClose={handleCreateSupplierSuccess} open={openOderForm} />
                     </Dialog>
                 </Stack>
 

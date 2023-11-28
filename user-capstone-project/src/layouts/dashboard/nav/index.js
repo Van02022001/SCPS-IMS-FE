@@ -161,6 +161,7 @@ const managerNavConfig = [
                     },
                     {
                         title: 'Phiếu nhập kho',
+                        path: '/dashboard/import-receipt',
                         icon: <Receipt />,
                     },
                 ],
@@ -181,8 +182,8 @@ const managerNavConfig = [
                 ]
             },
             {
-                title: 'Kiểm kho  ',
-                path: '/dashboard/products/products-check',
+                title: 'Nhập tồn kho',
+                path: '/dashboard/products-check',
                 icon: <DomainVerification />,
             },
         ],
@@ -209,12 +210,7 @@ const inventoryNavConfig = [
                 title: 'Danh mục',
                 path: '/inventory-staff/product',
                 icon: <ClassOutlined />,
-            },
-            // {
-            //     title: 'Kiểm kho  ',
-            //     path: '/inventory-staff/products-check',
-            //     icon: <DomainVerification />,
-            // },
+            }
         ],
     },
     {
@@ -262,7 +258,13 @@ const inventoryNavConfig = [
                         path: '/inventory-staff/export-receipt',
                         icon: <Receipt />,
                     },
+                    
                 ]
+            },
+            {
+                title: 'Nhập tồn kho',
+                path: '/inventory-staff/inventory-check',
+                icon: <DomainVerification />,
             },
         ],
     },

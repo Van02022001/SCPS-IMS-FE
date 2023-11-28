@@ -45,7 +45,7 @@ const TABLE_HEAD = [
     { id: 'description', label: 'Mô tả', alignRight: false },
     { id: 'createdBy', label: 'Người tạo', alignRight: false },
     { id: 'createdAt', label: 'Ngày tạo', alignRight: false },
-    { id: 'type', label: 'Loại yêu cầu', alignRight: false },
+    // { id: 'type', label: 'Loại yêu cầu', alignRight: false },
     { id: 'status', label: 'Trạng thái', alignRight: false },
     { id: '' },
 ];
@@ -349,7 +349,7 @@ const ViewReceiptPage = () => {
                                                 </TableCell>
                                                 <TableCell align="left">{importReceipt.createdBy}</TableCell>
                                                 <TableCell align="left">{importReceipt.createdAt}</TableCell>
-                                                <TableCell align="left">{importReceipt.type}</TableCell>
+                                                {/* <TableCell align="left">{importReceipt.type}</TableCell> */}
                                                 <TableCell align="left">
                                                     <Label
                                                         color={
