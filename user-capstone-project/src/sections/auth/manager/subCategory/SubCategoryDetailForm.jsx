@@ -200,15 +200,15 @@ const SubCategoryDetailForm = ({
             const data = respone.data;
             setUnit_mea_id(data);
         });
-        getAllSubCategoryMeta(subCategoryId)
-            .then((respone) => {
-                const data = respone.data;
-                setSubCategoryMeta(data);
-            })
-            .catch((error) => {
-                console.error('Error fetching subcategory meta:', error);
-                setSubCategoryMeta(null);
-            });
+        // getAllSubCategoryMeta(subCategoryId)
+        //     .then((respone) => {
+        //         const data = respone.data;
+        //         setSubCategoryMeta(data);
+        //     })
+        //     .catch((error) => {
+        //         console.error('Error fetching subcategory meta:', error);
+        //         setSubCategoryMeta(null);
+        //     });
 
         getItemsBySubCategory(subCategoryId)
             .then((respone) => {
@@ -219,25 +219,24 @@ const SubCategoryDetailForm = ({
             .catch((error) => console.error('Error fetching units measurement:', error));
     }, []);
 
-    useEffect(() => {
-        if (mode === 'create') {
+    // useEffect(() => {
+    //     if (mode === 'create') {
 
-            setEditSubCategoryMeta({
-                key: '',
-                description: '',
+    //         setEditSubCategoryMeta({
+    //             key: '',
+    //             description: '',
 
-            });
-        } else {
-            if (subCategoryMeta) {
-
-                const editedSubCategoryMeta = {
-                    key: subCategoryMeta.key,
-                    description: subCategoryMeta.description,
-                };
-                setEditSubCategoryMeta(editedSubCategoryMeta);
-            }
-        }
-    }, []);
+    //         });
+    //     } else {
+    //         if (subCategoryMeta) {
+    //             const editedSubCategoryMeta = {
+    //                 key: subCategoryMeta.key ? subCategoryMeta.key : '',
+    //                 description: subCategoryMeta.description ? subCategoryMeta.description : '',
+    //             };
+    //             setEditSubCategoryMeta(editedSubCategoryMeta);
+    //         }
+    //     }
+    // }, [subCategoryMeta]);
 
     const subCategorys = subCategory.find((o) => o.id === subCategoryId);
 
@@ -625,52 +624,54 @@ const SubCategoryDetailForm = ({
                             </Grid>
                         </Grid>
                     </Stack>
-                    {itemsDetail.map((items) => {
-                        return (
-                            <div key={items.id}>
-                                <Card sx={{ marginTop: 5 }}>
-                                    <CardContent>
-                                        <TableContainer>
-                                            <Table>
-                                                <TableBody>
-                                                    <TableRow
-                                                        variant="subtitle1"
-                                                        sx={{
-                                                            fontSize: '20px',
-                                                            backgroundColor: '#f0f1f3',
-                                                            height: 50,
-                                                            textAlign: 'start',
-                                                            fontFamily: 'bold',
-                                                            padding: '10px 0 0 20px',
-                                                        }}
-                                                        key={items.id}
-                                                    >
-                                                        <TableCell>Mã sản phẩm</TableCell>
-                                                        <TableCell>Số lượng</TableCell>
-                                                        <TableCell>Đơn giá</TableCell>
-                                                        <TableCell>Thương hiệu</TableCell>
-                                                        <TableCell>Nhà cung cấp</TableCell>
-                                                        <TableCell>Xuất xứ</TableCell>
-                                                        <TableCell>Thẻ kho</TableCell>
-                                                        <TableCell>Tồn kho</TableCell>
-                                                    </TableRow>
+
+                    <div>
+                        <Card sx={{ marginTop: 5 }}>
+                            <CardContent>
+                                <TableContainer>
+                                    <Table>
+                                        <TableBody>
+                                            <TableRow
+                                                variant="subtitle1"
+                                                sx={{
+                                                    fontSize: '20px',
+                                                    backgroundColor: '#f0f1f3',
+                                                    height: 50,
+                                                    textAlign: 'start',
+                                                    fontFamily: 'bold',
+                                                    padding: '10px 0 0 20px',
+                                                }}
+
+                                            >
+                                                <TableCell>Mã sản phẩm</TableCell>
+                                                <TableCell>Số lượng</TableCell>
+                                                <TableCell>Đơn giá</TableCell>
+                                                <TableCell>Thương hiệu</TableCell>
+                                                <TableCell>Nhà cung cấp</TableCell>
+                                                <TableCell>Xuất xứ</TableCell>
+                                                <TableCell>Thẻ kho</TableCell>
+                                                <TableCell>Tồn kho</TableCell>
+                                            </TableRow>
+                                            {itemsDetail.map((items) => {
+                                                return (
                                                     <TableRow key={items.id}>
                                                         <TableCell>{items.code}</TableCell>
                                                         <TableCell>{items.quantity}</TableCell>
-                                                        <TableCell>{items.pricing}</TableCell>
+                                                        {/* <TableCell>{items.pricing.price !== null ? items.pricing.price : 0}</TableCell> */}
                                                         <TableCell>{items.brand.name}</TableCell>
                                                         <TableCell>{items.supplier.name}</TableCell>
                                                         <TableCell>{items.origin.name}</TableCell>
-                                                        <TableCell>{/* Thêm thành tiền nếu có */}</TableCell>
+
                                                     </TableRow>
-                                                </TableBody>
-                                            </Table>
-                                        </TableContainer>
-                                    </CardContent>
-                                </Card>
-                            </div>
-                        );
-                    })}
+                                                );
+                                            })}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                            </CardContent>
+                        </Card>
+                    </div>
+
                     {isSuccess && <SuccessAlerts message={successMessage} />}
                     {isError && <ErrorAlerts errorMessage={errorMessage} />}
                     <Stack spacing={4} margin={2}>

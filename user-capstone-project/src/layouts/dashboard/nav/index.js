@@ -253,7 +253,6 @@ export default function Nav({ openNav, onCloseNav }) {
     const [isReportMenuOpen, setIsReportMenuOpen] = useState(false);
     const isDesktop = useResponsive('up', 'lg');
     const userRole = getUserRole();
-    const [profileData, setProfileData] = useState([]);
 
     let selectedNavbarConfig = [];
 
@@ -269,17 +268,10 @@ export default function Nav({ openNav, onCloseNav }) {
         setIsReportMenuOpen(!isReportMenuOpen);
     };
 
-    useEffect(() => {
-        authenValidation()
-            .then((respone) => {
-                const data = respone.data;
-                setProfileData(data);
-                console.log(data);
-            })
-            .catch((error) => {
-                console.error('Error fetching users:', error);
-            });
-    }, []);
+    console.log(userRole);
+
+    const role = localStorage.getItem('role');
+    const userName = localStorage.getItem('userName');
 
     useEffect(() => {
         if (openNav) {
@@ -306,14 +298,11 @@ export default function Nav({ openNav, onCloseNav }) {
 
                         <Box sx={{ ml: 2 }}>
                             <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
-                                {profileData.firstName} {''} {profileData.lastName}
+                                {userName}
                             </Typography>
-
-                            {profileData.role && (
-                                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                    {profileData.role.name}
-                                </Typography>
-                            )}
+                            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                                {userRole}
+                            </Typography>
                         </Box>
                     </StyledAccount>
                 </Link>

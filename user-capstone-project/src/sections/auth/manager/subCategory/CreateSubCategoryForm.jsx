@@ -174,16 +174,14 @@ const CreateSubCategoryForm = (props) => {
     const handleClear = () => {
         setName('');
         setDescription('');
-        // setMinStockLevel('');
-        // setMaxStockLevel('');
         setLength('');
         setWidth('');
         setHeight('');
         setDiameter('');
-        setCategories_id([]);
-        setUnits_id([]);
-        setOrigins_id([]);
-        setUnit_mea_id([]);
+        // setCategories_id([]);
+        // setUnits_id([]);
+        // setOrigins_id([]);
+        // setUnit_mea_id([]);
     };
 
     const handleAddCategories = async () => { };

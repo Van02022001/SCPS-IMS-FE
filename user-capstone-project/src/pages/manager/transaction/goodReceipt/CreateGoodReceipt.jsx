@@ -34,7 +34,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
 import CreateGoodReceiptListHead from '~/sections/@dashboard/manager/transaction/createGoodReceipt/CreateGoodReceiptToolbar';
 import { CreateGoodReceiptToolbar } from '~/sections/@dashboard/manager/transaction/createGoodReceipt';
-import { createImportReceipt } from '~/data/mutation/importReceipt/ImportReceipt-mutation';
+import { createImportRequestReceipt } from '~/data/mutation/importRequestReceipt/ImportRequestReceipt-mutation';
 import { useEffect } from 'react';
 import { getAllItem } from '~/data/mutation/items/item-mutation';
 import { getAllUnit } from '~/data/mutation/unit/unit-mutation';
@@ -140,7 +140,7 @@ function CreateGoodReceipt() {
 
     const handleCreateImportReceipt = async () => {
         try {
-            const response = await createImportReceipt(recieptParams);
+            const response = await createImportRequestReceipt(recieptParams);
             if (response.status === '200 OK') {
                 // Xử lý khi tạo phiếu nhập thành công
             }
@@ -298,7 +298,7 @@ function CreateGoodReceipt() {
                         <ArrowBackIcon fontSize="large" color="action" />
                     </Button>
                     <Typography variant="h4" gutterBottom>
-                        Nhập kho
+                        Tạo yêu cầu nhập kho
                     </Typography>
                 </Stack>
 

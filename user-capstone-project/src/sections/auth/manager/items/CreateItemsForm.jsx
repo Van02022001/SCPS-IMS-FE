@@ -132,18 +132,12 @@ const CreateItemsForm = (props) => {
     };
 
     const handleClear = () => {
-        // setName('');
-        // setDescription('');
-        // setMinStockLevel('');
-        // setMaxStockLevel('');
-        // setLength('');
-        // setWidth('');
-        // setHeight('');
-        // setDiameter('');
-        // setCategories_id([]);
-        // setUnits_id([]);
+        setMinStockLevel('');
+        setMaxStockLevel('');
+        // setSub_category_id([]);
+        // setBrands_id([]);
+        // setSuppliers_id([]);
         // setOrigins_id([]);
-        // setUnit_mea_id([]);
     };
 
     const handleAddCategories = async () => { };

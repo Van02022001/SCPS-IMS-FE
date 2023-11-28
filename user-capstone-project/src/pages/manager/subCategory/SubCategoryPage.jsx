@@ -470,8 +470,8 @@ const SubCategoryPage = () => {
                                                         onChange={(event) =>
                                                             handleCheckboxChange(event, sub_category.id)
                                                         }
-                                                        // checked={selectedUser}
-                                                        // onChange={(event) => handleClick(event, name)}
+                                                    // checked={selectedUser}
+                                                    // onChange={(event) => handleClick(event, name)}
                                                     />
                                                 </TableCell>
 
@@ -480,13 +480,6 @@ const SubCategoryPage = () => {
                                                         {/* <Avatar alt={name} src={avatarUrl} /> */}
                                                     </Stack>
                                                 </TableCell>
-
-                                                {/* <TableCell align="left">
-                                                    <Typography variant="subtitle2" noWrap>
-                                                        {sub_category.id}
-                                                    </Typography>
-                                                </TableCell> */}
-
                                                 <TableCell component="th" scope="row" padding="none">
                                                     <Stack direction="row" alignItems="center" spacing={2}>
                                                         {/* <Avatar alt={name} src={avatarUrl} /> */}

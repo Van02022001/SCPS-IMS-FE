@@ -1,11 +1,5 @@
 import React, { useState } from 'react';
-import {
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    TextField,
-    Button,
-} from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, TextField, Button } from '@mui/material';
 
 import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
 import SuccessAlerts from '~/components/alert/SuccessAlert';
@@ -13,11 +7,8 @@ import ErrorAlerts from '~/components/alert/ErrorAlert';
 // api
 import { createUnits } from '~/data/mutation/unit/unit-mutation';
 
-
-
 const AddUnitForm = ({ open, onClose, onSave }) => {
     const [unitName, setUnitName] = useState('');
-    const [showNotification, setShowNotification] = useState(false);
 
     //thông báo
     const [isSuccess, setIsSuccess] = useState(false);
@@ -25,15 +16,16 @@ const AddUnitForm = ({ open, onClose, onSave }) => {
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
-
     const handleSave = async () => {
         const unitParams = {
             name: unitName,
-        }
+        };
         try {
             const response = await createUnits(unitParams);
 
-            if (response.status === "200 OK") {
+            if (response.status === '200 OK') {
+                setUnitName('');
+
                 setIsSuccess(true);
                 setIsError(false);
                 setSuccessMessage(response.message);
@@ -43,7 +35,12 @@ const AddUnitForm = ({ open, onClose, onSave }) => {
             console.error("can't feaching category", error);
             setIsError(true);
             setIsSuccess(false);
-            setErrorMessage(error.response.data.message);
+            if (error.response?.data?.message === 'Invalid request') {
+                setErrorMessage('Yêu cầu không hợp lệ');
+            }
+            if (error.response?.data?.message === 'Unit name already exists') {
+                setErrorMessage('Đơn vị này đã tồn tại !');
+            }
             if (error.response) {
                 console.log('Error response:', error.response.data.message);
             }
@@ -66,11 +63,7 @@ const AddUnitForm = ({ open, onClose, onSave }) => {
                 {isError && <ErrorAlerts errorMessage={errorMessage} />}
             </DialogContent>
             <div style={{ padding: '16px' }}>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleSave}
-                >
+                <Button variant="contained" color="primary" onClick={handleSave}>
                     lưu
                 </Button>
             </div>

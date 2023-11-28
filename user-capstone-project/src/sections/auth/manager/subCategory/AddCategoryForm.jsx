@@ -26,7 +26,10 @@ const AddCategoryForm = ({ open, onClose, onSave }) => {
             console.log(response);
             console.log(response.status);
 
-            if (response.status === 200) {
+            if (response.status === '200 OK') {
+                setCategoryName('');
+                setCategoryDescription('');
+
                 setIsSuccess(true);
                 setIsError(false);
                 setSuccessMessage(response.data.message);
@@ -36,7 +39,12 @@ const AddCategoryForm = ({ open, onClose, onSave }) => {
             console.error("Can't fetch category", error);
             setIsError(true);
             setIsSuccess(false);
-            setErrorMessage(error.response.data.message);
+            if (error.response?.data?.message === 'Invalid request') {
+                setErrorMessage('Yêu cầu không hợp lệ');
+            }
+            if (error.response?.data?.message === 'Name was existed') {
+                setErrorMessage('Nhóm hàng này đã tồn tại !');
+            }
             if (error.response) {
                 console.log('Error response:', error.response.data.message);
             }
