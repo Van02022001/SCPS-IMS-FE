@@ -32,6 +32,8 @@ import { getAllSuppliers } from '~/data/mutation/supplier/suppliers-mutation';
 //icons
 import AddIcon from '@mui/icons-material/Add';
 import AddLocationsForm from './AddLocationsForm';
+import { getItemsByMovementsHistory } from '~/data/mutation/items-movement/items-movement-mutation';
+import AddItemsMovementForm from './AddItemsMovementForm';
 
 const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode, updateItemStatusInList }) => {
     const [expandedItem, setExpandedItem] = useState(itemId);
@@ -48,6 +50,10 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
     const [itemPriceData, setItemPriceData] = useState([]);
     const [currentStatus, setCurrentStatus] = useState('');
     const [openAddCategoryDialog, setOpenAddCategoryDialog] = useState(false);
+
+    const [openAddItemMovementDialog, setOpenAddItemMovementDialog] = useState(false);
+
+    const [itemMovementsData, setItemMovementsData] = useState([]);
 
     //thông báo
     const [isSuccess, setIsSuccess] = useState(false);
@@ -121,6 +127,12 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
             .then((respone) => {
                 const data = respone.data;
                 setItemPriceData(data);
+            })
+            .catch((error) => console.error('Error fetching Items:', error));
+        getItemsByMovementsHistory(itemId)
+            .then((respone) => {
+                const data = respone.data;
+                setItemMovementsData(data);
             })
             .catch((error) => console.error('Error fetching Items:', error));
     }, []);
@@ -218,6 +230,15 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
         setOpenAddCategoryDialog(false);
     };
 
+    const handleOpenAddItemMovementDialog = () => {
+        setOpenAddItemMovementDialog(true);
+    };
+    const handleCloseAddItemMovementDialog = () => {
+        setOpenAddItemMovementDialog(false);
+    };
+
+    console.log(itemMovementsData);
+
     return (
         <div
             id="itemDetailForm"
@@ -230,6 +251,7 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
             <Tabs value={selectedTab} onChange={(event, newValue) => setSelectedTab(newValue)}>
                 <Tab label="Thông tin" />
                 <Tab label="Lịch sử giá mua" />
+                <Tab label="Lịch sử vận chuyển" />
             </Tabs>
 
             {selectedTab === 0 && (
@@ -603,6 +625,18 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                 <Button variant="contained" color="error" onClick={updateItemStatus}>
                                     Thay đổi trạng thái
                                 </Button>
+                                <Button variant="contained" color="warning">
+                                    Cập nhật vị trí nhập kho
+                                </Button>
+                                <Button variant="contained" color="warning" onClick={handleOpenAddItemMovementDialog}>
+                                    Chuyển sản phẩm trong kho
+                                </Button>
+                                <AddItemsMovementForm
+                                    open={openAddItemMovementDialog}
+                                    onClose={handleCloseAddItemMovementDialog}
+                                    itemId={itemId}
+                                    itemMovementsData={itemMovementsData}
+                                />
                             </Grid>
                         </Stack>
                     </div>
@@ -643,6 +677,72 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                                             <TableCell>{items.changeDate}</TableCell>
                                                             <TableCell>{items.oldPrice}</TableCell>
                                                             <TableCell>{items.newPrice}</TableCell>
+                                                        </TableRow>
+                                                    );
+                                                })}
+                                            </TableBody>
+                                        </Table>
+                                    </TableContainer>
+                                </CardContent>
+                            </Card>
+                        </div>
+                    </Stack>
+
+                    <div>
+                        {isSuccess && <SuccessAlerts message={successMessage} />}
+                        {isError && <ErrorAlerts errorMessage={errorMessage} />}
+                    </div>
+                </div>
+            )}
+            {selectedTab === 2 && (
+                <div style={{ marginLeft: 50 }}>
+                    <Stack spacing={4} margin={2}>
+                        <div>
+                            <Typography variant="h4">Quá Trình Vận Chuyển</Typography>
+                            <Card>
+                                <CardContent>
+                                    <TableContainer>
+                                        <Table>
+                                            <TableBody>
+                                                <TableRow
+                                                    variant="subtitle1"
+                                                    sx={{
+                                                        fontSize: '20px',
+                                                        backgroundColor: '#f0f1f3',
+                                                        height: 50,
+                                                        textAlign: 'start',
+                                                        fontFamily: 'bold',
+                                                        padding: '10px 0 0 20px',
+                                                    }}
+                                                >
+                                                    <TableCell>Vị trí kho</TableCell>
+                                                    <TableCell>Số lượng</TableCell>
+                                                    <TableCell>Từ vị trí</TableCell>
+                                                    <TableCell>Đến vị trí</TableCell>
+                                                    <TableCell>Ghi chú</TableCell>
+                                                    <TableCell>Vận chuyển ngày</TableCell>
+                                                </TableRow>
+                                                {itemMovementsData.map((items) => {
+                                                    return (
+                                                        <TableRow key={items.id}>
+                                                            <TableCell>{items.toLocation.warehouse.name}</TableCell>
+                                                            <TableCell>{items.quantity}</TableCell>
+                                                            <TableCell>
+                                                                {items.fromLocation !== null ? (
+                                                                    <div>
+                                                                        {items.fromLocation.binNumber} -{' '}
+                                                                        {items.fromLocation.shelfNumber}
+                                                                    </div>
+                                                                ) : (
+                                                                    'Chưa có'
+                                                                )}
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                {items.toLocation.binNumber} -{' '}
+                                                                {items.toLocation.shelfNumber}
+                                                            </TableCell>
+                                                            <TableCell>{items.notes}</TableCell>
+                                                            <TableCell>{items.movedAt}</TableCell>
                                                         </TableRow>
                                                     );
                                                 })}

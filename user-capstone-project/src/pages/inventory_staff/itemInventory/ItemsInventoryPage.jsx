@@ -462,27 +462,6 @@ const ItemsInventoryPage = () => {
             </FormControl>
 
             <FormControl sx={{ m: 1, width: 200, mb: 2 }}>
-                <InputLabel id="demo-multiple-checkbox-label">Nhà cung cấp</InputLabel>
-                <Select
-                    labelId="demo-multiple-checkbox-label"
-                    id="demo-multiple-checkbox"
-                    multiple
-                    value={selectedSuppliers}
-                    onChange={(event) => setSelectedSuppliers(event.target.value)}
-                    input={<OutlinedInput label="Nhà cung cấp" />}
-                    renderValue={(selected) => selected.join(', ')}
-                    MenuProps={MenuProps}
-                >
-                    {filterSuppliers.map((name) => (
-                        <MenuItem key={name} value={name}>
-                            <Checkbox checked={selectedSuppliers.indexOf(name) > -1} />
-                            <ListItemText primary={name} />
-                        </MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
-
-            <FormControl sx={{ m: 1, width: 200, mb: 2 }}>
                 <InputLabel id="demo-multiple-checkbox-label">Nguồn gốc</InputLabel>
                 <Select
                     labelId="demo-multiple-checkbox-label"
@@ -502,7 +481,7 @@ const ItemsInventoryPage = () => {
                     ))}
                 </Select>
             </FormControl>
-            <FormControl sx={{ ml: 44, width: 300 }}>
+            <FormControl sx={{ ml: 75, width: 300 }}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DemoContainer components={['DateRangePicker']}>
                         <DateRangePicker
