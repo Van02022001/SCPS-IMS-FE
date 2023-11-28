@@ -335,9 +335,9 @@ const ExportReceiptManagerPage = () => {
             {/* <Container> */}
             <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
                 <Typography variant="h4" gutterBottom>
-                    Quản lý phiếu xuất kho
+                    Quản lý phiếu yêu cầu xuất kho
                 </Typography>
-                <Button
+                {/* <Button
                     variant="contained"
                     startIcon={<Iconify icon="eva:plus-fill" />}
                     onClick={() => navigate("/dashboard/create-export-receipt")}
@@ -352,11 +352,11 @@ const ExportReceiptManagerPage = () => {
                         </IconButton>{' '}
                     </DialogTitle>
                     <CreateExportReceipt onClose={handleCreateGoodReceiptSuccess} open={openOderForm} />
-                </Dialog>
+                </Dialog> */}
             </Stack>
 
             {/* ===========================================filter=========================================== */}
-            <div style={{ display: 'flex', alignItems: 'center' }}>
+            {/* <div style={{ display: 'flex', alignItems: 'center' }}>
                 <FilterAltIcon color="action" />
                 <Typography gutterBottom variant="h6" color="text.secondary" component="div" sx={{ m: 1 }}>
                     Bộ lọc tìm kiếm
@@ -381,7 +381,7 @@ const ExportReceiptManagerPage = () => {
                         </MenuItem>
                     ))}
                 </Select>
-            </FormControl>
+            </FormControl> */}
             {/* ===========================================filter=========================================== */}
             <Card>
                 <SubCategoryToolbar

@@ -568,14 +568,14 @@ const ImportReceiptDetailForm = ({
                     {isError && <ErrorAlerts errorMessage={errorMessage} />} */}
                     <Stack spacing={4} margin={2}>
                         <Grid container spacing={1} sx={{ gap: '10px' }}>
-                            <Button
+                            {/* <Button
                                 variant="contained"
                                 color="primary"
                                 startIcon={<SaveIcon />}
                                 onClick={updateImportReceipt}
                             >
                                 Cập nhật
-                            </Button>
+                            </Button> */}
 
                             <div>
                                 <Button variant="contained" color="primary" onClick={updateImportReceiptConfirm}>

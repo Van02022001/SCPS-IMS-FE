@@ -331,7 +331,7 @@ function CreateGoodReceipt() {
     return (
         <>
             <Helmet>
-                <title> Nhập Kho </title>
+                <title> Nhập Kho | </title>
             </Helmet>
 
             <Box sx={{ flexGrow: 1 }}>
@@ -548,7 +548,6 @@ function CreateGoodReceipt() {
                                                 <img alt={items.name} width="100%" />
                                                 <div style={{ padding: '8px' }}>
                                                     <Typography variant="body1">{items.subCategory.name}</Typography>
-                                                    <Typography variant="body2">{`${items.pricing} VND`}</Typography>
                                                 </div>
                                             </ListItem>
                                         ))

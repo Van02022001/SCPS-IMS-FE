@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
-import { set, sub } from 'date-fns';
+import { set, sub, parse  } from 'date-fns';
 import { noCase } from 'change-case';
 import { faker } from '@faker-js/faker';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 // @mui
 import {
   Box,
@@ -22,64 +22,69 @@ import {
 } from '@mui/material';
 // utils
 import { fToNow } from '../../../utils/formatTime';
+
 // components
 import Iconify from '../../../components/iconify';
 import Scrollbar from '../../../components/scrollbar';
+import { getAllNotification } from '~/data/mutation/notification/notification-mutation';
+import NotificationDetail from '~/sections/auth/notification/NotificationDetail';
 
 // ----------------------------------------------------------------------
 
-const NOTIFICATIONS = [
-  {
-    id: faker.datatype.uuid(),
-    title: 'Your order is placed',
-    description: 'waiting for shipping',
-    avatar: null,
-    type: 'order_placed',
-    createdAt: set(new Date(), { hours: 10, minutes: 30 }),
-    isUnRead: true,
-  },
-  {
-    id: faker.datatype.uuid(),
-    title: faker.name.fullName(),
-    description: 'answered to your comment on the Minimal',
-    avatar: '/assets/images/avatars/avatar_2.jpg',
-    type: 'friend_interactive',
-    createdAt: sub(new Date(), { hours: 3, minutes: 30 }),
-    isUnRead: true,
-  },
-  {
-    id: faker.datatype.uuid(),
-    title: 'You have new message',
-    description: '5 unread messages',
-    avatar: null,
-    type: 'chat_message',
-    createdAt: sub(new Date(), { days: 1, hours: 3, minutes: 30 }),
-    isUnRead: false,
-  },
-  {
-    id: faker.datatype.uuid(),
-    title: 'You have new mail',
-    description: 'sent from Guido Padberg',
-    avatar: null,
-    type: 'mail',
-    createdAt: sub(new Date(), { days: 2, hours: 3, minutes: 30 }),
-    isUnRead: false,
-  },
-  {
-    id: faker.datatype.uuid(),
-    title: 'Delivery processing',
-    description: 'Your order is being shipped',
-    avatar: null,
-    type: 'order_shipped',
-    createdAt: sub(new Date(), { days: 3, hours: 3, minutes: 30 }),
-    isUnRead: false,
-  },
-];
+// const NOTIFICATIONS = [
+//   {
+//     id: faker.datatype.uuid(),
+//     title: 'Your order is placed',
+//     description: 'waiting for shipping',
+//     avatar: null,
+//     type: 'order_placed',
+//     createdAt: set(new Date(), { hours: 10, minutes: 30 }),
+//     isUnRead: true,
+//   },
+//   {
+//     id: faker.datatype.uuid(),
+//     title: faker.name.fullName(),
+//     description: 'answered to your comment on the Minimal',
+//     avatar: '/assets/images/avatars/avatar_2.jpg',
+//     type: 'friend_interactive',
+//     createdAt: sub(new Date(), { hours: 3, minutes: 30 }),
+//     isUnRead: true,
+//   },
+//   {
+//     id: faker.datatype.uuid(),
+//     title: 'You have new message',
+//     description: '5 unread messages',
+//     avatar: null,
+//     type: 'chat_message',
+//     createdAt: sub(new Date(), { days: 1, hours: 3, minutes: 30 }),
+//     isUnRead: false,
+//   },
+//   {
+//     id: faker.datatype.uuid(),
+//     title: 'You have new mail',
+//     description: 'sent from Guido Padberg',
+//     avatar: null,
+//     type: 'mail',
+//     createdAt: sub(new Date(), { days: 2, hours: 3, minutes: 30 }),
+//     isUnRead: false,
+//   },
+//   {
+//     id: faker.datatype.uuid(),
+//     title: 'Delivery processing',
+//     description: 'Your order is being shipped',
+//     avatar: null,
+//     type: 'order_shipped',
+//     createdAt: sub(new Date(), { days: 3, hours: 3, minutes: 30 }),
+//     isUnRead: false,
+//   },
+// ];
 
 export default function NotificationsPopover() {
-  const [notifications, setNotifications] = useState(NOTIFICATIONS);
+  const [notifications, setNotifications] = useState([]);
+  const [totalUnRead, setTotalUnRead] = useState(0);
+  const [selectedNotification, setSelectedNotification] = useState(null);
 
-  const totalUnRead = notifications.filter((item) => item.isUnRead === true).length;
+  // const totalUnRead = notifications.filter((item) => item.isUnRead === true).length;
 
   const [open, setOpen] = useState(null);
 
@@ -99,7 +104,29 @@ export default function NotificationsPopover() {
       }))
     );
   };
-
+  useEffect(() => {
+    const userId = localStorage.getItem('id');
+  
+    getAllNotification(userId)
+      .then((data) => {
+        // Update the createdAt field to use parse function
+        const formattedData = data.data.map((notification) => ({
+          ...notification,
+          createdAt: parse(notification.createdAt, 'dd/MM/yyyy HH:mm:ss', new Date()),
+        }));
+  
+        setNotifications(formattedData);
+        setTotalUnRead(formattedData.filter((item) => item.seen === false).length);
+        console.log(formattedData);
+      })
+      .catch((error) => {
+        console.error('Error fetching notifications:', error);
+      });
+  }, []);
+  const handleNotificationClick = (notification) => {
+    setSelectedNotification(notification);
+    setOpen(null); 
+  };
   return (
     <>
       <IconButton color={open ? 'primary' : 'default'} onClick={handleOpen} sx={{ width: 40, height: 40 }}>
@@ -124,9 +151,9 @@ export default function NotificationsPopover() {
       >
         <Box sx={{ display: 'flex', alignItems: 'center', py: 2, px: 2.5 }}>
           <Box sx={{ flexGrow: 1 }}>
-            <Typography variant="subtitle1">Notifications</Typography>
+            <Typography variant="subtitle1">Thông báo</Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              You have {totalUnRead} unread messages
+              Bạn có {totalUnRead} thông báo chưa đọc
             </Typography>
           </Box>
 
@@ -146,7 +173,7 @@ export default function NotificationsPopover() {
             disablePadding
             subheader={
               <ListSubheader disableSticky sx={{ py: 1, px: 2.5, typography: 'overline' }}>
-                New
+                Mới
               </ListSubheader>
             }
           >
@@ -159,7 +186,7 @@ export default function NotificationsPopover() {
             disablePadding
             subheader={
               <ListSubheader disableSticky sx={{ py: 1, px: 2.5, typography: 'overline' }}>
-                Before that
+                Đã đọc
               </ListSubheader>
             }
           >
@@ -173,10 +200,16 @@ export default function NotificationsPopover() {
 
         <Box sx={{ p: 1 }}>
           <Button fullWidth disableRipple>
-            View All
+            Coi tất cả
           </Button>
         </Box>
       </Popover>
+      {selectedNotification && (
+        <NotificationDetail
+          notification={selectedNotification}
+          onClose={() => setSelectedNotification(null)}
+        />
+      )}
     </>
   );
 }
@@ -239,25 +272,40 @@ function renderContent(notification) {
   const title = (
     <Typography variant="subtitle2">
       {notification.title}
-      <Typography component="span" variant="body2" sx={{ color: 'text.secondary' }}>
-        &nbsp; {noCase(notification.description)}
-      </Typography>
+      {notification.description && (
+        <Typography component="span" variant="body2" sx={{ color: 'text.secondary' }}>
+          &nbsp; {noCase(notification.description)}
+        </Typography>
+      )}
+      {notification.type && (
+        <Typography component="span" variant="body3" sx={{ color: 'text.secondary' }}>
+          &nbsp; {notification.type === "XAC_NHAN_NHAP_KHO" ? 'Xác nhận nhập kho'  : 
+          notification.type === "YEU_CAU_NHAP_KHO" ? 'Yêu cầu nhập kho' :
+          notification.type === "DANG_TIEN_HANH_NHAP_KHO" ? 'Đang tiến hành nhập kho' 
+          : ''}
+        </Typography>
+      )}
     </Typography>
   );
 
-  if (notification.type === 'order_placed') {
+
+  if (notification.type === "XAC_NHAN_NHAP_KHO") {
     return {
-      avatar: <img alt={notification.title} src="/assets/icons/ic_notification_package.svg" />,
+      avatar: (
+        <img alt={notification.title} src="/assets/icons/ic_notification_package.svg" />
+      ),
       title,
     };
   }
-  if (notification.type === 'order_shipped') {
+  if (notification.type === "YEU_CAU_NHAP_KHO") {
     return {
-      avatar: <img alt={notification.title} src="/assets/icons/ic_notification_shipping.svg" />,
+      avatar: (
+        <img alt={notification.title} src="/assets/icons/ic_notification_shipping.svg" />
+      ),
       title,
     };
   }
-  if (notification.type === 'mail') {
+  if (notification.type === 'DANG_TIEN_HANH_NHAP_KHO') {
     return {
       avatar: <img alt={notification.title} src="/assets/icons/ic_notification_mail.svg" />,
       title,
@@ -265,12 +313,15 @@ function renderContent(notification) {
   }
   if (notification.type === 'chat_message') {
     return {
-      avatar: <img alt={notification.title} src="/assets/icons/ic_notification_chat.svg" />,
+      avatar: (
+        <img alt={notification.title} src="/assets/icons/ic_notification_chat.svg" />
+      ),
       title,
     };
   }
+  // Handle unrecognized notification types or missing avatars
   return {
-    avatar: notification.avatar ? <img alt={notification.title} src={notification.avatar} /> : null,
+    avatar: null,
     title,
   };
 }

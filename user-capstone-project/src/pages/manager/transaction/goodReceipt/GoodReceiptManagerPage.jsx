@@ -335,18 +335,18 @@ const GoodReceiptManagerPage = () => {
             {/* <Container> */}
             <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
                 <Typography variant="h4" gutterBottom>
-                    Quản lý phiếu nhập kho
+                    Quản lý phiếu yêu cầu nhập kho
                 </Typography>
                 <Button
                     variant="contained"
                     startIcon={<Iconify icon="eva:plus-fill" />}
                     onClick={() => navigate("/dashboard/create-good-receipt")}
                 >
-                    Thêm phiếu nhập kho
+                    Tạo phiếu yêu cầu nhập kho
                 </Button>
                 <Dialog fullWidth maxWidth open={openOderForm}>
                     <DialogTitle>
-                        Tạo Sản Phẩm{' '}
+                        Tạo phiếu yêu cầu nhập kho{' '}
                         <IconButton style={{ float: 'right' }} onClick={handleCloseOdersForm}>
                             <CloseIcon color="primary" />
                         </IconButton>{' '}
@@ -356,13 +356,13 @@ const GoodReceiptManagerPage = () => {
             </Stack>
 
             {/* ===========================================filter=========================================== */}
-            <div style={{ display: 'flex', alignItems: 'center' }}>
+            {/* <div style={{ display: 'flex', alignItems: 'center' }}>
                 <FilterAltIcon color="action" />
                 <Typography gutterBottom variant="h6" color="text.secondary" component="div" sx={{ m: 1 }}>
                     Bộ lọc tìm kiếm
                 </Typography>
-            </div>
-            <FormControl sx={{ m: 1, width: 300, mb: 2 }}>
+            </div> */}
+            {/* <FormControl sx={{ m: 1, width: 300, mb: 2 }}>
                 <InputLabel id="demo-multiple-checkbox-label">Nhóm hàng</InputLabel>
                 <Select
                     labelId="demo-multiple-checkbox-label"
@@ -381,7 +381,7 @@ const GoodReceiptManagerPage = () => {
                         </MenuItem>
                     ))}
                 </Select>
-            </FormControl>
+            </FormControl> */}
             {/* ===========================================filter=========================================== */}
             <Card>
                 <SubCategoryToolbar
@@ -527,49 +527,7 @@ const GoodReceiptManagerPage = () => {
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </Card>
-            {/* </Container> */}
 
-            {/* <Popover
-                open={Boolean(open)}
-                anchorEl={open}
-                onClose={handleCloseMenu}
-                anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                PaperProps={{
-                    sx: {
-                        p: 1,
-                        width: 140,
-                        '& .MuiMenuItem-root': {
-                            px: 1,
-                            typography: 'body2',
-                            borderRadius: 0.75,
-                        },
-                    },
-                }}
-            >
-                <MenuItem onClick={() => setOpenEditForm(true)}>
-                    <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-                    Edit
-                </MenuItem>
-                <Dialog fullWidth maxWidth open={openEditForm}>
-                    <DialogTitle>
-                        Cập Nhật Sản Phẩm{' '}
-                        <IconButton style={{ float: 'right' }} onClick={handleCloseEditsForm}>
-                            <CloseIcon color="primary" />
-                        </IconButton>{' '}
-                    </DialogTitle>
-                    <EditCategoryForm
-                        open={openEditForm}
-                        product={selectedProduct}
-                        handleClose={handleCloseEditsForm}
-                    />
-                </Dialog>
-
-                <MenuItem sx={{ color: 'error.main' }}>
-                    <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
-                    Delete
-                </MenuItem>
-            </Popover> */}
         </>
     );
 };
