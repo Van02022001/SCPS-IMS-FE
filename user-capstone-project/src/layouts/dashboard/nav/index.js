@@ -18,6 +18,9 @@ import {
     Inventory2Outlined,
     PriceChangeOutlined,
     DomainVerification,
+    Receipt,
+    Warehouse,
+    ReceiptLong,
 } from '@mui/icons-material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 // mock
@@ -66,17 +69,17 @@ const managerNavConfig = [
                 title: 'Danh mục',
                 path: '/dashboard/products/production',
                 icon: <ClassOutlined />,
-            },
-            {
-                title: 'Thiết lập giá',
-                path: '/dashboard/products/products-price',
-                icon: <PriceChangeOutlined />,
-            },
-            {
-                title: 'Kiểm kho  ',
-                path: '/dashboard/products/products-check',
-                icon: <DomainVerification />,
-            },
+            }
+            // {
+            //     title: 'Thiết lập giá',
+            //     path: '/dashboard/products/products-price',
+            //     icon: <PriceChangeOutlined />,
+            // },
+            // {
+            //     title: 'Kiểm kho  ',
+            //     path: '/dashboard/products/products-check',
+            //     icon: <DomainVerification />,
+            // },
         ],
     },
 
@@ -122,40 +125,60 @@ const managerNavConfig = [
         ],
     },
 
-    {
-        title: 'Báo cáo',
-        icon: <Assignment />,
-        children: [
-            {
-                title: 'Cuối Ngày',
-                path: '/dashboard/report/report-end-day',
-                icon: <CalendarToday />,
-            },
-            {
-                title: 'Bán hàng',
-                path: '/dashboard/report/report-sale',
-                icon: <MonetizationOnOutlined />,
-            },
-            {
-                title: 'Hàng hóa',
-                path: '/dashboard/report/report-inventory',
-                icon: <Inventory2Outlined />,
-            },
-        ],
-    },
+    // {
+    //     title: 'Báo cáo',
+    //     icon: <Assignment />,
+    //     children: [
+    //         {
+    //             title: 'Cuối Ngày',
+    //             path: '/dashboard/report/report-end-day',
+    //             icon: <CalendarToday />,
+    //         },
+    //         {
+    //             title: 'Bán hàng',
+    //             path: '/dashboard/report/report-sale',
+    //             icon: <MonetizationOnOutlined />,
+    //         },
+    //         {
+    //             title: 'Hàng hóa',
+    //             path: '/dashboard/report/report-inventory',
+    //             icon: <Inventory2Outlined />,
+    //         },
+    //     ],
+    // },
     {
         title: 'Giao dịch',
         icon: <ShoppingCart />,
         children: [
             {
-                title: 'Nhập kho',
-                path: '/dashboard/goods-receipt',
+                title: 'Nhập hàng',
                 icon: <ClassOutlined />,
+                children: [
+                    {
+                        title: 'Yêu cầu nhập kho',
+                        path: '/dashboard/goods-receipt',
+                        icon: <ReceiptLong />,
+                    },
+                    {
+                        title: 'Phiếu nhập kho',
+                        icon: <Receipt />,
+                    },
+                ],
             },
             {
                 title: 'Xuất kho',
-                path: '/dashboard/export-receipt',
                 icon: <PriceChangeOutlined />,
+                children: [
+                    {
+                        title: 'Yêu cầu xuất kho',
+                        path: '/dashboard/export-receipt',
+                        icon: <ReceiptLong />,
+                    },
+                    {
+                        title: 'Phiếu xuất kho',
+                        icon: <Receipt />,
+                    },
+                ]
             },
             {
                 title: 'Kiểm kho  ',
@@ -187,11 +210,11 @@ const inventoryNavConfig = [
                 path: '/inventory-staff/product',
                 icon: <ClassOutlined />,
             },
-            {
-                title: 'Kiểm kho  ',
-                path: '/inventory-staff/products-check',
-                icon: <DomainVerification />,
-            },
+            // {
+            //     title: 'Kiểm kho  ',
+            //     path: '/inventory-staff/products-check',
+            //     icon: <DomainVerification />,
+            // },
         ],
     },
     {
@@ -200,21 +223,43 @@ const inventoryNavConfig = [
         children: [
             {
                 title: 'Nhập hàng',
-                path: '/inventory-staff/views-receipt',
-                icon: <ClassOutlined />,
+                icon: <Warehouse />,
+                children: [
+                    {
+                        title: 'Yêu cầu nhập kho',
+                        path: '/inventory-staff/requests-import-receipt',
+                        icon: <ReceiptLong />,
+                    },
+                    {
+                        title: 'Phiếu nhập kho',
+                        path: '/inventory-staff/import-receipt',
+                        icon: <Receipt />,
+                    },
+                ],
             },
             {
                 title: 'Xuất hàng',
-                path: '/inventory-staff/exports-receipt',
-                icon: <ClassOutlined />,
+                icon: <Warehouse />,
+                children: [
+                    {
+                        title: 'Yêu cầu xuất kho',
+                        path: '/inventory-staff/requests-export-receipt',
+                        icon: <ReceiptLong />,
+                    },
+                    {
+                        title: 'Phiếu xuất kho',
+                        path: '/inventory-staff/export-receipt',
+                        icon: <Receipt />,
+                    },
+                ]
             },
         ],
     },
-    {
-        title: 'login',
-        path: '/login',
-        icon: icon('ic_lock'),
-    },
+    // { 
+    //     title: 'login',
+    //     path: '/login',
+    //     icon: icon('ic_lock'),
+    // },
     // ...
 ];
 

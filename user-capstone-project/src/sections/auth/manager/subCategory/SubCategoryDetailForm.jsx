@@ -657,7 +657,15 @@ const SubCategoryDetailForm = ({
                                                     <TableRow key={items.id}>
                                                         <TableCell>{items.code}</TableCell>
                                                         <TableCell>{items.quantity}</TableCell>
-                                                        {/* <TableCell>{items.pricing.price !== null ? items.pricing.price : 0}</TableCell> */}
+                                                        <TableCell>
+                                                            {items.pricing !== null ? (
+                                                                <div>
+                                                                    {items.pricing.price}
+                                                                </div>
+                                                            ) : (
+                                                                'Chưa có'
+                                                            )}
+                                                        </TableCell>
                                                         <TableCell>{items.brand.name}</TableCell>
                                                         <TableCell>{items.supplier.name}</TableCell>
                                                         <TableCell>{items.origin.name}</TableCell>

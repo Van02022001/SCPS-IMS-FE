@@ -72,8 +72,8 @@ export default function AccountPopover() {
           navigate('/login');
         } else {
 
-          console.error('Error logging out:', response.data.error);
-          if (response.data.error === "You must be logged in with proper permissions to access this resource") {
+         console.log(response.data.error);
+          if (response.error === "You must be logged in with proper permissions to access this resource") {
             navigate('/login');
           }
         }

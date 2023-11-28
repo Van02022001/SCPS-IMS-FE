@@ -482,7 +482,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                         variant="outlined"
                                         label="Giá bán"
                                         sx={{ width: '70%', marginRight: 5 }}
-                                        value={item.pricing.price}
+                                        value={item.pricing !== null ? item.pricing.price : 'Chưa có'}
                                     />
                                 </Grid> */}
                                 {/* <Grid
@@ -499,7 +499,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                         variant="outlined"
                                         label="Giá nhập"
                                         sx={{ width: '70%', marginRight: 5 }}
-                                        value={item.purchasePrice.price}
+                                        value={item.purchasePrice !== null ? item.purchasePrice.price : 'Chưa có'}
                                     />
                                 </Grid> */}
                                 <Grid

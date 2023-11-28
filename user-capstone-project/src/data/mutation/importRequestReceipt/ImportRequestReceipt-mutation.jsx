@@ -1,6 +1,6 @@
 import { axiosInstance } from "../../api/axios";
 
-export const getAllImportReceipt = async () => {
+export const getAllImportRequest = async () => {
     const response = await axiosInstance.get(`/import-request-receipts`);
     return response.data;
 }

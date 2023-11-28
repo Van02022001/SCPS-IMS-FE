@@ -26,7 +26,7 @@ import ProductInventoryPage from './pages/inventory_staff/product/ProductInvento
 import ItemsSalePage from './pages/sale/items/ItemsSalePage';
 import CustomerSalePage from './pages/sale/customer/CustomerSalePage';
 import GoodsReceiptPage from './pages/inventory_staff/transaction/GoodsReceiptPage';
-import ViewReceiptPage from './pages/inventory_staff/transaction/ViewReceiptPage';
+import ViewReceiptPage from './pages/inventory_staff/transaction/importRequest/ViewReceiptPage';
 import ExportsReceipt from './pages/inventory_staff/transaction/ExportsReceipt';
 import BadsReceiptPage from './pages/inventory_staff/transaction/BadsReceiptPage';
 import UnitPage from './pages/manager/unit/UnitPage';
@@ -37,6 +37,7 @@ import GoodReceiptManagerPage from './pages/manager/transaction/goodReceipt/Good
 import CreateGoodReceipt from './pages/manager/transaction/goodReceipt/CreateGoodReceipt';
 import ExportReceiptManagerPage from './pages/manager/transaction/exportReceipt/ExportReceiptManagerPage';
 import CreateExportReceipt from './pages/manager/transaction/exportReceipt/CreateExportReceipt';
+import ImportReceiptPage from './pages/inventory_staff/transaction/importReceipt/ImportReceiptPage';
 
 // ----------------------------------------------------------------------
 
@@ -102,9 +103,12 @@ const Router = () => {
             children: [
                 { path: 'product', element: <ProductInventoryPage /> },
                 { path: 'order-sale', element: <OrderSalePage /> },
-                { path: 'views-receipt', element: <ViewReceiptPage /> },
+                { path: 'requests-import-receipt', element: <ViewReceiptPage /> },
+
+                { path: 'import-receipt', element: <ImportReceiptPage /> },
+                
                 { path: 'goods-receipt', element: <GoodsReceiptPage /> },
-                { path: 'exports-receipt', element: <ExportsReceipt /> },
+                { path: 'requests-export-receipt', element: <ExportsReceipt /> },
                 { path: 'bads-receipt', element: <BadsReceiptPage /> },
 
 

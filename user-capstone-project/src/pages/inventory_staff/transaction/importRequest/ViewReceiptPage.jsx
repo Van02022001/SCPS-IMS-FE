@@ -8,11 +8,8 @@ import {
     Stack,
     Paper,
     Avatar,
-    Button,
-    Popover,
     Checkbox,
     TableRow,
-    MenuItem,
     TableBody,
     TableCell,
     Container,
@@ -20,25 +17,21 @@ import {
     IconButton,
     TableContainer,
     TablePagination,
-    Dialog,
-    DialogTitle,
 } from '@mui/material';
 // components
 import Label from '~/components/label/Label';
-import Iconify from '~/components/iconify/Iconify';
+// import Iconify from '~/components/iconify/Iconify';
 import Scrollbar from '~/components/scrollbar/Scrollbar';
-import CloseIcon from '@mui/icons-material/Close';
 
 // sections
 import { ProductsListHead, ProductsListToolbar } from '~/sections/@dashboard/products';
 // mock
-import PRODUCTSLIST from '../../../_mock/products';
-import CategoryForm from '~/sections/auth/manager/subCategory/CreateSubCategoryForm';
+import PRODUCTSLIST from '../../../../_mock/products';
 // api
-import { getAllImportReceipt } from '~/data/mutation/importRequestReceipt/ImportRequestReceipt-mutation';
+import { getAllImportRequest } from '~/data/mutation/importRequestReceipt/ImportRequestReceipt-mutation';
 import ImportReaceiptDetailForm from '~/sections/auth/inventory_staff/importReceipt/ImportReceiptDetailForm';
-import EditCategoryForm from '~/sections/auth/manager/categories/EditCategoryForm';
-import GoodsReceiptPage from './GoodsReceiptPage';
+
+// import GoodsReceiptPage from '../GoodsReceiptPage';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -88,14 +81,14 @@ function applySortFilter(array, comparator, query) {
     return stabilizedThis.map((el) => el[0]);
 }
 
-function formatDate(dateString) {
-    const date = new Date(dateString);
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
+// function formatDate(dateString) {
+//     const date = new Date(dateString);
+//     const day = date.getDate();
+//     const month = date.getMonth() + 1;
+//     const year = date.getFullYear();
 
-    return `${day}/${month}/${year}`;
-}
+//     return `${day}/${month}/${year}`;
+// }
 
 const ViewReceiptPage = () => {
     // State mở các form----------------------------------------------------------------
@@ -119,53 +112,53 @@ const ViewReceiptPage = () => {
     const navigate = useNavigate();
 
     // State data và xử lý data
-    const [importReceiptData, setImportReceiptData] = useState([]);
-    const [productStatus, setProductStatus] = useState('');
+    const [importRequestData, setImportRequestData] = useState([]);
+    // const [productStatus, setProductStatus] = useState('');
 
     const [selectedProduct, setSelectedProduct] = useState(null);
 
     // Hàm để thay đổi data mỗi khi Edit xong api-------------------------------------------------------------
     const updateImportReceiptInList = (updatedImportReceipt) => {
-        const importReceiptIndex = importReceiptData.findIndex((product) => product.id === updatedImportReceipt.id);
+        const importReceiptIndex = importRequestData.findIndex((product) => product.id === updatedImportReceipt.id);
 
         if (importReceiptIndex !== -1) {
-            const updatedImportReceiptData = [...importReceiptData];
+            const updatedImportReceiptData = [...importRequestData];
             updatedImportReceiptData[importReceiptIndex] = updatedImportReceipt;
 
-            setImportReceiptData(updatedImportReceiptData);
+            setImportRequestData(updatedImportReceiptData);
         }
     };
 
     const updateImportReceiptConfirmInList = (importReceiptId, newStatus) => {
-        const importReceiptIndex = importReceiptData.findIndex((product) => product.id === importReceiptId);
+        const importReceiptIndex = importRequestData.findIndex((product) => product.id === importReceiptId);
 
         if (importReceiptIndex !== -1) {
-            const updatedImportReceiptData = [...importReceiptData];
+            const updatedImportReceiptData = [...importRequestData];
             updatedImportReceiptData[importReceiptIndex].status = newStatus;
 
-            setImportReceiptData(updatedImportReceiptData);
+            setImportRequestData(updatedImportReceiptData);
         }
     };
 
     const handleCreateImportReceiptSuccess = (newImportReceipt) => {
         // Close the form
         setOpenOderForm(false);
-        setImportReceiptData((prevImportReceiptData) => [...prevImportReceiptData, newImportReceipt]);
+        setImportRequestData((prevImportReceiptData) => [...prevImportReceiptData, newImportReceipt]);
     };
 
     //----------------------------------------------------------------
-    const handleOpenMenu = (event, product) => {
-        setSelectedProduct(product);
-        setOpen(event.currentTarget);
-    };
+    // const handleOpenMenu = (event, product) => {
+    //     setSelectedProduct(product);
+    //     setOpen(event.currentTarget);
+    // };
 
-    const handleCloseMenu = () => {
-        setOpen(null);
-    };
+    // const handleCloseMenu = () => {
+    //     setOpen(null);
+    // };
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelecteds = importReceiptData.map((n) => n.name);
+            const newSelecteds = importRequestData.map((n) => n.name);
             setSelected(newSelecteds);
             return;
         }
@@ -222,7 +215,7 @@ const ViewReceiptPage = () => {
         setOrder(isAsc ? 'desc' : 'asc');
         setOrderBy(property);
         // Sắp xếp danh sách sản phẩm dựa trên trường và hướng đã chọn
-        const sortedProduct = [...importReceiptData].sort((a, b) => {
+        const sortedProduct = [...importRequestData].sort((a, b) => {
             const valueA = a[property];
             const valueB = b[property];
             if (valueA < valueB) {
@@ -245,13 +238,13 @@ const ViewReceiptPage = () => {
         setSortedProduct(filteredUsers);
     };
 
-    const handleCloseEditsForm = () => {
-        setOpenEditForm(false);
-    };
+    // const handleCloseEditsForm = () => {
+    //     setOpenEditForm(false);
+    // };
 
-    const handleNavigate = () => {
-        navigate("/inventory-staff/goods-receipt");
-    };
+    // const handleNavigate = () => {
+    //     navigate("/inventory-staff/goods-receipt");
+    // };
 
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - PRODUCTSLIST.length) : 0;
 
@@ -260,11 +253,11 @@ const ViewReceiptPage = () => {
     const isNotFound = !filteredUsers.length && !!filterName;
 
     useEffect(() => {
-        getAllImportReceipt()
+        getAllImportRequest()
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
-                    setImportReceiptData(data);
+                    setImportRequestData(data);
                 } else {
                     console.error('API response is not an array:', data);
                 }
@@ -273,7 +266,7 @@ const ViewReceiptPage = () => {
                 console.error('Error fetching users:', error);
             });
     }, []);
-    console.log(importReceiptData);
+    console.log(importRequestData);
     return (
         <>
             <Helmet>
@@ -308,13 +301,13 @@ const ViewReceiptPage = () => {
                                 order={order}
                                 orderBy={orderBy}
                                 headLabel={TABLE_HEAD}
-                                rowCount={importReceiptData.length}
+                                rowCount={importRequestData.length}
                                 numSelected={selected.length}
                                 onRequestSort={handleRequestSort}
                                 onSelectAllClick={handleSelectAllClick}
                             />
                             <TableBody>
-                                {importReceiptData.map((importReceipt) => {
+                                {importRequestData.map((importReceipt) => {
                                     return (
                                         <React.Fragment key={importReceipt.id}>
                                             <TableRow
@@ -385,7 +378,7 @@ const ViewReceiptPage = () => {
                                                 <TableRow>
                                                     <TableCell colSpan={8}>
                                                         <ImportReaceiptDetailForm
-                                                            importReceipt={importReceiptData}
+                                                            importReceipt={importRequestData}
                                                             // productStatus={productStatus}
                                                             importReceiptId={selectedImportReceiptId}
                                                             updateImportReceiptInList={updateImportReceiptInList}

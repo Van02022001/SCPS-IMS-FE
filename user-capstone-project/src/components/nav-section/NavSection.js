@@ -57,10 +57,19 @@ function NavItem({ item, isReportMenuOpen }) {
           marginBottom: open ? '170px' : 0,
         }),
         ...(item.title === 'Hàng hóa' && !isReportMenuOpen && {
-          marginBottom: open ? '170px' : 0,
+          marginBottom: open ? '50px' : 0,
         }),
         ...(item.title === 'Quản lý mục' && !isReportMenuOpen && {
           marginBottom: open ? '350px' : 0,
+        }),
+        ...(item.title === 'Nhập hàng' && !isReportMenuOpen && {
+          marginBottom: open ? '100px' : 0, 
+        }),
+        ...(item.title === 'Nhập hàng' && !isReportMenuOpen && {
+          marginBottom: open ? '100px' : 0, 
+        }),
+        ...(item.title === 'Xuất kho' && !isReportMenuOpen && {
+          marginBottom: open ? '100px' : 0, 
         }),
       }}
     >
