@@ -285,13 +285,13 @@ const ViewReceiptPage = () => {
                 <Typography variant="h4" gutterBottom>
                     Yêu cầu nhập kho
                 </Typography>
-                <Button
+                {/* <Button
                     variant="contained"
                     startIcon={<Iconify icon="eva:plus-fill" />}
                     onClick={handleNavigate}
                 >
                     Nhập hàng
-                </Button>
+                </Button> */}
             </Stack>
 
             <Card>

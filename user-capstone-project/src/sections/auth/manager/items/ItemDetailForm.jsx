@@ -214,7 +214,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
         >
             <Tabs value={selectedTab} onChange={(event, newValue) => setSelectedTab(newValue)}>
                 <Tab label="Thông tin" />
-                <Tab label="Lịch sử thanh toán" />
+                <Tab label="Lịch sử giá mua" />
             </Tabs>
 
             {selectedTab === 0 && (
@@ -481,7 +481,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                         variant="outlined"
                                         label="Giá bán"
                                         sx={{ width: '70%', marginRight: 5 }}
-                                        value={item.pricing}
+                                        value={item.pricing.price}
                                     />
                                 </Grid>
                                 <Grid
@@ -498,7 +498,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                         variant="outlined"
                                         label="Giá nhập"
                                         sx={{ width: '70%', marginRight: 5 }}
-                                        value={item.purchasePrice}
+                                        value={item.purchasePrice.price}
                                     />
                                 </Grid>
                                 <Grid
@@ -558,54 +558,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                     </Stack>
 
                     <div>
-                        {/* <Card sx={{ marginTop: 5 }}>
-                            <CardContent>
-                                <TableContainer>
-                                    <Table>
-                                        <TableBody>
-                                            <TableRow
-                                                variant="subtitle1"
-                                                sx={{
-                                                    fontSize: '20px',
-                                                    backgroundColor: '#f0f1f3',
-                                                    height: 50,
-                                                    textAlign: 'start',
-                                                    fontFamily: 'bold',
-                                                    padding: '10px 0 0 20px',
-                                                }}
-                                            >
-                                                <TableCell>Mã hàng</TableCell>
-                                                <TableCell>Tên hàng</TableCell>
-                                                <TableCell>Số lượng</TableCell>
-                                                <TableCell>Đơn giá</TableCell>
-                                                <TableCell>Giảm giá</TableCell>
-                                                <TableCell>Giá bán</TableCell>
-                                                <TableCell>Thành tiền</TableCell>
-                                            </TableRow>
-                                            <TableRow>
-                                                <TableCell>{item.name}</TableCell>
-                                                <TableCell>{item.productName}</TableCell>
-                                                <TableCell>{item.quantity}</TableCell>
-                                                <TableCell>{item.unitPrice}</TableCell>
-                                                <TableCell>{item.discount}</TableCell>
-                                                <TableCell>{item.price}</TableCell>
-                                                <TableCell>{item.total}</TableCell>
-                                            </TableRow>
-                                        </TableBody>
-                                    </Table>
-                                </TableContainer>
-                            </CardContent>
-                        </Card> */}
-                        {/* Đoạn tổng kết */}
-                        {/* <Grid container spacing={2} sx={{ marginTop: 2 }}>
-                            <Grid item xs={6}>
-                                <Typography variant="body1">Tổng số hàng: </Typography>
-                                <Typography variant="body1">Tổng số tiền: </Typography>
-                                <Typography variant="body1">Giảm giá hóa đơn: {item.discount}</Typography>
-                                <Typography variant="body1">Khách cần trả:</Typography>
-                                <Typography variant="body1">Khách đã trả: {item.amountPaid}</Typography>
-                            </Grid>
-                        </Grid> */}
+
                         {isSuccess && <SuccessAlerts message={successMessage} />}
                         {isError && <ErrorAlerts errorMessage={errorMessage} />}
                         <Stack spacing={4} margin={2}>
@@ -624,32 +577,35 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
             {selectedTab === 1 && (
                 <div style={{ marginLeft: 50 }}>
                     <Stack spacing={4} margin={2}>
-                        {itemPriceData.map((items) => {
-                            return (
-                                <div key={items.id}>
-                                    <Card>
-                                        <CardContent>
-                                            <TableContainer>
-                                                <Table>
-                                                    <TableBody>
-                                                        <TableRow
-                                                            variant="subtitle1"
-                                                            sx={{
-                                                                fontSize: '20px',
-                                                                backgroundColor: '#f0f1f3',
-                                                                height: 50,
-                                                                textAlign: 'start',
-                                                                fontFamily: 'bold',
-                                                                padding: '10px 0 0 20px',
-                                                            }}
-                                                            key={items.id}
-                                                        >
-                                                            <TableCell>Tên sản phẩm</TableCell>
-                                                            <TableCell>Người thay đổi</TableCell>
-                                                            <TableCell>Ngày thay đổi</TableCell>
-                                                            <TableCell>Giá cũ</TableCell>
-                                                            <TableCell>Giá mới</TableCell>
-                                                        </TableRow>
+                        <div>
+                            <Typography variant="h4" >
+                                Bảng Giá Mua
+                            </Typography>
+                            <Card>
+                                <CardContent>
+                                    <TableContainer>
+                                        <Table>
+                                            <TableBody>
+                                                <TableRow
+                                                    variant="subtitle1"
+                                                    sx={{
+                                                        fontSize: '20px',
+                                                        backgroundColor: '#f0f1f3',
+                                                        height: 50,
+                                                        textAlign: 'start',
+                                                        fontFamily: 'bold',
+                                                        padding: '10px 0 0 20px',
+                                                    }}
+
+                                                >
+                                                    <TableCell>Tên sản phẩm</TableCell>
+                                                    <TableCell>Người thay đổi</TableCell>
+                                                    <TableCell>Ngày thay đổi</TableCell>
+                                                    <TableCell>Giá cũ</TableCell>
+                                                    <TableCell>Giá mới</TableCell>
+                                                </TableRow>
+                                                {itemPriceData.map((items) => {
+                                                    return (
                                                         <TableRow key={items.id}>
                                                             <TableCell>{items.itemName}</TableCell>
                                                             <TableCell>{items.changedBy}</TableCell>
@@ -657,14 +613,15 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                                             <TableCell>{items.oldPrice}</TableCell>
                                                             <TableCell>{items.newPrice}</TableCell>
                                                         </TableRow>
-                                                    </TableBody>
-                                                </Table>
-                                            </TableContainer>
-                                        </CardContent>
-                                    </Card>
-                                </div>
-                            );
-                        })}
+                                                    );
+                                                })}
+                                            </TableBody>
+                                        </Table>
+                                    </TableContainer>
+                                </CardContent>
+                            </Card>
+                        </div>
+
                     </Stack>
 
                     <div>

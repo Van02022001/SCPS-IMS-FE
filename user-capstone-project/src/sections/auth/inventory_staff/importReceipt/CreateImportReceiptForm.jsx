@@ -10,6 +10,8 @@ import {
     TextField,
     Button,
     Grid,
+    FormControl,
+    Typography,
 } from '@mui/material';
 import { createImportReceipt } from '~/data/mutation/importReceipt/ImportReceipt-mutation';
 
@@ -35,7 +37,6 @@ const CreateImportReceiptForm = ({ isOpen, onClose, importReceipst }) => {
     return (
         <>
             <div style={{ textAlign: 'center' }}>
-
                 <DialogContent>
                     <Card>
                         <CardContent>
@@ -82,9 +83,9 @@ const CreateImportReceiptForm = ({ isOpen, onClose, importReceipst }) => {
                                         }}
                                     >
                                         <TableCell>Tên sản phẩm</TableCell>
-                                        <TableCell>Số lượng</TableCell>
-                                        <TableCell>Giá sản phẩm</TableCell>
-                                        <TableCell>Tổng</TableCell>
+                                        <TableCell>Số lượng yêu cầu</TableCell>
+                                        <TableCell>Giá mua</TableCell>
+                                        <TableCell>Tổng tiền</TableCell>
                                         <TableCell>Đơn vị</TableCell>
                                         <TableCell>Só lượng thực tế</TableCell>
                                     </TableRow>
@@ -97,6 +98,7 @@ const CreateImportReceiptForm = ({ isOpen, onClose, importReceipst }) => {
                                             <TableCell>{items.unitName}</TableCell>
                                             <TableCell>
                                                 <TextField
+                                                    style={{ width: "50%" }}
                                                     type="number"
                                                     value={quantities[items.id] || ''}
                                                     onChange={(e) => handleQuantityChange(items.id, e.target.value)}
@@ -105,6 +107,23 @@ const CreateImportReceiptForm = ({ isOpen, onClose, importReceipst }) => {
                                             </TableCell>
                                         </TableRow>
                                     ))}
+                                    <div style={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        minWidth: 100,
+                                    }}>
+                                        <TableBody>
+                                            <Typography variant="h6">Thông tin phiếu</Typography>
+                                            <TableRow>
+                                                <TableCell >Tổng số lượng:</TableCell>
+                                                <TableCell>{importReceipst.totalQuantity}</TableCell>
+                                            </TableRow>
+                                            <TableRow>
+                                                <TableCell >Tổng tiền:</TableCell>
+                                                <TableCell>{importReceipst.totalPrice} VND</TableCell>
+                                            </TableRow>
+                                        </TableBody>
+                                    </div>
                                 </TableBody>
                             </Table>
                         </CardContent>

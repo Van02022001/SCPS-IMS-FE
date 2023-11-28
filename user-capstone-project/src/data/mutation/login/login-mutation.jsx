@@ -19,3 +19,7 @@ export const logout = async (schemaParams) => {
     const response = await axiosInstance.post("/auth/sessions", schemaParams);
     return response;
 }
+export const refreshTokenNew = async (schemaParams) => {
+    const response = await axiosInstance.post("/auth/accessToken", schemaParams);
+    return response;
+}

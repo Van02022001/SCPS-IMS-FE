@@ -265,13 +265,13 @@ const ImportReceiptDetailForm = ({
 
             console.log('Product status updated:', response);
         } catch (error) {
-            console.error('Error updating category status:', error);
-            setIsError(true);
-            setIsSuccess(false);
-            setErrorMessage(error.response.data.message);
-            if (error.response) {
-                console.log('Error response:', error.response);
-            }
+            // console.error('Error updating category status:', error);
+            // setIsError(true);
+            // setIsSuccess(false);
+            // setErrorMessage(error.response.data.message);
+            // if (error.response) {
+            //     console.log('Error response:', error.response);
+            // }
         }
     };
     const updateReceiptStartImport = async () => {
@@ -383,7 +383,7 @@ const ImportReceiptDetailForm = ({
                                 Tạo phiếu nhập kho
                             </Button>
                         </div>
-                        <Dialog fullWidth open={isOpenImportForm}>
+                        <Dialog maxWidth="lg" fullWidth open={isOpenImportForm}>
                             <DialogTitle style={{ textAlign: 'center' }}>Phiếu Nhập Kho
                                 <IconButton style={{ float: 'right' }} onClick={handleCloseForm}>
                                     <CloseIcon color="primary" />
@@ -480,20 +480,19 @@ const ImportReceiptDetailForm = ({
                                             Người tạo:{' '}
                                         </Typography>
                                         <Grid xs={8.5}>
-                                            <Select
+                                            <TextField
                                                 size="small"
                                                 labelId="group-label"
                                                 id="group-select"
                                                 sx={{ width: '100%', fontSize: '14px' }}
-
                                                 value={importReceipst.createdBy}
-                                            >
-                                                {/* {categories_id.map((category) => (
+                                            />
+                                            {/* {categories_id.map((category) => (
                                                     <MenuItem key={category.id} value={category.id}>
                                                         {category.name}
                                                     </MenuItem>
                                                 ))} */}
-                                            </Select>
+
                                         </Grid>
                                     </Grid>
 
@@ -565,8 +564,8 @@ const ImportReceiptDetailForm = ({
                         </Card>
                     </div>
 
-                    {isSuccess && <SuccessAlerts message={successMessage} />}
-                    {isError && <ErrorAlerts errorMessage={errorMessage} />}
+                    {/* {isSuccess && <SuccessAlerts message={successMessage} />}
+                    {isError && <ErrorAlerts errorMessage={errorMessage} />} */}
                     <Stack spacing={4} margin={2}>
                         <Grid container spacing={1} sx={{ gap: '10px' }}>
                             <Button

@@ -298,7 +298,7 @@ function CreateGoodReceipt() {
                         <ArrowBackIcon fontSize="large" color="action" />
                     </Button>
                     <Typography variant="h4" gutterBottom>
-                        Nhập kho
+                        Tạo yêu cầu nhập kho
                     </Typography>
                 </Stack>
 

@@ -7,7 +7,7 @@ import CloseIcon from "@mui/icons-material/Close"
 // mocks_
 import account from '../../../_mock/account';
 import UserInfoForm from '../../../sections/auth/home/UserInfoForm';
-import { logout } from '~/data/mutation/login/login-mutation';
+import { logout, refreshTokenNew } from '~/data/mutation/login/login-mutation';
 // ----------------------------------------------------------------------
 
 const MENU_OPTIONS = [
@@ -58,20 +58,32 @@ export default function AccountPopover() {
     setProfilePopupOpen(false);
     setDialogOpen(false);
   };
+  
   const handleLogout = async () => {
     try {
-        const rftoken = localStorage.getItem('refreshToken');
-        const schemaParams = { refreshToken: rftoken, };
+      const refreshToken = localStorage.getItem('refreshToken');
+  
+
+      if (refreshToken) {
+        const schemaParams = { refreshToken };
         const response = await logout(schemaParams);
+
         if (response.status === 202) {
-            navigate('/login');
+          navigate('/login');
         } else {
-            // Xử lý lỗi nếu cần.
+
+          console.error('Error logging out:', response.data.error);
+          if (response.data.error === "You must be logged in with proper permissions to access this resource") {
+            navigate('/login');
+          }
         }
+      } else {
+        console.error('Refresh token not found');
+      }
     } catch (error) {
-        console.error('Error:', error);
+      console.error('Error:', error);
     }
-};
+  };
 
   return (
     <>
