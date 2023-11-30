@@ -29,16 +29,19 @@ import { getAllSubCategoryActive } from '~/data/mutation/subCategory/subCategory
 import { getAllBrands } from '~/data/mutation/brand/brands-mutation';
 import { getAllOrigins } from '~/data/mutation/origins/origins-mutation';
 import { getAllSuppliers } from '~/data/mutation/supplier/suppliers-mutation';
+import AddUnitForm from '../subCategory/AddUnitForm';
+import AddBrandItemForm from './AddBrandItemForm';
+import AddOriginItemForm from './AddOriginItemForm';
 
 const CreateItemsForm = (props) => {
     const [currentTab, setCurrentTab] = useState(0);
     const [tab1Data, setTab1Data] = useState({ sub_category_id: [], brand_id: [], supplier_id: [], origin_id: [] });
     const [tab2Data, setTab2Data] = useState({});
 
-    // mở popup form
-    // const [openAddCategoryDialog, setOpenAddCategoryDialog] = useState(false);
-    // const [openAddOriginForm, setOpenAddOriginForm] = useState(false);
-    // const [openAddUnitForm, setOpenAddUnitForm] = useState(false);
+    //=====================================mở popup form
+    const [openAddCategoryDialog, setOpenAddCategoryDialog] = useState(false);
+    const [openAddOriginForm, setOpenAddOriginForm] = useState(false);
+    const [openAddBrandForm, setOpenAddBrandForm] = useState(false);
 
     // form để call api
     const [minStockLevel, setMinStockLevel] = useState([]);
@@ -69,30 +72,27 @@ const CreateItemsForm = (props) => {
         setCurrentTab(newValue);
     };
 
-    // hàm xử lý đóng mở popup form
-    // const handleOpenAddCategoryDialog = () => {
-    //     setOpenAddCategoryDialog(true);
-    // };
+    //======================================================== hàm xử lý đóng mở popup form========================================================
+    const handleOpenAddBrandForm = () => {
+        setOpenAddBrandForm(true);
+    };
+    const handleCloseAddBrandForm = () => {
+        setOpenAddBrandForm(false);
+    };
+    const handleSaveBrand = () => {
+        handleCloseAddBrandForm();
+    };
 
-    // const handleCloseAddCategoryDialog = () => {
-    //     setOpenAddCategoryDialog(false);
-    // };
-
-    // const handleOpenAddOriginForm = () => {
-    //     setOpenAddOriginForm(true);
-    // };
-
-    // const handleCloseAddOriginForm = () => {
-    //     setOpenAddOriginForm(false);
-    // };
-
-    // const handleOpenAddUnitForm = () => {
-    //     setOpenAddUnitForm(true);
-    // };
-
-    // const handleCloseAddUnitFormm = () => {
-    //     setOpenAddUnitForm(false);
-    // };
+    const handleOpenAddOriginForm = () => {
+        setOpenAddOriginForm(true);
+    };
+    const handleCloseAddOriginForm = () => {
+        setOpenAddOriginForm(false);
+    };
+    const handleSaveOrigin = () => {
+        handleCloseAddOriginForm();
+    };
+    //================================================================================================================
     // Hàm delete của trang ---------------------------------------------------------------------
 
     // hàm create category-----------------------------------------
@@ -179,7 +179,7 @@ const CreateItemsForm = (props) => {
                 setSuppliers_id(data);
             })
             .catch((error) => console.error('Error fetching brands:', error));
-    }, []);
+    }, [openAddOriginForm, openAddBrandForm]);
 
     return (
         <>
@@ -187,7 +187,7 @@ const CreateItemsForm = (props) => {
                 <DialogContent style={{ width: '90%' }}>
                     <Tabs value={currentTab} onChange={handleChangeTab} indicatorColor="primary" textColor="primary">
                         <Tab label="Thông tin" />
-                        <Tab label="Mô tả chi tiết" />
+                        {/* <Tab label="Mô tả chi tiết" /> */}
                     </Tabs>
                     {currentTab === 0 && (
                         <div style={{ marginLeft: 100 }}>
@@ -251,6 +251,18 @@ const CreateItemsForm = (props) => {
                                                         </MenuItem>
                                                     ))}
                                                 </Select>
+                                                <Button
+                                                    variant="outlined"
+                                                    sx={{ padding: 0.8, minWidth: 0 }}
+                                                    onClick={handleOpenAddBrandForm}
+                                                >
+                                                    <AddIcon />
+                                                </Button>
+                                                <AddBrandItemForm
+                                                    open={openAddBrandForm}
+                                                    onClose={handleCloseAddBrandForm}
+                                                    onSave={handleSaveBrand}
+                                                />
                                             </Grid>
                                         </Grid>
 
@@ -311,6 +323,18 @@ const CreateItemsForm = (props) => {
                                                         </MenuItem>
                                                     ))}
                                                 </Select>
+                                                <Button
+                                                    variant="outlined"
+                                                    sx={{ padding: 0.8, minWidth: 0 }}
+                                                    onClick={handleOpenAddOriginForm}
+                                                >
+                                                    <AddIcon />
+                                                </Button>
+                                                <AddOriginItemForm
+                                                    open={openAddOriginForm}
+                                                    onClose={handleCloseAddOriginForm}
+                                                    onSave={handleSaveOrigin}
+                                                />
                                             </Grid>
                                         </Grid>
 

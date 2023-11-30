@@ -194,7 +194,7 @@ const ItemsManagerPage = () => {
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelecteds = USERLIST.map((n) => n.name);
+            const newSelecteds = itemsData.map((n) => n.name);
             setSelected(newSelecteds);
             return;
         }
@@ -553,8 +553,8 @@ const ItemsManagerPage = () => {
                                                     <Checkbox
                                                         checked={selectedItemId === item.id}
                                                         onChange={(event) => handleCheckboxChange(event, item.id)}
-                                                        // checked={selectedUser}
-                                                        // onChange={(event) => handleClick(event, name)}
+                                                    // checked={selectedUser}
+                                                    // onChange={(event) => handleClick(event, name)}
                                                     />
                                                 </TableCell>
 

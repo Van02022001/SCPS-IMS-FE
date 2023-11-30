@@ -30,6 +30,9 @@ const AddUnitForm = ({ open, onClose, onSave }) => {
                 setIsError(false);
                 setSuccessMessage(response.message);
                 console.log(response);
+                onSave && onSave();
+                // Đóng form
+                onClose && onClose();
             }
         } catch (error) {
             console.error("can't feaching category", error);

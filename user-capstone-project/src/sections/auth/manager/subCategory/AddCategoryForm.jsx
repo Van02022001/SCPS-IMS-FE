@@ -33,7 +33,10 @@ const AddCategoryForm = ({ open, onClose, onSave }) => {
                 setIsSuccess(true);
                 setIsError(false);
                 setSuccessMessage(response.data.message);
-                console.log(response.data.message);
+
+                onSave && onSave();
+                // Đóng form
+                onClose && onClose();
             }
         } catch (error) {
             console.error("Can't fetch category", error);
