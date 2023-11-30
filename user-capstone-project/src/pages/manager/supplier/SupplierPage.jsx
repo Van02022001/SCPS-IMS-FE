@@ -31,12 +31,13 @@ import Scrollbar from '../../../components/scrollbar';
 import CloseIcon from '@mui/icons-material/Close';
 
 // sections
-import { UserListHead, UserListToolbar } from '../../../sections/@dashboard/user';
+import { SupplierListHead, SupplierToolbar } from '~/sections/@dashboard/manager/supplier';
 // mock
 import USERLIST from '../../../_mock/user';
 import { getAllSuppliers } from '~/data/mutation/supplier/suppliers-mutation';
 import CreateSupplierForm from '~/sections/auth/manager/supplier/CreateSupplierForm';
 import SupplierDetailForm from '~/sections/auth/manager/supplier/SupplierDetailForm';
+
 
 // ----------------------------------------------------------------------
 
@@ -132,7 +133,7 @@ const SupplierPage = () => {
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelecteds = USERLIST.map((n) => n.name);
+            const newSelecteds = suppliersData.map((n) => n.name);
             setSelected(newSelecteds);
             return;
         }
@@ -237,7 +238,7 @@ const SupplierPage = () => {
                 </Stack>
 
                 <Card>
-                    <UserListToolbar
+                    <SupplierToolbar
                         numSelected={selected.length}
                         filterName={filterName}
                         onFilterName={handleFilterByName}
@@ -246,11 +247,11 @@ const SupplierPage = () => {
                     <Scrollbar>
                         <TableContainer sx={{ minWidth: 800 }}>
                             <Table>
-                                <UserListHead
+                                <SupplierListHead
                                     order={order}
                                     orderBy={orderBy}
                                     headLabel={TABLE_HEAD}
-                                    rowCount={USERLIST.length}
+                                    rowCount={suppliersData.length}
                                     numSelected={selected.length}
                                     onRequestSort={handleRequestSort}
                                     onSelectAllClick={handleSelectAllClick}

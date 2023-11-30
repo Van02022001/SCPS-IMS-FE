@@ -29,7 +29,7 @@ import Scrollbar from '../../../components/scrollbar';
 import CloseIcon from '@mui/icons-material/Close';
 
 // sections
-import { CategoryListHead, CategoryToolbar } from '~/sections/@dashboard/manager/categoy';
+import { CategoryListHead, CategoryToolbar } from '~/sections/@dashboard/manager/category';
 // mock
 import USERLIST from '../../../_mock/user';
 import { getAllCategories } from '~/data/mutation/categories/categories-mutation';
@@ -145,7 +145,7 @@ const CategoryPage = () => {
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelecteds = USERLIST.map((n) => n.name);
+            const newSelecteds = categoryData.map((n) => n.name);
             setSelected(newSelecteds);
             return;
         }
@@ -288,7 +288,7 @@ const CategoryPage = () => {
                                             >
                                                 <TableCell padding="checkbox">
                                                     <Checkbox
-                                                        onChange={(event) => handleClick(event, category.name)}
+                                                    // onChange={(event) => handleClick(event, category.name)}
                                                     />
                                                 </TableCell>
                                                 {/* tên  */}

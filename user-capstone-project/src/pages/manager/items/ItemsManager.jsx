@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
-import { sentenceCase } from 'change-case';
+
 import React, { useEffect, useState } from 'react';
 // @mui
 import {
@@ -10,13 +10,11 @@ import {
     Paper,
     Avatar,
     Button,
-    Popover,
     Checkbox,
     TableRow,
     MenuItem,
     TableBody,
     TableCell,
-    Container,
     Typography,
     IconButton,
     TableContainer,
@@ -35,7 +33,7 @@ import Iconify from '../../../components/iconify';
 import Scrollbar from '../../../components/scrollbar';
 import CloseIcon from '@mui/icons-material/Close';
 // sections
-import { UserListHead, UserListToolbar } from '../../../sections/@dashboard/user';
+import { ItemsListHead, ItemsToolbar } from '~/sections/@dashboard/manager/items';
 import CreateItemsForm from '~/sections/auth/manager/items/CreateItemsForm';
 import ItemDetailForm from '~/sections/auth/manager/items/ItemDetailForm';
 import USERLIST from '../../../_mock/user';
@@ -54,6 +52,7 @@ import { DateRangePicker } from '@mui/x-date-pickers-pro/DateRangePicker';
 import dayjs from 'dayjs';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
 
@@ -134,14 +133,14 @@ const ItemsManagerPage = () => {
 
     const [rowsPerPage, setRowsPerPage] = useState(5);
     //-------------------------------------------------
-    const [openOderFormDetail, setOpenOderFormDetail] = useState(false);
-    const [selectedOrderId, setSelectedOrderId] = useState(null);
+    // const [openOderFormDetail, setOpenOderFormDetail] = useState(false);
+    // const [selectedOrderId, setSelectedOrderId] = useState(null);
     const [selectedOrder, setSelectedOrder] = useState(null);
 
     const [selectedItemId, setSelectedItemId] = useState([]);
     // State data và xử lý data
     const [itemsData, setItemData] = useState([]);
-    const [itemStatus, setItemStatus] = useState('');
+    // const [itemStatus, setItemStatus] = useState('');
     const [sortedItem, setSortedItem] = useState([]);
     //--------------------Filter------------------------
     const [personName, setPersonName] = React.useState([]);
@@ -182,9 +181,9 @@ const ItemsManagerPage = () => {
         setOpen(event.currentTarget);
     };
 
-    const handleCloseMenu = () => {
-        setOpen(null);
-    };
+    // const handleCloseMenu = () => {
+    //     setOpen(null);
+    // };
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -201,20 +200,20 @@ const ItemsManagerPage = () => {
         setSelected([]);
     };
 
-    const handleClick = (event, name) => {
-        const selectedIndex = selected.indexOf(name);
-        let newSelected = [];
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, name);
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-        }
-        setSelected(newSelected);
-    };
+    // const handleClick = (event, name) => {
+    //     const selectedIndex = selected.indexOf(name);
+    //     let newSelected = [];
+    //     if (selectedIndex === -1) {
+    //         newSelected = newSelected.concat(selected, name);
+    //     } else if (selectedIndex === 0) {
+    //         newSelected = newSelected.concat(selected.slice(1));
+    //     } else if (selectedIndex === selected.length - 1) {
+    //         newSelected = newSelected.concat(selected.slice(0, -1));
+    //     } else if (selectedIndex > 0) {
+    //         newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
+    //     }
+    //     setSelected(newSelected);
+    // };
     const handleCloseOdersForm = () => {
         setOpenOderForm(false);
     };
@@ -501,6 +500,7 @@ const ItemsManagerPage = () => {
                     ))}
                 </Select>
             </FormControl>
+
             <FormControl sx={{ ml: 44, width: 300 }}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DemoContainer components={['DateRangePicker']}>
@@ -519,7 +519,7 @@ const ItemsManagerPage = () => {
             {/* ===========================================filter=========================================== */}
 
             <Card>
-                <UserListToolbar
+                <ItemsToolbar
                     numSelected={selected.length}
                     filterName={filterName}
                     onFilterName={handleFilterByName}
@@ -528,11 +528,11 @@ const ItemsManagerPage = () => {
                 <Scrollbar>
                     <TableContainer sx={{ minWidth: 800 }}>
                         <Table>
-                            <UserListHead
+                            <ItemsListHead
                                 order={order}
                                 orderBy={orderBy}
                                 headLabel={TABLE_HEAD}
-                                rowCount={USERLIST.length}
+                                rowCount={itemsData.length}
                                 numSelected={selected.length}
                                 onRequestSort={handleRequestSort}
                                 onSelectAllClick={handleSelectAllClick}

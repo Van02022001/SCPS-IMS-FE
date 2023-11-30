@@ -14,7 +14,6 @@ import {
     Popover,
     Checkbox,
     TableRow,
-    MenuItem,
     TableBody,
     TableCell,
     Container,
@@ -31,14 +30,14 @@ import Scrollbar from '../../../components/scrollbar';
 import CloseIcon from '@mui/icons-material/Close';
 
 // sections
-import { UserListHead, UserListToolbar } from '../../../sections/@dashboard/user';
+import { BrandListHead, BrandToolbar } from '~/sections/@dashboard/manager/brand';
 // mock
 import USERLIST from '../../../_mock/user';
 import { getAllOrigins } from '~/data/mutation/origins/origins-mutation';
-import OriginDetailForm from '~/sections/auth/manager/origin/OriginDetailForm';
 import { getAllBrands } from '~/data/mutation/brand/brands-mutation';
 import BrandForm from '~/sections/auth/manager/brand/CreateBrandForm';
 import BrandDetailForm from '~/sections/auth/manager/brand/BrandDetailForm';
+
 
 // ----------------------------------------------------------------------
 
@@ -123,9 +122,9 @@ const BrandPage = () => {
     };
     //===========================================================================================
 
-    const handleOpenMenu = (event) => {
-        setOpen(event.currentTarget);
-    };
+    // const handleOpenMenu = (event) => {
+    //     setOpen(event.currentTarget);
+    // };
 
     const handleCloseMenu = () => {
         setOpen(null);
@@ -139,7 +138,7 @@ const BrandPage = () => {
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelecteds = USERLIST.map((n) => n.name);
+            const newSelecteds = brandData.map((n) => n.name);
             setSelected(newSelecteds);
             return;
         }
@@ -164,9 +163,9 @@ const BrandPage = () => {
     const handleBrandClick = (brand) => {
         if (selectedBrandId === brand.id) {
             console.log(selectedBrandId);
-            setSelectedBrandId(null); // Đóng nếu đã mở
+            setSelectedBrandId(null);
         } else {
-            setSelectedBrandId(brand.id); // Mở hoặc chuyển sang hóa đơn khác
+            setSelectedBrandId(brand.id);
         }
     };
 
@@ -234,7 +233,7 @@ const BrandPage = () => {
                 </Stack>
 
                 <Card>
-                    <UserListToolbar
+                    <BrandToolbar
                         numSelected={selected.length}
                         filterName={filterName}
                         onFilterName={handleFilterByName}
@@ -244,11 +243,11 @@ const BrandPage = () => {
                     <Scrollbar>
                         <TableContainer sx={{ minWidth: 800 }}>
                             <Table>
-                                <UserListHead
+                                <BrandListHead
                                     order={order}
                                     orderBy={orderBy}
                                     headLabel={TABLE_HEAD}
-                                    rowCount={USERLIST.length}
+                                    rowCount={brandData.length}
                                     numSelected={selected.length}
                                     onRequestSort={handleRequestSort}
                                     onSelectAllClick={handleSelectAllClick}

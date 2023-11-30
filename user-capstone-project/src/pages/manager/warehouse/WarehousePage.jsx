@@ -145,7 +145,7 @@ const WarehousePage = () => {
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelecteds = USERLIST.map((n) => n.name);
+            const newSelecteds = warehouseData.map((n) => n.name);
             setSelected(newSelecteds);
             return;
         }
@@ -266,7 +266,7 @@ const WarehousePage = () => {
                                     order={order}
                                     orderBy={orderBy}
                                     headLabel={TABLE_HEAD}
-                                    rowCount={USERLIST.length}
+                                    rowCount={warehouseData.length}
                                     numSelected={selected.length}
                                     onRequestSort={handleRequestSort}
                                     onSelectAllClick={handleSelectAllClick}

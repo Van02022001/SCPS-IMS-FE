@@ -30,11 +30,13 @@ import Scrollbar from '../../../components/scrollbar';
 import CloseIcon from '@mui/icons-material/Close';
 
 // sections
-import { UserListHead, UserListToolbar } from '../../../sections/@dashboard/user';
+import UnitToolbar from '~/sections/@dashboard/manager/unit/UnitListHead';
+
 // mock
 import { getAllUnit } from '~/data/mutation/unit/unit-mutation';
 import UnitForm from '~/sections/auth/manager/unit/UnitForm';
 import UnitDetailForm from '~/sections/auth/manager/unit/UnitDetailForm';
+import { UnitListHead } from '~/sections/@dashboard/manager/unit';
 
 // ----------------------------------------------------------------------
 
@@ -212,7 +214,7 @@ const UnitPage = () => {
                 </Stack>
 
                 <Card>
-                    <UserListToolbar
+                    <UnitToolbar
                         numSelected={selected.length}
                         filterName={filterName}
                         onFilterName={handleFilterByName}
@@ -221,7 +223,7 @@ const UnitPage = () => {
                     <Scrollbar>
                         <TableContainer sx={{ minWidth: 800 }}>
                             <Table>
-                                <UserListHead
+                                <UnitListHead
                                     order={order}
                                     orderBy={orderBy}
                                     headLabel={TABLE_HEAD}

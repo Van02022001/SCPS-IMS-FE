@@ -31,12 +31,13 @@ import Scrollbar from '../../../components/scrollbar';
 import CloseIcon from '@mui/icons-material/Close';
 
 // sections
-import { UserListHead, UserListToolbar } from '../../../sections/@dashboard/user';
+import { OriginListHead, OriginToolbar } from '~/sections/@dashboard/manager/origin';
 // mock
 import USERLIST from '../../../_mock/user';
 import { getAllOrigins } from '~/data/mutation/origins/origins-mutation';
 import OriginDetailForm from '~/sections/auth/manager/origin/OriginDetailForm';
 import CreateOriginForm from '~/sections/auth/manager/origin/CreateOriginForm';
+
 
 // ----------------------------------------------------------------------
 
@@ -125,7 +126,7 @@ const OriginPage = () => {
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelecteds = USERLIST.map((n) => n.name);
+            const newSelecteds = originData.map((n) => n.name);
             setSelected(newSelecteds);
             return;
         }
@@ -214,7 +215,7 @@ const OriginPage = () => {
                 </Stack>
 
                 <Card>
-                    <UserListToolbar
+                    <OriginToolbar
                         numSelected={selected.length}
                         filterName={filterName}
                         onFilterName={handleFilterByName}
@@ -223,11 +224,11 @@ const OriginPage = () => {
                     <Scrollbar>
                         <TableContainer sx={{ minWidth: 800 }}>
                             <Table>
-                                <UserListHead
+                                <OriginListHead
                                     order={order}
                                     orderBy={orderBy}
                                     headLabel={TABLE_HEAD}
-                                    rowCount={USERLIST.length}
+                                    rowCount={originData.length}
                                     numSelected={selected.length}
                                     onRequestSort={handleRequestSort}
                                     onSelectAllClick={handleSelectAllClick}
