@@ -16,7 +16,7 @@ const visuallyHidden = {
   clip: 'rect(0 0 0 0)',
 };
 
-CategoryListHead.propTypes = {
+OriginListHead.propTypes = {
   order: PropTypes.oneOf(['asc', 'desc']),
   orderBy: PropTypes.string,
   rowCount: PropTypes.number,
@@ -26,7 +26,7 @@ CategoryListHead.propTypes = {
   onSelectAllClick: PropTypes.func,
 };
 
-export default function CategoryListHead({
+export default function OriginListHead({
   order,
   orderBy,
   rowCount,

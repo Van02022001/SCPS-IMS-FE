@@ -107,7 +107,7 @@ const MenuProps = {
 
 // const filterOptions = ['Ren', 'Ron', 'Abc', 'Test1', 'Test12', 'Test123'];
 
-const GoodReceiptManagerPage = () => {
+const RequestReceiptManagerPage = () => {
     // State mở các form----------------------------------------------------------------
     const [open, setOpen] = useState(null);
     const [openOderForm, setOpenOderForm] = useState(false);
@@ -528,4 +528,4 @@ const GoodReceiptManagerPage = () => {
         </>
     );
 };
-export default GoodReceiptManagerPage;
+export default RequestReceiptManagerPage;

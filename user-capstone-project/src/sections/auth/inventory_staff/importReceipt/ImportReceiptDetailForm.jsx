@@ -36,6 +36,7 @@ import { editImportReceipt, editImportReceiptConfirm, editReceiptStartImport } f
 import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
 import CreateImportReceiptForm from './CreateImportReceiptForm';
+import { getAllImportReceipt } from '~/data/mutation/importReceipt/ImportReceipt-mutation';
 
 
 
@@ -63,7 +64,7 @@ const ImportReceiptDetailForm = ({
     const [editedImportReceipt, setEditedImportReceipt] = useState(null);
     const [editSubCategoryMeta, setEditSubCategoryMeta] = useState(null);
     const [currentStatus, setCurrentStatus] = useState('');
-
+    const [importReceiptData, setImportReceiptData] = useState([]);
     // const [positionedSnackbarOpen, setPositionedSnackbarOpen] = useState(false);
     // const [positionedSnackbarError, setPositionedSnackbarError] = useState(false);
     // form
@@ -358,7 +359,20 @@ const ImportReceiptDetailForm = ({
     const handleDelete = () => {
         // Xử lý xóa
     };
-
+    const handleDataReload = () => {
+        getAllImportReceipt()
+            .then((response) => {
+                const data = response.data;
+                if (Array.isArray(data)) {
+                    setImportReceiptData(data);
+                } else {
+                    console.error('API response is not an array:', data);
+                }
+            })
+            .catch((error) => {
+                console.error('Error fetching import receipts:', error);
+            });
+    };
 
     return editedImportReceipt ? (
         <div
@@ -390,7 +404,14 @@ const ImportReceiptDetailForm = ({
                                 </IconButton>{' '}
                             </DialogTitle>
 
-                            <CreateImportReceiptForm open={isOpenImportForm} importReceipst={importReceipst} />
+                            <CreateImportReceiptForm
+                                isOpen={isOpenImportForm}
+                                onCloseForm={() => {
+                                    setIsOpenImportForm(false);
+                                    handleDataReload();
+                                }}
+                                importReceipst={importReceipst}
+                            />
                         </Dialog>
                     </div>
                     <Stack spacing={4} margin={2}>

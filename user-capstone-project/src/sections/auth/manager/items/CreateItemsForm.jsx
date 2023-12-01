@@ -11,11 +11,14 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 //icons
 import AddIcon from '@mui/icons-material/Add';
 import ClearIcon from '@mui/icons-material/Clear';
 import SaveIcon from '@mui/icons-material/Save';
+import Snackbar from '@mui/material/Snackbar';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 //components
 import BoxComponent from '~/components/box/BoxComponent';
 // form popup
@@ -33,7 +36,9 @@ import AddUnitForm from '../subCategory/AddUnitForm';
 import AddBrandItemForm from './AddBrandItemForm';
 import AddOriginItemForm from './AddOriginItemForm';
 
+
 const CreateItemsForm = (props) => {
+    const [open, setOpen] = React.useState(false);
     const [currentTab, setCurrentTab] = useState(0);
     const [tab1Data, setTab1Data] = useState({ sub_category_id: [], brand_id: [], supplier_id: [], origin_id: [] });
     const [tab2Data, setTab2Data] = useState({});
@@ -52,6 +57,7 @@ const CreateItemsForm = (props) => {
     const [origin_id, setOrigins_id] = useState([]);
 
     //thông báo
+    const [message, setMessage] = useState('');
     const [isSuccess, setIsSuccess] = useState(false);
     const [isError, setIsError] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
@@ -93,8 +99,36 @@ const CreateItemsForm = (props) => {
         handleCloseAddOriginForm();
     };
     //================================================================================================================
-    // Hàm delete của trang ---------------------------------------------------------------------
+    //========================== Hàm notification của trang ==================================
+    const handleMessage = (message) => {
+        setOpen(true);
+        // Đặt logic hiển thị nội dung thông báo từ API ở đây
+        if (message === 'Update SubCategory status successfully.') {
+            setMessage('Cập nhập trạng thái danh mục thành công')
+        } else if (message === 'Update SubCategory successfully.') {
+            setMessage('Cập nhập danh mục thành công')
+            console.error('Error message:', errorMessage);
+        }
+    };
 
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpen(false);
+
+    };
+    const action = (
+        <React.Fragment>
+            <Button color="secondary" size="small" onClick={handleClose}>
+            </Button>
+            <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
+                <CloseIcon fontSize="lage" />
+            </IconButton>
+        </React.Fragment>
+    );
+    //============================================================
     // hàm create category-----------------------------------------
     const handleCreateItem = async () => {
         if (parseInt(minStockLevel) < 5) {
@@ -117,20 +151,12 @@ const CreateItemsForm = (props) => {
         try {
             const response = await createItem(itemParams);
             if (response.status === "200 OK") {
-                setIsSuccess(true);
-                setIsError(false);
-                setSuccessMessage(response.data.message);
-
+                // setIsSuccess(true);
+                // setIsError(false);
+                // setSuccessMessage(response.data.message);
+                handleMessage(response.message);
                 props.onClose(response.data);
-                // //clear 
-                // setMinStockLevel([]);
-                // setMaxStockLevel([]);
-                // setSub_category_id([]);
-                // setBrands_id([]);
-                // setSuppliers_id([]);
-                // setOrigins_id([]);
 
-                console.log(response.data.message);
             }
         } catch (error) {
             console.error('Error creating product:', error.response.status);
@@ -386,6 +412,18 @@ const CreateItemsForm = (props) => {
                                     >
                                         Lưu
                                     </Button>
+                                    <Snackbar
+                                        open={open}
+                                        autoHideDuration={6000}
+                                        onClose={handleClose}
+                                        anchorOrigin={{
+                                            vertical: 'bottom',
+                                            horizontal: 'right',
+                                        }}
+                                        message={message}
+                                        action={action}
+                                        style={{ bottom: '16px', right: '16px' }}
+                                    />
                                     <Button
                                         color="error"
                                         variant="outlined"

@@ -10,24 +10,24 @@ import {
     TextField,
     Button,
     Grid,
-    FormControl,
     Typography,
 } from '@mui/material';
 import { createImportReceipt } from '~/data/mutation/importReceipt/ImportReceipt-mutation';
 
-const CreateImportReceiptForm = ({ isOpen, onClose, importReceipst }) => {
+const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst }) => {
 
     const [quantities, setQuantities] = useState({});
 
     const handleQuantityChange = (itemId, value) => {
         setQuantities((prev) => ({ ...prev, [itemId]: value }));
     };
+
     const handleSendToManager = async () => {
         try {
             const response = await createImportReceipt(importReceipst.id, quantities);
             // Handle success
             console.log('Response:', response);
-
+            onCloseForm()
         } catch (error) {
             // Handle error
             console.error('Error creating import receipt:', error);
@@ -129,7 +129,7 @@ const CreateImportReceiptForm = ({ isOpen, onClose, importReceipst }) => {
                         </CardContent>
                         <Grid container justifyContent="flex-end" style={{ marginTop: 10 }}>
                             <Button variant="contained" color="primary" onClick={handleSendToManager}>
-                                Gửi Phiếu nhập
+                                Gửi Phiếu
                             </Button>
                         </Grid>
                     </Card>

@@ -30,13 +30,13 @@ import Scrollbar from '../../../components/scrollbar';
 import CloseIcon from '@mui/icons-material/Close';
 
 // sections
-import UnitToolbar from '~/sections/@dashboard/manager/unit/UnitListHead';
+import { UnitListHead, UnitToolbar } from '~/sections/@dashboard/manager/unit';
 
 // mock
 import { getAllUnit } from '~/data/mutation/unit/unit-mutation';
 import UnitForm from '~/sections/auth/manager/unit/UnitForm';
 import UnitDetailForm from '~/sections/auth/manager/unit/UnitDetailForm';
-import { UnitListHead } from '~/sections/@dashboard/manager/unit';
+
 
 // ----------------------------------------------------------------------
 
@@ -147,12 +147,12 @@ const UnitPage = () => {
         setSelected(newSelected);
     };
 
-    const handleUnitClick = (origin) => {
-        if (selectedUnitId === origin.id) {
+    const handleUnitClick = (unit) => {
+        if (selectedUnitId === unit.id) {
             console.log(selectedUnitId);
             setSelectedUnitId(null); // Đóng nếu đã mở
         } else {
-            setSelectedUnitId(origin.id); // Mở hoặc chuyển sang hóa đơn khác
+            setSelectedUnitId(unit.id); // Mở hoặc chuyển sang hóa đơn khác
         }
     };
 
@@ -319,7 +319,7 @@ const UnitPage = () => {
                     />
                 </Card>
             </Container>
-
+            {/* 
             <Popover
                 open={Boolean(open)}
                 anchorEl={open}
@@ -337,7 +337,7 @@ const UnitPage = () => {
                         },
                     },
                 }}
-            ></Popover>
+            ></Popover> */}
         </>
     );
 };

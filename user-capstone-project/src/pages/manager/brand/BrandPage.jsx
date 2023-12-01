@@ -347,7 +347,7 @@ const BrandPage = () => {
                 </Card>
             </Container>
 
-            <Popover
+            {/* <Popover
                 open={Boolean(open)}
                 anchorEl={open}
                 onClose={handleCloseMenu}
@@ -364,7 +364,7 @@ const BrandPage = () => {
                         },
                     },
                 }}
-            ></Popover>
+            ></Popover> */}
         </>
     );
 };

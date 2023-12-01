@@ -83,7 +83,7 @@ const CategoryPage = () => {
 
     // const [open, setOpen] = useState(null);
 
-    const [openOderForm, setOpenOderForm] = useState(false);
+    const [openCreateCategoryForm, setOpenCreateCategoryForm] = useState(false);
 
     const [page, setPage] = useState(0);
 
@@ -98,6 +98,7 @@ const CategoryPage = () => {
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
     const [categoryData, setCategoryData] = useState([]);
+
     const [categoryStatus, setCategoryStatus] = useState('');
 
     //=============================================== Hàm để thay đổi data mỗi khi Edit xong api===============================================
@@ -124,7 +125,7 @@ const CategoryPage = () => {
     };
     const handleCreateCategorySuccess = (newCategory) => {
         // Close the form
-        setOpenOderForm(false);
+        setOpenCreateCategoryForm(false);
         setCategoryData((prevCategoryData) => [...prevCategoryData, newCategory]);
     };
     //===========================================================================================
@@ -182,7 +183,7 @@ const CategoryPage = () => {
     };
 
     const handleCloseOdersForm = () => {
-        setOpenOderForm(false);
+        setOpenCreateCategoryForm(false);
     };
 
     const handleCategoryClick = (category) => {
@@ -203,9 +204,9 @@ const CategoryPage = () => {
         setCategoryData(searchResult);
     };
 
-    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
+    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - categoryData.length) : 0;
 
-    const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
+    const filteredUsers = applySortFilter(categoryData, getComparator(order, orderBy), filterName);
 
     const isNotFound = !filteredUsers.length && !!filterName;
 
@@ -238,18 +239,18 @@ const CategoryPage = () => {
                 <Button
                     variant="contained"
                     startIcon={<Iconify icon="eva:plus-fill" />}
-                    onClick={() => setOpenOderForm(true)}
+                    onClick={() => setOpenCreateCategoryForm(true)}
                 >
                     Thêm thể loại
                 </Button>
-                <Dialog fullWidth maxWidth="sm" open={openOderForm}>
+                <Dialog fullWidth maxWidth="sm" open={openCreateCategoryForm}>
                     <DialogTitle>
                         Tạo Thể Loại{' '}
                         <IconButton style={{ float: 'right' }} onClick={handleCloseOdersForm}>
                             <CloseIcon color="primary" />
                         </IconButton>{' '}
                     </DialogTitle>
-                    <CreateCategoriesForm onClose={handleCreateCategorySuccess} open={openOderForm} />
+                    <CreateCategoriesForm onClose={handleCreateCategorySuccess} open={openCreateCategoryForm} />
                 </Dialog>
             </Stack>
 

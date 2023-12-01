@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Button, Stack, Grid, TextField } from '@mui/material';
+import { Typography, Button, Stack, Grid, TextField, IconButton } from '@mui/material';
 
 import { editCategories, editStatusCategories } from '~/data/mutation/categories/categories-mutation';
+
+import Snackbar from '@mui/material/Snackbar';
+import CloseIcon from '@mui/icons-material/Close';
 import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
 import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
@@ -16,6 +19,7 @@ const CategoryDetailForm = ({
     isOpen,
     mode,
 }) => {
+    const [open, setOpen] = React.useState(false);
     const [expandedItem, setExpandedItem] = useState(categoriesId);
     const [formHeight, setFormHeight] = useState(0);
     const [selectedTab, setSelectedTab] = useState(0);
@@ -23,11 +27,44 @@ const CategoryDetailForm = ({
     const [editedCategory, setEditedCategory] = useState(null);
     const [currentStatus, setCurrentStatus] = useState('');
 
+
     //thông báo
+    const [message, setMessage] = useState('');
     const [isSuccess, setIsSuccess] = useState(false);
     const [isError, setIsError] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+
+    //========================== Hàm notification của trang ==================================
+    const handleMessage = (message) => {
+        setOpen(true);
+        // Đặt logic hiển thị nội dung thông báo từ API ở đây
+        if (message === 'Update category status successfully') {
+            setMessage('Cập nhập trạng thái thể loại thành công')
+        } else if (message === 'Update SubCategory successfully.') {
+            setMessage('Cập nhập danh mục thành công')
+            console.error('Error message:', errorMessage);
+        }
+    };
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpen(false);
+
+    };
+    const action = (
+        <React.Fragment>
+            <Button color="secondary" size="small" onClick={handleClose}>
+            </Button>
+            <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
+                <CloseIcon fontSize="lage" />
+            </IconButton>
+        </React.Fragment>
+    );
+    //============================================================
 
     useEffect(() => {
         if (isOpen) {
@@ -83,6 +120,7 @@ const CategoryDetailForm = ({
                     setIsSuccess(true);
                     setIsError(false);
                     setSuccessMessage(response.message);
+                    handleMessage(response.message);
                 }
 
                 updateCategoryInList(response.data);
@@ -119,6 +157,7 @@ const CategoryDetailForm = ({
                 setIsSuccess(true);
                 setIsError(false);
                 setSuccessMessage(response.message);
+                handleMessage(response.message);
             }
 
             // Sử dụng hàm để cập nhật trạng thái trong danh sách categories trong CategoryPage
@@ -242,9 +281,33 @@ const CategoryDetailForm = ({
                             <Button variant="contained" color="primary" onClick={updateCategory}>
                                 Cập nhật
                             </Button>
+                            <Snackbar
+                                open={open}
+                                autoHideDuration={6000}
+                                onClose={handleClose}
+                                anchorOrigin={{
+                                    vertical: 'bottom',
+                                    horizontal: 'right',
+                                }}
+                                message={message}
+                                action={action}
+                                style={{ bottom: '16px', right: '16px' }}
+                            />
                             <Button variant="contained" color="error" onClick={updateCategoryStatus}>
                                 Thay đổi trạng thái
                             </Button>
+                            <Snackbar
+                                open={open}
+                                autoHideDuration={6000}
+                                onClose={handleClose}
+                                anchorOrigin={{
+                                    vertical: 'bottom',
+                                    horizontal: 'right',
+                                }}
+                                message={message}
+                                action={action}
+                                style={{ bottom: '16px', right: '16px' }}
+                            />
                         </Grid>
                     </Stack>
                 </div>

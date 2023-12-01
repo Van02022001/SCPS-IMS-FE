@@ -11,10 +11,8 @@ import {
     Paper,
     Avatar,
     Button,
-    Popover,
     Checkbox,
     TableRow,
-    MenuItem,
     TableBody,
     TableCell,
     Container,
@@ -79,7 +77,7 @@ const OriginPage = () => {
 
     const [open, setOpen] = useState(null);
 
-    const [openOderForm, setOpenOderForm] = useState(false);
+    const [openCreateOriginForm, setOpenCreateOriginForm] = useState(false);
 
     const [page, setPage] = useState(0);
 
@@ -176,9 +174,14 @@ const OriginPage = () => {
     };
 
     const handleCloseOdersForm = () => {
-        setOpenOderForm(false);
+        setOpenCreateOriginForm(false);
     };
 
+    const handleCreateCategorySuccess = (newOrigin) => {
+        // Close the form
+        setOpenCreateOriginForm(false);
+        setOriginData((prevOriginData) => [...prevOriginData, newOrigin]);
+    };
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
     const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
@@ -199,18 +202,18 @@ const OriginPage = () => {
                     <Button
                         variant="contained"
                         startIcon={<Iconify icon="eva:plus-fill" />}
-                        onClick={() => setOpenOderForm(true)}
+                        onClick={() => setOpenCreateOriginForm(true)}
                     >
                         Thêm nguồn gốc
                     </Button>
-                    <Dialog fullWidth maxWidth="sm" open={openOderForm}>
+                    <Dialog fullWidth maxWidth="sm" open={openCreateOriginForm}>
                         <DialogTitle>
                             Tạo nguồn gốc{' '}
                             <IconButton style={{ float: 'right' }} onClick={handleCloseOdersForm}>
                                 <CloseIcon color="primary" />
                             </IconButton>{' '}
                         </DialogTitle>
-                        <CreateOriginForm />
+                        <CreateOriginForm onClose={handleCreateCategorySuccess} open={openCreateOriginForm} />
                     </Dialog>
                 </Stack>
 
@@ -312,7 +315,7 @@ const OriginPage = () => {
                     <TablePagination
                         rowsPerPageOptions={[5, 10, 25]}
                         component="div"
-                        count={USERLIST.length}
+                        count={originData.length}
                         rowsPerPage={rowsPerPage}
                         page={page}
                         onPageChange={handleChangePage}
@@ -320,7 +323,7 @@ const OriginPage = () => {
                     />
                 </Card>
             </Container>
-
+            {/* 
             <Popover
                 open={Boolean(open)}
                 anchorEl={open}
@@ -338,7 +341,7 @@ const OriginPage = () => {
                         },
                     },
                 }}
-            ></Popover>
+            ></Popover> */}
         </>
     );
 };

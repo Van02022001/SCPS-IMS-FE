@@ -307,9 +307,9 @@ const SubCategoryPage = () => {
         setOpenEditForm(false);
     };
 
-    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - PRODUCTSLIST.length) : 0;
+    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - categoryData.length) : 0;
 
-    const filteredUsers = applySortFilter(PRODUCTSLIST, getComparator(order, orderBy), filterName);
+    const filteredUsers = applySortFilter(categoryData, getComparator(order, orderBy), filterName);
 
     const isNotFound = !filteredUsers.length && !!filterName;
 
@@ -570,7 +570,7 @@ const SubCategoryPage = () => {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={PRODUCTSLIST.length}
+                    count={categoryData.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}
@@ -579,7 +579,7 @@ const SubCategoryPage = () => {
             </Card>
             {/* </Container> */}
 
-            <Popover
+            {/* <Popover
                 open={Boolean(open)}
                 anchorEl={open}
                 onClose={handleCloseMenu}
@@ -619,7 +619,7 @@ const SubCategoryPage = () => {
                     <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
                     Delete
                 </MenuItem>
-            </Popover>
+            </Popover> */}
         </>
     );
 };

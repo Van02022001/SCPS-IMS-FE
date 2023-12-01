@@ -19,22 +19,19 @@ import {
 } from '@mui/material';
 // components
 import Label from '~/components/label/Label';
-import Iconify from '~/components/iconify/Iconify';
 import Scrollbar from '~/components/scrollbar/Scrollbar';
-import CloseIcon from '@mui/icons-material/Close';
 
 // sections
 import { ProductsListHead, ProductsListToolbar } from '~/sections/@dashboard/products';
 // mock
 import PRODUCTSLIST from '../../../../_mock/products';
 // api
-
-import ImportReaceiptDetailForm from '~/sections/auth/inventory_staff/importReceipt/ImportReceiptDetailForm';
+import ImportReceiptDetailManagerForm from '~/sections/auth/manager/transaction/importReceipt/ImportReceiptDetailManagerForm';
 // import EditCategoryForm from '~/sections/auth/manager/categories/EditCategoryForm';
 // import GoodsReceiptPage from '../GoodsReceiptPage';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { getAllImportReceipt } from '~/data/mutation/importReceipt/ImportReceipt-mutation';
-import ImportReceiptDetailManagerForm from '~/sections/auth/manager/transaction/importReceipt/ImportReceiptDetailManagerForm';
+
 
 
 
@@ -96,7 +93,6 @@ const ImportReceiptManagerPage = () => {
     // State mở các form----------------------------------------------------------------
     const [open, setOpen] = useState(null);
     const [openOderForm, setOpenOderForm] = useState(false);
-    const [openEditForm, setOpenEditForm] = useState(false);
 
     const [selected, setSelected] = useState([]);
     const [selectedImportReceiptId, setSelectedImportReceiptId] = useState([]);
@@ -112,6 +108,7 @@ const ImportReceiptManagerPage = () => {
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
     const navigate = useNavigate();
+    const location = useLocation();
 
     // State data và xử lý data
     const [importReceiptData, setImportReceiptData] = useState([]);
@@ -264,7 +261,22 @@ const ImportReceiptManagerPage = () => {
                 console.error('Error fetching users:', error);
             });
     }, []);
-    console.log(importReceiptData);
+
+    useEffect(() => {
+        getAllImportReceipt()
+            .then((response) => {
+                const data = response.data;
+                if (Array.isArray(data)) {
+                    setImportReceiptData(data);
+                } else {
+                    console.error('API response is not an array:', data);
+                }
+            })
+            .catch((error) => {
+                console.error('Error fetching import receipts:', error);
+            });
+    }, [location.pathname]);
+
     return (
         <>
             <Helmet>
@@ -426,7 +438,7 @@ const ImportReceiptManagerPage = () => {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={PRODUCTSLIST.length}
+                    count={importReceiptData.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}

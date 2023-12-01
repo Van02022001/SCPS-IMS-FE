@@ -12,14 +12,16 @@ import {
     Typography,
     Card,
     CardContent,
+    IconButton,
 } from '@mui/material';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 //icons
+import Snackbar from '@mui/material/Snackbar';
+import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
 import ClearIcon from '@mui/icons-material/Clear';
 import SaveIcon from '@mui/icons-material/Save';
-import CloseIcon from '@mui/icons-material/Close';
 
 //components
 import BoxComponent from '~/components/box/BoxComponent';
@@ -41,6 +43,7 @@ import ErrorAlerts from '~/components/alert/ErrorAlert';
 import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
 
 const CreateSubCategoryForm = (props) => {
+    const [openSubAddCategory, setOpenSubAddCategory] = React.useState(false);
     const [currentTab, setCurrentTab] = useState(0);
     const [tab1Data, setTab1Data] = useState({ categories_id: [] });
     const [tab2Data, setTab2Data] = useState({});
@@ -65,10 +68,42 @@ const CreateSubCategoryForm = (props) => {
     const [unit_mea_id, setUnit_mea_id] = useState([]);
 
     //thông báo
+    const [message, setMessage] = useState('');
     const [isSuccess, setIsSuccess] = useState(false);
     const [isError, setIsError] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+
+    //========================== Hàm notification của trang ==================================
+    const handleMessage = (message) => {
+        setOpenSubAddCategory(true);
+        // Đặt logic hiển thị nội dung thông báo từ API ở đây
+        if (message === 'Update SubCategory status successfully.') {
+            setMessage('Cập nhập trạng thái danh mục thành công')
+        } else if (message === 'Update SubCategory successfully.') {
+            setMessage('Cập nhập danh mục thành công')
+        }
+    };
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenSubAddCategory(false);
+
+    };
+
+    const action = (
+        <React.Fragment>
+            <Button color="secondary" size="small" onClick={handleClose}>
+            </Button>
+            <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
+                <CloseIcon fontSize="lage" />
+            </IconButton>
+        </React.Fragment>
+    );
+    //============================================================
 
     const handleTab1DataChange = (event) => {
         // Cập nhật dữ liệu cho tab 1 tại đây
@@ -156,6 +191,7 @@ const CreateSubCategoryForm = (props) => {
                 setIsError(false);
                 setSuccessMessage(response.message);
 
+                handleMessage(response.message)
                 props.onClose(response.data); // Call the callback function
             }
         } catch (error) {
@@ -485,6 +521,18 @@ const CreateSubCategoryForm = (props) => {
                                     >
                                         Lưu
                                     </Button>
+                                    <Snackbar
+                                        open={openSubAddCategory}
+                                        autoHideDuration={6000}
+                                        onClose={handleClose}
+                                        anchorOrigin={{
+                                            vertical: 'bottom',
+                                            horizontal: 'right',
+                                        }}
+                                        message={message}
+                                        action={action}
+                                        style={{ bottom: '16px', right: '16px' }}
+                                    />
                                     <Button
                                         color="error"
                                         variant="outlined"

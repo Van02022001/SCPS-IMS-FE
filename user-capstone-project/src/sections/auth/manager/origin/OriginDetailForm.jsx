@@ -1,22 +1,56 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Button, Tab, Tabs, Stack, Grid, TextField, FormControl, Select, MenuItem } from '@mui/material';
+import { Typography, Button, Stack, Grid, TextField, IconButton } from '@mui/material';
 import { deleteOrigins, editOrigins } from '~/data/mutation/origins/origins-mutation';
+
+import Snackbar from '@mui/material/Snackbar';
+import CloseIcon from '@mui/icons-material/Close';
 import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
 import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
 
 const OriginDetailForm = ({ origins, originsId, onClose, isOpen, mode }) => {
-    const [expandedItem, setExpandedItem] = useState(originsId);
+    // const [expandedItem, setExpandedItem] = useState(originsId);
+    const [open, setOpen] = React.useState(false);
     const [formHeight, setFormHeight] = useState(0);
     const [selectedTab, setSelectedTab] = useState(0);
     //thông báo
+    const [message, setMessage] = useState('');
     const [isSuccess, setIsSuccess] = useState(false);
     const [isError, setIsError] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
     const [editedOrigin, setEditedOrigin] = useState(null);
+    //========================== Hàm notification của trang ==================================
+    const handleMessage = (message) => {
+        setOpen(true);
+        // Đặt logic hiển thị nội dung thông báo từ API ở đây
+        if (message === 'Update SubCategory status successfully.') {
+            setMessage('Cập nhập trạng thái danh mục thành công')
+        } else if (message === 'Update SubCategory successfully.') {
+            setMessage('Cập nhập danh mục thành công')
+        }
+    };
 
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpen(false);
+
+    };
+
+    const action = (
+        <React.Fragment>
+            <Button color="secondary" size="small" onClick={handleClose}>
+            </Button>
+            <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
+                <CloseIcon fontSize="lage" />
+            </IconButton>
+        </React.Fragment>
+    );
+    //============================================================
     useEffect(() => {
         if (isOpen) {
             setFormHeight(1000);
@@ -66,6 +100,7 @@ const OriginDetailForm = ({ origins, originsId, onClose, isOpen, mode }) => {
                     setIsSuccess(true);
                     setIsError(false);
                     setSuccessMessage(response.message);
+                    handleMessage(response.message);
                 }
 
                 // Handle the response as needed
@@ -148,13 +183,25 @@ const OriginDetailForm = ({ origins, originsId, onClose, isOpen, mode }) => {
                             <Button variant="contained" color="primary" onClick={updateOrigin}>
                                 Cập nhập
                             </Button>
+                            <Snackbar
+                                open={open}
+                                autoHideDuration={6000}
+                                onClose={handleClose}
+                                anchorOrigin={{
+                                    vertical: 'bottom',
+                                    horizontal: 'right',
+                                }}
+                                message={message}
+                                action={action}
+                                style={{ bottom: '16px', right: '16px' }}
+                            />
                         </Grid>
                     </Stack>
                 </div>
             )}
-            {selectedTab === 1 && (
-                <div style={{ flex: 1 }}>{/* Hiển thị nội dung cho tab "Lịch sử thanh toán" ở đây */}</div>
-            )}
+            {/* {selectedTab === 1 && (
+                <div style={{ flex: 1 }}></div>
+            )} */}
         </div>
     );
 };
