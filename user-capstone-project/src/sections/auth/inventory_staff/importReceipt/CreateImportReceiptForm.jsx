@@ -13,13 +13,23 @@ import {
     Typography,
 } from '@mui/material';
 import { createImportReceipt } from '~/data/mutation/importReceipt/ImportReceipt-mutation';
+import AddLocationsForm from '../item/AddLocationsForm';
 
 const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst }) => {
-
     const [quantities, setQuantities] = useState({});
+    const [openAddCategoryDialog, setOpenAddCategoryDialog] = useState(false);
+    const [dataReceiptDetail, setDataReceiptDetail] = useState('');
 
     const handleQuantityChange = (itemId, value) => {
         setQuantities((prev) => ({ ...prev, [itemId]: value }));
+    };
+
+    const handleOpenAddCategoryDialog = () => {
+        setOpenAddCategoryDialog(true);
+    };
+
+    const handleCloseAddCategoryDialog = () => {
+        setOpenAddCategoryDialog(false);
     };
 
     const handleSendToManager = async () => {
@@ -27,12 +37,17 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst }) => {
             const response = await createImportReceipt(importReceipst.id, quantities);
             // Handle success
             console.log('Response:', response);
-            onCloseForm()
+            if (response.status === '201 CREATED') {
+                setDataReceiptDetail(response.data);
+                handleOpenAddCategoryDialog();
+            }
         } catch (error) {
             // Handle error
             console.error('Error creating import receipt:', error);
         }
     };
+
+    console.log(dataReceiptDetail);
 
     return (
         <>
@@ -98,7 +113,7 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst }) => {
                                             <TableCell>{items.unitName}</TableCell>
                                             <TableCell>
                                                 <TextField
-                                                    style={{ width: "50%" }}
+                                                    style={{ width: '50%' }}
                                                     type="number"
                                                     value={quantities[items.id] || ''}
                                                     onChange={(e) => handleQuantityChange(items.id, e.target.value)}
@@ -107,19 +122,21 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst }) => {
                                             </TableCell>
                                         </TableRow>
                                     ))}
-                                    <div style={{
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        minWidth: 100,
-                                    }}>
+                                    <div
+                                        style={{
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            minWidth: 100,
+                                        }}
+                                    >
                                         <TableBody>
                                             <Typography variant="h6">Thông tin phiếu</Typography>
                                             <TableRow>
-                                                <TableCell >Tổng số lượng:</TableCell>
+                                                <TableCell>Tổng số lượng:</TableCell>
                                                 <TableCell>{importReceipst.totalQuantity}</TableCell>
                                             </TableRow>
                                             <TableRow>
-                                                <TableCell >Tổng tiền:</TableCell>
+                                                <TableCell>Tổng tiền:</TableCell>
                                                 <TableCell>{importReceipst.totalPrice} VND</TableCell>
                                             </TableRow>
                                         </TableBody>
@@ -131,10 +148,15 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst }) => {
                             <Button variant="contained" color="primary" onClick={handleSendToManager}>
                                 Gửi Phiếu
                             </Button>
+                            <AddLocationsForm
+                                open={openAddCategoryDialog}
+                                onClose={handleCloseAddCategoryDialog}
+                                dataReceiptDetail={dataReceiptDetail}
+                                details={dataReceiptDetail.details}
+                            />
                         </Grid>
                     </Card>
                 </DialogContent>
-
             </div>
         </>
     );

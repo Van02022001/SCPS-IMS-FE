@@ -1,12 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { Dialog, DialogTitle, DialogContent, TextField, Button, Select, Typography, Grid, MenuItem, FormControl, InputLabel } from '@mui/material';
+import {
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    TextField,
+    Button,
+    Select,
+    Typography,
+    Grid,
+    MenuItem,
+    FormControl,
+    InputLabel,
+} from '@mui/material';
 
 import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
 import { editItemLocations } from '~/data/mutation/items/item-mutation';
 import { getAllLocation } from '~/data/mutation/location/location-mutation';
 
-const AddLocationsForm = ({ open, onClose, onSave, itemId }) => {
+const AddLocationsForm = ({ open, onClose, dataReceiptDetail }) => {
     const [quantity, setQuantity] = useState('');
     const [toLocation_id, setToLocation_id] = useState([]);
     const [popupOpen, setPopupOpen] = useState(false); // Add state for controlling popup visibility
@@ -17,6 +29,7 @@ const AddLocationsForm = ({ open, onClose, onSave, itemId }) => {
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
+    console.log('Data Receipt Detail in AddLocationsForm:', dataReceiptDetail);
 
     const handleOpenPopup = () => {
         setPopupOpen(true);
@@ -28,6 +41,8 @@ const AddLocationsForm = ({ open, onClose, onSave, itemId }) => {
     };
 
     const updateLocations = async () => {
+        const receiptDetailId = dataReceiptDetail.details[0].id;
+
         const itemLocationsParams = {
             locations: [
                 {
@@ -39,7 +54,7 @@ const AddLocationsForm = ({ open, onClose, onSave, itemId }) => {
         };
 
         try {
-            const response = await editItemLocations(itemId, itemLocationsParams);
+            const response = await editItemLocations(receiptDetailId, itemLocationsParams);
 
             if (response.status === '200 OK') {
                 setIsSuccess(true);
@@ -91,7 +106,7 @@ const AddLocationsForm = ({ open, onClose, onSave, itemId }) => {
     }, [open]);
     return (
         <Dialog open={open} onClose={handleClosePopup}>
-            <DialogTitle>Thêm Địa Chỉ</DialogTitle>
+            <DialogTitle>Hãy Chọn Địa Chỉ Trong Kho</DialogTitle>
             <DialogContent>
                 <Grid
                     direction="row"
@@ -131,7 +146,7 @@ const AddLocationsForm = ({ open, onClose, onSave, itemId }) => {
             </DialogContent>
             <div style={{ padding: '16px' }}>
                 <Button variant="contained" color="primary" onClick={updateLocations}>
-                    lưu
+                    Lưu
                 </Button>
             </div>
         </Dialog>
