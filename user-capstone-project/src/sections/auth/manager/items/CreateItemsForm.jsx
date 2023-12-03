@@ -331,7 +331,7 @@ const CreateItemsForm = (props) => {
                                             sx={{ marginBottom: 4, gap: 5 }}
                                         >
                                             <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
-                                                Xuất xứ:{' '}
+                                                Nguồn gốc:{' '}
                                             </Typography>
                                             <Grid xs={8.5}>
                                                 <Select

@@ -481,7 +481,7 @@ const ItemsInventoryPage = () => {
                     ))}
                 </Select>
             </FormControl>
-            <FormControl sx={{ ml: 75, width: 300 }}>
+            <FormControl sx={{ ml: 72, width: 300 }}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DemoContainer components={['DateRangePicker']}>
                         <DateRangePicker
@@ -562,11 +562,11 @@ const ItemsInventoryPage = () => {
                                                     </Label>
                                                 </TableCell>
 
-                                                <TableCell align="right">
+                                                {/* <TableCell align="right">
                                                     <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
                                                         <Iconify icon={'eva:more-vertical-fill'} />
                                                     </IconButton>
-                                                </TableCell>
+                                                </TableCell> */}
                                             </TableRow>
 
                                             {selectedItemId === item.id && (

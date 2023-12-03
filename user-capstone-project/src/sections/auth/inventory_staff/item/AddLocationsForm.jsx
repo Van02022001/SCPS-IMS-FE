@@ -53,7 +53,9 @@ const AddLocationsForm = ({ open, onClose, onSave, itemId }) => {
             console.error('An error occurred while updating the item:', error);
             setIsError(true);
             setIsSuccess(false);
-            setErrorMessage(error.response.data.message);
+            if (error.response?.data?.message === 'Receipt Detail not found') {
+                setErrorMessage('Không tìm thấy chi tiết phiếu !');
+            }
             if (error.response) {
                 console.log('Error response:', error.response);
             }
