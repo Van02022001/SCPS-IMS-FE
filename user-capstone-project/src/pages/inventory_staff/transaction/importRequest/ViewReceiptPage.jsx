@@ -267,6 +267,15 @@ const ViewReceiptPage = () => {
             });
     }, []);
     console.log(importRequestData);
+
+//==============================* filter *==============================
+    const pendingApprovalItems = importRequestData.filter((importRequest) => importRequest.status === 'Pending_Approval');
+
+    const otherItems = importRequestData.filter((importRequest) => importRequest.status !== 'Pending_Approval');
+
+    const allItems = [...pendingApprovalItems, ...otherItems];
+    //==============================* filter *==============================
+
     return (
         <>
             <Helmet>
@@ -307,7 +316,7 @@ const ViewReceiptPage = () => {
                                 onSelectAllClick={handleSelectAllClick}
                             />
                             <TableBody>
-                                {importRequestData.map((importReceipt) => {
+                                {allItems.map((importReceipt) => {
                                     return (
                                         <React.Fragment key={importReceipt.id}>
                                             <TableRow

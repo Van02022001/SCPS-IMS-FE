@@ -39,6 +39,10 @@ import CategoryForm from '~/sections/auth/manager/subCategory/CreateSubCategoryF
 import { getAllSubCategory } from '~/data/mutation/subCategory/subCategory-mutation';
 import ProductDetailForm from '~/sections/auth/manager/subCategory/SubCategoryDetailForm';
 import EditCategoryForm from '~/sections/auth/manager/categories/EditCategoryForm';
+// filter
+import dayjs from 'dayjs';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 
 
 // ----------------------------------------------------------------------
@@ -264,8 +268,13 @@ const ProductInventoryPage = () => {
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
-                    setProductData(data);
-                    setSortedProduct(data);
+                    const sortedData = data.sort((a, b) => {
+                        return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(
+                            dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
+                        );
+                    });
+                    setProductData(sortedData);
+                    setSortedProduct(sortedData);
                 } else {
                     console.error('API response is not an array:', data);
                 }

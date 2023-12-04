@@ -66,7 +66,7 @@ const TABLE_HEAD = [
     { id: 'name', label: 'Tên sản phẩm', alignRight: false },
     { id: 'description', label: 'Mô tả', alignRight: false },
     { id: 'createdAt', label: 'Ngày tạo', alignRight: false },
-    { id: 'updatedAt', label: 'Ngày cập nhập', alignRight: false },
+    // { id: 'updatedAt', label: 'Ngày cập nhập', alignRight: false },
     { id: 'categories', label: 'Nhóm hàng', alignRight: false },
     { id: 'status', label: 'Trạng thái', alignRight: false },
     { id: '' },
@@ -197,7 +197,7 @@ const SubCategoryPage = () => {
     const handleCreateSubCategorySuccess = (newSubCategory) => {
         // Close the form
         setOpenOderForm(false);
-        setSubCategoryData((prevSubCategoryData) => [...prevSubCategoryData, newSubCategory]);
+        setSubCategoryData((prevSubCategoryData) => [newSubCategory, ...prevSubCategoryData]);
     };
 
     //===========================================================================================
@@ -318,8 +318,13 @@ const SubCategoryPage = () => {
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
-                    setSubCategoryData(data);
-                    setSortedProduct(data);
+                    const sortedData = data.sort((a, b) => {
+                        return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(
+                            dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
+                        );
+                    });
+                    setSubCategoryData(sortedData);
+                    setSortedProduct(sortedData);
                 } else {
                     console.error('API response is not an array:', data);
                 }
@@ -351,7 +356,8 @@ const SubCategoryPage = () => {
             (!Array.isArray(sub_category.categories) && selectedCategories.includes(sub_category.categories.name));
 
         const isDateInRange =
-            (!startDate || dayjs(sub_category.createdAt, 'DD/MM/YYYY HH:mm:ss').isSameOrAfter(dayjs(startDate), 'day')) &&
+            (!startDate ||
+                dayjs(sub_category.createdAt, 'DD/MM/YYYY HH:mm:ss').isSameOrAfter(dayjs(startDate), 'day')) &&
             (!endDate || dayjs(sub_category.createdAt, 'DD/MM/YYYY HH:mm:ss').isSameOrBefore(dayjs(endDate), 'day'));
 
         return isCategoriesMatch && isDateInRange;
@@ -470,8 +476,8 @@ const SubCategoryPage = () => {
                                                         onChange={(event) =>
                                                             handleCheckboxChange(event, sub_category.id)
                                                         }
-                                                    // checked={selectedUser}
-                                                    // onChange={(event) => handleClick(event, name)}
+                                                        // checked={selectedUser}
+                                                        // onChange={(event) => handleClick(event, name)}
                                                     />
                                                 </TableCell>
 
@@ -490,7 +496,7 @@ const SubCategoryPage = () => {
                                                 </TableCell>
                                                 <TableCell align="left">{sub_category.description}</TableCell>
                                                 <TableCell align="left">{sub_category.createdAt}</TableCell>
-                                                <TableCell align="left">{sub_category.updatedAt}</TableCell>
+                                                {/* <TableCell align="left">{sub_category.updatedAt}</TableCell> */}
                                                 <TableCell align="left">
                                                     <Typography variant="subtitle2" noWrap>
                                                         {sub_category.categories.map((category, index) => {

@@ -290,8 +290,13 @@ const ItemsInventoryPage = () => {
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
-                    setItemData(data);
-                    setSortedItem(data);
+                    const sortedData = data.sort((a, b) => {
+                        return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(
+                            dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
+                        );
+                    });
+                    setItemData(sortedData);
+                    setSortedItem(sortedData);
                 } else {
                     console.error('API response is not an array:', data);
                 }

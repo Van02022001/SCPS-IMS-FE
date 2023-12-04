@@ -211,7 +211,6 @@ const RequestReceiptManagerPage = () => {
     // };
 
     const handleSubCategoryClick = (subCategory) => {
-
         if (selectedGoodReceiptId === subCategory.id) {
             setSelectedGoodReceiptId(null); // Đóng nếu đã mở
         } else {
@@ -279,7 +278,6 @@ const RequestReceiptManagerPage = () => {
         setSortedGoodReceipt(filteredUsers);
     };
 
-
     const handleCloseOdersForm = () => {
         setOpenOderForm(false);
     };
@@ -310,12 +308,11 @@ const RequestReceiptManagerPage = () => {
     }, []);
 
     //==============================* filter *==============================
-    const renderedTodoList = goodReceiptData.filter((sub_category) => {
-        if (!selectedFilterOptions || selectedFilterOptions.length === 0) {
-            return true;
-        }
-        return sub_category.categories.some((category) => selectedFilterOptions.includes(category.name));
-    });
+    const pendingApprovalItems = goodReceiptData.filter((importRequest) => importRequest.status === 'Pending_Approval');
+
+    const otherItems = goodReceiptData.filter((importRequest) => importRequest.status !== 'Pending_Approval');
+
+    const allItems = [...pendingApprovalItems, ...otherItems];
     //==============================* filter *==============================
 
     return (
@@ -332,7 +329,7 @@ const RequestReceiptManagerPage = () => {
                 <Button
                     variant="contained"
                     startIcon={<Iconify icon="eva:plus-fill" />}
-                    onClick={() => navigate("/dashboard/create-good-receipt")}
+                    onClick={() => navigate('/dashboard/create-good-receipt')}
                 >
                     Tạo phiếu yêu cầu nhập kho
                 </Button>
@@ -396,7 +393,7 @@ const RequestReceiptManagerPage = () => {
                                 onSelectAllClick={handleSelectAllClick}
                             />
                             <TableBody>
-                                {goodReceiptData.map((importRequest) => {
+                                {allItems.map((importRequest) => {
                                     return (
                                         <React.Fragment key={importRequest.id}>
                                             <TableRow
@@ -410,9 +407,11 @@ const RequestReceiptManagerPage = () => {
                                                 <TableCell padding="checkbox">
                                                     <Checkbox
                                                         checked={selectedGoodReceiptId === importRequest.id}
-                                                        onChange={(event) => handleCheckboxChange(event, importRequest.id)}
-                                                    // checked={selectedUser}
-                                                    // onChange={(event) => handleClick(event, name)}
+                                                        onChange={(event) =>
+                                                            handleCheckboxChange(event, importRequest.id)
+                                                        }
+                                                        // checked={selectedUser}
+                                                        // onChange={(event) => handleClick(event, name)}
                                                     />
                                                 </TableCell>
 
@@ -442,7 +441,8 @@ const RequestReceiptManagerPage = () => {
                                                 <TableCell align="left">
                                                     <Label
                                                         color={
-                                                            (importRequest.status === 'Pending_Approval' && 'warning') ||
+                                                            (importRequest.status === 'Pending_Approval' &&
+                                                                'warning') ||
                                                             (importRequest.status === 'Approved' && 'success') ||
                                                             (importRequest.status === ' IN_PROGRESS' && 'warning') ||
                                                             (importRequest.status === 'Complete' && 'primary') ||
@@ -453,12 +453,12 @@ const RequestReceiptManagerPage = () => {
                                                         {importRequest.status === 'Pending_Approval'
                                                             ? 'Chờ phê duyệt'
                                                             : importRequest.status === 'Approved'
-                                                                ? 'Đã xác nhận'
-                                                                : importRequest.status === 'IN_PROGRESS'
-                                                                    ? 'Đang tiến hành'
-                                                                    : importRequest.status === 'Complete'
-                                                                        ? 'Hoàn thành'
-                                                                        : 'Ngừng hoạt động'}
+                                                            ? 'Đã xác nhận'
+                                                            : importRequest.status === 'IN_PROGRESS'
+                                                            ? 'Đang tiến hành'
+                                                            : importRequest.status === 'Complete'
+                                                            ? 'Hoàn thành'
+                                                            : 'Ngừng hoạt động'}
                                                     </Label>
                                                 </TableCell>
                                             </TableRow>
@@ -471,7 +471,9 @@ const RequestReceiptManagerPage = () => {
                                                             goodReceiptStatus={goodReceiptStatus}
                                                             goodReceiptId={selectedGoodReceiptId}
                                                             updateGoodReceiptInList={updateGoodReceiptInList}
-                                                            updateGoodReceiptStatusInList={updateGoodReceiptStatusInList}
+                                                            updateGoodReceiptStatusInList={
+                                                                updateGoodReceiptStatusInList
+                                                            }
                                                             onClose={handleCloseSubCategoryDetails}
                                                         />
                                                     </TableCell>
@@ -524,7 +526,6 @@ const RequestReceiptManagerPage = () => {
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </Card>
-
         </>
     );
 };

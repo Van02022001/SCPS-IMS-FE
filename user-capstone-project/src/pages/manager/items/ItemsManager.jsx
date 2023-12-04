@@ -273,7 +273,7 @@ const ItemsManagerPage = () => {
     const handleCreateItemsSuccess = (newItems) => {
         // Close the form
         setOpenOderForm(false);
-        setItemData((prevItemsData) => [...prevItemsData, newItems]);
+        setItemData((prevItemsData) => [newItems, ...prevItemsData]);
     };
     //===========================================================================================
 
@@ -288,8 +288,13 @@ const ItemsManagerPage = () => {
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
-                    setItemData(data);
-                    setSortedItem(data);
+                    const sortedData = data.sort((a, b) => {
+                        return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(
+                            dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
+                        );
+                    });
+                    setItemData(sortedData);
+                    setSortedItem(sortedData);
                 } else {
                     console.error('API response is not an array:', data);
                 }
@@ -519,11 +524,7 @@ const ItemsManagerPage = () => {
             {/* ===========================================filter=========================================== */}
 
             <Card>
-                <ItemsToolbar
-                    numSelected={selected.length}
-                    filterName={filterName}
-                    onFilterName={handleFilterByName}
-                />
+                <ItemsToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
 
                 <Scrollbar>
                     <TableContainer sx={{ minWidth: 800 }}>
@@ -553,8 +554,8 @@ const ItemsManagerPage = () => {
                                                     <Checkbox
                                                         checked={selectedItemId === item.id}
                                                         onChange={(event) => handleCheckboxChange(event, item.id)}
-                                                    // checked={selectedUser}
-                                                    // onChange={(event) => handleClick(event, name)}
+                                                        // checked={selectedUser}
+                                                        // onChange={(event) => handleClick(event, name)}
                                                     />
                                                 </TableCell>
 
