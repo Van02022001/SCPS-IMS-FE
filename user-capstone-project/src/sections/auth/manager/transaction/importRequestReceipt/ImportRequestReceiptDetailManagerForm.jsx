@@ -32,9 +32,9 @@ import ErrorAlerts from '~/components/alert/ErrorAlert';
 
 
 
-const ImportReceiptDetailManagerForm = ({
-    importReceipt,
-    importReceiptId,
+const ImportRequestReceiptDetailManagerForm = ({
+    importRequestReceipt,
+    importRequestReceiptId,
     updateImportReceiptInList,
     updateImportReceiptConfirmInList,
     onClose,
@@ -153,7 +153,7 @@ const ImportReceiptDetailManagerForm = ({
                 ]
             });
         } else {
-            const importReceipst = importReceipt.find((o) => o.id === importReceiptId);
+            const importReceipst = importRequestReceipt.find((o) => o.id === importRequestReceiptId);
             console.log(importReceipst);
             if (importReceipst) {
 
@@ -178,7 +178,7 @@ const ImportReceiptDetailManagerForm = ({
                 console.log(importRecieptParams);
             }
         }
-    }, [importReceiptId, importReceipt, mode]);
+    }, [importRequestReceiptId, importRequestReceipt, mode]);
 
 
     // useEffect(() => {
@@ -205,7 +205,7 @@ const ImportReceiptDetailManagerForm = ({
     //     }
     // }, []);
     //===================================================== Những hàm update thay đổi data =====================================================
-    const importReceipst = importReceipt.find((o) => o.id === importReceiptId);
+    const importReceipst = importRequestReceipt.find((o) => o.id === importRequestReceiptId);
 
     if (!importReceipst) {
         return null;
@@ -216,7 +216,7 @@ const ImportReceiptDetailManagerForm = ({
             return;
         }
         try {
-            const response = await editImportReceipt(importReceiptId, editedImportReceipt);
+            const response = await editImportReceipt(importRequestReceiptId, editedImportReceipt);
 
             if (response.status === '200 OK') {
                 setIsSuccess(true);
@@ -244,7 +244,7 @@ const ImportReceiptDetailManagerForm = ({
         try {
             let newStatus = currentStatus === 'Pending_Approval' ? 'Inactive' : 'Approved';
 
-            const response = await editImportReceiptConfirm(importReceiptId, newStatus);
+            const response = await editImportReceiptConfirm(importRequestReceiptId, newStatus);
 
             if (response.status === '200 OK') {
                 setIsSuccess(true);
@@ -253,7 +253,7 @@ const ImportReceiptDetailManagerForm = ({
                 handleMessage(response.message);
             }
 
-            updateImportReceiptConfirmInList(importReceiptId, newStatus);
+            updateImportReceiptConfirmInList(importRequestReceiptId, newStatus);
             setCurrentStatus(newStatus);
 
             console.log('Product status updated:', response);
@@ -271,7 +271,7 @@ const ImportReceiptDetailManagerForm = ({
         try {
             let newStatus = currentStatus === 'Approved' ? 'Inactive' : 'Completed';
 
-            const response = await editReceiptStartImport(importReceiptId, newStatus);
+            const response = await editReceiptStartImport(importRequestReceiptId, newStatus);
 
             if (response.status === '200 OK') {
                 setIsSuccess(true);
@@ -280,7 +280,7 @@ const ImportReceiptDetailManagerForm = ({
                 handleMessage(response.message);
             }
 
-            updateImportReceiptConfirmInList(importReceiptId, newStatus);
+            updateImportReceiptConfirmInList(importRequestReceiptId, newStatus);
             setCurrentStatus(newStatus);
 
             console.log('Product status updated:', response);
@@ -295,7 +295,7 @@ const ImportReceiptDetailManagerForm = ({
         }
     };
     const handleOpenForm = () => {
-        const validImportReceipst = importReceipt.find((o) => o.id === importReceiptId);
+        const validImportReceipst = importRequestReceipt.find((o) => o.id === importRequestReceiptId);
 
         if (validImportReceipst && validImportReceipst.status === 'IN_PROGRESS') {
             setIsOpenImportForm(true);
@@ -317,7 +317,7 @@ const ImportReceiptDetailManagerForm = ({
 
             console.log(validImportReceipst);
         } else {
-            console.error("Không tìm thấy dữ liệu hợp lệ cho importReceiptId: ", importReceiptId);
+            console.error("Không tìm thấy dữ liệu hợp lệ cho importReceiptId: ", importRequestReceiptId);
         }
     };
     const handleCloseForm = () => {
@@ -627,4 +627,4 @@ const ImportReceiptDetailManagerForm = ({
     ) : null;
 };
 
-export default ImportReceiptDetailManagerForm;
+export default ImportRequestReceiptDetailManagerForm;

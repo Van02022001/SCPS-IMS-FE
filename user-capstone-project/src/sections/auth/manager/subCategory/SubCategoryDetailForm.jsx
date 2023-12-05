@@ -17,6 +17,11 @@ import {
     TableBody,
     TableRow,
     TableCell,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogContentText,
+    DialogActions,
 } from '@mui/material';
 // icons
 // import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
@@ -71,6 +76,8 @@ const SubCategoryDetailForm = ({
     const [openAddSubCategoryMetaForm, setOpenAddSubCategoryMetaForm] = useState(false);
 
     //thông báo
+    const [confirmOpen, setConfirmOpen] = useState(false);
+
     const [isSuccess, setIsSuccess] = useState(false);
     const [isError, setIsError] = useState(false);
     const [message, setMessage] = useState('');
@@ -106,6 +113,22 @@ const SubCategoryDetailForm = ({
             </IconButton>
         </React.Fragment>
     );
+    const handleConfirmClose = () => {
+        setConfirmOpen(false);
+    };
+
+    const handleConfirmUpdate = () => {
+        setConfirmOpen(false);
+        updateSubCategory();
+    };
+    const handleConfirmUpdateStatus = () => {
+        setConfirmOpen(false);
+        updateSubCategoryStatus();
+    };
+
+    const handleConfirm = () => {
+        setConfirmOpen(true);
+    };
 
     const handleTab1DataChange = (event) => {
         // Cập nhật dữ liệu cho tab 1 tại đây
@@ -688,14 +711,44 @@ const SubCategoryDetailForm = ({
                                 variant="contained"
                                 color="primary"
                                 startIcon={<SaveIcon />}
-                                onClick={updateSubCategory}
+                                onClick={handleConfirm}
                             >
                                 Cập nhật
                             </Button>
+                            {/* Thông báo confirm */}
+                            <Dialog open={confirmOpen} onClose={handleConfirmClose}>
+                                <DialogTitle>Thông báo!</DialogTitle>
+                                <DialogContent>
+                                    <DialogContentText>Bạn có chắc muốn cập nhật không?</DialogContentText>
+                                </DialogContent>
+                                <DialogActions>
+                                    <Button onClick={handleConfirmClose} color="primary">
+                                        Hủy
+                                    </Button>
+                                    <Button onClick={handleConfirmUpdate} color="primary" autoFocus>
+                                        Xác nhận
+                                    </Button>
+                                </DialogActions>
+                            </Dialog>
                             <div>
-                                <Button variant="contained" color="error" onClick={updateSubCategoryStatus}>
+                                <Button variant="contained" color="error" onClick={handleConfirm}>
                                     Thay đổi trạng thái
                                 </Button>
+                                {/* Thông báo confirm */}
+                                <Dialog open={confirmOpen} onClose={handleConfirmClose}>
+                                    <DialogTitle>Thông báo!</DialogTitle>
+                                    <DialogContent>
+                                        <DialogContentText>Bạn có chắc muốn cập nhật không?</DialogContentText>
+                                    </DialogContent>
+                                    <DialogActions>
+                                        <Button onClick={handleConfirmClose} color="primary">
+                                            Hủy
+                                        </Button>
+                                        <Button onClick={handleConfirmUpdate} color="primary" autoFocus>
+                                            Xác nhận
+                                        </Button>
+                                    </DialogActions>
+                                </Dialog>
                                 <Snackbar
                                     open={open}
                                     autoHideDuration={6000}

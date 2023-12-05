@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Button, Stack, Grid, TextField, IconButton } from '@mui/material';
+import { Typography, Button, Stack, Grid, TextField, IconButton, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
 import { deleteOrigins, editOrigins } from '~/data/mutation/origins/origins-mutation';
 
 import Snackbar from '@mui/material/Snackbar';
@@ -14,6 +14,8 @@ const OriginDetailForm = ({ origins, originsId, onClose, isOpen, mode }) => {
     const [formHeight, setFormHeight] = useState(0);
     const [selectedTab, setSelectedTab] = useState(0);
     //thông báo
+    const [confirmOpen, setConfirmOpen] = useState(false);
+
     const [message, setMessage] = useState('');
     const [isSuccess, setIsSuccess] = useState(false);
     const [isError, setIsError] = useState(false);
@@ -39,6 +41,18 @@ const OriginDetailForm = ({ origins, originsId, onClose, isOpen, mode }) => {
 
         setOpen(false);
 
+    };
+    const handleConfirmClose = () => {
+        setConfirmOpen(false);
+    };
+
+    const handleConfirmUpdate = () => {
+        setConfirmOpen(false);
+        updateOrigin();
+    };
+
+    const handleConfirm = () => {
+        setConfirmOpen(true);
     };
 
     const action = (
@@ -180,9 +194,25 @@ const OriginDetailForm = ({ origins, originsId, onClose, isOpen, mode }) => {
                     {isError && <ErrorAlerts errorMessage={errorMessage} />}
                     <Stack spacing={4} margin={2}>
                         <Grid container spacing={1} sx={{ gap: '10px' }}>
-                            <Button variant="contained" color="primary" onClick={updateOrigin}>
+                            <Button variant="contained" color="primary" onClick={handleConfirm}>
                                 Cập nhập
                             </Button>
+                            {/* Thông báo confirm */}
+                            <Dialog open={confirmOpen} onClose={handleConfirmClose}>
+                                <DialogTitle>Thông báo!</DialogTitle>
+                                <DialogContent>
+                                    <DialogContentText>Bạn có chắc muốn cập nhật không?</DialogContentText>
+                                </DialogContent>
+                                <DialogActions>
+                                    <Button onClick={handleConfirmClose} color="primary">
+                                        Hủy
+                                    </Button>
+                                    <Button onClick={handleConfirmUpdate} color="primary" autoFocus>
+                                        Xác nhận
+                                    </Button>
+                                </DialogActions>
+                            </Dialog>
+                            {/* notificaiton */}
                             <Snackbar
                                 open={open}
                                 autoHideDuration={6000}

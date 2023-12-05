@@ -16,6 +16,11 @@ import {
     Table,
     Select,
     MenuItem,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogContentText,
+    DialogActions,
 } from '@mui/material';
 
 // import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
@@ -47,11 +52,29 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
     const [openAddCategoryDialog, setOpenAddCategoryDialog] = useState(false);
 
     //thông báo
+    const [confirmOpen, setConfirmOpen] = useState(false);
+
     const [isSuccess, setIsSuccess] = useState(false);
     const [isError, setIsError] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
+    const handleConfirmClose = () => {
+        setConfirmOpen(false);
+    };
+
+    const handleConfirmUpdate = () => {
+        setConfirmOpen(false);
+        updateItems();
+    };
+    const handleConfirmUpdateStatus = () => {
+        setConfirmOpen(false);
+        updateItemStatus();
+    };
+
+    const handleConfirm = () => {
+        setConfirmOpen(true);
+    };
     useEffect(() => {
         if (isOpen) {
             setFormHeight(1000);
@@ -599,9 +622,39 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                 <Button variant="contained" color="primary" onClick={updateItems}>
                                     Cập nhật
                                 </Button>
+                                {/* Thông báo confirm */}
+                                <Dialog open={confirmOpen} onClose={handleConfirmClose}>
+                                    <DialogTitle>Thông báo!</DialogTitle>
+                                    <DialogContent>
+                                        <DialogContentText>Bạn có chắc muốn cập nhật không?</DialogContentText>
+                                    </DialogContent>
+                                    <DialogActions>
+                                        <Button onClick={handleConfirmClose} color="primary">
+                                            Hủy
+                                        </Button>
+                                        <Button onClick={handleConfirmUpdateStatus} color="primary" autoFocus>
+                                            Xác nhận
+                                        </Button>
+                                    </DialogActions>
+                                </Dialog>
                                 <Button variant="contained" color="error" onClick={updateItemStatus}>
                                     Thay đổi trạng thái
                                 </Button>
+                                {/* Thông báo confirm */}
+                                <Dialog open={confirmOpen} onClose={handleConfirmClose}>
+                                    <DialogTitle>Thông báo!</DialogTitle>
+                                    <DialogContent>
+                                        <DialogContentText>Bạn có chắc muốn cập nhật không?</DialogContentText>
+                                    </DialogContent>
+                                    <DialogActions>
+                                        <Button onClick={handleConfirmClose} color="primary">
+                                            Hủy
+                                        </Button>
+                                        <Button onClick={handleConfirmUpdateStatus} color="primary" autoFocus>
+                                            Xác nhận
+                                        </Button>
+                                    </DialogActions>
+                                </Dialog>
                             </Grid>
                         </Stack>
                     </div>

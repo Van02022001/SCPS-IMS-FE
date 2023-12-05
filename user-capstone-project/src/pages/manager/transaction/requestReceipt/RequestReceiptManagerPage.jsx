@@ -10,7 +10,6 @@ import {
     Paper,
     Avatar,
     Button,
-    Popover,
     Checkbox,
     TableRow,
     TableBody,
@@ -34,12 +33,13 @@ import { SubCategoryListHead, SubCategoryToolbar } from '~/sections/@dashboard/m
 import PRODUCTSLIST from '../../../../_mock/products';
 import { useNavigate } from 'react-router-dom';
 // api
-
-import SubCategoryDetailForm from '~/sections/auth/manager/subCategory/SubCategoryDetailForm';
+import ImportRequestReceiptDetailManagerForm from '~/sections/auth/manager/transaction/importRequestReceipt/ImportRequestReceiptDetailManagerForm';
 //icons
+
 // import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import CreateGoodReceipt from './CreateGoodReceipt';
 import { getAllImportRequest } from '~/data/mutation/importRequestReceipt/ImportRequestReceipt-mutation';
+
 
 // ----------------------------------------------------------------------
 
@@ -128,10 +128,8 @@ const RequestReceiptManagerPage = () => {
     // Search data
     const [displayedGoodReceiptData, setDisplayedGoodReceiptData] = useState([]);
     // State data và xử lý data
-    const [goodReceiptData, setGoodReceiptData] = useState([]);
-    const [goodReceiptStatus, setGoodReceiptStatus] = useState('');
-
-    const [selectedGoodReceipt, setSelectedGoodReceipt] = useState(null);
+    const [importRequestData, setImportRequestData] = useState([]);
+    const [importRequestStatus, setImportRequestStatus] = useState('');
 
     const [filteredCategory, setFilteredCategory] = useState(null);
 
@@ -151,36 +149,36 @@ const RequestReceiptManagerPage = () => {
 
     // ========================== Hàm để thay đổi data mỗi khi Edit xong api=======================================
     const updateGoodReceiptInList = (updatedGoodReceipt) => {
-        const goodReceiptIndex = goodReceiptData.findIndex((good_receipt) => good_receipt.id === updatedGoodReceipt.id);
+        const importRquestReceiptIndex = importRequestData.findIndex((good_receipt) => good_receipt.id === updatedGoodReceipt.id);
 
-        if (goodReceiptIndex !== -1) {
-            const UpdatedGoodReceipt = [...goodReceiptData];
-            UpdatedGoodReceipt[goodReceiptIndex] = UpdatedGoodReceipt;
+        if (importRquestReceiptIndex !== -1) {
+            const UpdatedGoodReceipt = [...importRequestData];
+            UpdatedGoodReceipt[importRquestReceiptIndex] = UpdatedGoodReceipt;
 
-            setGoodReceiptData(UpdatedGoodReceipt);
+            setImportRequestData(UpdatedGoodReceipt);
         }
     };
 
     const updateGoodReceiptStatusInList = (goodReceiptId, newStatus) => {
-        const goodReceiptIndex = goodReceiptData.findIndex((good_receipt) => good_receipt.id === goodReceiptId);
+        const importRquestReceiptIndex = importRequestData.findIndex((good_receipt) => good_receipt.id === goodReceiptId);
 
-        if (goodReceiptIndex !== -1) {
-            const UpdatedGoodReceipt = [...goodReceiptData];
-            UpdatedGoodReceipt[goodReceiptIndex].status = newStatus;
+        if (importRquestReceiptIndex !== -1) {
+            const UpdatedGoodReceipt = [...importRequestData];
+            UpdatedGoodReceipt[importRquestReceiptIndex].status = newStatus;
 
-            setGoodReceiptData(UpdatedGoodReceipt);
+            setImportRequestData(UpdatedGoodReceipt);
         }
     };
 
     const handleCreateGoodReceiptSuccess = (newGoodReceipt) => {
         // Close the form
         setOpenOderForm(false);
-        setGoodReceiptData((prevGoodReceiptData) => [...prevGoodReceiptData, newGoodReceipt]);
+        setImportRequestData((prevGoodReceiptData) => [...prevGoodReceiptData, newGoodReceipt]);
     };
 
     const handleDataSearch = (searchResult) => {
         // Cập nhật state của trang chính với dữ liệu từ tìm kiếm
-        setGoodReceiptData(searchResult);
+        setImportRequestData(searchResult);
         setDisplayedGoodReceiptData(searchResult);
         console.log(displayedGoodReceiptData);
     };
@@ -234,7 +232,7 @@ const RequestReceiptManagerPage = () => {
     //=========================================== Các hàm xử lý soft theo name===========================================
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelecteds = goodReceiptData.map((n) => n.name);
+            const newSelecteds = importRequestData.map((n) => n.name);
             setSelected(newSelecteds);
             return;
         }
@@ -255,7 +253,7 @@ const RequestReceiptManagerPage = () => {
         setOrder(isAsc ? 'desc' : 'asc');
         setOrderBy(property);
         // Sắp xếp danh sách sản phẩm dựa trên trường và hướng đã chọn
-        const sortedGoodReceipt = [...goodReceiptData].sort((a, b) => {
+        const sortedGoodReceipt = [...importRequestData].sort((a, b) => {
             const valueA = a[property];
             const valueB = b[property];
             if (valueA < valueB) {
@@ -297,7 +295,7 @@ const RequestReceiptManagerPage = () => {
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
-                    setGoodReceiptData(data);
+                    setImportRequestData(data);
                 } else {
                     console.error('API response is not an array:', data);
                 }
@@ -308,9 +306,9 @@ const RequestReceiptManagerPage = () => {
     }, []);
 
     //==============================* filter *==============================
-    const pendingApprovalItems = goodReceiptData.filter((importRequest) => importRequest.status === 'Pending_Approval');
+    const pendingApprovalItems = importRequestData.filter((importRequest) => importRequest.status === 'Pending_Approval');
 
-    const otherItems = goodReceiptData.filter((importRequest) => importRequest.status !== 'Pending_Approval');
+    const otherItems = importRequestData.filter((importRequest) => importRequest.status !== 'Pending_Approval');
 
     const allItems = [...pendingApprovalItems, ...otherItems];
     //==============================* filter *==============================
@@ -387,7 +385,7 @@ const RequestReceiptManagerPage = () => {
                                 order={order}
                                 orderBy={orderBy}
                                 headLabel={TABLE_HEAD}
-                                rowCount={goodReceiptData.length}
+                                rowCount={importRequestData.length}
                                 numSelected={selected.length}
                                 onRequestSort={handleRequestSort}
                                 onSelectAllClick={handleSelectAllClick}
@@ -451,12 +449,12 @@ const RequestReceiptManagerPage = () => {
                                                         {importRequest.status === 'Pending_Approval'
                                                             ? 'Chờ phê duyệt'
                                                             : importRequest.status === 'Approved'
-                                                            ? 'Đã xác nhận'
-                                                            : importRequest.status === 'IN_PROGRESS'
-                                                            ? 'Đang tiến hành'
-                                                            : importRequest.status === 'Complete'
-                                                            ? 'Hoàn thành'
-                                                            : 'Ngừng hoạt động'}
+                                                                ? 'Đã xác nhận'
+                                                                : importRequest.status === 'IN_PROGRESS'
+                                                                    ? 'Đang tiến hành'
+                                                                    : importRequest.status === 'Complete'
+                                                                        ? 'Hoàn thành'
+                                                                        : 'Ngừng hoạt động'}
                                                     </Label>
                                                 </TableCell>
                                             </TableRow>
@@ -464,10 +462,10 @@ const RequestReceiptManagerPage = () => {
                                             {selectedGoodReceiptId === importRequest.id && (
                                                 <TableRow>
                                                     <TableCell colSpan={8}>
-                                                        <SubCategoryDetailForm
-                                                            goodReceipt={goodReceiptData}
-                                                            goodReceiptStatus={goodReceiptStatus}
-                                                            goodReceiptId={selectedGoodReceiptId}
+                                                        <ImportRequestReceiptDetailManagerForm
+                                                            importRequestReceipt={importRequestData}
+                                                            importRequestReceiptStatus={importRequestStatus}
+                                                            importRequestReceiptId={selectedGoodReceiptId}
                                                             updateGoodReceiptInList={updateGoodReceiptInList}
                                                             updateGoodReceiptStatusInList={
                                                                 updateGoodReceiptStatusInList
