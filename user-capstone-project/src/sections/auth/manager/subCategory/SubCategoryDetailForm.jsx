@@ -87,7 +87,7 @@ const SubCategoryDetailForm = ({
     const handleMessage = (message) => {
         setOpen(true);
         // Đặt logic hiển thị nội dung thông báo từ API ở đây
-        if (message === 'Update SubCategory status successfully.') {
+        if (message === 'Update sub category status successfully.') {
             setMessage('Cập nhập trạng thái danh mục thành công')
         } else if (message === 'Update SubCategory successfully.') {
             setMessage('Cập nhập danh mục thành công')
@@ -744,7 +744,7 @@ const SubCategoryDetailForm = ({
                                         <Button onClick={handleConfirmClose} color="primary">
                                             Hủy
                                         </Button>
-                                        <Button onClick={handleConfirmUpdate} color="primary" autoFocus>
+                                        <Button onClick={handleConfirmUpdateStatus} color="primary" autoFocus>
                                             Xác nhận
                                         </Button>
                                     </DialogActions>

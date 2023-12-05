@@ -144,9 +144,8 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
             })
             .catch((error) => console.error('Error fetching Items:', error));
     }, []);
-    console.log(sub_category_id);
+
     const item = items.find((o) => o.id === itemId);
-    console.log(item);
 
     if (!item) {
         return null;

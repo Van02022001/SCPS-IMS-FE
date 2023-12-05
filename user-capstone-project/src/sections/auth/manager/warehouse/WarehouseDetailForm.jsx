@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Button, Tab, Tabs, Stack, Grid, TextField, FormControl, Select, MenuItem } from '@mui/material';
+import { Typography, Button, Tab, Tabs, Stack, Grid, TextField, FormControl, Select, MenuItem, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
 import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
 import { editWarehouse } from '~/data/mutation/warehouse/warehouse-mutation';
@@ -17,6 +17,7 @@ const WarehouseDetailForm = ({
     const [formHeight, setFormHeight] = useState(0);
     const [selectedTab, setSelectedTab] = useState(0);
     //thông báo
+    const [confirmOpen, setConfirmOpen] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
     const [isError, setIsError] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
@@ -24,6 +25,23 @@ const WarehouseDetailForm = ({
 
     const [editedWarehouse, setEditedWarehouse] = useState(null);
     const [currentStatus, setCurrentStatus] = useState('');
+
+    const handleConfirmClose = () => {
+        setConfirmOpen(false);
+    };
+
+    const handleConfirmUpdate = () => {
+        setConfirmOpen(false);
+        updateWarehouse();
+    };
+    const handleConfirmUpdateStatus = () => {
+        setConfirmOpen(false);
+    };
+
+    const handleConfirm = () => {
+        setConfirmOpen(true);
+    };
+
 
     useEffect(() => {
         if (isOpen) {
@@ -198,9 +216,24 @@ const WarehouseDetailForm = ({
                     </Stack>
                     {isSuccess && <SuccessAlerts />}
                     {isError && <ErrorAlerts errorMessage={errorMessage} />}
-                    <Button variant="contained" color="primary" onClick={updateWarehouse}>
+                    <Button variant="contained" color="primary" onClick={handleConfirm}>
                         Cập nhập
                     </Button>
+                    {/* Thông báo confirm */}
+                    <Dialog open={confirmOpen} onClose={handleConfirmClose}>
+                        <DialogTitle>Thông báo!</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText>Bạn có chắc muốn cập nhật không?</DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleConfirmClose} color="primary">
+                                Hủy
+                            </Button>
+                            <Button onClick={handleConfirmUpdate} color="primary" autoFocus>
+                                Xác nhận
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
                 </div>
             )}
             {selectedTab === 1 && (

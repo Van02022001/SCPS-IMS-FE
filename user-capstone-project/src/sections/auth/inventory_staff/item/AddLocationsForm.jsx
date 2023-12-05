@@ -24,7 +24,7 @@ import { editItemLocations } from '~/data/mutation/items/item-mutation';
 import { getAllLocation } from '~/data/mutation/location/location-mutation';
 import InventorySelection from './InventorySelection';
 
-const AddLocationsForm = ({ open, onClose, dataReceiptDetail }) => {
+const AddLocationsForm = ({ itemId, open, onClose, dataReceiptDetail }) => {
     const [quantity, setQuantity] = useState('');
     const [toLocation_id, setToLocation_id] = useState([]);
     const [selectedLocationId, setSelectedLocationId] = useState('');
@@ -271,7 +271,7 @@ const AddLocationsForm = ({ open, onClose, dataReceiptDetail }) => {
                     </Button>
                 </div>
             )} */}
-                {!showLocationSelection && (
+                {/* {!showLocationSelection && (
                     <div style={{ padding: '16px' }}>
                         <Button
                             variant="contained"
@@ -282,12 +282,12 @@ const AddLocationsForm = ({ open, onClose, dataReceiptDetail }) => {
                         >
                             Chọn vị trí
                         </Button>
-                        {/* <InventorySelection
+                        <InventorySelection
                             open={openSelectLocationDialog}
                             onClose={handleCloseSelectLocationDialog}
-                        /> */}
+                        />
                     </div>
-                )}
+                )} */}
                 {/* Button to update locations */}
                 {showLocationSelection && (
                     <div style={{ padding: '16px' }}>

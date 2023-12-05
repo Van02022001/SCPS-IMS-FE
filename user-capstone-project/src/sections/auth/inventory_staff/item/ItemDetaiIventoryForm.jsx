@@ -136,7 +136,7 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
             })
             .catch((error) => console.error('Error fetching Items:', error));
     }, []);
-    console.log(sub_category_id);
+
     const item = items.find((o) => o.id === itemId);
     console.log(item);
 
@@ -438,7 +438,7 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                                 )
                                                 .join(',\n')}
                                         />
-                                        <Button
+                                        {/* <Button
                                             variant="outlined"
                                             sx={{ padding: 0.8, minWidth: 0, maxHeight: 40 }}
                                             onClick={handleOpenAddCategoryDialog}
@@ -449,7 +449,7 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                             open={openAddCategoryDialog}
                                             onClose={handleCloseAddCategoryDialog}
                                             itemId={itemId}
-                                        />
+                                        /> */}
                                     </div>
                                 </Grid>
                                 <Grid
