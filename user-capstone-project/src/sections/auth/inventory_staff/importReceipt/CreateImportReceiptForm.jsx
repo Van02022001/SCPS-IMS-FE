@@ -18,7 +18,7 @@ import AddLocationsForm from '../item/AddLocationsForm';
 const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst }) => {
     const [quantities, setQuantities] = useState({});
     const [openAddCategoryDialog, setOpenAddCategoryDialog] = useState(false);
-    const [dataReceiptDetail, setDataReceiptDetail] = useState('');
+    const [dataReceiptDetail, setDataReceiptDetail] = useState({});
 
     const handleQuantityChange = (itemId, value) => {
         setQuantities((prev) => ({ ...prev, [itemId]: value }));
@@ -35,8 +35,10 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst }) => {
     const handleSendToManager = async () => {
         try {
             const response = await createImportReceipt(importReceipst.id, quantities);
+
             // Handle success
             console.log('Response:', response);
+
             if (response.status === '201 CREATED') {
                 setDataReceiptDetail(response.data);
                 handleOpenAddCategoryDialog();
@@ -46,7 +48,6 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst }) => {
             console.error('Error creating import receipt:', error);
         }
     };
-
     console.log(dataReceiptDetail);
 
     return (

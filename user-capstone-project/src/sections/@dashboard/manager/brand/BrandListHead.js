@@ -54,6 +54,8 @@ export default function BrandListHead({
             key={headCell.id}
             align={headCell.alignRight ? 'right' : 'left'}
             sortDirection={orderBy === headCell.id ? order : false}
+            padding={headCell.disablePadding ? 'none' : 'normal'}
+            width={headCell.id === 'name' || headCell.id === 'description' ? '250px' : undefined}
           >
             <TableSortLabel
               hideSortIcon

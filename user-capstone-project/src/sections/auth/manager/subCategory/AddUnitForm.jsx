@@ -67,7 +67,8 @@ const AddUnitForm = ({ open, onClose, onSave }) => {
                 setIsSuccess(true);
                 setIsError(false);
                 setSuccessMessage(response.message);
-                console.log(response);
+
+                handleMessage(response.message)
                 onSave && onSave();
                 // Đóng form
                 onClose && onClose();

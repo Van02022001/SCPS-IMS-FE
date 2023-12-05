@@ -331,9 +331,9 @@ const ImportReceiptManagerPage = () => {
                                                 <TableCell padding="checkbox">
                                                     <Checkbox
                                                         checked={selectedImportReceiptId === importReceipt.id}
-                                                        onChange={(event) => handleCheckboxChange(event, importReceipt.id)}
-                                                    // checked={selectedUser}
-                                                    // onChange={(event) => handleClick(event, name)}
+                                                        // onChange={(event) => handleCheckboxChange(event, importReceipt.id)}
+                                                        // checked={selectedUser}
+                                                        onChange={(event) => handleClick(event, importReceipt.code)}
                                                     />
                                                 </TableCell>
 

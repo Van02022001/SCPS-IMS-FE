@@ -39,7 +39,7 @@ import CreateOriginForm from '~/sections/auth/manager/origin/CreateOriginForm';
 
 // ----------------------------------------------------------------------
 
-const TABLE_HEAD = [{ id: 'name', label: 'Tên', alignRight: false },];
+const TABLE_HEAD = [{ id: 'name', label: 'Tên nguồn', alignRight: false },];
 
 // ----------------------------------------------------------------------
 
@@ -149,9 +149,9 @@ const OriginPage = () => {
     const handleOriginClick = (origin) => {
         if (selectedOriginId === origin.id) {
             console.log(selectedOriginId);
-            setSelectedOriginId(null); // Đóng nếu đã mở
+            setSelectedOriginId(null);
         } else {
-            setSelectedOriginId(origin.id); // Mở hoặc chuyển sang hóa đơn khác
+            setSelectedOriginId(origin.id);
         }
     };
 
@@ -161,18 +161,7 @@ const OriginPage = () => {
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
-    };
-
-    const handleChangeRowsPerPage = (event) => {
-        setPage(0);
-        setRowsPerPage(parseInt(event.target.value, 10));
-    };
-
-    const handleFilterByName = (event) => {
-        setPage(0);
-        setFilterName(event.target.value);
-    };
-
+    }
     const handleCloseOdersForm = () => {
         setOpenCreateOriginForm(false);
     };
@@ -182,9 +171,20 @@ const OriginPage = () => {
         setOpenCreateOriginForm(false);
         setOriginData((prevOriginData) => [...prevOriginData, newOrigin]);
     };
-    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
+    //=========================Phân trang số lượng==========================
+    const handleChangeRowsPerPage = (event) => {
+        setPage(0);
+        setRowsPerPage(parseInt(event.target.value, 10));
+    };
 
-    const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
+    const handleFilterByName = (event) => {
+        setPage(0);
+        setFilterName(event.target.value);
+    };
+    //============================================================================
+    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - originData.length) : 0;
+
+    const filteredUsers = applySortFilter(originData, getComparator(order, orderBy), filterName);
 
     const isNotFound = !filteredUsers.length && !!filterName;
 

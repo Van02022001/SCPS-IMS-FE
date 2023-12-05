@@ -54,6 +54,8 @@ export default function OriginListHead({
             key={headCell.id}
             align={headCell.alignRight ? 'right' : 'left'}
             sortDirection={orderBy === headCell.id ? order : false}
+            padding={headCell.disablePadding ? 'none' : 'normal'}
+            width={headCell.id === 'name' ? '400px' : undefined} 
           >
             <TableSortLabel
               hideSortIcon

@@ -18,7 +18,7 @@ import {
     MenuItem,
 } from '@mui/material';
 
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+// import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { editItem, editStatusItem, getItemsByPriceHistory } from '~/data/mutation/items/item-mutation';
 import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
@@ -407,11 +407,13 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                             multiline
                                             sx={{ width: '81%', marginRight: 1 }}
                                             value={item.locations
-                                                .map(
-                                                    (location) =>
-                                                        `${location.binNumber} - ${location.shelfNumber} - ${location.warehouse.name}`,
-                                                )
-                                                .join(',\n')}
+                                                ? item.locations
+                                                    .map(
+                                                        (location) =>
+                                                            `${location.binNumber} - ${location.shelfNumber} - ${location.warehouse.name}`,
+                                                    )
+                                                    .join(',\n')
+                                                : ''}
                                         />
                                         <Button
                                             variant="outlined"

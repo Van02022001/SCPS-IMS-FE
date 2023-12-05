@@ -73,15 +73,13 @@ export default function AccountPopover() {
         } else {
 
          console.log(response.data.error);
-          if (response.error === "You must be logged in with proper permissions to access this resource") {
-            navigate('/login');
-          }
         }
-      } else {
-        console.error('Refresh token not found');
-      }
+      } 
     } catch (error) {
       console.error('Error:', error);
+      if (error.message === "Request failed with status code 403") {
+        navigate('/login');
+      }
     }
   };
 

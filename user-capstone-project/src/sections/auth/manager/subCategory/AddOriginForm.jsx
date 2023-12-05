@@ -18,6 +18,7 @@ const AddOriginForm = ({ open, onClose, onSave }) => {
   const [originName, setOriginName] = useState('');
 
   const [message, setMessage] = useState('');
+
   //========================== Hàm notification của trang ==================================
   const handleMessage = (message) => {
     setOpenAddCategory(true);
@@ -54,9 +55,9 @@ const AddOriginForm = ({ open, onClose, onSave }) => {
       name: originName,
     }
     try {
-      const respone = await createOrigins(originParams);
-      console.log(respone);
-      handleMessage(respone.message)
+      const response = await createOrigins(originParams);
+      console.log(response);
+      handleMessage(response.message)
       onSave && onSave();
       // Đóng form
       onClose && onClose();

@@ -168,14 +168,7 @@ const CategoryPage = () => {
         setSelected(newSelected);
     };
 
-    const handleChangePage = (event, newPage) => {
-        setPage(newPage);
-    };
 
-    const handleChangeRowsPerPage = (event) => {
-        setPage(0);
-        setRowsPerPage(parseInt(event.target.value, 10));
-    };
 
     const handleFilterByName = (event) => {
         setPage(0);
@@ -198,12 +191,21 @@ const CategoryPage = () => {
     const handleCloseCategoryDetails = () => {
         setSelectedCategoryId(null);
     };
-
+    //Search 
     const handleDataSearch = (searchResult) => {
         // Cập nhật state của trang chính với dữ liệu từ tìm kiếm
         setCategoryData(searchResult);
     };
 
+    // ======================================item dưới chỗ page======================================
+    const handleChangePage = (event, newPage) => {
+        setPage(newPage);
+    };
+
+    const handleChangeRowsPerPage = (event) => {
+        setPage(0);
+        setRowsPerPage(parseInt(event.target.value, 10));
+    };
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - categoryData.length) : 0;
 
     const filteredUsers = applySortFilter(categoryData, getComparator(order, orderBy), filterName);
@@ -231,29 +233,30 @@ const CategoryPage = () => {
                 <title> Quản lý thể loại | Minimal UI </title>
             </Helmet>
 
-            <Container>
-                <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-                    <Typography variant="h4" gutterBottom>
-                        Quản lý thể loại
-                    </Typography>
-                    <Button
-                        variant="contained"
-                        startIcon={<Iconify icon="eva:plus-fill" />}
-                        onClick={() => setOpenCreateCategoryForm(true)}
-                    >
-                        Thêm thể loại
-                    </Button>
-                    <Dialog fullWidth maxWidth="sm" open={openCreateCategoryForm}>
-                        <DialogTitle>
-                            Tạo Thể Loại{' '}
-                            <IconButton style={{ float: 'right' }} onClick={handleCloseOdersForm}>
-                                <CloseIcon color="primary" />
-                            </IconButton>{' '}
-                        </DialogTitle>
-                        <CreateCategoriesForm onClose={handleCreateCategorySuccess} open={openCreateCategoryForm} />
-                    </Dialog>
-                </Stack>
 
+            <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+                <Typography variant="h4" gutterBottom>
+                    Quản lý thể loại
+                </Typography>
+                <Button
+                    variant="contained"
+                    startIcon={<Iconify icon="eva:plus-fill" />}
+                    onClick={() => setOpenCreateCategoryForm(true)}
+                >
+                    Thêm thể loại
+                </Button>
+                <Dialog fullWidth maxWidth="sm" open={openCreateCategoryForm}>
+                    <DialogTitle>
+                        Tạo Thể Loại{' '}
+                        <IconButton style={{ float: 'right' }} onClick={handleCloseOdersForm}>
+                            <CloseIcon color="primary" />
+                        </IconButton>{' '}
+                    </DialogTitle>
+                    <CreateCategoriesForm onClose={handleCreateCategorySuccess} open={openCreateCategoryForm} />
+                </Dialog>
+            </Stack>
+
+            <Container sx={{ minWidth: 1500, }}>
                 <Card>
                     <CategoryToolbar
                         numSelected={selected.length}
@@ -288,7 +291,7 @@ const CategoryPage = () => {
                                                 >
                                                     <TableCell padding="checkbox">
                                                         <Checkbox
-                                                        // onChange={(event) => handleClick(event, category.name)}
+                                                            onChange={(event) => handleClick(event, category.name)}
                                                         />
                                                     </TableCell>
                                                     {/* tên  */}

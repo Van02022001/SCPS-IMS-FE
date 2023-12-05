@@ -195,20 +195,20 @@ const RequestReceiptManagerPage = () => {
         setOpen(null);
     };
 
-    // const handleClick = (event, name) => {
-    //     const selectedIndex = selected.indexOf(name);
-    //     let newSelected = [];
-    //     if (selectedIndex === -1) {
-    //         newSelected = newSelected.concat(selected, name);
-    //     } else if (selectedIndex === 0) {
-    //         newSelected = newSelected.concat(selected.slice(1));
-    //     } else if (selectedIndex === selected.length - 1) {
-    //         newSelected = newSelected.concat(selected.slice(0, -1));
-    //     } else if (selectedIndex > 0) {
-    //         newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-    //     }
-    //     setSelected(newSelected);
-    // };
+    const handleClick = (event, name) => {
+        const selectedIndex = selected.indexOf(name);
+        let newSelected = [];
+        if (selectedIndex === -1) {
+            newSelected = newSelected.concat(selected, name);
+        } else if (selectedIndex === 0) {
+            newSelected = newSelected.concat(selected.slice(1));
+        } else if (selectedIndex === selected.length - 1) {
+            newSelected = newSelected.concat(selected.slice(0, -1));
+        } else if (selectedIndex > 0) {
+            newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
+        }
+        setSelected(newSelected);
+    };
 
     const handleSubCategoryClick = (subCategory) => {
         if (selectedGoodReceiptId === subCategory.id) {
@@ -407,11 +407,9 @@ const RequestReceiptManagerPage = () => {
                                                 <TableCell padding="checkbox">
                                                     <Checkbox
                                                         checked={selectedGoodReceiptId === importRequest.id}
-                                                        onChange={(event) =>
-                                                            handleCheckboxChange(event, importRequest.id)
-                                                        }
+                                                        // onChange={(event) => handleCheckboxChange(event, importRequest.id)}
                                                         // checked={selectedUser}
-                                                        // onChange={(event) => handleClick(event, name)}
+                                                        onChange={(event) => handleClick(event, importRequest.name)}
                                                     />
                                                 </TableCell>
 

@@ -209,29 +209,29 @@ const BrandPage = () => {
                 <title> Quản lý thương hiệu | Minimal UI </title>
             </Helmet>
 
-            <Container>
-                <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-                    <Typography variant="h4" gutterBottom>
-                        Quản lý thương hiệu
-                    </Typography>
-                    <Button
-                        variant="contained"
-                        startIcon={<Iconify icon="eva:plus-fill" />}
-                        onClick={() => setOpenOderForm(true)}
-                    >
-                        Thêm thương hiệu
-                    </Button>
-                    <Dialog fullWidth maxWidth="sm" open={openOderForm}>
-                        <DialogTitle>
-                            Tạo thương hiệu{' '}
-                            <IconButton style={{ float: 'right' }} onClick={handleCloseOdersForm}>
-                                <CloseIcon color="primary" />
-                            </IconButton>{' '}
-                        </DialogTitle>
-                        <BrandForm onClose={handleCreateBrandSuccess} open={openOderForm} />
-                    </Dialog>
-                </Stack>
 
+            <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+                <Typography variant="h4" gutterBottom>
+                    Quản lý thương hiệu
+                </Typography>
+                <Button
+                    variant="contained"
+                    startIcon={<Iconify icon="eva:plus-fill" />}
+                    onClick={() => setOpenOderForm(true)}
+                >
+                    Thêm thương hiệu
+                </Button>
+                <Dialog fullWidth maxWidth="sm" open={openOderForm}>
+                    <DialogTitle>
+                        Tạo thương hiệu{' '}
+                        <IconButton style={{ float: 'right' }} onClick={handleCloseOdersForm}>
+                            <CloseIcon color="primary" />
+                        </IconButton>{' '}
+                    </DialogTitle>
+                    <BrandForm onClose={handleCreateBrandSuccess} open={openOderForm} />
+                </Dialog>
+            </Stack>
+            <Container sx={{ minWidth: 1500, }}>
                 <Card>
                     <BrandToolbar
                         numSelected={selected.length}
@@ -241,7 +241,7 @@ const BrandPage = () => {
                     />
 
                     <Scrollbar>
-                        <TableContainer sx={{ minWidth: 800 }}>
+                        <TableContainer sx={{ minWidth: 800, }}>
                             <Table>
                                 <BrandListHead
                                     order={order}
@@ -263,11 +263,12 @@ const BrandPage = () => {
                                                     role="checkbox"
                                                     selected={selectedBrandId === brand.id}
                                                     onClick={() => handleBrandClick(brand)}
+                                                    style={{ height: 52 }}
                                                 >
                                                     <TableCell padding="checkbox">
-                                                        <Checkbox
+                                                        {/* <Checkbox
                                                             onChange={(event) => handleClick(event, brand.name)}
-                                                        />
+                                                        /> */}
                                                     </TableCell>
 
                                                     {/* tên  */}
@@ -338,15 +339,15 @@ const BrandPage = () => {
                     <TablePagination
                         rowsPerPageOptions={[5, 10, 25]}
                         component="div"
-                        count={USERLIST.length}
+                        count={brandData.length}
                         rowsPerPage={rowsPerPage}
                         page={page}
                         onPageChange={handleChangePage}
                         onRowsPerPageChange={handleChangeRowsPerPage}
                     />
                 </Card>
-            </Container>
 
+            </Container>
             {/* <Popover
                 open={Boolean(open)}
                 anchorEl={open}

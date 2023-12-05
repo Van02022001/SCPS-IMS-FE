@@ -200,20 +200,21 @@ const ItemsManagerPage = () => {
         setSelected([]);
     };
 
-    // const handleClick = (event, name) => {
-    //     const selectedIndex = selected.indexOf(name);
-    //     let newSelected = [];
-    //     if (selectedIndex === -1) {
-    //         newSelected = newSelected.concat(selected, name);
-    //     } else if (selectedIndex === 0) {
-    //         newSelected = newSelected.concat(selected.slice(1));
-    //     } else if (selectedIndex === selected.length - 1) {
-    //         newSelected = newSelected.concat(selected.slice(0, -1));
-    //     } else if (selectedIndex > 0) {
-    //         newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-    //     }
-    //     setSelected(newSelected);
-    // };
+    const handleClick = (event, name) => {
+        const selectedIndex = selected.indexOf(name);
+        let newSelected = [];
+        if (selectedIndex === -1) {
+            newSelected = newSelected.concat(selected, name);
+        } else if (selectedIndex === 0) {
+            newSelected = newSelected.concat(selected.slice(1));
+        } else if (selectedIndex === selected.length - 1) {
+            newSelected = newSelected.concat(selected.slice(0, -1));
+        } else if (selectedIndex > 0) {
+            newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
+        }
+        setSelected(newSelected);
+    };
+
     const handleCloseOdersForm = () => {
         setOpenOderForm(false);
     };
@@ -553,9 +554,9 @@ const ItemsManagerPage = () => {
                                                 <TableCell padding="checkbox">
                                                     <Checkbox
                                                         checked={selectedItemId === item.id}
-                                                        onChange={(event) => handleCheckboxChange(event, item.id)}
+                                                        // onChange={(event) => handleCheckboxChange(event, item.id)}
                                                         // checked={selectedUser}
-                                                        // onChange={(event) => handleClick(event, name)}
+                                                        onChange={(event) => handleClick(event, item.name)}
                                                     />
                                                 </TableCell>
 
@@ -582,12 +583,6 @@ const ItemsManagerPage = () => {
                                                             : 'Ngừng hoạt động'}
                                                     </Label>
                                                 </TableCell>
-
-                                                {/* <TableCell align="right">
-                                                    <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
-                                                        <Iconify icon={'eva:more-vertical-fill'} />
-                                                    </IconButton>
-                                                </TableCell> */}
                                             </TableRow>
 
                                             {selectedItemId === item.id && (
