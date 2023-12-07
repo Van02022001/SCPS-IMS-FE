@@ -285,17 +285,17 @@ const inventoryNavConfig = [
 const saleNavConfig = [
     {
         title: 'Sản phẩm',
-        path: '/items-sale',
+        path: '/sale-staff/items-sale',
         icon: <Payments />,
     },
     {
         title: 'Quản lý khách hàng',
-        path: '/customer-sale',
+        path: '/sale-staff/customer-sale',
         icon: <Payments />,
     },
     {
         title: 'Quản lý phiếu xuất kho',
-        path: '/order-sale',
+        path: '/sale-staff/request-customer',
         icon: <Payments />,
     },
     {

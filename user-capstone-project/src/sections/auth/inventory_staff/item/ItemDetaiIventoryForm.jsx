@@ -438,8 +438,6 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                                 )
                                                 .join(',\n')}
                                         />
-<<<<<<< HEAD
-=======
                                         {/* <Button
                                             variant="outlined"
                                             sx={{ padding: 0.8, minWidth: 0, maxHeight: 40 }}
@@ -452,7 +450,6 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                             onClose={handleCloseAddCategoryDialog}
                                             itemId={itemId}
                                         /> */}
->>>>>>> ec7c7836fbf33408f10d75ac4fcc04b0a81cf5a5
                                     </div>
                                 </Grid>
                                 <Grid

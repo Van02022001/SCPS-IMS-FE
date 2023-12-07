@@ -91,7 +91,7 @@ function applySortFilter(array, comparator, query) {
 //     return `${day}/${month}/${year}`;
 // }
 
-const ImportReceiptPage = () => {
+const ExportReceiptPage = () => {
     // State mở các form----------------------------------------------------------------
     const [open, setOpen] = useState(null);
     const [openOderForm, setOpenOderForm] = useState(false);
@@ -438,4 +438,4 @@ const ImportReceiptPage = () => {
         </>
     );
 };
-export default ImportReceiptPage;
+export default ExportReceiptPage;

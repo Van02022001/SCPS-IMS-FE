@@ -444,7 +444,7 @@ function CreateGoodReceipt() {
                                                         }
                                                     />
                                                 </ListItemText>
-                                                <ListItemText>
+                                                {/* <ListItemText>
                                                     <Select
                                                         label="Đơn vị"
                                                         value={selectedItem.unitId} // Sử dụng selectedUnitId thay vì unitId
@@ -469,7 +469,7 @@ function CreateGoodReceipt() {
                                                             </MenuItem>
                                                         ))}
                                                     </Select>
-                                                </ListItemText>
+                                                </ListItemText> */}
                                                 <Button onClick={() => handleRemoveFromCart(index)}>Xóa</Button>
                                             </ListItem>
                                         ))}

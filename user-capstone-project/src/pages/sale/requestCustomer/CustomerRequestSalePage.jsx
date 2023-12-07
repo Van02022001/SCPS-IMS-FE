@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 // @mui
 import {
     Card,
@@ -35,6 +35,8 @@ import OdersForm from '~/sections/auth/manager/items/CreateItemsForm';
 import OrderDetailForm from '~/sections/auth/manager/items/ItemDetailForm';
 import USERLIST from '../../../_mock/user';
 import CustomerRequestForm from '~/sections/auth/sale/customerRequest/CustomerRequestForm';
+import CreateRequestCustomerPage from './CreateRequestCustomerPage';
+import { useNavigate } from 'react-router-dom';
 
 // ----------------------------------------------------------------------
 
@@ -85,7 +87,7 @@ function applySortFilter(array, comparator, query) {
     return stabilizedThis.map((el) => el[0]);
 }
 
-const OrderSalePage = () => {
+const CustomerRequestSalePage = () => {
     const [open, setOpen] = useState(null);
 
     const [openOderForm, setOpenOderForm] = useState(false);
@@ -105,6 +107,7 @@ const OrderSalePage = () => {
     const [openOderFormDetail, setOpenOderFormDetail] = useState(false);
     const [selectedOrderId, setSelectedOrderId] = useState(null);
     const [selectedOrder, setSelectedOrder] = useState(null);
+    const navigate = useNavigate();
 
     const handleOrderClick = (order) => {
         if (selectedOrderId === order.id) {
@@ -117,6 +120,7 @@ const OrderSalePage = () => {
     const handleCloseOrderDetails = () => {
         setSelectedOrder(null);
     };
+
 
 
     const handleOpenMenu = (event) => {
@@ -172,6 +176,20 @@ const OrderSalePage = () => {
         setPage(0);
         setFilterName(event.target.value);
     };
+    useEffect(() => {
+        // getAllImportRequest()
+        //     .then((respone) => {
+        //         const data = respone.data;
+        //         if (Array.isArray(data)) {
+        //             setImportRequestData(data);
+        //         } else {
+        //             console.error('API response is not an array:', data);
+        //         }
+        //     })
+        //     .catch((error) => {
+        //         console.error('Error fetching users:', error);
+        //     });
+    }, []);
 
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
@@ -191,12 +209,18 @@ const OrderSalePage = () => {
                 <Typography variant="h4" gutterBottom>
                     Phiếu hóa đơn
                 </Typography>
-                <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={() => setOpenOderForm(true)}>
+                <Button
+                    variant="contained"
+                    startIcon={<Iconify icon="eva:plus-fill" />}
+                    onClick={() => navigate('/sale-staff/create-request')}
+                >
                     Xử lý hóa đơn
                 </Button>
-                <Dialog fullWidth maxWidth="sm" open={openOderForm} >
-                    <DialogTitle>Xử lý đặt hàng  <IconButton style={{ float: 'right' }} onClick={handleCloseOdersForm}><CloseIcon color="primary" /></IconButton>  </DialogTitle>
-                    <CustomerRequestForm />
+                <Dialog fullWidth maxWidth open={openOderForm} >
+                    <DialogTitle>Xử lý đặt hàng  <IconButton style={{ float: 'right' }} onClick={handleCloseOdersForm}>
+                        <CloseIcon color="primary" /></IconButton>
+                    </DialogTitle>
+                    <CreateRequestCustomerPage open={openOderForm} />
                 </Dialog>
             </Stack>
 
@@ -343,4 +367,4 @@ const OrderSalePage = () => {
         </>
     );
 }
-export default OrderSalePage
+export default CustomerRequestSalePage

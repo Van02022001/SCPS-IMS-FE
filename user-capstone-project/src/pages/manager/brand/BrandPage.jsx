@@ -231,6 +231,7 @@ const BrandPage = () => {
                     <BrandForm onClose={handleCreateBrandSuccess} open={openOderForm} />
                 </Dialog>
             </Stack>
+
             <Container sx={{ minWidth: 1500, }}>
                 <Card>
                     <BrandToolbar

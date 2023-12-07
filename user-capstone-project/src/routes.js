@@ -20,14 +20,13 @@ import ReportSalePage from './pages/manager/report/ReportSalePage';
 import ProductsPricePage from './pages/manager/subCategory/ProductPrice';
 import ForgotPassword from './pages/login/ForgotPassword';
 import WarehousePage from './pages/manager/warehouse/WarehousePage';
-import SaleProductPage from './pages/sale/SaleProductPage';
-import OrderSalePage from './pages/sale/order/OrderSalePage';
+import CreateRequestCustomerPage from './pages/sale/requestCustomer/CreateRequestCustomerPage';
+import CustomerRequestSalePage from './pages/sale/requestCustomer/CustomerRequestSalePage';
 import ProductInventoryPage from './pages/inventory_staff/product/ProductInventoryPage';
 import ItemsSalePage from './pages/sale/items/ItemsSalePage';
 import CustomerSalePage from './pages/sale/customer/CustomerSalePage';
 import GoodsReceiptPage from './pages/inventory_staff/transaction/GoodsReceiptPage';
 import ViewReceiptPage from './pages/inventory_staff/transaction/importRequest/ViewReceiptPage';
-import ExportsReceipt from './pages/inventory_staff/transaction/ExportsReceipt';
 import BadsReceiptPage from './pages/inventory_staff/transaction/BadsReceiptPage';
 import UnitPage from './pages/manager/unit/UnitPage';
 import OriginPage from './pages/manager/origin/OriginPage';
@@ -43,6 +42,8 @@ import ImportReceiptManagerPage from './pages/manager/transaction/importReceipt/
 import InventoryReportPage from './pages/manager/transaction/inventoryReport/InventoryReportPage';
 import InventoryStaffReportPage from './pages/inventory_staff/inventoryReport/InventoryStaffReportPage';
 import LocationInventoryPage from './pages/inventory_staff/locationInventory/LocationInventoryPage';
+import CustomerRequestPage from './pages/inventory_staff/transaction/exportRequest/CustomerRequestPage';
+import ExportReceiptPage from './pages/inventory_staff/transaction/exportReceipt/ExportReceiptPage';
 
 // ----------------------------------------------------------------------
 
@@ -95,13 +96,13 @@ const Router = () => {
             element: <LoginPage />,
         },
         {
-            path: '/sale-staff',
+            path: '/sale-staff/',
             element: <DashboardLayout />,
             children: [
                 { path: 'items-sale', element: <ItemsSalePage /> },
                 { path: 'customer-sale', element: <CustomerSalePage /> },
-                { path: 'sale', element: <SaleProductPage /> },
-                { path: 'order-sale', element: <OrderSalePage /> },
+                { path: 'create-request', element: <CreateRequestCustomerPage /> },
+                { path: 'request-customer', element: <CustomerRequestSalePage /> },
             ],
         },
         {
@@ -112,7 +113,7 @@ const Router = () => {
                 { path: 'itemsInventory', element: <ItemsInventoryPage /> },
                 { path: 'locationsInventory', element: <LocationInventoryPage /> },
                 
-                { path: 'order-sale', element: <OrderSalePage /> },
+                // { path: 'order-sale', element: <OrderSalePage /> },
                 { path: 'requests-import-receipt', element: <ViewReceiptPage /> },
 
                 { path: 'import-receipt', element: <ImportReceiptPage /> },
@@ -120,7 +121,8 @@ const Router = () => {
                 { path: 'inventory-check', element: <InventoryStaffReportPage /> },
 
                 { path: 'goods-receipt', element: <GoodsReceiptPage /> },
-                { path: 'requests-export-receipt', element: <ExportsReceipt /> },
+                { path: 'requests-export-receipt', element: <CustomerRequestPage/> },
+                { path: 'export-receipt', element: <ExportReceiptPage /> },
                 { path: 'bads-receipt', element: <BadsReceiptPage /> },
 
 
