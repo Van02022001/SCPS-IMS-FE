@@ -34,9 +34,10 @@ export const axiosInstance = axios.create({
 //     common: {
 //       "Content-Type": "multipart/form-data",
 //     },
-//     authorization: `Bearer ${token}`,
+//     authorization: `Bearer ${localStorage.getItem('token')}`,
 //   },
 // });
+
 axiosInstance.interceptors.request.use(
   (config) => {
     config.headers.Authorization = `Bearer ${localStorage.getItem('token')}`;

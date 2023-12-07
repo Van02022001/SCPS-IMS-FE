@@ -33,7 +33,6 @@ import { getAllOrigins } from '~/data/mutation/origins/origins-mutation';
 import { getAllSuppliers } from '~/data/mutation/supplier/suppliers-mutation';
 //icons
 import AddIcon from '@mui/icons-material/Add';
-import AddLocationsForm from '../../inventory_staff/item/AddLocationsForm';
 
 const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode, updateItemStatusInList }) => {
     const [expandedItem, setExpandedItem] = useState(itemId);
@@ -436,18 +435,6 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                                     )
                                                     .join(',\n')
                                                 : ''}
-                                        />
-                                        <Button
-                                            variant="outlined"
-                                            sx={{ padding: 0.8, minWidth: 0, maxHeight: 40 }}
-                                            onClick={handleOpenAddCategoryDialog}
-                                        >
-                                            <AddIcon />
-                                        </Button>
-                                        <AddLocationsForm
-                                            open={openAddCategoryDialog}
-                                            onClose={handleCloseAddCategoryDialog}
-                                            itemId={itemId}
                                         />
                                     </div>
                                 </Grid>

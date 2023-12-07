@@ -34,6 +34,11 @@ export const getItemsByPriceHistory = async (itemId) => {
     return response.data;
 }
 
+export const getExaminationItem = async (receiptId) => {
+    const response = await axiosInstance.get(`/items/item-locations/${receiptId}`);
+    return response.data;
+}
+
 export const editItemLocations = async (itemId, editLocationsParams) => {
     const response = await axiosInstance.put(`/items/item-locations/${itemId}`, editLocationsParams);
     return response.data;

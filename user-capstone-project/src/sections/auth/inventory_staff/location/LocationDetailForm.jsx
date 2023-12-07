@@ -62,16 +62,17 @@ const LocationDetailForm = ({ locations, locationsId, onClose, isOpen, mode }) =
 
     useEffect(() => {
         if (mode === 'create') {
+            // const defaultTagsId = tags_id.find((tag) => tag.name === 'Ống').id;
             setEditedLocation({
                 shelfNumber: '',
                 binNumber: '',
-                tags_id: null, // Set tags_id to null initially (not selected)
+                tags_id: [], // Set tags_id to null initially (not selected)
             });
         } else {
             const location = locations.find((o) => o.id === locationsId);
-
+            console.log(location);
             if (location) {
-                const tagIds = location.tags_id ? location.tags_id.map((tag) => tag.id) : null;
+                const tagIds = location.tags ? location.tags.map((tag) => tag.id) : [];
                 // Create a new object with only the desired fields
                 const editedLocation = {
                     shelfNumber: location.shelfNumber,
@@ -80,17 +81,15 @@ const LocationDetailForm = ({ locations, locationsId, onClose, isOpen, mode }) =
                 };
 
                 setEditedLocation(editedLocation);
-            } else {
-                // Handle the case when location is null or undefined
-                setEditedLocation(null);
             }
         }
     }, [locations, locationsId, mode]);
 
     useEffect(() => {
         getAllLocation_tag()
-            .then((respone) => {
-                const data = respone.data;
+            .then((response) => {
+                const data = response.data;
+                console.log('Tags data:', data);
                 setTags_id(data);
             })
             .catch((error) => console.error('Error fetching tags_id:', error));
@@ -137,10 +136,18 @@ const LocationDetailForm = ({ locations, locationsId, onClose, isOpen, mode }) =
     };
 
     const handleEdit = (field, value) => {
-        setEditedLocation((prevLocation) => ({
-            ...prevLocation,
-            [field]: value,
-        }));
+        if (field === 'tags_id') {
+            const tagId = value.map(Number).filter(Boolean);
+            setEditedLocation((prevProduct) => ({
+                ...prevProduct,
+                [field]: tagId,
+            }));
+        } else {
+            setEditedLocation((prevLocation) => ({
+                ...prevLocation,
+                [field]: value,
+            }));
+        }
     };
     const handleSave = () => {
         // Xử lý lưu
@@ -150,8 +157,7 @@ const LocationDetailForm = ({ locations, locationsId, onClose, isOpen, mode }) =
         // Xử lý xóa
     };
 
-    console.log('Location:', location);
-    console.log('Tags:', tags_id);
+    console.log('editedLocation', editedLocation);
 
     return (
         <div
@@ -223,9 +229,10 @@ const LocationDetailForm = ({ locations, locationsId, onClose, isOpen, mode }) =
                                             labelId="group-label"
                                             id="group-select"
                                             sx={{ width: '100%', fontSize: '14px' }}
-                                            value={editedLocation?.tags_id || []}
+                                            value={editedLocation ? editedLocation.tags_id : []}
                                             onChange={(e) => handleEdit('tags_id', e.target.value)}
                                             name="tags_id"
+                                            multiple
                                         >
                                             {tags_id.map((tag) => (
                                                 <MenuItem key={tag.id} value={tag.id}>

@@ -266,7 +266,7 @@ const CreateItemsForm = (props) => {
                                                     size="small"
                                                     labelId="group-label"
                                                     id="group-select"
-                                                    sx={{ width: '90%', fontSize: '14px' }}
+                                                    sx={{ width: '82%', fontSize: '14px' }}
                                                     value={tab1Data.brand_id}
                                                     onChange={handleTab1DataChange}
                                                     name="brand_id"
@@ -338,7 +338,7 @@ const CreateItemsForm = (props) => {
                                                     size="small"
                                                     labelId="group-label"
                                                     id="group-select"
-                                                    sx={{ width: '90%', fontSize: '14px' }}
+                                                    sx={{ width: '82%', fontSize: '14px' }}
                                                     value={tab1Data.origin_id}
                                                     onChange={handleTab1DataChange}
                                                     name="origin_id"

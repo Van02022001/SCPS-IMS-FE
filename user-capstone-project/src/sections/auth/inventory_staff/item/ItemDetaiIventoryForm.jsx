@@ -31,7 +31,6 @@ import { getAllOrigins } from '~/data/mutation/origins/origins-mutation';
 import { getAllSuppliers } from '~/data/mutation/supplier/suppliers-mutation';
 //icons
 import AddIcon from '@mui/icons-material/Add';
-// import AddLocationsForm from './AddLocationsForm';
 import { getItemsByMovementsHistory } from '~/data/mutation/items-movement/items-movement-mutation';
 import AddItemsMovementForm from './AddItemsMovementForm';
 
@@ -438,21 +437,6 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                                 )
                                                 .join(',\n')}
                                         />
-<<<<<<< HEAD
-=======
-                                        {/* <Button
-                                            variant="outlined"
-                                            sx={{ padding: 0.8, minWidth: 0, maxHeight: 40 }}
-                                            onClick={handleOpenAddCategoryDialog}
-                                        >
-                                            <AddIcon />
-                                        </Button>
-                                        <AddLocationsForm
-                                            open={openAddCategoryDialog}
-                                            onClose={handleCloseAddCategoryDialog}
-                                            itemId={itemId}
-                                        /> */}
->>>>>>> ec7c7836fbf33408f10d75ac4fcc04b0a81cf5a5
                                     </div>
                                 </Grid>
                                 <Grid

@@ -294,9 +294,11 @@ const LocationInventoryPage = () => {
                                                     </TableCell>
                                                     <TableCell component="th" scope="row" padding="none">
                                                         <Stack direction="row" alignItems="center" spacing={2}>
-                                                            <Typography variant="subtitle2" noWrap>
-                                                                {location.tags}
-                                                            </Typography>
+                                                            {location.tags.map((tag, index) => (
+                                                                <Typography key={index} variant="subtitle2" noWrap>
+                                                                    {tag.name}
+                                                                </Typography>
+                                                            ))}
                                                         </Stack>
                                                     </TableCell>
                                                 </TableRow>

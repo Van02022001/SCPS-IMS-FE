@@ -75,19 +75,19 @@ const AddItemsMovementForm = ({ open, onClose, onSave, itemId, itemMovementsData
         }
     };
 
-    useEffect(() => {
-        if (popupOpen) {
-            getAllLocationByItem(itemId)
-                .then((respone) => {
-                    const data = respone.data;
-                    const dataArray = Array.isArray(data) ? data : [data];
-                    setToLocation_id(dataArray);
-                    setFromLocation_id(dataArray);
-                    console.log(dataArray);
-                })
-                .catch((error) => console.error('Error fetching categories:', error));
-        }
-    }, [popupOpen]);
+    // useEffect(() => {
+    //     if (popupOpen) {
+    //         getAllLocationByItem(itemId)
+    //             .then((respone) => {
+    //                 const data = respone.data;
+    //                 const dataArray = Array.isArray(data) ? data : [data];
+    //                 setToLocation_id(dataArray);
+    //                 setFromLocation_id(dataArray);
+    //                 console.log(dataArray);
+    //             })
+    //             .catch((error) => console.error('Error fetching categories:', error));
+    //     }
+    // }, [popupOpen]);
 
     useEffect(() => {
         if (open) {
@@ -95,12 +95,19 @@ const AddItemsMovementForm = ({ open, onClose, onSave, itemId, itemMovementsData
                 .then((respone) => {
                     const data = respone.data;
                     const dataArray = Array.isArray(data) ? data : [data];
-                    setToLocation_id(dataArray);
                     setFromLocation_id(dataArray);
                     console.log(dataArray);
                 })
                 .catch((error) => console.error('Error fetching categories:', error));
         }
+        getAllLocation()
+            .then((respone) => {
+                const data = respone.data;
+                const dataArray = Array.isArray(data) ? data : [data];
+                setToLocation_id(dataArray);
+                console.log(dataArray);
+            })
+            .catch((error) => console.error('Error fetching categories:', error));
     }, [open]);
 
     console.log(toLocation_id);
