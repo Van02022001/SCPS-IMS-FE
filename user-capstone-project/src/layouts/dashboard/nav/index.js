@@ -156,7 +156,7 @@ const managerNavConfig = [
                 children: [
                     {
                         title: 'Yêu cầu nhập kho',
-                        path: '/dashboard/goods-receipt',
+                        path: '/dashboard/request-import-receipt',
                         icon: <ReceiptLong />,
                     },
                     {
@@ -172,11 +172,12 @@ const managerNavConfig = [
                 children: [
                     {
                         title: 'Yêu cầu xuất kho',
-                        path: '/dashboard/export-receipt',
+                        path: '/dashboard/request-export-receipt',
                         icon: <ReceiptLong />,
                     },
                     {
                         title: 'Phiếu xuất kho',
+                        path: '/dashboard/export-receipt',
                         icon: <Receipt />,
                     },
                 ]
@@ -285,17 +286,17 @@ const inventoryNavConfig = [
 const saleNavConfig = [
     {
         title: 'Sản phẩm',
-        path: '/items-sale',
+        path: '/sale-staff/items-sale',
         icon: <Payments />,
     },
     {
         title: 'Quản lý khách hàng',
-        path: '/customer-sale',
+        path: '/sale-staff/customer-sale',
         icon: <Payments />,
     },
     {
         title: 'Quản lý phiếu xuất kho',
-        path: '/order-sale',
+        path: '/sale-staff/request-customer',
         icon: <Payments />,
     },
     {

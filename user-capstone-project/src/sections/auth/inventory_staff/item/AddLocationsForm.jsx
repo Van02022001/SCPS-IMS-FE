@@ -179,23 +179,6 @@ const AddLocationsForm = ({ open, onClose, dataReceiptDetail }) => {
             <Dialog open={open} onClose={handleClosePopup}>
                 <DialogTitle>Hãy Chọn Địa Chỉ Trong Kho</DialogTitle>
                 <DialogContent>
-                    {/* <Grid
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                        sx={{ marginBottom: 4, gap: 5 }}
-                    >
-                        <Typography variant="body1">Số lượng:</Typography>
-                        <TextField
-                            label="Số lượng"
-                            variant="outlined"
-                            fullWidth
-                            margin="normal"
-                            value={quantity}
-                            onChange={(e) => setQuantity(e.target.value)}
-                        />
-                    </Grid> */}
-
                     {/* Display item details */}
                     <CardContent>
                         <Table>
@@ -236,7 +219,7 @@ const AddLocationsForm = ({ open, onClose, dataReceiptDetail }) => {
                                                         variant="contained"
                                                         color="primary"
                                                         onClick={() => handleOpenAddCategoryDialog(detail.id)}
-                                                        //detailId
+                                                    //detailId
                                                     >
                                                         Chọn vị trí
                                                     </Button>
@@ -281,31 +264,6 @@ const AddLocationsForm = ({ open, onClose, dataReceiptDetail }) => {
                     {isSuccess && <SuccessAlerts message={successMessage} />}
                     {isError && <ErrorAlerts errorMessage={errorMessage} />}
                 </DialogContent>
-                {/* Button to show location selection */}
-                {/* {!showLocationSelection && (
-                <div style={{ padding: '16px' }}>
-                    <Button variant="contained" color="primary" onClick={handleOpenPopup}>
-                        Chọn Vị Trí
-                    </Button>
-                </div>
-            )} */}
-                {/* {!showLocationSelection && (
-                    <div style={{ padding: '16px' }}>
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            sx={{ main: '#1976D2' }} // You can adjust the color as needed
-                            onClick={() => handleOpenLocationSelection()}
-                        //item.id
-                        >
-                            Chọn vị trí
-                        </Button>
-                        <InventorySelection
-                            open={openSelectLocationDialog}
-                            onClose={handleCloseSelectLocationDialog}
-                        />
-                    </div>
-                )} */}
                 {/* Button to update locations */}
                 {showLocationSelection && (
                     <div style={{ padding: '16px' }}>

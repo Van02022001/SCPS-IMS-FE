@@ -20,29 +20,31 @@ import ReportSalePage from './pages/manager/report/ReportSalePage';
 import ProductsPricePage from './pages/manager/subCategory/ProductPrice';
 import ForgotPassword from './pages/login/ForgotPassword';
 import WarehousePage from './pages/manager/warehouse/WarehousePage';
-import SaleProductPage from './pages/sale/SaleProductPage';
-import OrderSalePage from './pages/sale/order/OrderSalePage';
+import CreateRequestCustomerPage from './pages/sale/requestCustomer/CreateRequestCustomerPage';
+import CustomerRequestSalePage from './pages/sale/requestCustomer/CustomerRequestSalePage';
 import ProductInventoryPage from './pages/inventory_staff/product/ProductInventoryPage';
 import ItemsSalePage from './pages/sale/items/ItemsSalePage';
 import CustomerSalePage from './pages/sale/customer/CustomerSalePage';
 import GoodsReceiptPage from './pages/inventory_staff/transaction/GoodsReceiptPage';
 import ViewReceiptPage from './pages/inventory_staff/transaction/importRequest/ViewReceiptPage';
-import ExportsReceipt from './pages/inventory_staff/transaction/ExportsReceipt';
 import BadsReceiptPage from './pages/inventory_staff/transaction/BadsReceiptPage';
 import UnitPage from './pages/manager/unit/UnitPage';
 import OriginPage from './pages/manager/origin/OriginPage';
 import BrandPage from './pages/manager/brand/BrandPage';
 import SupplierPage from './pages/manager/supplier/SupplierPage';
-import RequestReceiptManagerPage from './pages/manager/transaction/requestReceipt/RequestReceiptManagerPage';
-import CreateGoodReceipt from './pages/manager/transaction/requestReceipt/CreateGoodReceipt';
-import ExportReceiptManagerPage from './pages/manager/transaction/exportReceipt/ExportReceiptManagerPage';
-import CreateExportReceipt from './pages/manager/transaction/exportReceipt/CreateExportReceipt';
+import RequestReceiptManagerPage from './pages/manager/transaction/requestImportReceipt/RequestReceiptManagerPage';
+import CreateGoodReceipt from './pages/manager/transaction/requestImportReceipt/CreateGoodReceipt';
+import CreateExportReceipt from './pages/manager/transaction/requestExportReceipt/CreateExportReceipt';
 import ImportReceiptPage from './pages/inventory_staff/transaction/importReceipt/ImportReceiptPage';
 import ItemsInventoryPage from './pages/inventory_staff/itemInventory/ItemsInventoryPage';
 import ImportReceiptManagerPage from './pages/manager/transaction/importReceipt/ImportReceiptManagerPage';
 import InventoryReportPage from './pages/manager/transaction/inventoryReport/InventoryReportPage';
 import InventoryStaffReportPage from './pages/inventory_staff/inventoryReport/InventoryStaffReportPage';
 import LocationInventoryPage from './pages/inventory_staff/locationInventory/LocationInventoryPage';
+import CustomerRequestPage from './pages/inventory_staff/transaction/exportRequest/CustomerRequestPage';
+import ExportReceiptPage from './pages/inventory_staff/transaction/exportReceipt/ExportReceiptPage';
+import ExportRequestReceiptManagerPage from './pages/manager/transaction/requestExportReceipt/ExportRequestReceiptManagerPage';
+import ExportReceiptManagerPage from './pages/manager/transaction/exportReceipt/ExportReceiptManagerPage';
 
 // ----------------------------------------------------------------------
 
@@ -73,11 +75,15 @@ const Router = () => {
                 { path: 'unit', element: <UnitPage/> },
                 { path: 'blog', element: <BlogPage /> },
                 { path: 'warehouse', element: <WarehousePage /> },
-                { path: 'goods-receipt', element: <RequestReceiptManagerPage /> }, 
+
+                { path: 'request-import-receipt', element: <RequestReceiptManagerPage /> }, 
                 { path: 'create-good-receipt', element: <CreateGoodReceipt/> },
                 { path: 'import-receipt', element: <ImportReceiptManagerPage/> },
-                { path: 'export-receipt', element: <ExportReceiptManagerPage /> },
+
+                { path: 'request-export-receipt', element: <ExportRequestReceiptManagerPage /> },
                 { path: 'create-export-receipt', element: <CreateExportReceipt/> },
+                { path: 'export-receipt', element: <ExportReceiptManagerPage/> },
+
                 { path: 'products-check', element: <InventoryReportPage/> },
                 {
                     path: 'report',
@@ -95,13 +101,13 @@ const Router = () => {
             element: <LoginPage />,
         },
         {
-            path: '/sale-staff',
+            path: '/sale-staff/',
             element: <DashboardLayout />,
             children: [
                 { path: 'items-sale', element: <ItemsSalePage /> },
                 { path: 'customer-sale', element: <CustomerSalePage /> },
-                { path: 'sale', element: <SaleProductPage /> },
-                { path: 'order-sale', element: <OrderSalePage /> },
+                { path: 'create-request', element: <CreateRequestCustomerPage /> },
+                { path: 'request-customer', element: <CustomerRequestSalePage /> },
             ],
         },
         {
@@ -112,7 +118,7 @@ const Router = () => {
                 { path: 'itemsInventory', element: <ItemsInventoryPage /> },
                 { path: 'locationsInventory', element: <LocationInventoryPage /> },
                 
-                { path: 'order-sale', element: <OrderSalePage /> },
+                // { path: 'order-sale', element: <OrderSalePage /> },
                 { path: 'requests-import-receipt', element: <ViewReceiptPage /> },
 
                 { path: 'import-receipt', element: <ImportReceiptPage /> },
@@ -120,7 +126,8 @@ const Router = () => {
                 { path: 'inventory-check', element: <InventoryStaffReportPage /> },
 
                 { path: 'goods-receipt', element: <GoodsReceiptPage /> },
-                { path: 'requests-export-receipt', element: <ExportsReceipt /> },
+                { path: 'requests-export-receipt', element: <CustomerRequestPage/> },
+                { path: 'export-receipt', element: <ExportReceiptPage /> },
                 { path: 'bads-receipt', element: <BadsReceiptPage /> },
 
 

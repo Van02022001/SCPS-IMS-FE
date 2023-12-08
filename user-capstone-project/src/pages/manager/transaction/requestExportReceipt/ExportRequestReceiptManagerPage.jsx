@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
-import { sentenceCase } from 'change-case';
+
 import React, { useEffect, useState } from 'react';
 // @mui
 import {
@@ -9,20 +9,13 @@ import {
     Stack,
     Paper,
     Avatar,
-    Button,
-    Popover,
     Checkbox,
     TableRow,
-    MenuItem,
     TableBody,
     TableCell,
-    Container,
     Typography,
-    IconButton,
     TableContainer,
     TablePagination,
-    Dialog,
-    DialogTitle,
 } from '@mui/material';
 // components
 import Label from '~/components/label/Label';
@@ -31,25 +24,23 @@ import Scrollbar from '~/components/scrollbar/Scrollbar';
 import CloseIcon from '@mui/icons-material/Close';
 
 // sections
-import { ProductsListHead, ProductsListToolbar } from '~/sections/@dashboard/products';
+import { SubCategoryListHead, SubCategoryToolbar } from '~/sections/@dashboard/manager/subCategory';
 // mock
-import PRODUCTSLIST from '../../../_mock/products';
-import CategoryForm from '~/sections/auth/manager/subCategory/CreateSubCategoryForm';
+import PRODUCTSLIST from '../../../../_mock/products';
+import { useNavigate } from 'react-router-dom';
 // api
-import { getAllSubCategory } from '~/data/mutation/subCategory/subCategory-mutation';
-import ProductDetailForm from '~/sections/auth/manager/subCategory/SubCategoryDetailForm';
-import EditCategoryForm from '~/sections/auth/manager/categories/EditCategoryForm';
-// filter
-import dayjs from 'dayjs';
-import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
-import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 
+import SubCategoryDetailForm from '~/sections/auth/manager/subCategory/SubCategoryDetailForm';
+//icons
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import CreateExportReceipt from './CreateExportReceipt';
+import { getAllCustomerRequest } from '~/data/mutation/customerRequest/CustomerRequest-mutation';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
     { id: 'image', label: '', alignRight: false },
-    { id: 'id', label: 'Mã hàng', alignRight: false },
+    // { id: 'id', label: 'Mã hàng', alignRight: false },
     { id: 'name', label: 'Tên sản phẩm', alignRight: false },
     { id: 'description', label: 'Mô tả', alignRight: false },
     { id: 'createdAt', label: 'Ngày tạo', alignRight: false },
@@ -90,87 +81,114 @@ function applySortFilter(array, comparator, query) {
     return stabilizedThis.map((el) => el[0]);
 }
 
-function formatDate(dateString) {
-    const date = new Date(dateString);
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
+// function formatDate(dateString) {
+//     const date = new Date(dateString);
+//     const day = date.getDate();
+//     const month = date.getMonth() + 1;
+//     const year = date.getFullYear();
 
-    return `${day}/${month}/${year}`;
-}
+//     return `${day}/${month}/${year}`;
+// }
 
-const ProductInventoryPage = () => {
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+    PaperProps: {
+        style: {
+            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+            width: 250,
+        },
+    },
+};
+
+const filterOptions = ['Ren', 'Ron', 'Abc', 'Test1', 'Test12', 'Test123'];
+
+const ExportRequestReceiptManagerPage = () => {
     // State mở các form----------------------------------------------------------------
     const [open, setOpen] = useState(null);
     const [openOderForm, setOpenOderForm] = useState(false);
     const [openEditForm, setOpenEditForm] = useState(false);
 
     const [selected, setSelected] = useState([]);
-    const [selectedProductId, setSelectedProductId] = useState([]);
+    const [selectedExportReceiptId, setSelectedExportReceiptId] = useState([]);
 
     // State cho phần soft theo name-------------------------------------------------------
     const [filterName, setFilterName] = useState('');
     const [page, setPage] = useState(0);
-    const [orderBy, setOrderBy] = useState("name");
+    const [orderBy, setOrderBy] = useState('name');
     const [order, setOrder] = useState('asc');
     const [sortBy, setSortBy] = useState('createdAt');
-    const [sortedProduct, setSortedProduct] = useState([]);
+    const [sortedExportReceipt, setSortedExportReceipt] = useState([]);
 
     const [rowsPerPage, setRowsPerPage] = useState(5);
-
+    // Search data
+    const [displayedExportReceiptData, setDisplayedExportReceiptData] = useState([]);
     // State data và xử lý data
-    const [productsData, setProductData] = useState([]);
-    const [productStatus, setProductStatus] = useState('');
+    const [exportReceiptData, setExportReceiptData] = useState([]);
+    const [exportReceiptStatus, setExportReceiptStatus] = useState('');
 
-    const [selectedProduct, setSelectedProduct] = useState(null);
+    const [selectedExportReceipt, setSelectedExportReceipt] = useState(null);
 
-    // Hàm để thay đổi data mỗi khi Edit xong api-------------------------------------------------------------
-    const updateProductInList = (updatedProduct) => {
-        const productIndex = productsData.findIndex((product) => product.id === updatedProduct.id);
+    const [filteredCategory, setFilteredCategory] = useState(null);
 
-        if (productIndex !== -1) {
-            const updatedProductData = [...productsData];
-            updatedProductData[productIndex] = updatedProduct;
+    // const [anchorElOptions, setAnchorElOptions] = useState(null);
 
-            setProductData(updatedProductData);
+    const [selectedFilterOptions, setSelectedFilterOptions] = useState(null);
+
+    const [personName, setPersonName] = React.useState([]);
+    const navigate = useNavigate();
+
+    const handleChange = (event) => {
+        setPersonName(event.target.value);
+        const selectedValues = event.target.value.length > 0 ? event.target.value : null;
+        setFilteredCategory(selectedValues);
+        setSelectedFilterOptions(selectedValues);
+    };
+
+    // ========================== Hàm để thay đổi data mỗi khi Edit xong api=======================================
+    const updateExportReceiptInList = (updatedExportReceipt) => {
+        const exportReceiptIndex = exportReceiptData.findIndex((export_receipt) => export_receipt.id === updatedExportReceipt.id);
+
+        if (exportReceiptIndex !== -1) {
+            const UpdatedExportReceipt = [...exportReceiptData];
+            UpdatedExportReceipt[exportReceiptIndex] = UpdatedExportReceipt;
+
+            setExportReceiptData(UpdatedExportReceipt);
         }
     };
 
-    const updateProductStatusInList = (productId, newStatus) => {
-        const productIndex = productsData.findIndex((product) => product.id === productId);
+    const updateExportReceiptStatusInList = (exportReceiptId, newStatus) => {
+        const exportReceiptIndex = exportReceiptData.findIndex((export_receipt) => export_receipt.id === exportReceiptId);
 
-        if (productIndex !== -1) {
-            const updatedProductData = [...productsData];
-            updatedProductData[productIndex].status = newStatus;
+        if (exportReceiptIndex !== -1) {
+            const UpdatedExportReceipt = [...exportReceiptData];
+            UpdatedExportReceipt[exportReceiptIndex].status = newStatus;
 
-            setProductData(updatedProductData);
+            setExportReceiptData(UpdatedExportReceipt);
         }
     };
 
-    const handleCreateProductSuccess = (newProduct) => {
+    const handleCreateGoodReceiptSuccess = (newExportReceipt) => {
         // Close the form
         setOpenOderForm(false);
-        setProductData((prevProductData) => [...prevProductData, newProduct]);
+        setExportReceiptData((prevExportReceiptData) => [...prevExportReceiptData, newExportReceipt]);
     };
 
-    //----------------------------------------------------------------
-    const handleOpenMenu = (event, product) => {
-        setSelectedProduct(product);
-        setOpen(event.currentTarget);
+    const handleDataSearch = (searchResult) => {
+        // Cập nhật state của trang chính với dữ liệu từ tìm kiếm
+        setExportReceiptData(searchResult);
+        setDisplayedExportReceiptData(searchResult);
+        console.log(displayedExportReceiptData);
     };
+
+    //===========================================================================================
+    // const handleOpenMenu = (event, subCategory) => {
+    //     setSelectedProduct(subCategory);
+    //     setOpen(event.currentTarget);
+    // };
 
     const handleCloseMenu = () => {
         setOpen(null);
-    };
-
-
-    const handleSelectAllClick = (event) => {
-        if (event.target.checked) {
-            const newSelecteds = productsData.map((n) => n.name);
-            setSelected(newSelecteds);
-            return;
-        }
-        setSelected([]);
     };
 
     const handleClick = (event, name) => {
@@ -188,18 +206,18 @@ const ProductInventoryPage = () => {
         setSelected(newSelected);
     };
 
-    const handleProductClick = (product) => {
-        if (selectedProductId === product.id) {
-            setSelectedProductId(null); // Đóng nếu đã mở
+    const handleSubCategoryClick = (subCategory) => {
+
+        if (selectedExportReceiptId === subCategory.id) {
+            setSelectedExportReceiptId(null); // Đóng nếu đã mở
         } else {
-            setSelectedProductId(product.id); // Mở hoặc chuyển sang sản phẩm khác
+            setSelectedExportReceiptId(subCategory.id); // Mở hoặc chuyển sang sản phẩm khác
         }
     };
 
-    const handleCloseProductDetails = () => {
-        setSelectedProductId(null);
+    const handleCloseSubCategoryDetails = () => {
+        setSelectedExportReceiptId(null);
     };
-
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -209,14 +227,24 @@ const ProductInventoryPage = () => {
         setPage(0);
         setRowsPerPage(parseInt(event.target.value, 10));
     };
-    // Các hàm xử lý soft theo name--------------------------------------------------------------------------------------------------------------------------------
-    const handleCheckboxChange = (event, productId) => {
+
+    //=========================================== Các hàm xử lý soft theo name===========================================
+    const handleSelectAllClick = (event) => {
+        if (event.target.checked) {
+            const newSelecteds = exportReceiptData.map((n) => n.name);
+            setSelected(newSelecteds);
+            return;
+        }
+        setSelected([]);
+    };
+
+    const handleCheckboxChange = (event, subCategoryId) => {
         if (event.target.checked) {
             // Nếu người dùng chọn checkbox, thêm sản phẩm vào danh sách đã chọn.
-            setSelectedProductId([...selectedProductId, productId]);
+            setSelectedExportReceiptId([...selectedExportReceiptId, subCategoryId]);
         } else {
             // Nếu người dùng bỏ chọn checkbox, loại bỏ sản phẩm khỏi danh sách đã chọn.
-            setSelectedProductId(selectedProductId.filter((id) => id !== productId));
+            setSelectedExportReceiptId(selectedExportReceiptId.filter((id) => id !== subCategoryId));
         }
     };
     const handleRequestSort = (property) => {
@@ -224,7 +252,7 @@ const ProductInventoryPage = () => {
         setOrder(isAsc ? 'desc' : 'asc');
         setOrderBy(property);
         // Sắp xếp danh sách sản phẩm dựa trên trường và hướng đã chọn
-        const sortedProduct = [...productsData].sort((a, b) => {
+        const sortedExportReceipt = [...exportReceiptData].sort((a, b) => {
             const valueA = a[property];
             const valueB = b[property];
             if (valueA < valueB) {
@@ -235,7 +263,7 @@ const ProductInventoryPage = () => {
             }
             return 0;
         });
-        setSortedProduct(sortedProduct);
+        setSortedExportReceipt(sortedExportReceipt);
     };
 
     const handleFilterByName = (event) => {
@@ -243,9 +271,10 @@ const ProductInventoryPage = () => {
         const query = event.target.value;
         setFilterName(query);
 
-        const filteredUsers = applySortFilter(sortedProduct, getComparator(order, sortBy), query);
-        setSortedProduct(filteredUsers)
+        const filteredUsers = applySortFilter(sortedExportReceipt, getComparator(order, sortBy), query);
+        setSortedExportReceipt(filteredUsers);
     };
+
 
     const handleCloseOdersForm = () => {
         setOpenOderForm(false);
@@ -255,26 +284,17 @@ const ProductInventoryPage = () => {
         setOpenEditForm(false);
     };
 
-
-
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - PRODUCTSLIST.length) : 0;
 
     const filteredUsers = applySortFilter(PRODUCTSLIST, getComparator(order, orderBy), filterName);
 
     const isNotFound = !filteredUsers.length && !!filterName;
-
     useEffect(() => {
-        getAllSubCategory()
+        getAllCustomerRequest()
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
-                    const sortedData = data.sort((a, b) => {
-                        return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(
-                            dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
-                        );
-                    });
-                    setProductData(sortedData);
-                    setSortedProduct(sortedData);
+                    setExportReceiptData(data);
                 } else {
                     console.error('API response is not an array:', data);
                 }
@@ -284,23 +304,33 @@ const ProductInventoryPage = () => {
             });
     }, []);
 
+
+    //==============================* filter *==============================
+    const renderedTodoList = exportReceiptData.filter((sub_category) => {
+        if (!selectedFilterOptions || selectedFilterOptions.length === 0) {
+            return true;
+        }
+        return sub_category.categories.some((category) => selectedFilterOptions.includes(category.name));
+    });
+    //==============================* filter *==============================
+
     return (
         <>
             <Helmet>
-                <title> Quản lý sản phẩm | Minimal UI </title>
+                <title> Quản lý xuât kho| Minimal UI </title>
             </Helmet>
 
             {/* <Container> */}
-            <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+            <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
                 <Typography variant="h4" gutterBottom>
-                    Quản lý sản phẩm
+                    Quản lý phiếu yêu cầu xuất kho
                 </Typography>
-                <Button
+                {/* <Button
                     variant="contained"
                     startIcon={<Iconify icon="eva:plus-fill" />}
-                    onClick={() => setOpenOderForm(true)}
+                    onClick={() => navigate("/dashboard/create-export-receipt")}
                 >
-                    Thêm Sản Phẩm
+                    Thêm phiếu xuất kho
                 </Button>
                 <Dialog fullWidth maxWidth open={openOderForm}>
                     <DialogTitle>
@@ -309,50 +339,78 @@ const ProductInventoryPage = () => {
                             <CloseIcon color="primary" />
                         </IconButton>{' '}
                     </DialogTitle>
-                    <CategoryForm
-                        onClose={handleCreateProductSuccess}
-                        open={openOderForm}
-                    />
-                </Dialog>
+                    <CreateExportReceipt onClose={handleCreateGoodReceiptSuccess} open={openOderForm} />
+                </Dialog> */}
             </Stack>
 
+            {/* ===========================================filter=========================================== */}
+            {/* <div style={{ display: 'flex', alignItems: 'center' }}>
+                <FilterAltIcon color="action" />
+                <Typography gutterBottom variant="h6" color="text.secondary" component="div" sx={{ m: 1 }}>
+                    Bộ lọc tìm kiếm
+                </Typography>
+            </div>
+            <FormControl sx={{ m: 1, width: 300, mb: 2 }}>
+                <InputLabel id="demo-multiple-checkbox-label">Nhóm hàng</InputLabel>
+                <Select
+                    labelId="demo-multiple-checkbox-label"
+                    id="demo-multiple-checkbox"
+                    multiple
+                    value={personName}
+                    onChange={handleChange}
+                    input={<OutlinedInput label="Nhóm hàng" />}
+                    renderValue={(selected) => selected.join(', ')}
+                    MenuProps={MenuProps}
+                >
+                    {filterOptions.map((name) => (
+                        <MenuItem key={name} value={name}>
+                            <Checkbox checked={personName.indexOf(name) > -1} />
+                            <ListItemText primary={name} />
+                        </MenuItem>
+                    ))}
+                </Select>
+            </FormControl> */}
+            {/* ===========================================filter=========================================== */}
             <Card>
-                <ProductsListToolbar
+                <SubCategoryToolbar
                     numSelected={selected.length}
                     filterName={filterName}
                     onFilterName={handleFilterByName}
+                    onDataSearch={handleDataSearch}
                 />
 
                 <Scrollbar>
                     <TableContainer sx={{ minWidth: 800 }}>
                         <Table>
-                            <ProductsListHead
+                            <SubCategoryListHead
                                 order={order}
                                 orderBy={orderBy}
                                 headLabel={TABLE_HEAD}
-                                rowCount={productsData.length}
+                                rowCount={exportReceiptData.length}
                                 numSelected={selected.length}
                                 onRequestSort={handleRequestSort}
                                 onSelectAllClick={handleSelectAllClick}
                             />
                             <TableBody>
-                                {productsData.map((product) => {
+                                {renderedTodoList.map((sub_category) => {
                                     return (
-                                        <React.Fragment key={product.id}>
+                                        <React.Fragment key={sub_category.id}>
                                             <TableRow
                                                 hover
-                                                key={product.id}
+                                                key={sub_category.id}
                                                 tabIndex={-1}
                                                 role="checkbox"
-                                                selected={selectedProductId === product.id}
-                                                onClick={() => handleProductClick(product)}
+                                                selected={selectedExportReceiptId === sub_category.id}
+                                                onClick={() => handleSubCategoryClick(sub_category)}
                                             >
                                                 <TableCell padding="checkbox">
                                                     <Checkbox
-                                                        checked={selectedProductId === product.id}
-                                                        // onChange={(event) => handleCheckboxChange(event, product.id)}
+                                                        checked={selectedExportReceiptId === sub_category.id}
+                                                        // onChange={(event) =>
+                                                        //     handleCheckboxChange(event, sub_category.id)
+                                                        // }
                                                         // checked={selectedUser}
-                                                        onChange={(event) => handleClick(event, product.name)}
+                                                        onChange={(event) => handleClick(event, sub_category.name)}
                                                     />
                                                 </TableCell>
 
@@ -362,49 +420,51 @@ const ProductInventoryPage = () => {
                                                     </Stack>
                                                 </TableCell>
 
-                                                <TableCell align="left">
-                                                    <Typography variant="subtitle2" noWrap>
-                                                        {product.id}
-                                                    </Typography>
-                                                </TableCell>
-
                                                 <TableCell component="th" scope="row" padding="none">
                                                     <Stack direction="row" alignItems="center" spacing={2}>
                                                         {/* <Avatar alt={name} src={avatarUrl} /> */}
                                                         <Typography variant="subtitle2" noWrap>
-                                                            {product.name}
+                                                            {sub_category.name}
                                                         </Typography>
                                                     </Stack>
                                                 </TableCell>
-                                                <TableCell align="left">{product.description}</TableCell>
-                                                <TableCell align="left">{product.createdAt}</TableCell>
-                                                <TableCell align="left">{product.updatedAt}</TableCell>
+                                                <TableCell align="left">{sub_category.description}</TableCell>
+                                                <TableCell align="left">{sub_category.createdAt}</TableCell>
+                                                <TableCell align="left">{sub_category.updatedAt}</TableCell>
                                                 <TableCell align="left">
                                                     <Typography variant="subtitle2" noWrap>
-                                                        {product.categories.map((category, index) => {
-                                                            return index === product.categories.length - 1
+                                                        {sub_category.categories.map((category, index) => {
+                                                            return index === sub_category.categories.length - 1
                                                                 ? category.name
                                                                 : `${category.name}, `;
                                                         })}
                                                     </Typography>
                                                 </TableCell>
+
                                                 <TableCell align="left">
-                                                    <Label color={(product.status === 'Inactive' && 'error') || 'success'}>
-                                                        {(product.status === 'Active') ? 'Đang hoạt động' : 'Ngừng hoạt động'}
+                                                    <Label
+                                                        color={
+                                                            (sub_category.status === 'Inactive' && 'error') || 'success'
+                                                        }
+                                                    >
+                                                        {sub_category.status === 'Active'
+                                                            ? 'Đang hoạt động'
+                                                            : 'Ngừng hoạt động'}
                                                     </Label>
                                                 </TableCell>
                                             </TableRow>
 
-                                            {selectedProductId === product.id && (
+                                            {selectedExportReceiptId === sub_category.id && (
                                                 <TableRow>
                                                     <TableCell colSpan={8}>
-                                                        <ProductDetailForm
-                                                            products={productsData}
-                                                            productStatus={productStatus}
-                                                            productId={selectedProductId}
-                                                            updateProductInList={updateProductInList}
-                                                            updateProductStatusInList={updateProductStatusInList}
-                                                            onClose={handleCloseProductDetails} />
+                                                        <SubCategoryDetailForm
+                                                            exportReceipt={exportReceiptData}
+                                                            exportReceiptStatus={exportReceiptStatus}
+                                                            exportReceiptId={selectedExportReceiptId}
+                                                            updateExportReceiptInList={updateExportReceiptInList}
+                                                            updateExportReceiptStatusInList={updateExportReceiptStatusInList}
+                                                            onClose={handleCloseSubCategoryDetails}
+                                                        />
                                                     </TableCell>
                                                 </TableRow>
                                             )}
@@ -455,50 +515,8 @@ const ProductInventoryPage = () => {
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </Card>
-            {/* </Container> */}
 
-            {/* <Popover
-                open={Boolean(open)}
-                anchorEl={open}
-                onClose={handleCloseMenu}
-                anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                PaperProps={{
-                    sx: {
-                        p: 1,
-                        width: 140,
-                        '& .MuiMenuItem-root': {
-                            px: 1,
-                            typography: 'body2',
-                            borderRadius: 0.75,
-                        },
-                    },
-                }}
-            >
-                <MenuItem onClick={() => setOpenEditForm(true)}>
-                    <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-                    Edit
-                </MenuItem>
-                <Dialog fullWidth maxWidth open={openEditForm}>
-                    <DialogTitle>
-                        Cập Nhật Sản Phẩm{' '}
-                        <IconButton style={{ float: 'right' }} onClick={handleCloseEditsForm}>
-                            <CloseIcon color="primary" />
-                        </IconButton>{' '}
-                    </DialogTitle>
-                    <EditCategoryForm
-                        open={openEditForm}
-                        product={selectedProduct}
-                        handleClose={handleCloseEditsForm}
-                    />
-                </Dialog>
-
-                <MenuItem sx={{ color: 'error.main' }}>
-                    <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
-                    Delete
-                </MenuItem>
-            </Popover> */}
         </>
     );
 };
-export default ProductInventoryPage;
+export default ExportRequestReceiptManagerPage;

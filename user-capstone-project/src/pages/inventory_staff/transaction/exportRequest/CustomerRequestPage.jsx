@@ -8,32 +8,32 @@ import {
     Stack,
     Paper,
     Avatar,
-    Button,
     Checkbox,
     TableRow,
     TableBody,
     TableCell,
+    Container,
     Typography,
     TableContainer,
     TablePagination,
 } from '@mui/material';
 // components
 import Label from '~/components/label/Label';
-import Iconify from '~/components/iconify/Iconify';
+// import Iconify from '~/components/iconify/Iconify';
 import Scrollbar from '~/components/scrollbar/Scrollbar';
-import CloseIcon from '@mui/icons-material/Close';
 
 // sections
 import { ProductsListHead, ProductsListToolbar } from '~/sections/@dashboard/products';
 // mock
 import PRODUCTSLIST from '../../../../_mock/products';
 // api
-
+import { getAllCustomerRequest } from '~/data/mutation/customerRequest/CustomerRequest-mutation';
 import ImportReaceiptDetailForm from '~/sections/auth/inventory_staff/importReceipt/ImportReceiptDetailForm';
-// import EditCategoryForm from '~/sections/auth/manager/categories/EditCategoryForm';
+
 // import GoodsReceiptPage from '../GoodsReceiptPage';
 import { useNavigate } from 'react-router-dom';
-import { getAllImportReceipt } from '~/data/mutation/importReceipt/ImportReceipt-mutation';
+import ExportReceiptDetailForm from '~/sections/auth/inventory_staff/exportReceipt/ExportReceiptDetailForm';
+
 
 
 
@@ -91,7 +91,7 @@ function applySortFilter(array, comparator, query) {
 //     return `${day}/${month}/${year}`;
 // }
 
-const ImportReceiptPage = () => {
+const CustomerRequestPage = () => {
     // State mở các form----------------------------------------------------------------
     const [open, setOpen] = useState(null);
     const [openOderForm, setOpenOderForm] = useState(false);
@@ -113,38 +113,38 @@ const ImportReceiptPage = () => {
     const navigate = useNavigate();
 
     // State data và xử lý data
-    const [importReceiptData, setImportReceiptData] = useState([]);
-    const [productStatus, setProductStatus] = useState('');
+    const [importRequestData, setImportRequestData] = useState([]);
+    // const [productStatus, setProductStatus] = useState('');
 
     const [selectedProduct, setSelectedProduct] = useState(null);
 
     // Hàm để thay đổi data mỗi khi Edit xong api-------------------------------------------------------------
     const updateImportReceiptInList = (updatedImportReceipt) => {
-        const importReceiptIndex = importReceiptData.findIndex((product) => product.id === updatedImportReceipt.id);
+        const importReceiptIndex = importRequestData.findIndex((product) => product.id === updatedImportReceipt.id);
 
         if (importReceiptIndex !== -1) {
-            const updatedImportReceiptData = [...importReceiptData];
+            const updatedImportReceiptData = [...importRequestData];
             updatedImportReceiptData[importReceiptIndex] = updatedImportReceipt;
 
-            setImportReceiptData(updatedImportReceiptData);
+            setImportRequestData(updatedImportReceiptData);
         }
     };
 
     const updateImportReceiptConfirmInList = (importReceiptId, newStatus) => {
-        const importReceiptIndex = importReceiptData.findIndex((product) => product.id === importReceiptId);
+        const importReceiptIndex = importRequestData.findIndex((product) => product.id === importReceiptId);
 
         if (importReceiptIndex !== -1) {
-            const updatedImportReceiptData = [...importReceiptData];
+            const updatedImportReceiptData = [...importRequestData];
             updatedImportReceiptData[importReceiptIndex].status = newStatus;
 
-            setImportReceiptData(updatedImportReceiptData);
+            setImportRequestData(updatedImportReceiptData);
         }
     };
 
     const handleCreateImportReceiptSuccess = (newImportReceipt) => {
         // Close the form
         setOpenOderForm(false);
-        setImportReceiptData((prevImportReceiptData) => [...prevImportReceiptData, newImportReceipt]);
+        setImportRequestData((prevImportReceiptData) => [...prevImportReceiptData, newImportReceipt]);
     };
 
     //----------------------------------------------------------------
@@ -159,7 +159,7 @@ const ImportReceiptPage = () => {
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelecteds = importReceiptData.map((n) => n.name);
+            const newSelecteds = importRequestData.map((n) => n.name);
             setSelected(newSelecteds);
             return;
         }
@@ -216,7 +216,7 @@ const ImportReceiptPage = () => {
         setOrder(isAsc ? 'desc' : 'asc');
         setOrderBy(property);
         // Sắp xếp danh sách sản phẩm dựa trên trường và hướng đã chọn
-        const sortedProduct = [...importReceiptData].sort((a, b) => {
+        const sortedProduct = [...importRequestData].sort((a, b) => {
             const valueA = a[property];
             const valueB = b[property];
             if (valueA < valueB) {
@@ -243,6 +243,10 @@ const ImportReceiptPage = () => {
     //     setOpenEditForm(false);
     // };
 
+    // const handleNavigate = () => {
+    //     navigate("/inventory-staff/goods-receipt");
+    // };
+
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - PRODUCTSLIST.length) : 0;
 
     const filteredUsers = applySortFilter(PRODUCTSLIST, getComparator(order, orderBy), filterName);
@@ -250,11 +254,11 @@ const ImportReceiptPage = () => {
     const isNotFound = !filteredUsers.length && !!filterName;
 
     useEffect(() => {
-        getAllImportReceipt()
+        getAllCustomerRequest()
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
-                    setImportReceiptData(data);
+                    setImportRequestData(data);
                 } else {
                     console.error('API response is not an array:', data);
                 }
@@ -263,7 +267,16 @@ const ImportReceiptPage = () => {
                 console.error('Error fetching users:', error);
             });
     }, []);
-    console.log(importReceiptData);
+    console.log(importRequestData);
+
+    //==============================* filter *==============================
+    const pendingApprovalItems = importRequestData.filter((importRequest) => importRequest.status === 'Pending_Approval');
+
+    const otherItems = importRequestData.filter((importRequest) => importRequest.status !== 'Pending_Approval');
+
+    const allItems = [...pendingApprovalItems, ...otherItems];
+    //==============================* filter *==============================
+
     return (
         <>
             <Helmet>
@@ -273,7 +286,7 @@ const ImportReceiptPage = () => {
             {/* <Container> */}
             <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                 <Typography variant="h4" gutterBottom>
-                    Phiếu nhập kho
+                    Yêu cầu xuất hàng
                 </Typography>
                 {/* <Button
                     variant="contained"
@@ -298,13 +311,13 @@ const ImportReceiptPage = () => {
                                 order={order}
                                 orderBy={orderBy}
                                 headLabel={TABLE_HEAD}
-                                rowCount={importReceiptData.length}
+                                rowCount={importRequestData.length}
                                 numSelected={selected.length}
                                 onRequestSort={handleRequestSort}
                                 onSelectAllClick={handleSelectAllClick}
                             />
                             <TableBody>
-                                {importReceiptData.map((importReceipt) => {
+                                {allItems.map((importReceipt) => {
                                     return (
                                         <React.Fragment key={importReceipt.id}>
                                             <TableRow
@@ -351,9 +364,9 @@ const ImportReceiptPage = () => {
                                                     <Label
                                                         color={
                                                             (importReceipt.status === 'Pending_Approval' && 'warning') ||
-                                                            (importReceipt.status === 'Approved' && 'primary') ||
+                                                            (importReceipt.status === 'Approved' && 'success') ||
                                                             (importReceipt.status === ' IN_PROGRESS' && 'warning') ||
-                                                            (importReceipt.status === 'Completed' && 'success') ||
+                                                            (importReceipt.status === 'Complete' && 'primary') ||
                                                             (importReceipt.status === 'Inactive' && 'error') ||
                                                             'default'
                                                         }
@@ -364,7 +377,7 @@ const ImportReceiptPage = () => {
                                                                 ? 'Đã xác nhận'
                                                                 : importReceipt.status === 'IN_PROGRESS'
                                                                     ? 'Đang tiến hành'
-                                                                    : importReceipt.status === 'Completed'
+                                                                    : importReceipt.status === 'Complete'
                                                                         ? 'Hoàn thành'
                                                                         : 'Ngừng hoạt động'}
                                                     </Label>
@@ -374,8 +387,8 @@ const ImportReceiptPage = () => {
                                             {selectedImportReceiptId === importReceipt.id && (
                                                 <TableRow>
                                                     <TableCell colSpan={8}>
-                                                        <ImportReaceiptDetailForm
-                                                            importReceipt={importReceiptData}
+                                                        <ExportReceiptDetailForm
+                                                            importReceipt={importRequestData}
                                                             // productStatus={productStatus}
                                                             importReceiptId={selectedImportReceiptId}
                                                             updateImportReceiptInList={updateImportReceiptInList}
@@ -438,4 +451,4 @@ const ImportReceiptPage = () => {
         </>
     );
 };
-export default ImportReceiptPage;
+export default CustomerRequestPage;

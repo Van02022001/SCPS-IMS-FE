@@ -286,7 +286,7 @@ const ImportReceiptManagerPage = () => {
             {/* <Container> */}
             <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                 <Typography variant="h4" gutterBottom>
-                    Yêu cầu nhập kho
+                    Phiếu nhập kho
                 </Typography>
                 {/* <Button
                     variant="contained"

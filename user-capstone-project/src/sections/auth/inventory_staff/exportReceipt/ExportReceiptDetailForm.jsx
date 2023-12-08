@@ -35,12 +35,14 @@ import { editImportReceipt, editImportReceiptConfirm, editReceiptStartImport } f
 
 import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
-import CreateImportReceiptForm from './CreateImportReceiptForm';
+
 import { getAllImportReceipt } from '~/data/mutation/importReceipt/ImportReceipt-mutation';
+import CreateExportReceiptForm from './CreateExportReceiptForm';
+import { editExportRequestReceipt } from '~/data/mutation/customerRequest/CustomerRequest-mutation';
 
 
 
-const ImportReceiptDetailForm = ({
+const ExportReceiptDetailForm = ({
     importReceipt,
     importReceiptId,
     updateImportReceiptInList,
@@ -241,11 +243,11 @@ const ImportReceiptDetailForm = ({
         }
     };
 
-    const updateImportReceiptConfirm = async () => {
+    const updateExportReceiptConfirm = async () => {
         try {
             let newStatus = currentStatus === 'Pending_Approval' ? 'Inactive' : 'Approved';
 
-            const response = await editImportReceiptConfirm(importReceiptId, newStatus);
+            const response = await editExportRequestReceipt(importReceiptId, newStatus);
 
             if (response.status === '200 OK') {
                 setIsSuccess(true);
@@ -268,33 +270,33 @@ const ImportReceiptDetailForm = ({
             // }
         }
     };
-    const updateReceiptStartImport = async () => {
-        try {
-            let newStatus = currentStatus === 'Approved' ? 'Inactive' : 'Completed';
+    // const updateReceiptStartImport = async () => {
+    //     try {
+    //         let newStatus = currentStatus === 'Approved' ? 'Inactive' : 'Completed';
 
-            const response = await editReceiptStartImport(importReceiptId, newStatus);
+    //         const response = await editExportRequestReceipt(importReceiptId, newStatus);
 
-            if (response.status === '200 OK') {
-                setIsSuccess(true);
-                setIsError(false);
-                setSuccessMessage(response.message);
-                handleMessage(response.message);
-            }
+    //         if (response.status === '200 OK') {
+    //             setIsSuccess(true);
+    //             setIsError(false);
+    //             setSuccessMessage(response.message);
+    //             handleMessage(response.message);
+    //         }
 
-            updateImportReceiptConfirmInList(importReceiptId, newStatus);
-            setCurrentStatus(newStatus);
+    //         updateImportReceiptConfirmInList(importReceiptId, newStatus);
+    //         setCurrentStatus(newStatus);
 
-            console.log('Product status updated:', response);
-        } catch (error) {
-            console.error('Error updating category status:', error);
-            setIsError(true);
-            setIsSuccess(false);
-            setErrorMessage(error.response.data.message);
-            if (error.response) {
-                console.log('Error response:', error.response);
-            }
-        }
-    };
+    //         console.log('Product status updated:', response);
+    //     } catch (error) {
+    //         console.error('Error updating category status:', error);
+    //         setIsError(true);
+    //         setIsSuccess(false);
+    //         setErrorMessage(error.response.data.message);
+    //         if (error.response) {
+    //             console.log('Error response:', error.response);
+    //         }
+    //     }
+    // };
     const handleOpenForm = () => {
         const validImportReceipst = importReceipt.find((o) => o.id === importReceiptId);
 
@@ -387,17 +389,17 @@ const ImportReceiptDetailForm = ({
                     <div>
                         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                             <Button variant="contained" color="primary" onClick={handleOpenForm}>
-                                Tạo phiếu nhập kho
+                                Tạo phiếu xuất kho
                             </Button>
                         </div>
                         <Dialog maxWidth="lg" fullWidth open={isOpenImportForm}>
-                            <DialogTitle style={{ textAlign: 'center' }}>Phiếu Nhập Kho
+                            <DialogTitle style={{ textAlign: 'center' }}>Phiếu Xuất Kho
                                 <IconButton style={{ float: 'right' }} onClick={handleCloseForm}>
                                     <CloseIcon color="primary" />
                                 </IconButton>{' '}
                             </DialogTitle>
 
-                            <CreateImportReceiptForm
+                            <CreateExportReceiptForm
                                 isOpen={isOpenImportForm}
                                 onCloseForm={() => {
                                     setIsOpenImportForm(false);
@@ -554,6 +556,7 @@ const ImportReceiptDetailForm = ({
                                             >
                                                 <TableCell>Tên sản phẩm</TableCell>
                                                 <TableCell>Số lượng</TableCell>
+                                                <TableCell>Tổng giá phiếu</TableCell>
                                                 <TableCell>Đơn vị</TableCell>
 
                                             </TableRow>
@@ -562,6 +565,7 @@ const ImportReceiptDetailForm = ({
                                                     <TableRow key={items.id}>
                                                         <TableCell>{items.itemName}</TableCell>
                                                         <TableCell>{items.quantity}</TableCell>
+                                                        <TableCell>{items.totalPrice}</TableCell>
                                                         <TableCell>{items.unitName}</TableCell>
                                                         <TableCell>{/* Thêm thành tiền nếu có */}</TableCell>
                                                     </TableRow>
@@ -574,6 +578,10 @@ const ImportReceiptDetailForm = ({
                                         <TableRow>
                                             <TableCell >Tổng số lượng:</TableCell>
                                             <TableCell>{importReceipst.totalQuantity}</TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell >Tổng tiền:</TableCell>
+                                            <TableCell>{importReceipst.totalPrice} VND</TableCell>
                                         </TableRow>
                                     </TableBody>
                                 </TableContainer>
@@ -595,7 +603,7 @@ const ImportReceiptDetailForm = ({
                             </Button> */}
 
                             <div>
-                                <Button variant="contained" color="primary" onClick={updateImportReceiptConfirm}>
+                                <Button variant="contained" color="primary" onClick={updateExportReceiptConfirm}>
                                     Xác nhận
                                 </Button>
                                 <Snackbar
@@ -612,7 +620,7 @@ const ImportReceiptDetailForm = ({
                                 />
 
                             </div>
-                            <div>
+                            {/* <div>
                                 <Button variant="contained" color="warning" onClick={updateReceiptStartImport}>
                                     Tiến hành nhập kho
                                 </Button>
@@ -628,7 +636,7 @@ const ImportReceiptDetailForm = ({
                                     action={action}
                                     style={{ bottom: '16px', right: '16px' }}
                                 />
-                            </div>
+                            </div> */}
                             {/* <Button variant="outlined" color="error" onClick={handleClear}>
                                 Hủy bỏ
                             </Button> */}
@@ -640,4 +648,4 @@ const ImportReceiptDetailForm = ({
     ) : null;
 };
 
-export default ImportReceiptDetailForm;
+export default ExportReceiptDetailForm;

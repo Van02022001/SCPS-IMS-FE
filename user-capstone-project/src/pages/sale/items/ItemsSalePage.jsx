@@ -325,9 +325,9 @@ const ItemsSalePage = () => {
                                                 <TableCell padding="checkbox">
                                                     <Checkbox
                                                         checked={selectedProductId === subCategory.id}
-                                                        onChange={(event) => handleCheckboxChange(event, subCategory.id)}
-                                                    // checked={selectedUser}
-                                                    // onChange={(event) => handleClick(event, name)}
+                                                        // onChange={(event) => handleCheckboxChange(event, subCategory.id)}
+                                                        // checked={selectedUser}
+                                                        onChange={(event) => handleClick(event, subCategory.name)}
                                                     />
                                                 </TableCell>
 

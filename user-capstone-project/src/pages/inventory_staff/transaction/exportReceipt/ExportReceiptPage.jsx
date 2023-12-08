@@ -34,6 +34,8 @@ import ImportReaceiptDetailForm from '~/sections/auth/inventory_staff/importRece
 // import GoodsReceiptPage from '../GoodsReceiptPage';
 import { useNavigate } from 'react-router-dom';
 import { getAllImportReceipt } from '~/data/mutation/importReceipt/ImportReceipt-mutation';
+import ExportReceiptDetailForm from '~/sections/auth/inventory_staff/exportReceipt/ExportReceiptDetailForm';
+import { getAllExportReceipt } from '~/data/mutation/exportReceipt/ExportReceipt-mutation';
 
 
 
@@ -91,7 +93,7 @@ function applySortFilter(array, comparator, query) {
 //     return `${day}/${month}/${year}`;
 // }
 
-const ImportReceiptPage = () => {
+const ExportReceiptPage = () => {
     // State mở các form----------------------------------------------------------------
     const [open, setOpen] = useState(null);
     const [openOderForm, setOpenOderForm] = useState(false);
@@ -250,7 +252,7 @@ const ImportReceiptPage = () => {
     const isNotFound = !filteredUsers.length && !!filterName;
 
     useEffect(() => {
-        getAllImportReceipt()
+        getAllExportReceipt()
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
@@ -273,7 +275,7 @@ const ImportReceiptPage = () => {
             {/* <Container> */}
             <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                 <Typography variant="h4" gutterBottom>
-                    Phiếu nhập kho
+                    Phiếu xuất kho
                 </Typography>
                 {/* <Button
                     variant="contained"
@@ -374,7 +376,7 @@ const ImportReceiptPage = () => {
                                             {selectedImportReceiptId === importReceipt.id && (
                                                 <TableRow>
                                                     <TableCell colSpan={8}>
-                                                        <ImportReaceiptDetailForm
+                                                        <ExportReceiptDetailForm
                                                             importReceipt={importReceiptData}
                                                             // productStatus={productStatus}
                                                             importReceiptId={selectedImportReceiptId}
@@ -438,4 +440,4 @@ const ImportReceiptPage = () => {
         </>
     );
 };
-export default ImportReceiptPage;
+export default ExportReceiptPage;

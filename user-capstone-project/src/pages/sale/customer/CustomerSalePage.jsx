@@ -342,9 +342,9 @@ const CustomerSalePage = () => {
                                                 <TableCell padding="checkbox">
                                                     <Checkbox
                                                         checked={selectedCustomerId === customer.id}
-                                                        onChange={(event) => handleCheckboxChange(event, customer.id)}
-                                                    // checked={selectedUser}
-                                                    // onChange={(event) => handleClick(event, name)}
+                                                        // onChange={(event) => handleCheckboxChange(event, customer.id)}
+                                                        // checked={selectedUser}
+                                                        onChange={(event) => handleClick(event, customer.name)}
                                                     />
                                                 </TableCell>
 

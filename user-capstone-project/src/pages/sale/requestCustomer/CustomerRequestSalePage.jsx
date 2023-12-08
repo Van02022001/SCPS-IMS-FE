@@ -1,5 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
+
 import React, { useEffect, useState } from 'react';
 // @mui
 import {
@@ -14,8 +15,11 @@ import {
     TableBody,
     TableCell,
     Typography,
+    IconButton,
     TableContainer,
     TablePagination,
+    Dialog,
+    DialogTitle,
 } from '@mui/material';
 // components
 import Label from '~/components/label/Label';
@@ -24,18 +28,17 @@ import Scrollbar from '~/components/scrollbar/Scrollbar';
 import CloseIcon from '@mui/icons-material/Close';
 
 // sections
-import { ProductsListHead, ProductsListToolbar } from '~/sections/@dashboard/products';
+import { SubCategoryListHead, SubCategoryToolbar } from '~/sections/@dashboard/manager/subCategory';
 // mock
-import PRODUCTSLIST from '../../../../_mock/products';
-// api
-
-import ImportReaceiptDetailForm from '~/sections/auth/inventory_staff/importReceipt/ImportReceiptDetailForm';
-// import EditCategoryForm from '~/sections/auth/manager/categories/EditCategoryForm';
-// import GoodsReceiptPage from '../GoodsReceiptPage';
+import PRODUCTSLIST from '../../../_mock/products';
 import { useNavigate } from 'react-router-dom';
-import { getAllImportReceipt } from '~/data/mutation/importReceipt/ImportReceipt-mutation';
+// api
+import ImportRequestReceiptDetailManagerForm from '~/sections/auth/manager/transaction/importRequestReceipt/ImportRequestReceiptDetailManagerForm';
+//icons
 
-
+// import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import { getAllCustomerRequest } from '~/data/mutation/customerRequest/CustomerRequest-mutation';
+import CreateRequestCustomerPage from './CreateRequestCustomerPage';
 
 
 // ----------------------------------------------------------------------
@@ -91,14 +94,27 @@ function applySortFilter(array, comparator, query) {
 //     return `${day}/${month}/${year}`;
 // }
 
-const ImportReceiptPage = () => {
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+    PaperProps: {
+        style: {
+            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+            width: 250,
+        },
+    },
+};
+
+// const filterOptions = ['Ren', 'Ron', 'Abc', 'Test1', 'Test12', 'Test123'];
+
+const CustomerRequestSalePage = () => {
     // State mở các form----------------------------------------------------------------
     const [open, setOpen] = useState(null);
     const [openOderForm, setOpenOderForm] = useState(false);
     const [openEditForm, setOpenEditForm] = useState(false);
 
     const [selected, setSelected] = useState([]);
-    const [selectedImportReceiptId, setSelectedImportReceiptId] = useState([]);
+    const [selectedGoodReceiptId, setSelectedGoodReceiptId] = useState([]);
 
     // State cho phần soft theo name-------------------------------------------------------
     const [filterName, setFilterName] = useState('');
@@ -106,64 +122,75 @@ const ImportReceiptPage = () => {
     const [orderBy, setOrderBy] = useState('name');
     const [order, setOrder] = useState('asc');
     const [sortBy, setSortBy] = useState('createdAt');
-    const [sortedProduct, setSortedProduct] = useState([]);
+    const [sortedGoodReceipt, setSortedGoodReceipt] = useState([]);
 
     const [rowsPerPage, setRowsPerPage] = useState(5);
+    // Search data
+    const [displayedGoodReceiptData, setDisplayedGoodReceiptData] = useState([]);
+    // State data và xử lý data
+    const [importRequestData, setImportRequestData] = useState([]);
+    const [importRequestStatus, setImportRequestStatus] = useState('');
 
+    const [filteredCategory, setFilteredCategory] = useState(null);
+
+    // const [anchorElOptions, setAnchorElOptions] = useState(null);
+
+    const [selectedFilterOptions, setSelectedFilterOptions] = useState(null);
+
+    const [personName, setPersonName] = React.useState([]);
     const navigate = useNavigate();
 
-    // State data và xử lý data
-    const [importReceiptData, setImportReceiptData] = useState([]);
-    const [productStatus, setProductStatus] = useState('');
+    const handleChange = (event) => {
+        setPersonName(event.target.value);
+        const selectedValues = event.target.value.length > 0 ? event.target.value : null;
+        setFilteredCategory(selectedValues);
+        setSelectedFilterOptions(selectedValues);
+    };
 
-    const [selectedProduct, setSelectedProduct] = useState(null);
+    // ========================== Hàm để thay đổi data mỗi khi Edit xong api=======================================
+    const updateGoodReceiptInList = (updatedGoodReceipt) => {
+        const importRquestReceiptIndex = importRequestData.findIndex((good_receipt) => good_receipt.id === updatedGoodReceipt.id);
 
-    // Hàm để thay đổi data mỗi khi Edit xong api-------------------------------------------------------------
-    const updateImportReceiptInList = (updatedImportReceipt) => {
-        const importReceiptIndex = importReceiptData.findIndex((product) => product.id === updatedImportReceipt.id);
+        if (importRquestReceiptIndex !== -1) {
+            const UpdatedGoodReceipt = [...importRequestData];
+            UpdatedGoodReceipt[importRquestReceiptIndex] = UpdatedGoodReceipt;
 
-        if (importReceiptIndex !== -1) {
-            const updatedImportReceiptData = [...importReceiptData];
-            updatedImportReceiptData[importReceiptIndex] = updatedImportReceipt;
-
-            setImportReceiptData(updatedImportReceiptData);
+            setImportRequestData(UpdatedGoodReceipt);
         }
     };
 
-    const updateImportReceiptConfirmInList = (importReceiptId, newStatus) => {
-        const importReceiptIndex = importReceiptData.findIndex((product) => product.id === importReceiptId);
+    const updateGoodReceiptStatusInList = (goodReceiptId, newStatus) => {
+        const importRquestReceiptIndex = importRequestData.findIndex((good_receipt) => good_receipt.id === goodReceiptId);
 
-        if (importReceiptIndex !== -1) {
-            const updatedImportReceiptData = [...importReceiptData];
-            updatedImportReceiptData[importReceiptIndex].status = newStatus;
+        if (importRquestReceiptIndex !== -1) {
+            const UpdatedGoodReceipt = [...importRequestData];
+            UpdatedGoodReceipt[importRquestReceiptIndex].status = newStatus;
 
-            setImportReceiptData(updatedImportReceiptData);
+            setImportRequestData(UpdatedGoodReceipt);
         }
     };
 
-    const handleCreateImportReceiptSuccess = (newImportReceipt) => {
+    const handleCreateGoodReceiptSuccess = (newGoodReceipt) => {
         // Close the form
         setOpenOderForm(false);
-        setImportReceiptData((prevImportReceiptData) => [...prevImportReceiptData, newImportReceipt]);
+        setImportRequestData((prevGoodReceiptData) => [...prevGoodReceiptData, newGoodReceipt]);
     };
 
-    //----------------------------------------------------------------
-    // const handleOpenMenu = (event, product) => {
-    //     setSelectedProduct(product);
+    const handleDataSearch = (searchResult) => {
+        // Cập nhật state của trang chính với dữ liệu từ tìm kiếm
+        setImportRequestData(searchResult);
+        setDisplayedGoodReceiptData(searchResult);
+        console.log(displayedGoodReceiptData);
+    };
+
+    //===========================================================================================
+    // const handleOpenMenu = (event, subCategory) => {
+    //     setSelectedProduct(subCategory);
     //     setOpen(event.currentTarget);
     // };
 
-    // const handleCloseMenu = () => {
-    //     setOpen(null);
-    // };
-
-    const handleSelectAllClick = (event) => {
-        if (event.target.checked) {
-            const newSelecteds = importReceiptData.map((n) => n.name);
-            setSelected(newSelecteds);
-            return;
-        }
-        setSelected([]);
+    const handleCloseMenu = () => {
+        setOpen(null);
     };
 
     const handleClick = (event, name) => {
@@ -181,16 +208,16 @@ const ImportReceiptPage = () => {
         setSelected(newSelected);
     };
 
-    const handleProductClick = (importReceipt) => {
-        if (selectedImportReceiptId === importReceipt.id) {
-            setSelectedImportReceiptId(null); // Đóng nếu đã mở
+    const handleSubCategoryClick = (subCategory) => {
+        if (selectedGoodReceiptId === subCategory.id) {
+            setSelectedGoodReceiptId(null); // Đóng nếu đã mở
         } else {
-            setSelectedImportReceiptId(importReceipt.id); // Mở hoặc chuyển sang sản phẩm khác
+            setSelectedGoodReceiptId(subCategory.id); // Mở hoặc chuyển sang sản phẩm khác
         }
     };
 
-    const handleCloseProductDetails = () => {
-        setSelectedImportReceiptId(null);
+    const handleCloseSubCategoryDetails = () => {
+        setSelectedGoodReceiptId(null);
     };
 
     const handleChangePage = (event, newPage) => {
@@ -201,14 +228,24 @@ const ImportReceiptPage = () => {
         setPage(0);
         setRowsPerPage(parseInt(event.target.value, 10));
     };
-    // Các hàm xử lý soft theo name--------------------------------------------------------------------------------------------------------------------------------
-    const handleCheckboxChange = (event, productId) => {
+
+    //=========================================== Các hàm xử lý soft theo name===========================================
+    const handleSelectAllClick = (event) => {
+        if (event.target.checked) {
+            const newSelecteds = importRequestData.map((n) => n.name);
+            setSelected(newSelecteds);
+            return;
+        }
+        setSelected([]);
+    };
+
+    const handleCheckboxChange = (event, subCategoryId) => {
         if (event.target.checked) {
             // Nếu người dùng chọn checkbox, thêm sản phẩm vào danh sách đã chọn.
-            setSelectedImportReceiptId([...selectedImportReceiptId, productId]);
+            setSelectedGoodReceiptId([...selectedGoodReceiptId, subCategoryId]);
         } else {
             // Nếu người dùng bỏ chọn checkbox, loại bỏ sản phẩm khỏi danh sách đã chọn.
-            setSelectedImportReceiptId(selectedImportReceiptId.filter((id) => id !== productId));
+            setSelectedGoodReceiptId(selectedGoodReceiptId.filter((id) => id !== subCategoryId));
         }
     };
     const handleRequestSort = (property) => {
@@ -216,7 +253,7 @@ const ImportReceiptPage = () => {
         setOrder(isAsc ? 'desc' : 'asc');
         setOrderBy(property);
         // Sắp xếp danh sách sản phẩm dựa trên trường và hướng đã chọn
-        const sortedProduct = [...importReceiptData].sort((a, b) => {
+        const sortedGoodReceipt = [...importRequestData].sort((a, b) => {
             const valueA = a[property];
             const valueB = b[property];
             if (valueA < valueB) {
@@ -227,7 +264,7 @@ const ImportReceiptPage = () => {
             }
             return 0;
         });
-        setSortedProduct(sortedProduct);
+        setSortedGoodReceipt(sortedGoodReceipt);
     };
 
     const handleFilterByName = (event) => {
@@ -235,13 +272,17 @@ const ImportReceiptPage = () => {
         const query = event.target.value;
         setFilterName(query);
 
-        const filteredUsers = applySortFilter(sortedProduct, getComparator(order, sortBy), query);
-        setSortedProduct(filteredUsers);
+        const filteredUsers = applySortFilter(sortedGoodReceipt, getComparator(order, sortBy), query);
+        setSortedGoodReceipt(filteredUsers);
     };
 
-    // const handleCloseEditsForm = () => {
-    //     setOpenEditForm(false);
-    // };
+    const handleCloseOdersForm = () => {
+        setOpenOderForm(false);
+    };
+
+    const handleCloseEditsForm = () => {
+        setOpenEditForm(false);
+    };
 
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - PRODUCTSLIST.length) : 0;
 
@@ -250,11 +291,11 @@ const ImportReceiptPage = () => {
     const isNotFound = !filteredUsers.length && !!filterName;
 
     useEffect(() => {
-        getAllImportReceipt()
+        getAllCustomerRequest()
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
-                    setImportReceiptData(data);
+                    setImportRequestData(data);
                 } else {
                     console.error('API response is not an array:', data);
                 }
@@ -263,64 +304,107 @@ const ImportReceiptPage = () => {
                 console.error('Error fetching users:', error);
             });
     }, []);
-    console.log(importReceiptData);
+
+    //==============================* filter *==============================
+    const pendingApprovalItems = importRequestData.filter((importRequest) => importRequest.status === 'Pending_Approval');
+
+    const otherItems = importRequestData.filter((importRequest) => importRequest.status !== 'Pending_Approval');
+
+    const allItems = [...pendingApprovalItems, ...otherItems];
+    //==============================* filter *==============================
+
     return (
         <>
             <Helmet>
-                <title> Nhập kho | Minimal UI </title>
+                <title> Quản lý nh| Minimal UI </title>
             </Helmet>
 
             {/* <Container> */}
-            <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+            <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
                 <Typography variant="h4" gutterBottom>
-                    Phiếu nhập kho
+                    Yêu cầu khách hàng
                 </Typography>
-                {/* <Button
+                <Button
                     variant="contained"
                     startIcon={<Iconify icon="eva:plus-fill" />}
-                    onClick={handleNavigate}
+                    onClick={() => navigate('/sale-staff/create-request')}
                 >
-                    Nhập hàng
-                </Button> */}
+                    Xử lý hóa đơn
+                </Button>
+                <Dialog fullWidth maxWidth open={openOderForm} >
+                    <DialogTitle>Xử lý đặt hàng  <IconButton style={{ float: 'right' }} onClick={handleCloseOdersForm}>
+                        <CloseIcon color="primary" /></IconButton>
+                    </DialogTitle>
+                    <CreateRequestCustomerPage open={openOderForm} />
+                </Dialog>
             </Stack>
 
+            {/* ===========================================filter=========================================== */}
+            {/* <div style={{ display: 'flex', alignItems: 'center' }}>
+                <FilterAltIcon color="action" />
+                <Typography gutterBottom variant="h6" color="text.secondary" component="div" sx={{ m: 1 }}>
+                    Bộ lọc tìm kiếm
+                </Typography>
+            </div> */}
+            {/* <FormControl sx={{ m: 1, width: 300, mb: 2 }}>
+                <InputLabel id="demo-multiple-checkbox-label">Nhóm hàng</InputLabel>
+                <Select
+                    labelId="demo-multiple-checkbox-label"
+                    id="demo-multiple-checkbox"
+                    multiple
+                    value={personName}
+                    onChange={handleChange}
+                    input={<OutlinedInput label="Nhóm hàng" />}
+                    renderValue={(selected) => selected.join(', ')}
+                    MenuProps={MenuProps}
+                >
+                    {filterOptions.map((name) => (
+                        <MenuItem key={name} value={name}>
+                            <Checkbox checked={personName.indexOf(name) > -1} />
+                            <ListItemText primary={name} />
+                        </MenuItem>
+                    ))}
+                </Select>
+            </FormControl> */}
+            {/* ===========================================filter=========================================== */}
             <Card>
-                <ProductsListToolbar
+                <SubCategoryToolbar
                     numSelected={selected.length}
                     filterName={filterName}
                     onFilterName={handleFilterByName}
+                    onDataSearch={handleDataSearch}
                 />
 
                 <Scrollbar>
                     <TableContainer sx={{ minWidth: 800 }}>
                         <Table>
-                            <ProductsListHead
+                            <SubCategoryListHead
                                 order={order}
                                 orderBy={orderBy}
                                 headLabel={TABLE_HEAD}
-                                rowCount={importReceiptData.length}
+                                rowCount={importRequestData.length}
                                 numSelected={selected.length}
                                 onRequestSort={handleRequestSort}
                                 onSelectAllClick={handleSelectAllClick}
                             />
                             <TableBody>
-                                {importReceiptData.map((importReceipt) => {
+                                {allItems.map((importRequest) => {
                                     return (
-                                        <React.Fragment key={importReceipt.id}>
+                                        <React.Fragment key={importRequest.id}>
                                             <TableRow
                                                 hover
-                                                key={importReceipt.id}
+                                                key={importRequest.id}
                                                 tabIndex={-1}
                                                 role="checkbox"
-                                                selected={selectedImportReceiptId === importReceipt.id}
-                                                onClick={() => handleProductClick(importReceipt)}
+                                                selected={selectedGoodReceiptId === importRequest.id}
+                                                onClick={() => handleSubCategoryClick(importRequest)}
                                             >
                                                 <TableCell padding="checkbox">
                                                     <Checkbox
-                                                        checked={selectedImportReceiptId === importReceipt.id}
-                                                        // onChange={(event) => handleCheckboxChange(event, importReceipt.id)}
+                                                        checked={selectedGoodReceiptId === importRequest.id}
+                                                        // onChange={(event) => handleCheckboxChange(event, importRequest.id)}
                                                         // checked={selectedUser}
-                                                        onChange={(event) => handleClick(event, importReceipt.name)}
+                                                        onChange={(event) => handleClick(event, importRequest.name)}
                                                     />
                                                 </TableCell>
 
@@ -332,7 +416,7 @@ const ImportReceiptPage = () => {
 
                                                 <TableCell align="left">
                                                     <Typography variant="subtitle2" noWrap>
-                                                        {importReceipt.code}
+                                                        {importRequest.code}
                                                     </Typography>
                                                 </TableCell>
 
@@ -340,47 +424,50 @@ const ImportReceiptPage = () => {
                                                     <Stack direction="row" alignItems="center" spacing={2}>
                                                         {/* <Avatar alt={name} src={avatarUrl} /> */}
                                                         <Typography variant="subtitle2" noWrap>
-                                                            {importReceipt.description}
+                                                            {importRequest.description}
                                                         </Typography>
                                                     </Stack>
                                                 </TableCell>
-                                                <TableCell align="left">{importReceipt.createdBy}</TableCell>
-                                                <TableCell align="left">{importReceipt.createdAt}</TableCell>
+                                                <TableCell align="left">{importRequest.createdBy}</TableCell>
+                                                <TableCell align="left">{importRequest.createdAt}</TableCell>
                                                 {/* <TableCell align="left">{importReceipt.type}</TableCell> */}
                                                 <TableCell align="left">
                                                     <Label
                                                         color={
-                                                            (importReceipt.status === 'Pending_Approval' && 'warning') ||
-                                                            (importReceipt.status === 'Approved' && 'primary') ||
-                                                            (importReceipt.status === ' IN_PROGRESS' && 'warning') ||
-                                                            (importReceipt.status === 'Completed' && 'success') ||
-                                                            (importReceipt.status === 'Inactive' && 'error') ||
+                                                            (importRequest.status === 'Pending_Approval' &&
+                                                                'warning') ||
+                                                            (importRequest.status === 'Approved' && 'success') ||
+                                                            (importRequest.status === ' IN_PROGRESS' && 'warning') ||
+                                                            (importRequest.status === 'Complete' && 'primary') ||
+                                                            (importRequest.status === 'Inactive' && 'error') ||
                                                             'default'
                                                         }
                                                     >
-                                                        {importReceipt.status === 'Pending_Approval'
+                                                        {importRequest.status === 'Pending_Approval'
                                                             ? 'Chờ phê duyệt'
-                                                            : importReceipt.status === 'Approved'
+                                                            : importRequest.status === 'Approved'
                                                                 ? 'Đã xác nhận'
-                                                                : importReceipt.status === 'IN_PROGRESS'
+                                                                : importRequest.status === 'IN_PROGRESS'
                                                                     ? 'Đang tiến hành'
-                                                                    : importReceipt.status === 'Completed'
+                                                                    : importRequest.status === 'Complete'
                                                                         ? 'Hoàn thành'
                                                                         : 'Ngừng hoạt động'}
                                                     </Label>
                                                 </TableCell>
                                             </TableRow>
 
-                                            {selectedImportReceiptId === importReceipt.id && (
+                                            {selectedGoodReceiptId === importRequest.id && (
                                                 <TableRow>
                                                     <TableCell colSpan={8}>
-                                                        <ImportReaceiptDetailForm
-                                                            importReceipt={importReceiptData}
-                                                            // productStatus={productStatus}
-                                                            importReceiptId={selectedImportReceiptId}
-                                                            updateImportReceiptInList={updateImportReceiptInList}
-                                                            updateImportReceiptConfirmInList={updateImportReceiptConfirmInList}
-                                                            onClose={handleCloseProductDetails}
+                                                        <ImportRequestReceiptDetailManagerForm
+                                                            importRequestReceipt={importRequestData}
+                                                            importRequestReceiptStatus={importRequestStatus}
+                                                            importRequestReceiptId={selectedGoodReceiptId}
+                                                            updateGoodReceiptInList={updateGoodReceiptInList}
+                                                            updateGoodReceiptStatusInList={
+                                                                updateGoodReceiptStatusInList
+                                                            }
+                                                            onClose={handleCloseSubCategoryDetails}
                                                         />
                                                     </TableCell>
                                                 </TableRow>
@@ -432,10 +519,7 @@ const ImportReceiptPage = () => {
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </Card>
-            {/* </Container> */}
-
-
         </>
     );
 };
-export default ImportReceiptPage;
+export default CustomerRequestSalePage;

@@ -60,8 +60,8 @@ const TABLE_HEAD = [
     { id: 'closingStockValue', label: 'Giá trị tồn kho cuối', alignRight: false },
     { id: 'inboundQuantity', label: 'Số lượng đầu vào', alignRight: false },
     { id: 'inboundValue', label: 'Giá trị đầu vào', alignRight: false },
-    // { id: 'outboundQuantity', label: 'Số lượng gửi đi', alignRight: false },
-    // { id: 'outboundValue', label: 'Giá trị gửi đi', alignRight: false },
+    { id: 'outboundQuantity', label: 'Số lượng xuất kho', alignRight: false },
+    { id: 'outboundValue', label: 'Giá trị xuất kho', alignRight: false },
     { id: 'totalValue', label: 'Tổng giá trị', alignRight: false },
     { id: '' },
 ];
@@ -337,6 +337,8 @@ const InventoryReportPage = () => {
                                                 <TableCell>{inventoryReport.closingStockValue}</TableCell>
                                                 <TableCell>{inventoryReport.inboundQuantity}</TableCell>
                                                 <TableCell>{inventoryReport.inboundValue}</TableCell>
+                                                <TableCell>{inventoryReport.outboundQuantity}</TableCell>
+                                                <TableCell>{inventoryReport.outboundValue}</TableCell>
                                                 <TableCell>{inventoryReport.totalValue}</TableCell>
                                             </TableRow>
                                         </React.Fragment>
