@@ -350,9 +350,9 @@ const ProductInventoryPage = () => {
                                                 <TableCell padding="checkbox">
                                                     <Checkbox
                                                         checked={selectedProductId === product.id}
-                                                        onChange={(event) => handleCheckboxChange(event, product.id)}
-                                                    // checked={selectedUser}
-                                                    // onChange={(event) => handleClick(event, name)}
+                                                        // onChange={(event) => handleCheckboxChange(event, product.id)}
+                                                        // checked={selectedUser}
+                                                        onChange={(event) => handleClick(event, product.name)}
                                                     />
                                                 </TableCell>
 

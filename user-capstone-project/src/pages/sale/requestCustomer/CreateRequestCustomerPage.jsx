@@ -409,7 +409,7 @@ const CreateRequestCustomerPage = () => {
                                                 </Select>
                                             </FormControl>
                                         </Grid>
-                                        <Grid item xs={2}>
+                                        <Grid item xs={4}>
                                             {selectedWarehouse && (
                                                 <FormControl size="small" variant="outlined" sx={{ width: '100%' }}>
                                                     <InputLabel id="inventory-staff-label">Chọn Nhân Viên</InputLabel>

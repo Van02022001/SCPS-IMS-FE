@@ -437,7 +437,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                                     .join(',\n')
                                                 : ''}
                                         />
-                                        <Button
+                                        {/* <Button
                                             variant="outlined"
                                             sx={{ padding: 0.8, minWidth: 0, maxHeight: 40 }}
                                             onClick={handleOpenAddCategoryDialog}
@@ -448,7 +448,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                             open={openAddCategoryDialog}
                                             onClose={handleCloseAddCategoryDialog}
                                             itemId={itemId}
-                                        />
+                                        /> */}
                                     </div>
                                 </Grid>
                                 <Grid

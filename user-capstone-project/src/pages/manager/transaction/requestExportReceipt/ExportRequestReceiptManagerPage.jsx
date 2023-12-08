@@ -9,17 +9,13 @@ import {
     Stack,
     Paper,
     Avatar,
-    Button,
     Checkbox,
     TableRow,
     TableBody,
     TableCell,
     Typography,
-    IconButton,
     TableContainer,
     TablePagination,
-    Dialog,
-    DialogTitle,
 } from '@mui/material';
 // components
 import Label from '~/components/label/Label';
@@ -30,26 +26,26 @@ import CloseIcon from '@mui/icons-material/Close';
 // sections
 import { SubCategoryListHead, SubCategoryToolbar } from '~/sections/@dashboard/manager/subCategory';
 // mock
-import PRODUCTSLIST from '../../../_mock/products';
+import PRODUCTSLIST from '../../../../_mock/products';
 import { useNavigate } from 'react-router-dom';
 // api
-import ImportRequestReceiptDetailManagerForm from '~/sections/auth/manager/transaction/importRequestReceipt/ImportRequestReceiptDetailManagerForm';
+
+import SubCategoryDetailForm from '~/sections/auth/manager/subCategory/SubCategoryDetailForm';
 //icons
-
-// import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import CreateExportReceipt from './CreateExportReceipt';
 import { getAllCustomerRequest } from '~/data/mutation/customerRequest/CustomerRequest-mutation';
-import CreateRequestCustomerPage from './CreateRequestCustomerPage';
-
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
     { id: 'image', label: '', alignRight: false },
-    { id: 'id', label: 'Mã phiếu', alignRight: false },
+    // { id: 'id', label: 'Mã hàng', alignRight: false },
+    { id: 'name', label: 'Tên sản phẩm', alignRight: false },
     { id: 'description', label: 'Mô tả', alignRight: false },
-    { id: 'createdBy', label: 'Người tạo', alignRight: false },
     { id: 'createdAt', label: 'Ngày tạo', alignRight: false },
-    // { id: 'type', label: 'Loại yêu cầu', alignRight: false },
+    { id: 'updatedAt', label: 'Ngày cập nhập', alignRight: false },
+    { id: 'categories', label: 'Nhóm hàng', alignRight: false },
     { id: 'status', label: 'Trạng thái', alignRight: false },
     { id: '' },
 ];
@@ -105,16 +101,16 @@ const MenuProps = {
     },
 };
 
-// const filterOptions = ['Ren', 'Ron', 'Abc', 'Test1', 'Test12', 'Test123'];
+const filterOptions = ['Ren', 'Ron', 'Abc', 'Test1', 'Test12', 'Test123'];
 
-const CustomerRequestSalePage = () => {
+const ExportRequestReceiptManagerPage = () => {
     // State mở các form----------------------------------------------------------------
     const [open, setOpen] = useState(null);
     const [openOderForm, setOpenOderForm] = useState(false);
     const [openEditForm, setOpenEditForm] = useState(false);
 
     const [selected, setSelected] = useState([]);
-    const [selectedGoodReceiptId, setSelectedGoodReceiptId] = useState([]);
+    const [selectedExportReceiptId, setSelectedExportReceiptId] = useState([]);
 
     // State cho phần soft theo name-------------------------------------------------------
     const [filterName, setFilterName] = useState('');
@@ -122,14 +118,16 @@ const CustomerRequestSalePage = () => {
     const [orderBy, setOrderBy] = useState('name');
     const [order, setOrder] = useState('asc');
     const [sortBy, setSortBy] = useState('createdAt');
-    const [sortedGoodReceipt, setSortedGoodReceipt] = useState([]);
+    const [sortedExportReceipt, setSortedExportReceipt] = useState([]);
 
     const [rowsPerPage, setRowsPerPage] = useState(5);
     // Search data
-    const [displayedGoodReceiptData, setDisplayedGoodReceiptData] = useState([]);
+    const [displayedExportReceiptData, setDisplayedExportReceiptData] = useState([]);
     // State data và xử lý data
-    const [importRequestData, setImportRequestData] = useState([]);
-    const [importRequestStatus, setImportRequestStatus] = useState('');
+    const [exportReceiptData, setExportReceiptData] = useState([]);
+    const [exportReceiptStatus, setExportReceiptStatus] = useState('');
+
+    const [selectedExportReceipt, setSelectedExportReceipt] = useState(null);
 
     const [filteredCategory, setFilteredCategory] = useState(null);
 
@@ -148,39 +146,39 @@ const CustomerRequestSalePage = () => {
     };
 
     // ========================== Hàm để thay đổi data mỗi khi Edit xong api=======================================
-    const updateGoodReceiptInList = (updatedGoodReceipt) => {
-        const importRquestReceiptIndex = importRequestData.findIndex((good_receipt) => good_receipt.id === updatedGoodReceipt.id);
+    const updateExportReceiptInList = (updatedExportReceipt) => {
+        const exportReceiptIndex = exportReceiptData.findIndex((export_receipt) => export_receipt.id === updatedExportReceipt.id);
 
-        if (importRquestReceiptIndex !== -1) {
-            const UpdatedGoodReceipt = [...importRequestData];
-            UpdatedGoodReceipt[importRquestReceiptIndex] = UpdatedGoodReceipt;
+        if (exportReceiptIndex !== -1) {
+            const UpdatedExportReceipt = [...exportReceiptData];
+            UpdatedExportReceipt[exportReceiptIndex] = UpdatedExportReceipt;
 
-            setImportRequestData(UpdatedGoodReceipt);
+            setExportReceiptData(UpdatedExportReceipt);
         }
     };
 
-    const updateGoodReceiptStatusInList = (goodReceiptId, newStatus) => {
-        const importRquestReceiptIndex = importRequestData.findIndex((good_receipt) => good_receipt.id === goodReceiptId);
+    const updateExportReceiptStatusInList = (exportReceiptId, newStatus) => {
+        const exportReceiptIndex = exportReceiptData.findIndex((export_receipt) => export_receipt.id === exportReceiptId);
 
-        if (importRquestReceiptIndex !== -1) {
-            const UpdatedGoodReceipt = [...importRequestData];
-            UpdatedGoodReceipt[importRquestReceiptIndex].status = newStatus;
+        if (exportReceiptIndex !== -1) {
+            const UpdatedExportReceipt = [...exportReceiptData];
+            UpdatedExportReceipt[exportReceiptIndex].status = newStatus;
 
-            setImportRequestData(UpdatedGoodReceipt);
+            setExportReceiptData(UpdatedExportReceipt);
         }
     };
 
-    const handleCreateGoodReceiptSuccess = (newGoodReceipt) => {
+    const handleCreateGoodReceiptSuccess = (newExportReceipt) => {
         // Close the form
         setOpenOderForm(false);
-        setImportRequestData((prevGoodReceiptData) => [...prevGoodReceiptData, newGoodReceipt]);
+        setExportReceiptData((prevExportReceiptData) => [...prevExportReceiptData, newExportReceipt]);
     };
 
     const handleDataSearch = (searchResult) => {
         // Cập nhật state của trang chính với dữ liệu từ tìm kiếm
-        setImportRequestData(searchResult);
-        setDisplayedGoodReceiptData(searchResult);
-        console.log(displayedGoodReceiptData);
+        setExportReceiptData(searchResult);
+        setDisplayedExportReceiptData(searchResult);
+        console.log(displayedExportReceiptData);
     };
 
     //===========================================================================================
@@ -209,15 +207,16 @@ const CustomerRequestSalePage = () => {
     };
 
     const handleSubCategoryClick = (subCategory) => {
-        if (selectedGoodReceiptId === subCategory.id) {
-            setSelectedGoodReceiptId(null); // Đóng nếu đã mở
+
+        if (selectedExportReceiptId === subCategory.id) {
+            setSelectedExportReceiptId(null); // Đóng nếu đã mở
         } else {
-            setSelectedGoodReceiptId(subCategory.id); // Mở hoặc chuyển sang sản phẩm khác
+            setSelectedExportReceiptId(subCategory.id); // Mở hoặc chuyển sang sản phẩm khác
         }
     };
 
     const handleCloseSubCategoryDetails = () => {
-        setSelectedGoodReceiptId(null);
+        setSelectedExportReceiptId(null);
     };
 
     const handleChangePage = (event, newPage) => {
@@ -232,7 +231,7 @@ const CustomerRequestSalePage = () => {
     //=========================================== Các hàm xử lý soft theo name===========================================
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelecteds = importRequestData.map((n) => n.name);
+            const newSelecteds = exportReceiptData.map((n) => n.name);
             setSelected(newSelecteds);
             return;
         }
@@ -242,10 +241,10 @@ const CustomerRequestSalePage = () => {
     const handleCheckboxChange = (event, subCategoryId) => {
         if (event.target.checked) {
             // Nếu người dùng chọn checkbox, thêm sản phẩm vào danh sách đã chọn.
-            setSelectedGoodReceiptId([...selectedGoodReceiptId, subCategoryId]);
+            setSelectedExportReceiptId([...selectedExportReceiptId, subCategoryId]);
         } else {
             // Nếu người dùng bỏ chọn checkbox, loại bỏ sản phẩm khỏi danh sách đã chọn.
-            setSelectedGoodReceiptId(selectedGoodReceiptId.filter((id) => id !== subCategoryId));
+            setSelectedExportReceiptId(selectedExportReceiptId.filter((id) => id !== subCategoryId));
         }
     };
     const handleRequestSort = (property) => {
@@ -253,7 +252,7 @@ const CustomerRequestSalePage = () => {
         setOrder(isAsc ? 'desc' : 'asc');
         setOrderBy(property);
         // Sắp xếp danh sách sản phẩm dựa trên trường và hướng đã chọn
-        const sortedGoodReceipt = [...importRequestData].sort((a, b) => {
+        const sortedExportReceipt = [...exportReceiptData].sort((a, b) => {
             const valueA = a[property];
             const valueB = b[property];
             if (valueA < valueB) {
@@ -264,7 +263,7 @@ const CustomerRequestSalePage = () => {
             }
             return 0;
         });
-        setSortedGoodReceipt(sortedGoodReceipt);
+        setSortedExportReceipt(sortedExportReceipt);
     };
 
     const handleFilterByName = (event) => {
@@ -272,9 +271,10 @@ const CustomerRequestSalePage = () => {
         const query = event.target.value;
         setFilterName(query);
 
-        const filteredUsers = applySortFilter(sortedGoodReceipt, getComparator(order, sortBy), query);
-        setSortedGoodReceipt(filteredUsers);
+        const filteredUsers = applySortFilter(sortedExportReceipt, getComparator(order, sortBy), query);
+        setSortedExportReceipt(filteredUsers);
     };
+
 
     const handleCloseOdersForm = () => {
         setOpenOderForm(false);
@@ -289,13 +289,12 @@ const CustomerRequestSalePage = () => {
     const filteredUsers = applySortFilter(PRODUCTSLIST, getComparator(order, orderBy), filterName);
 
     const isNotFound = !filteredUsers.length && !!filterName;
-
     useEffect(() => {
         getAllCustomerRequest()
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
-                    setImportRequestData(data);
+                    setExportReceiptData(data);
                 } else {
                     console.error('API response is not an array:', data);
                 }
@@ -305,38 +304,43 @@ const CustomerRequestSalePage = () => {
             });
     }, []);
 
+
     //==============================* filter *==============================
-    const pendingApprovalItems = importRequestData.filter((importRequest) => importRequest.status === 'Pending_Approval');
-
-    const otherItems = importRequestData.filter((importRequest) => importRequest.status !== 'Pending_Approval');
-
-    const allItems = [...pendingApprovalItems, ...otherItems];
+    const renderedTodoList = exportReceiptData.filter((sub_category) => {
+        if (!selectedFilterOptions || selectedFilterOptions.length === 0) {
+            return true;
+        }
+        return sub_category.categories.some((category) => selectedFilterOptions.includes(category.name));
+    });
     //==============================* filter *==============================
 
     return (
         <>
             <Helmet>
-                <title> Quản lý nh| Minimal UI </title>
+                <title> Quản lý xuât kho| Minimal UI </title>
             </Helmet>
 
             {/* <Container> */}
             <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
                 <Typography variant="h4" gutterBottom>
-                    Yêu cầu khách hàng
+                    Quản lý phiếu yêu cầu xuất kho
                 </Typography>
-                <Button
+                {/* <Button
                     variant="contained"
                     startIcon={<Iconify icon="eva:plus-fill" />}
-                    onClick={() => navigate('/sale-staff/create-request')}
+                    onClick={() => navigate("/dashboard/create-export-receipt")}
                 >
-                    Xử lý hóa đơn
+                    Thêm phiếu xuất kho
                 </Button>
-                <Dialog fullWidth maxWidth open={openOderForm} >
-                    <DialogTitle>Xử lý đặt hàng  <IconButton style={{ float: 'right' }} onClick={handleCloseOdersForm}>
-                        <CloseIcon color="primary" /></IconButton>
+                <Dialog fullWidth maxWidth open={openOderForm}>
+                    <DialogTitle>
+                        Tạo Sản Phẩm{' '}
+                        <IconButton style={{ float: 'right' }} onClick={handleCloseOdersForm}>
+                            <CloseIcon color="primary" />
+                        </IconButton>{' '}
                     </DialogTitle>
-                    <CreateRequestCustomerPage open={openOderForm} />
-                </Dialog>
+                    <CreateExportReceipt onClose={handleCreateGoodReceiptSuccess} open={openOderForm} />
+                </Dialog> */}
             </Stack>
 
             {/* ===========================================filter=========================================== */}
@@ -345,8 +349,8 @@ const CustomerRequestSalePage = () => {
                 <Typography gutterBottom variant="h6" color="text.secondary" component="div" sx={{ m: 1 }}>
                     Bộ lọc tìm kiếm
                 </Typography>
-            </div> */}
-            {/* <FormControl sx={{ m: 1, width: 300, mb: 2 }}>
+            </div>
+            <FormControl sx={{ m: 1, width: 300, mb: 2 }}>
                 <InputLabel id="demo-multiple-checkbox-label">Nhóm hàng</InputLabel>
                 <Select
                     labelId="demo-multiple-checkbox-label"
@@ -382,29 +386,31 @@ const CustomerRequestSalePage = () => {
                                 order={order}
                                 orderBy={orderBy}
                                 headLabel={TABLE_HEAD}
-                                rowCount={importRequestData.length}
+                                rowCount={exportReceiptData.length}
                                 numSelected={selected.length}
                                 onRequestSort={handleRequestSort}
                                 onSelectAllClick={handleSelectAllClick}
                             />
                             <TableBody>
-                                {allItems.map((importRequest) => {
+                                {renderedTodoList.map((sub_category) => {
                                     return (
-                                        <React.Fragment key={importRequest.id}>
+                                        <React.Fragment key={sub_category.id}>
                                             <TableRow
                                                 hover
-                                                key={importRequest.id}
+                                                key={sub_category.id}
                                                 tabIndex={-1}
                                                 role="checkbox"
-                                                selected={selectedGoodReceiptId === importRequest.id}
-                                                onClick={() => handleSubCategoryClick(importRequest)}
+                                                selected={selectedExportReceiptId === sub_category.id}
+                                                onClick={() => handleSubCategoryClick(sub_category)}
                                             >
                                                 <TableCell padding="checkbox">
                                                     <Checkbox
-                                                        checked={selectedGoodReceiptId === importRequest.id}
-                                                        // onChange={(event) => handleCheckboxChange(event, importRequest.id)}
+                                                        checked={selectedExportReceiptId === sub_category.id}
+                                                        // onChange={(event) =>
+                                                        //     handleCheckboxChange(event, sub_category.id)
+                                                        // }
                                                         // checked={selectedUser}
-                                                        onChange={(event) => handleClick(event, importRequest.name)}
+                                                        onChange={(event) => handleClick(event, sub_category.name)}
                                                     />
                                                 </TableCell>
 
@@ -414,59 +420,49 @@ const CustomerRequestSalePage = () => {
                                                     </Stack>
                                                 </TableCell>
 
-                                                <TableCell align="left">
-                                                    <Typography variant="subtitle2" noWrap>
-                                                        {importRequest.code}
-                                                    </Typography>
-                                                </TableCell>
-
                                                 <TableCell component="th" scope="row" padding="none">
                                                     <Stack direction="row" alignItems="center" spacing={2}>
                                                         {/* <Avatar alt={name} src={avatarUrl} /> */}
                                                         <Typography variant="subtitle2" noWrap>
-                                                            {importRequest.description}
+                                                            {sub_category.name}
                                                         </Typography>
                                                     </Stack>
                                                 </TableCell>
-                                                <TableCell align="left">{importRequest.createdBy}</TableCell>
-                                                <TableCell align="left">{importRequest.createdAt}</TableCell>
-                                                {/* <TableCell align="left">{importReceipt.type}</TableCell> */}
+                                                <TableCell align="left">{sub_category.description}</TableCell>
+                                                <TableCell align="left">{sub_category.createdAt}</TableCell>
+                                                <TableCell align="left">{sub_category.updatedAt}</TableCell>
+                                                <TableCell align="left">
+                                                    <Typography variant="subtitle2" noWrap>
+                                                        {sub_category.categories.map((category, index) => {
+                                                            return index === sub_category.categories.length - 1
+                                                                ? category.name
+                                                                : `${category.name}, `;
+                                                        })}
+                                                    </Typography>
+                                                </TableCell>
+
                                                 <TableCell align="left">
                                                     <Label
                                                         color={
-                                                            (importRequest.status === 'Pending_Approval' &&
-                                                                'warning') ||
-                                                            (importRequest.status === 'Approved' && 'success') ||
-                                                            (importRequest.status === ' IN_PROGRESS' && 'warning') ||
-                                                            (importRequest.status === 'Complete' && 'primary') ||
-                                                            (importRequest.status === 'Inactive' && 'error') ||
-                                                            'default'
+                                                            (sub_category.status === 'Inactive' && 'error') || 'success'
                                                         }
                                                     >
-                                                        {importRequest.status === 'Pending_Approval'
-                                                            ? 'Chờ phê duyệt'
-                                                            : importRequest.status === 'Approved'
-                                                                ? 'Đã xác nhận'
-                                                                : importRequest.status === 'IN_PROGRESS'
-                                                                    ? 'Đang tiến hành'
-                                                                    : importRequest.status === 'Complete'
-                                                                        ? 'Hoàn thành'
-                                                                        : 'Ngừng hoạt động'}
+                                                        {sub_category.status === 'Active'
+                                                            ? 'Đang hoạt động'
+                                                            : 'Ngừng hoạt động'}
                                                     </Label>
                                                 </TableCell>
                                             </TableRow>
 
-                                            {selectedGoodReceiptId === importRequest.id && (
+                                            {selectedExportReceiptId === sub_category.id && (
                                                 <TableRow>
                                                     <TableCell colSpan={8}>
-                                                        <ImportRequestReceiptDetailManagerForm
-                                                            importRequestReceipt={importRequestData}
-                                                            importRequestReceiptStatus={importRequestStatus}
-                                                            importRequestReceiptId={selectedGoodReceiptId}
-                                                            updateGoodReceiptInList={updateGoodReceiptInList}
-                                                            updateGoodReceiptStatusInList={
-                                                                updateGoodReceiptStatusInList
-                                                            }
+                                                        <SubCategoryDetailForm
+                                                            exportReceipt={exportReceiptData}
+                                                            exportReceiptStatus={exportReceiptStatus}
+                                                            exportReceiptId={selectedExportReceiptId}
+                                                            updateExportReceiptInList={updateExportReceiptInList}
+                                                            updateExportReceiptStatusInList={updateExportReceiptStatusInList}
                                                             onClose={handleCloseSubCategoryDetails}
                                                         />
                                                     </TableCell>
@@ -519,7 +515,8 @@ const CustomerRequestSalePage = () => {
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </Card>
+
         </>
     );
 };
-export default CustomerRequestSalePage;
+export default ExportRequestReceiptManagerPage;

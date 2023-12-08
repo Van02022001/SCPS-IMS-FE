@@ -5,7 +5,6 @@ export const getAllExportReceipt = async () => {
     return response.data;
 }
 
-
 export const createExportReceipt = async (receiptId, recieptParams) => {
     const response = await axiosInstance.post(`/export-receipts/${receiptId}`, recieptParams);
     return response.data;

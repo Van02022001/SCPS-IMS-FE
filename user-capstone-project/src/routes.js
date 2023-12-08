@@ -32,10 +32,9 @@ import UnitPage from './pages/manager/unit/UnitPage';
 import OriginPage from './pages/manager/origin/OriginPage';
 import BrandPage from './pages/manager/brand/BrandPage';
 import SupplierPage from './pages/manager/supplier/SupplierPage';
-import RequestReceiptManagerPage from './pages/manager/transaction/requestReceipt/RequestReceiptManagerPage';
-import CreateGoodReceipt from './pages/manager/transaction/requestReceipt/CreateGoodReceipt';
-import ExportReceiptManagerPage from './pages/manager/transaction/exportReceipt/ExportReceiptManagerPage';
-import CreateExportReceipt from './pages/manager/transaction/exportReceipt/CreateExportReceipt';
+import RequestReceiptManagerPage from './pages/manager/transaction/requestImportReceipt/RequestReceiptManagerPage';
+import CreateGoodReceipt from './pages/manager/transaction/requestImportReceipt/CreateGoodReceipt';
+import CreateExportReceipt from './pages/manager/transaction/requestExportReceipt/CreateExportReceipt';
 import ImportReceiptPage from './pages/inventory_staff/transaction/importReceipt/ImportReceiptPage';
 import ItemsInventoryPage from './pages/inventory_staff/itemInventory/ItemsInventoryPage';
 import ImportReceiptManagerPage from './pages/manager/transaction/importReceipt/ImportReceiptManagerPage';
@@ -44,6 +43,8 @@ import InventoryStaffReportPage from './pages/inventory_staff/inventoryReport/In
 import LocationInventoryPage from './pages/inventory_staff/locationInventory/LocationInventoryPage';
 import CustomerRequestPage from './pages/inventory_staff/transaction/exportRequest/CustomerRequestPage';
 import ExportReceiptPage from './pages/inventory_staff/transaction/exportReceipt/ExportReceiptPage';
+import ExportRequestReceiptManagerPage from './pages/manager/transaction/requestExportReceipt/ExportRequestReceiptManagerPage';
+import ExportReceiptManagerPage from './pages/manager/transaction/exportReceipt/ExportReceiptManagerPage';
 
 // ----------------------------------------------------------------------
 
@@ -74,11 +75,15 @@ const Router = () => {
                 { path: 'unit', element: <UnitPage/> },
                 { path: 'blog', element: <BlogPage /> },
                 { path: 'warehouse', element: <WarehousePage /> },
-                { path: 'goods-receipt', element: <RequestReceiptManagerPage /> }, 
+
+                { path: 'request-import-receipt', element: <RequestReceiptManagerPage /> }, 
                 { path: 'create-good-receipt', element: <CreateGoodReceipt/> },
                 { path: 'import-receipt', element: <ImportReceiptManagerPage/> },
-                { path: 'export-receipt', element: <ExportReceiptManagerPage /> },
+
+                { path: 'request-export-receipt', element: <ExportRequestReceiptManagerPage /> },
                 { path: 'create-export-receipt', element: <CreateExportReceipt/> },
+                { path: 'export-receipt', element: <ExportReceiptManagerPage/> },
+
                 { path: 'products-check', element: <InventoryReportPage/> },
                 {
                     path: 'report',

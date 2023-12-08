@@ -554,8 +554,6 @@ const ImportReceiptDetailForm = ({
                                             >
                                                 <TableCell>Tên sản phẩm</TableCell>
                                                 <TableCell>Số lượng</TableCell>
-                                                <TableCell>Giá sản phẩm</TableCell>
-                                                <TableCell>Tổng</TableCell>
                                                 <TableCell>Đơn vị</TableCell>
 
                                             </TableRow>
@@ -564,8 +562,6 @@ const ImportReceiptDetailForm = ({
                                                     <TableRow key={items.id}>
                                                         <TableCell>{items.itemName}</TableCell>
                                                         <TableCell>{items.quantity}</TableCell>
-                                                        <TableCell>{items.price}</TableCell>
-                                                        <TableCell>{items.totalPrice}</TableCell>
                                                         <TableCell>{items.unitName}</TableCell>
                                                         <TableCell>{/* Thêm thành tiền nếu có */}</TableCell>
                                                     </TableRow>
@@ -578,10 +574,6 @@ const ImportReceiptDetailForm = ({
                                         <TableRow>
                                             <TableCell >Tổng số lượng:</TableCell>
                                             <TableCell>{importReceipst.totalQuantity}</TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell >Tổng tiền:</TableCell>
-                                            <TableCell>{importReceipst.totalPrice} VND</TableCell>
                                         </TableRow>
                                     </TableBody>
                                 </TableContainer>

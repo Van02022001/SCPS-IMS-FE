@@ -248,7 +248,7 @@ const CreateSubCategoryForm = (props) => {
                 setOrigins_id(data);
             })
             .catch((error) => console.error('Error fetching origins:', error));
-    }, []);
+    }, [openAddUnitForm, openAddCategoryDialog]);
 
     return (
         <>

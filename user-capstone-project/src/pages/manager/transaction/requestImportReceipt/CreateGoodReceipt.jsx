@@ -87,8 +87,8 @@ function CreateGoodReceipt() {
     const TABLE_HEAD = [
         { id: 'name', label: 'Tên sản phẩm', alignRight: false },
         { id: 'quality', label: 'Số lượng', alignRight: false },
-        { id: 'pricing', label: 'Giá mua', alignRight: false },
-        { id: 'unit', label: 'Đơn vị', alignRight: false },
+        // { id: 'pricing', label: 'Giá mua', alignRight: false },
+        // { id: 'unit', label: 'Đơn vị', alignRight: false },
         { id: '' },
     ];
     useEffect(() => {
@@ -430,7 +430,7 @@ function CreateGoodReceipt() {
                                                         }
                                                     />
                                                 </ListItemText>
-                                                <ListItemText>
+                                                {/* <ListItemText>
                                                     <TextField
                                                         type="number"
                                                         label="Giá"
@@ -443,7 +443,7 @@ function CreateGoodReceipt() {
                                                             )
                                                         }
                                                     />
-                                                </ListItemText>
+                                                </ListItemText> */}
                                                 {/* <ListItemText>
                                                     <Select
                                                         label="Đơn vị"

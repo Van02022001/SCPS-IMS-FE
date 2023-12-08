@@ -556,8 +556,7 @@ const ExportReceiptDetailForm = ({
                                             >
                                                 <TableCell>Tên sản phẩm</TableCell>
                                                 <TableCell>Số lượng</TableCell>
-                                                <TableCell>Giá sản phẩm</TableCell>
-                                                <TableCell>Tổng</TableCell>
+                                                <TableCell>Tổng giá phiếu</TableCell>
                                                 <TableCell>Đơn vị</TableCell>
 
                                             </TableRow>
@@ -566,7 +565,6 @@ const ExportReceiptDetailForm = ({
                                                     <TableRow key={items.id}>
                                                         <TableCell>{items.itemName}</TableCell>
                                                         <TableCell>{items.quantity}</TableCell>
-                                                        <TableCell>{items.price}</TableCell>
                                                         <TableCell>{items.totalPrice}</TableCell>
                                                         <TableCell>{items.unitName}</TableCell>
                                                         <TableCell>{/* Thêm thành tiền nếu có */}</TableCell>

@@ -382,7 +382,7 @@ const SubCategoryPage = () => {
                     startIcon={<Iconify icon="eva:plus-fill" />}
                     onClick={() => setOpenOderForm(true)}
                 >
-                    Thêm Sản Phẩm
+                    Thêm danh mục
                 </Button>
                 <Dialog fullWidth maxWidth open={openOderForm}>
                     <DialogTitle>
@@ -472,7 +472,7 @@ const SubCategoryPage = () => {
                                             >
                                                 <TableCell padding="checkbox">
                                                     <Checkbox
-                                                        // checked={selectedSubCategoryId === sub_category.id}
+                                                        checked={selectedSubCategoryId === sub_category.id}
                                                         // onChange={(event) =>
                                                         //     handleCheckboxChange(event, sub_category.id)
                                                         // }
