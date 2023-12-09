@@ -154,7 +154,7 @@ function CreateGoodReceipt() {
                 setIsError(false);
                 setSuccessMessage(response.data.message);
             }
-            navigate('/dashboard/goods-receipt');
+            navigate('/dashboard/request-import-receipt');
         } catch (error) {
             console.error('Error creating product:', error.response);
             setIsError(true);
@@ -172,7 +172,7 @@ function CreateGoodReceipt() {
     };
 
     const handleNavigate = () => {
-        navigate('/dashboard/goods-receipt');
+        navigate('/dashboard/request-import-receipt');
     };
     useEffect(() => {
         getAllItem()

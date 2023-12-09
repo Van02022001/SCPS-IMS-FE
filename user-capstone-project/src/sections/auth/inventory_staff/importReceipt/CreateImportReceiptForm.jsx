@@ -153,6 +153,7 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst }) => {
                                 open={openAddCategoryDialog}
                                 onClose={handleCloseAddCategoryDialog}
                                 dataReceiptDetail={dataReceiptDetail}
+                                updateDataReceiptDetail={(newData) => setDataReceiptDetail(newData)} // Pass the update function
                                 details={dataReceiptDetail.details}
                             />
                         </Grid>

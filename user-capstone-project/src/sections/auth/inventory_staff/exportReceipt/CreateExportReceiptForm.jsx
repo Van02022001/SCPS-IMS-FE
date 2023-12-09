@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 import AddLocationsForm from '../item/AddLocationsForm';
 import { createExportReceipt } from '~/data/mutation/exportReceipt/ExportReceipt-mutation';
+import AddLocationToExportReceipt from './AddLocationToExportReceipt';
 
 const CreateExportReceiptForm = ({ isOpen, onCloseForm, importReceipst }) => {
     const [quantities, setQuantities] = useState({});
@@ -78,6 +79,10 @@ const CreateExportReceiptForm = ({ isOpen, onCloseForm, importReceipst }) => {
                                         <TableCell>Loại phiếu:</TableCell>
                                         <TableCell>{importReceipst.type}</TableCell>
                                     </TableRow>
+                                    <TableRow>
+                                        <TableCell>Khách hàng:</TableCell>
+                                        <TableCell>{importReceipst.customerName}</TableCell>
+                                    </TableRow>
                                 </TableBody>
                             </Table>
                         </CardContent>
@@ -100,8 +105,6 @@ const CreateExportReceiptForm = ({ isOpen, onCloseForm, importReceipst }) => {
                                     >
                                         <TableCell>Tên sản phẩm</TableCell>
                                         <TableCell>Số lượng yêu cầu</TableCell>
-                                        <TableCell>Giá mua</TableCell>
-                                        <TableCell>Tổng tiền</TableCell>
                                         <TableCell>Đơn vị</TableCell>
                                         <TableCell>Só lượng thực tế</TableCell>
                                     </TableRow>
@@ -109,8 +112,6 @@ const CreateExportReceiptForm = ({ isOpen, onCloseForm, importReceipst }) => {
                                         <TableRow key={items.id}>
                                             <TableCell>{items.itemName}</TableCell>
                                             <TableCell>{items.quantity}</TableCell>
-                                            <TableCell>{items.price}</TableCell>
-                                            <TableCell>{items.totalPrice}</TableCell>
                                             <TableCell>{items.unitName}</TableCell>
                                             <TableCell>
                                                 <TextField
@@ -136,10 +137,10 @@ const CreateExportReceiptForm = ({ isOpen, onCloseForm, importReceipst }) => {
                                                 <TableCell>Tổng số lượng:</TableCell>
                                                 <TableCell>{importReceipst.totalQuantity}</TableCell>
                                             </TableRow>
-                                            <TableRow>
+                                            {/* <TableRow>
                                                 <TableCell>Tổng tiền:</TableCell>
                                                 <TableCell>{importReceipst.totalPrice} VND</TableCell>
-                                            </TableRow>
+                                            </TableRow> */}
                                         </TableBody>
                                     </div>
                                 </TableBody>
@@ -149,6 +150,13 @@ const CreateExportReceiptForm = ({ isOpen, onCloseForm, importReceipst }) => {
                             <Button variant="contained" color="primary" onClick={handleSendToManager}>
                                 Gửi Phiếu
                             </Button>
+                            <AddLocationToExportReceipt
+                                open={openAddCategoryDialog}
+                                onClose={handleCloseAddCategoryDialog}
+                                dataReceiptDetail={dataReceiptDetail}
+                                updateDataReceiptDetail={(newData) => setDataReceiptDetail(newData)}
+                                details={dataReceiptDetail.details}
+                            />
                         </Grid>
                     </Card>
                 </DialogContent>
