@@ -101,13 +101,13 @@ export default function ItemsToolbar({ numSelected, onFilterName, onDataSearch }
             }
           />
 
-          <Tooltip title="Filter list">
+          {/* <Tooltip title="Filter list">
             <IconButton onClick={handleFilterClick}>
               <Iconify icon="ic:round-filter-list" />
             </IconButton>
-          </Tooltip>
+          </Tooltip> */}
 
-          <Menu
+          {/* <Menu
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}
             onClose={handleFilterClose}
@@ -154,7 +154,7 @@ export default function ItemsToolbar({ numSelected, onFilterName, onDataSearch }
               />
               Giá chung
             </MenuItem>
-          </Menu>
+          </Menu> */}
         </>
       )}
     </StyledRoot>

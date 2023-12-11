@@ -1,5 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Button, Stack, Grid, TextField, IconButton, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
+import {
+    Typography,
+    Button,
+    Stack,
+    Grid,
+    TextField,
+    IconButton,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogContentText,
+    DialogActions,
+} from '@mui/material';
 
 import { editCategories, editStatusCategories } from '~/data/mutation/categories/categories-mutation';
 
@@ -27,7 +39,6 @@ const CategoryDetailForm = ({
     const [editedCategory, setEditedCategory] = useState(null);
     const [currentStatus, setCurrentStatus] = useState('');
 
-
     //thông báo
     const [confirmOpen, setConfirmOpen] = useState(false);
 
@@ -42,9 +53,9 @@ const CategoryDetailForm = ({
         setOpen(true);
         // Đặt logic hiển thị nội dung thông báo từ API ở đây
         if (message === 'Update category status successfully') {
-            setMessage('Cập nhập trạng thái thể loại thành công')
+            setMessage('Cập nhập trạng thái thể loại thành công');
         } else if (message === 'Update SubCategory successfully.') {
-            setMessage('Cập nhập danh mục thành công')
+            setMessage('Cập nhập danh mục thành công');
             console.error('Error message:', errorMessage);
         }
     };
@@ -55,12 +66,10 @@ const CategoryDetailForm = ({
         }
 
         setOpen(false);
-
     };
     const action = (
         <React.Fragment>
-            <Button color="secondary" size="small" onClick={handleClose}>
-            </Button>
+            <Button color="secondary" size="small" onClick={handleClose}></Button>
             <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
                 <CloseIcon fontSize="lage" />
             </IconButton>
@@ -248,7 +257,9 @@ const CategoryDetailForm = ({
                                         label="Mô tả"
                                         sx={{ width: '70%' }}
                                         value={editedCategory ? editedCategory.description : ''}
-                                        onChange={(e) => handleEdit('description', capitalizeFirstLetter(e.target.value))}
+                                        onChange={(e) =>
+                                            handleEdit('description', capitalizeFirstLetter(e.target.value))
+                                        }
                                     />
                                 </Grid>
                                 <Grid
@@ -261,6 +272,7 @@ const CategoryDetailForm = ({
                                 >
                                     <Typography variant="body1">Ngày tạo:</Typography>
                                     <TextField
+                                        disabled
                                         size="small"
                                         variant="outlined"
                                         label="Ngày tạo"
@@ -279,6 +291,7 @@ const CategoryDetailForm = ({
                                 >
                                     <Typography variant="body1">Ngày cập nhập:</Typography>
                                     <TextField
+                                        disabled
                                         size="small"
                                         variant="outlined"
                                         label="Ngày cập nhập"

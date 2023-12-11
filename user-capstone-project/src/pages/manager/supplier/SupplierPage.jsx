@@ -37,6 +37,7 @@ import USERLIST from '../../../_mock/user';
 import { getAllSuppliers } from '~/data/mutation/supplier/suppliers-mutation';
 import CreateSupplierForm from '~/sections/auth/manager/supplier/CreateSupplierForm';
 import SupplierDetailForm from '~/sections/auth/manager/supplier/SupplierDetailForm';
+import dayjs from 'dayjs';
 
 
 // ----------------------------------------------------------------------
@@ -102,12 +103,20 @@ const SupplierPage = () => {
 
     const [suppliersData, setSupplierData] = useState([]);
 
+    const startIndex = page * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
+
     useEffect(() => {
         getAllSuppliers()
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
-                    setSupplierData(data);
+                    const sortedData = data.sort((a, b) => {
+                        return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(
+                            dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
+                        );
+                    });
+                    setSupplierData(sortedData);
                 } else {
                     console.error('API response is not an array:', data);
                 }
@@ -257,7 +266,7 @@ const SupplierPage = () => {
                                     onSelectAllClick={handleSelectAllClick}
                                 />
                                 <TableBody>
-                                    {suppliersData.map((supplier) => {
+                                    {suppliersData.slice(startIndex, endIndex).map((supplier) => {
                                         return (
                                             <React.Fragment key={supplier.id}>
                                                 <TableRow
@@ -372,7 +381,7 @@ const SupplierPage = () => {
                     <TablePagination
                         rowsPerPageOptions={[5, 10, 25]}
                         component="div"
-                        count={USERLIST.length}
+                        count={suppliersData.length}
                         rowsPerPage={rowsPerPage}
                         page={page}
                         onPageChange={handleChangePage}

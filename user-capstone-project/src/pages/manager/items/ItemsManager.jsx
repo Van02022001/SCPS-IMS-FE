@@ -163,6 +163,8 @@ const ItemsManagerPage = () => {
     // fiter createdAt //
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
+    const startIndex = page * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
 
     const handleChange = (event) => {
         setPersonName(event.target.value);
@@ -540,7 +542,7 @@ const ItemsManagerPage = () => {
                                 onSelectAllClick={handleSelectAllClick}
                             />
                             <TableBody>
-                                {filteredItems.map((item) => {
+                                {filteredItems.slice(startIndex, endIndex).map((item) => {
                                     return (
                                         <React.Fragment key={item.id}>
                                             <TableRow
@@ -633,7 +635,7 @@ const ItemsManagerPage = () => {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={itemsData.length}
+                    count={filteredItems.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}

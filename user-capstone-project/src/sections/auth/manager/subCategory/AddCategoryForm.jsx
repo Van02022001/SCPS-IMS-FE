@@ -60,9 +60,6 @@ const AddCategoryForm = ({ open, onClose, onSave }) => {
         try {
             const response = await createCategories(categoriesParams);
             if (response.status === '200 OK') {
-                // setCategoryName('');
-                // setCategoryDescription('');
-
                 setIsSuccess(true);
                 setIsError(false);
                 setSuccessMessage(response.data.message);

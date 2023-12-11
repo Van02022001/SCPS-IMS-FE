@@ -30,6 +30,7 @@ import Label from '../../../components/label';
 import Iconify from '../../../components/iconify';
 import Scrollbar from '../../../components/scrollbar';
 import CloseIcon from '@mui/icons-material/Close';
+import dayjs from 'dayjs';
 
 // sections
 import { WarehouseListHead, WarehouseToolbar } from '~/sections/@dashboard/manager/warehouse';
@@ -104,6 +105,8 @@ const WarehousePage = () => {
 
     const [warehouseData, setWarehouseData] = useState([]);
     const [warehouseStatus, setWarehouseStatus] = useState('');
+    const startIndex = page * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
 
     //Hàm để thay đổi data mỗi khi Edit xong api-------------------------------------------------------------
     const updateWarehouseInList = (updatedWarehouse) => {
@@ -212,7 +215,12 @@ const WarehousePage = () => {
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
-                    setWarehouseData(data);
+                    const sortedData = data.sort((a, b) => {
+                        return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(
+                            dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
+                        );
+                    });
+                    setWarehouseData(sortedData);
                 } else {
                     console.error('API response is not an array:', data);
                 }
@@ -272,7 +280,7 @@ const WarehousePage = () => {
                                     onSelectAllClick={handleSelectAllClick}
                                 />
                                 <TableBody>
-                                    {warehouseData.map((warehouse) => {
+                                    {warehouseData.slice(startIndex, endIndex).map((warehouse) => {
                                         return (
                                             <React.Fragment key={warehouse.id}>
                                                 <TableRow
@@ -373,7 +381,7 @@ const WarehousePage = () => {
                     <TablePagination
                         rowsPerPageOptions={[5, 10, 25]}
                         component="div"
-                        count={USERLIST.length}
+                        count={warehouseData.length}
                         rowsPerPage={rowsPerPage}
                         page={page}
                         onPageChange={handleChangePage}

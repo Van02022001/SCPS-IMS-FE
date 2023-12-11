@@ -35,7 +35,7 @@ import USERLIST from '../../../_mock/user';
 import { getAllOrigins } from '~/data/mutation/origins/origins-mutation';
 import OriginDetailForm from '~/sections/auth/manager/origin/OriginDetailForm';
 import CreateOriginForm from '~/sections/auth/manager/origin/CreateOriginForm';
-
+import dayjs from 'dayjs';
 
 // ----------------------------------------------------------------------
 
@@ -93,11 +93,19 @@ const OriginPage = () => {
 
     const [originData, setOriginData] = useState([]);
 
+    const startIndex = page * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
+
     useEffect(() => {
         getAllOrigins()
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
+                    const sortedData = data.sort((a, b) => {
+                        return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(
+                            dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
+                        );
+                    });
                     setOriginData(data);
                 } else {
                     console.error('API response is not an array:', data);
@@ -237,7 +245,7 @@ const OriginPage = () => {
                                     onSelectAllClick={handleSelectAllClick}
                                 />
                                 <TableBody>
-                                    {originData.map((origin) => {
+                                    {originData.slice(startIndex, endIndex).map((origin) => {
                                         return (
                                             <React.Fragment key={origin.id}>
                                                 <TableRow

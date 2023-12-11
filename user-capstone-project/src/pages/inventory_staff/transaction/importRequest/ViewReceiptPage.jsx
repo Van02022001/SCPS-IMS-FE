@@ -33,7 +33,7 @@ import ImportReaceiptDetailForm from '~/sections/auth/inventory_staff/importRece
 
 // import GoodsReceiptPage from '../GoodsReceiptPage';
 import { useNavigate } from 'react-router-dom';
-
+import dayjs from 'dayjs';
 
 
 
@@ -257,7 +257,12 @@ const ViewReceiptPage = () => {
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
-                    setImportRequestData(data);
+                    const sortedData = data.sort((a, b) => {
+                        return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(
+                            dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
+                        );
+                    });
+                    setImportRequestData(sortedData);
                 } else {
                     console.error('API response is not an array:', data);
                 }

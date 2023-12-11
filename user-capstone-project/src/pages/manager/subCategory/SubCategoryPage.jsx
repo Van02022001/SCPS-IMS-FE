@@ -163,6 +163,8 @@ const SubCategoryPage = () => {
     // fiter createdAt //
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
+    const startIndex = page * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
 
     const handleChange = (event) => {
         setPersonName(event.target.value);
@@ -459,7 +461,7 @@ const SubCategoryPage = () => {
                                 onSelectAllClick={handleSelectAllClick}
                             />
                             <TableBody>
-                                {filteredSubcate.map((sub_category) => {
+                                {filteredSubcate.slice(startIndex, endIndex).map((sub_category) => {
                                     return (
                                         <React.Fragment key={sub_category.id}>
                                             <TableRow
@@ -539,11 +541,11 @@ const SubCategoryPage = () => {
                                         </React.Fragment>
                                     );
                                 })}
-                                {emptyRows > 0 && (
+                                {/* {emptyRows > 0 && (
                                     <TableRow style={{ height: 53 * emptyRows }}>
                                         <TableCell colSpan={6} />
                                     </TableRow>
-                                )}
+                                )} */}
                             </TableBody>
 
                             {isNotFound && (
@@ -576,7 +578,7 @@ const SubCategoryPage = () => {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={categoryData.length}
+                    count={filteredSubcate.length} // Update count to the length of filteredSubcate
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}

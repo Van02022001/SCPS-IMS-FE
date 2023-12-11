@@ -101,7 +101,7 @@ export default function CategoryToolbar({ numSelected, onFilterName, onDataSearc
             }
           />
 
-          <Tooltip title="Filter list">
+          {/* <Tooltip title="Filter list">
             <IconButton onClick={handleFilterClick}>
               <Iconify icon="ic:round-filter-list" />
             </IconButton>
@@ -154,7 +154,7 @@ export default function CategoryToolbar({ numSelected, onFilterName, onDataSearc
               />
               Giá chung
             </MenuItem>
-          </Menu>
+          </Menu> */}
         </>
       )}
     </StyledRoot>

@@ -78,11 +78,11 @@ const CreateSubCategoryForm = (props) => {
     const handleMessage = (message) => {
         setOpenSubAddCategory(true);
         // Đặt logic hiển thị nội dung thông báo từ API ở đây
-        if (message === 'Update SubCategory status successfully.') {
-            setMessage('Cập nhập trạng thái danh mục thành công')
+        if (message === 'Create sub category successfully.') {
+            setMessage('Tạo mới sản phẩm thành công !');
         } else if (message === 'Update SubCategory successfully.') {
-            setMessage('Cập nhập danh mục thành công')
-        }
+            setMessage('Cập nhập danh mục thành công');
+        } 
     };
 
     const handleClose = (event, reason) => {
@@ -91,13 +91,11 @@ const CreateSubCategoryForm = (props) => {
         }
 
         setOpenSubAddCategory(false);
-
     };
 
     const action = (
         <React.Fragment>
-            <Button color="secondary" size="small" onClick={handleClose}>
-            </Button>
+            <Button color="secondary" size="small" onClick={handleClose}></Button>
             <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
                 <CloseIcon fontSize="lage" />
             </IconButton>
@@ -191,7 +189,7 @@ const CreateSubCategoryForm = (props) => {
                 setIsError(false);
                 setSuccessMessage(response.message);
 
-                handleMessage(response.message)
+                handleMessage(response.message);
                 props.onClose(response.data); // Call the callback function
             }
         } catch (error) {
@@ -220,7 +218,7 @@ const CreateSubCategoryForm = (props) => {
         // setUnit_mea_id([]);
     };
 
-    const handleAddCategories = async () => { };
+    const handleAddCategories = async () => {};
 
     useEffect(() => {
         getAllCategories()
@@ -472,7 +470,13 @@ const CreateSubCategoryForm = (props) => {
                                                         id="demo-customized-textbox"
                                                         label="Chiều dài"
                                                         value={length}
-                                                        onChange={(e) => setLength(e.target.value)}
+                                                        onChange={(e) =>
+                                                            setLength(Math.min(Number(e.target.value.replace(/[^0-9.-]/g, '')), 1000))
+                                                        }
+                                                        inputProps={{
+                                                            max: 1000,
+                                                            step: 1,
+                                                        }}
                                                     />
                                                 </FormControl>
                                                 <FormControl sx={{ m: 0.2 }} variant="standard">
@@ -480,7 +484,13 @@ const CreateSubCategoryForm = (props) => {
                                                         id="demo-customized-textbox"
                                                         label="Chiều rộng"
                                                         value={width}
-                                                        onChange={(e) => setWidth(e.target.value)}
+                                                        onChange={(e) =>
+                                                            setWidth(Math.min(Number(e.target.value.replace(/[^0-9.-]/g, '')), 1000))
+                                                        }
+                                                        inputProps={{
+                                                            max: 1000,
+                                                            step: 1,
+                                                        }}
                                                     />
                                                 </FormControl>
                                                 <FormControl sx={{ m: 0.2 }} variant="standard">
@@ -488,7 +498,13 @@ const CreateSubCategoryForm = (props) => {
                                                         id="demo-customized-textbox"
                                                         label="Chiều cao"
                                                         value={height}
-                                                        onChange={(e) => setHeight(e.target.value)}
+                                                        onChange={(e) =>
+                                                            setHeight(Math.min(Number(e.target.value.replace(/[^0-9.-]/g, '')), 1000))
+                                                        }
+                                                        inputProps={{
+                                                            max: 1000,
+                                                            step: 1,
+                                                        }}
                                                     />
                                                 </FormControl>
                                                 <FormControl sx={{ m: 0.2 }} variant="standard">
@@ -496,7 +512,13 @@ const CreateSubCategoryForm = (props) => {
                                                         id="demo-customized-textbox"
                                                         label="Đường kính"
                                                         value={diameter}
-                                                        onChange={(e) => setDiameter(e.target.value)}
+                                                        onChange={(e) =>
+                                                            setDiameter(Math.min(Number(e.target.value.replace(/[^0-9.-]/g, '')), 1000))
+                                                        }
+                                                        inputProps={{
+                                                            max: 1000,
+                                                            step: 1,
+                                                        }}
                                                     />
                                                 </FormControl>
                                             </div>

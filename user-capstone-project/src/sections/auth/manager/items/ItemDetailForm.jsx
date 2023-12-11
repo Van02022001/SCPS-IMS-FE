@@ -265,6 +265,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                 >
                                     <Typography variant="body1">Mã sản phẩm:</Typography>
                                     <TextField
+                                        disabled
                                         size="small"
                                         variant="outlined"
                                         label="Mã sản phẩm"
@@ -369,6 +370,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                 >
                                     <Typography variant="body1">Người tạo:</Typography>
                                     <TextField
+                                        disabled
                                         size="small"
                                         variant="outlined"
                                         label="Người tạo"
@@ -426,15 +428,17 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                             label="Vị trí"
                                             disabled
                                             multiline
-                                            sx={{ width: '81%', marginRight: 1 }}
-                                            value={item.locations
-                                                ? item.locations
-                                                    .map(
-                                                        (location) =>
-                                                            `${location.binNumber} - ${location.shelfNumber} - ${location.warehouse.name}`,
-                                                    )
-                                                    .join(',\n')
-                                                : ''}
+                                            sx={{ width: '91%', marginRight: 1 }}
+                                            value={
+                                                item.locations
+                                                    ? item.locations
+                                                          .map(
+                                                              (location) =>
+                                                                  `${location.binNumber} - ${location.shelfNumber} - ${location.warehouse.name}`,
+                                                          )
+                                                          .join(',\n')
+                                                    : ''
+                                            }
                                         />
                                     </div>
                                 </Grid>
@@ -469,6 +473,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                 >
                                     <Typography variant="body1">Trạng thái:</Typography>
                                     <TextField
+                                        disabled
                                         size="small"
                                         variant="outlined"
                                         label="Trạng thái"
@@ -486,6 +491,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                 >
                                     <Typography variant="body1">Số lượng:</Typography>
                                     <TextField
+                                        disabled
                                         size="small"
                                         variant="outlined"
                                         label="Số lượng"
@@ -503,6 +509,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                 >
                                     <Typography variant="body1">Hàng có sẵn:</Typography>
                                     <TextField
+                                        disabled
                                         size="small"
                                         variant="outlined"
                                         label="Hàng có sẵn"
@@ -554,6 +561,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                 >
                                     <Typography variant="body1">Đã bán:</Typography>
                                     <TextField
+                                        disabled
                                         size="small"
                                         variant="outlined"
                                         label="Đã bán"
@@ -571,6 +579,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                 >
                                     <Typography variant="body1">Hàng trả lại:</Typography>
                                     <TextField
+                                        disabled
                                         size="small"
                                         variant="outlined"
                                         label="Hàng trả lại"

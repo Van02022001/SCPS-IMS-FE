@@ -6,9 +6,9 @@ import LockOpenIcon from '@mui/icons-material/LockOpen';
 import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover, Button, TextField, DialogContent, Grid, FormControl, InputLabel, Input, InputAdornment } from '@mui/material';
 import account from '../../../_mock/account';
 // api
-import { authenValidation, authenChangePassword } from '../../../data/mutation/login/login-mutation';
+import { authenChangePassword } from '../../../data/mutation/login/login-mutation';
 
-export default function UserInfoForm() {
+export default function UserInfoForm({ profileData }) {
     const [open, setOpen] = useState(null);
     const [isEditingPassword, setIsEditingPassword] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
@@ -22,7 +22,7 @@ export default function UserInfoForm() {
     const [newPassword, setNewPassword] = useState("");
     const [confirmNewPassword, setConfirmNewPassword] = useState("");
 
-    const [profileData, setProfileData] = useState([]);
+    
     const handleOpen = (event) => {
         setOpen(event.currentTarget);
     };
@@ -70,17 +70,8 @@ export default function UserInfoForm() {
     const handleMouseDownPassword = (event) => {
         event.preventDefault();
     };
-    useEffect(() => {
-        authenValidation()
-            .then((respone) => {
-                const data = respone.data
-                setProfileData(data)
-                console.log(data);
-            })
-            .catch((error) => {
-                console.error("Error fetching users:", error);
-            })
-    }, [])
+
+    console.log(profileData);
 
     return (
         <Grid spacing={3}>

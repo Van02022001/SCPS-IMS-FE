@@ -2,6 +2,7 @@ import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
 import React, { useEffect, useState } from 'react';
+import dayjs from 'dayjs';
 
 // @mui
 import {
@@ -98,13 +99,21 @@ const BrandPage = () => {
     // Search data
     const [displayedBrandData, setDisplayedBrandData] = useState([]);
     const [brandData, setBrandData] = useState([]);
+    const startIndex = page * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
+
 
     useEffect(() => {
         getAllBrands()
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
-                    setBrandData(data);
+                    const sortedData = data.sort((a, b) => {
+                        return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(
+                            dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
+                        );
+                    });
+                    setBrandData(sortedData);
                 } else {
                     console.error('API response is not an array:', data);
                 }
@@ -254,7 +263,7 @@ const BrandPage = () => {
                                     onSelectAllClick={handleSelectAllClick}
                                 />
                                 <TableBody>
-                                    {brandData.map((brand) => {
+                                    {brandData.slice(startIndex, endIndex).map((brand) => {
                                         return (
                                             <React.Fragment key={brand.id}>
                                                 <TableRow

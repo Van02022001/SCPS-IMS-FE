@@ -2,6 +2,7 @@ import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
 import React, { useEffect, useState } from 'react';
+import dayjs from 'dayjs';
 
 // @mui
 import {
@@ -37,10 +38,9 @@ import { getAllUnit } from '~/data/mutation/unit/unit-mutation';
 import UnitForm from '~/sections/auth/manager/unit/UnitForm';
 import UnitDetailForm from '~/sections/auth/manager/unit/UnitDetailForm';
 
-
 // ----------------------------------------------------------------------
 
-const TABLE_HEAD = [{ id: 'name', label: 'Tên đơn vị', alignRight: false }, { id: '' }];
+const TABLE_HEAD = [{ id: 'name', label: 'Tên đơn vị', alignRight: false }];
 
 // ----------------------------------------------------------------------
 
@@ -94,12 +94,20 @@ const UnitPage = () => {
 
     const [unitData, setUnitData] = useState([]);
 
+    const startIndex = page * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
+
     useEffect(() => {
         getAllUnit()
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
-                    setUnitData(data);
+                    const sortedData = data.sort((a, b) => {
+                        return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(
+                            dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
+                        );
+                    });
+                    setUnitData(sortedData);
                 } else {
                     console.error('API response is not an array:', data);
                 }
@@ -233,7 +241,7 @@ const UnitPage = () => {
                                     onSelectAllClick={handleSelectAllClick}
                                 />
                                 <TableBody>
-                                    {unitData.map((unit) => {
+                                    {unitData.slice(startIndex, endIndex).map((unit) => {
                                         return (
                                             <React.Fragment key={unit.id}>
                                                 <TableRow
@@ -245,9 +253,7 @@ const UnitPage = () => {
                                                     onClick={() => handleUnitClick(unit)}
                                                 >
                                                     <TableCell padding="checkbox">
-                                                        <Checkbox
-                                                            onChange={(event) => handleClick(event, unit.name)}
-                                                        />
+                                                        <Checkbox onChange={(event) => handleClick(event, unit.name)} />
                                                     </TableCell>
 
                                                     {/* tên  */}

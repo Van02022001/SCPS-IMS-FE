@@ -37,7 +37,7 @@ import { getAllCategories } from '~/data/mutation/categories/categories-mutation
 // form validation
 import CategoryDetailForm from '~/sections/auth/manager/categories/CategoryDetailForm';
 import CreateCategoriesForm from '~/sections/auth/manager/categories/CreateCategoryForm';
-
+import dayjs from 'dayjs';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -100,6 +100,9 @@ const CategoryPage = () => {
     const [categoryData, setCategoryData] = useState([]);
 
     const [categoryStatus, setCategoryStatus] = useState('');
+
+    const startIndex = page * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
 
     //=============================================== Hàm để thay đổi data mỗi khi Edit xong api===============================================
     const updateCategoryInList = (updatedCategory) => {
@@ -168,8 +171,6 @@ const CategoryPage = () => {
         setSelected(newSelected);
     };
 
-
-
     const handleFilterByName = (event) => {
         setPage(0);
         setFilterName(event.target.value);
@@ -191,7 +192,7 @@ const CategoryPage = () => {
     const handleCloseCategoryDetails = () => {
         setSelectedCategoryId(null);
     };
-    //Search 
+    //Search
     const handleDataSearch = (searchResult) => {
         // Cập nhật state của trang chính với dữ liệu từ tìm kiếm
         setCategoryData(searchResult);
@@ -217,6 +218,11 @@ const CategoryPage = () => {
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
+                    const sortedData = data.sort((a, b) => {
+                        return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(
+                            dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
+                        );
+                    });
                     setCategoryData(data);
                 } else {
                     console.error('API response is not an array:', data);
@@ -232,7 +238,6 @@ const CategoryPage = () => {
             <Helmet>
                 <title> Quản lý thể loại | Minimal UI </title>
             </Helmet>
-
 
             <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                 <Typography variant="h4" gutterBottom>
@@ -256,7 +261,7 @@ const CategoryPage = () => {
                 </Dialog>
             </Stack>
 
-            <Container sx={{ minWidth: 1500, }}>
+            <Container sx={{ minWidth: 1500 }}>
                 <Card>
                     <CategoryToolbar
                         numSelected={selected.length}
@@ -278,7 +283,7 @@ const CategoryPage = () => {
                                     onSelectAllClick={handleSelectAllClick}
                                 />
                                 <TableBody>
-                                    {categoryData.map((category) => {
+                                    {categoryData.slice(startIndex, endIndex).map((category) => {
                                         return (
                                             <React.Fragment key={category.id}>
                                                 <TableRow
