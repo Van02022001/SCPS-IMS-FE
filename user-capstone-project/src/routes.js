@@ -41,6 +41,7 @@ import ImportReceiptManagerPage from './pages/manager/transaction/importReceipt/
 import InventoryReportPage from './pages/manager/transaction/inventoryReport/InventoryReportPage';
 import InventoryStaffReportPage from './pages/inventory_staff/inventoryReport/InventoryStaffReportPage';
 import LocationInventoryPage from './pages/inventory_staff/locationInventory/LocationInventoryPage';
+import WarehouseInventoryPage from './pages/inventory_staff/warehouseInventory/WarehouseInventoryPage';
 import CustomerRequestPage from './pages/inventory_staff/transaction/exportRequest/CustomerRequestPage';
 import ExportReceiptPage from './pages/inventory_staff/transaction/exportReceipt/ExportReceiptPage';
 import ExportRequestReceiptManagerPage from './pages/manager/transaction/requestExportReceipt/ExportRequestReceiptManagerPage';
@@ -117,6 +118,7 @@ const Router = () => {
                 { path: 'product', element: <ProductInventoryPage /> },
                 { path: 'itemsInventory', element: <ItemsInventoryPage /> },
                 { path: 'locationsInventory', element: <LocationInventoryPage /> },
+                {path: 'warehousesInventory', element: <WarehouseInventoryPage />},
                 
                 // { path: 'order-sale', element: <OrderSalePage /> },
                 { path: 'requests-import-receipt', element: <ViewReceiptPage /> },

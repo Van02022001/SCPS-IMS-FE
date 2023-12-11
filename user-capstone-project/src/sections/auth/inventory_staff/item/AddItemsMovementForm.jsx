@@ -110,7 +110,7 @@ const AddItemsMovementForm = ({ open, onClose, onSave, itemId, itemMovementsData
             .catch((error) => console.error('Error fetching categories:', error));
     }, [open]);
 
-    console.log(toLocation_id);
+    console.log(fromLocation_id);
 
     return (
         <Dialog open={open} onClose={handleClosePopup}>
@@ -158,11 +158,15 @@ const AddItemsMovementForm = ({ open, onClose, onSave, itemId, itemMovementsData
                         onChange={(e) => setSelectedFromLocationId(e.target.value)}
                     >
                         {Array.isArray(fromLocation_id) &&
-                            fromLocation_id.map((fromLocation) => (
-                                <MenuItem key={fromLocation.id} value={fromLocation.id}>
-                                    {`${fromLocation.binNumber} - ${fromLocation.shelfNumber}- ${fromLocation.warehouse.name}`}
-                                </MenuItem>
-                            ))}
+                            fromLocation_id.map((item) =>
+                                item.locations.map((fromLocation) => (
+                                    <MenuItem key={fromLocation.id} value={fromLocation.id}>
+                                        {`${fromLocation.binNumber} - ${fromLocation.shelfNumber}- ${
+                                            fromLocation.warehouse ? fromLocation.warehouse.name : ''
+                                        }`}
+                                    </MenuItem>
+                                )),
+                            )}
                     </Select>
                 </FormControl>
                 <FormControl sx={{ minWidth: 200 }}>

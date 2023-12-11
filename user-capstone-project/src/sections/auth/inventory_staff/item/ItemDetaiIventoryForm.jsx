@@ -429,7 +429,7 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                             label="Vị trí"
                                             disabled
                                             multiline
-                                            sx={{ width: '81%', marginRight: 1 }}
+                                            sx={{ width: '91%', marginRight: 1 }}
                                             value={item.locations
                                                 .map(
                                                     (location) =>
@@ -611,9 +611,6 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                 </Button>
                                 <Button variant="contained" color="error" onClick={updateItemStatus}>
                                     Thay đổi trạng thái
-                                </Button>
-                                <Button variant="contained" color="warning">
-                                    Cập nhật vị trí nhập kho
                                 </Button>
                                 <Button variant="contained" color="warning" onClick={handleOpenAddItemMovementDialog}>
                                     Chuyển sản phẩm trong kho

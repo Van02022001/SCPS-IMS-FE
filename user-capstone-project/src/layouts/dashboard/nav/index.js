@@ -35,6 +35,7 @@ import NavSection from '../../../components/nav-section';
 import navConfig from './config';
 import { authenValidation } from '~/data/mutation/login/login-mutation';
 import WarehouseIcon from '@mui/icons-material/Warehouse';
+import PlaceIcon from '@mui/icons-material/Place';
 // ----------------------------------------------------------------------
 
 const NAV_WIDTH = 280;
@@ -189,6 +190,12 @@ const managerNavConfig = [
             },
         ],
     },
+    {
+        title: 'Chuyển kho',
+        icon: <WarehouseIcon />,
+        path: '/dashboard/warehousesInventory',
+    },
+
     // {
     //   title: 'login',
     //   path: '/login',
@@ -226,6 +233,11 @@ const inventoryNavConfig = [
             {
                 title: 'Quản lý địa chỉ',
                 path: '/inventory-staff/locationsInventory',
+                icon: <PlaceIcon />,
+            },
+            {
+                title: 'Chuyển kho',
+                path: '/inventory-staff/warehousesInventory',
                 icon: <WarehouseIcon />,
             },
         ],
