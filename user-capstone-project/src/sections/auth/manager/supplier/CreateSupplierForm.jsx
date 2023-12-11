@@ -19,7 +19,7 @@ const CreateSupplierForm = (props) => {
     const [errorMessage, setErrorMessage] = useState('');
 
     const handleCreateSupplier = async () => {
-        const unitParams = {
+        const supplierParams = {
             code,
             name,
             phone,
@@ -28,7 +28,7 @@ const CreateSupplierForm = (props) => {
             address,
         };
         try {
-            const response = await createSuppliers(unitParams);
+            const response = await createSuppliers(supplierParams);
             console.log('Create supplier response:', response);
             if (response.status === '201 CREATED') {
                 setIsSuccess(true);
@@ -37,12 +37,6 @@ const CreateSupplierForm = (props) => {
 
                 props.onClose(response.data);
                 // // Clear the form fields after a successful creation
-                // setCode('');
-                // setName('');
-                // setPhone('');
-                // setEmail('');
-                // setTaxCode('');
-                // setAddress('');
 
                 console.log(response.data.message);
             }

@@ -5,18 +5,14 @@ import {
     DialogContent,
     TextField,
     Button,
-    Select,
     Typography,
     Grid,
-    MenuItem,
-    FormControl,
-    InputLabel,
 } from '@mui/material';
 
 import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
-import { editItemLocations } from '~/data/mutation/items/item-mutation';
-import { getAllLocation, getAllLocationByItem } from '~/data/mutation/location/location-mutation';
+import { editItemLocationsExport } from '~/data/mutation/items/item-mutation';
+import { getAllLocationByItem } from '~/data/mutation/location/location-mutation';
 
 const UpdateLocationToExportForm = ({
     open,
@@ -33,6 +29,8 @@ const UpdateLocationToExportForm = ({
     const [showLocationSelection, setShowLocationSelection] = useState(false);
     const [locationQuantities, setLocationQuantities] = useState({});
     const [receiptDetailId, setReceiptDetailId] = useState(null);
+    //state theo dõi vị trĩ
+    const [selectedLocationsMuti, setSelectedLocationsMuti] = useState([]);
     // Thông báo
     const [isSuccess, setIsSuccess] = useState(false);
     const [isError, setIsError] = useState(false);
@@ -43,7 +41,15 @@ const UpdateLocationToExportForm = ({
         setShowLocationSelection(false);
         onClose();
     };
+    const handleLocationClick = (location) => {
+        const isSelected = selectedLocationsMuti.some((selected) => selected.id === location.id);
 
+        if (isSelected) {
+            setSelectedLocationsMuti(selectedLocationsMuti.filter((selected) => selected.id !== location.id));
+        } else {
+            setSelectedLocationsMuti([...selectedLocationsMuti, location]);
+        }
+    };
     const handleOpenPopup = () => {
         const initialQuantities = {};
         dataReceiptDetail.details.forEach((item) => {
@@ -62,12 +68,12 @@ const UpdateLocationToExportForm = ({
 
     const updateLocations = async () => {
         try {
-            const response = await editItemLocations(detailId, {
+            const response = await editItemLocationsExport({
                 receipt_detail_id: receiptDetailId,
                 locations: [
                     {
                         quantity: quantity,
-                        toLocation_id: selectedLocationId,
+                        fromLocation_id: selectedLocationId,
                     },
                 ],
             });
@@ -112,7 +118,7 @@ const UpdateLocationToExportForm = ({
 
     useEffect(() => {
         if (open) {
-            setReceiptDetailId(dataReceiptDetail.id);
+            setReceiptDetailId(dataReceiptDetail.details[0].id);
             if (details && details.length > 0) {
                 details.forEach((detail) => {
                     getAllLocationByItem(detail.itemId)
@@ -131,52 +137,52 @@ const UpdateLocationToExportForm = ({
     console.log(toLocation_id.locations);
     return (
         <>
-            <Dialog open={open} onClose={handleClosePopup}>
-                <DialogTitle>Hãy Chọn Địa Chỉ Trong Kho</DialogTitle>
+            <Dialog open={open} onClose={handleClosePopup} maxWidth="md">
+                <DialogTitle>Hãy Chọn Địa Chỉ Lấy Sản Phẩm Trong Kho</DialogTitle>
                 <DialogContent>
-                    <Grid
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                        sx={{ marginBottom: 4, gap: 5 }}
-                    >
-                        <Typography variant="body1">Số lượng:</Typography>
-                        <TextField
-                            label="Số lượng"
-                            variant="outlined"
-                            fullWidth
-                            margin="normal"
-                            value={quantity}
-                            onChange={(e) => setQuantity(e.target.value)}
-                        />
+                    <Grid container spacing={2}>
+                        {toLocation_id.map((locationData) => (
+                            locationData.locations.map((location) => (
+                                <Grid item key={location.id} xs={6} md={4} lg={3}>
+                                    <div
+                                        key={location.id}
+                                        style={{
+                                            border: '3px solid #ccc',
+                                            borderRadius: '8px',
+                                            boxShadow: '4px 4px 10px rgba(0, 0, 0, 0.1)',
+                                            padding: '10px',
+                                            cursor: 'pointer',
+                                            transition: 'border-color 0.3s',
+                                            backgroundColor: selectedLocations.some((selected) => selected.id === location.id) ? 'lightgreen' : 'white',
+                                        }}
+                                        onClick={() => handleLocationClick(location)}
+                                    >
+                                        <Typography variant="body1">
+                                            {`${location.shelfNumber} - ${location.binNumber} - `}
+                                            {`Số lượng: ${location.item_quantity} `}
+                                            <Grid
+                                                direction="row"
+                                                justifyContent="space-between"
+                                                alignItems="center"
+                                                sx={{ marginBottom: 4, gap: 5 }}
+                                            >
+                                                <TextField
+                                                    size="small"
+                                                    label="Số lượng"
+                                                    variant="outlined"
+                                                    fullWidth
+                                                    margin="normal"
+                                                    value={quantity}
+                                                    onChange={(e) => setQuantity(e.target.value)}
+                                                />
+                                            </Grid>
+                                        </Typography>
+                                    </div>
+                                </Grid>
+                            ))
+                        ))}
                     </Grid>
-                    <Grid
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                        sx={{ marginBottom: 4, gap: 5 }}
-                    >
-                        <InputLabel id="toLocation_id">Chọn vị trí</InputLabel>
-                        <Select
-                            labelId="group-label"
-                            id="group-select"
-                            sx={{ width: '100%', fontSize: '14px' }}
-                            value={selectedLocationId || ''}
-                            onChange={(e) => setSelectedLocationId(e.target.value)}
-                        >
-                            {toLocation_id.map((locationData) => (
-                                locationData.locations.map((toLocation) => (
-                                    <MenuItem key={toLocation.id} value={toLocation.id}>
-                                        {`${toLocation.binNumber} - ${toLocation.shelfNumber} `}
-                                    </MenuItem>
-                                ))
-                            ))}
-                        </Select>
-                    </Grid>
-                    {/* Display success or error messages */}
-                    {isSuccess && <SuccessAlerts message={successMessage} />}
-                    {isError && <ErrorAlerts errorMessage={errorMessage} />}
-                    <Button variant="contained" color="primary" onClick={updateLocations}>
+                    <Button variant="contained" color="primary" onClick={updateLocations} style={{ marginTop: 20 }}>
                         Lưu
                     </Button>
                 </DialogContent>

@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 
 import { getExaminationItem } from '~/data/mutation/items/item-mutation';
-import { getAllLocation } from '~/data/mutation/location/location-mutation';
+import { getAllLocation, getLocationDetails } from '~/data/mutation/location/location-mutation';
 import InventorySelection from './InventorySelection';
 import UpdateLocationsForm from './UpdateLocationsForm';
 
@@ -27,7 +27,7 @@ const AddLocationsForm = ({ open, onClose, dataReceiptDetail, updateDataReceiptD
     const [openUpdateLocationsForm, setOpenUpdateLocationsForm] = useState(false);
 
     // State to manage the selected locations for each detailId
-    const [selectedLocations, setSelectedLocations] = useState({});
+    const [selectedLocations, setSelectedLocations] = useState([]);
 
     const [openAddCategoryDialog, setOpenAddCategoryDialog] = useState(false);
     const [selectedDetailId, setSelectedDetailId] = useState(null);
@@ -36,23 +36,21 @@ const AddLocationsForm = ({ open, onClose, dataReceiptDetail, updateDataReceiptD
     const handleUpdateLocations = ({ detailId, locations }) => {
         console.log('Updating flag for detailId:', detailId);
 
-        setSelectedLocationsFlag((prevFlag) => {
-            console.log('Previous flag:', prevFlag);
-            return {
-                ...prevFlag,
-                [detailId]: true,
-            };
-        });
-
-        // Update selectedLocations for the specific detailId
         setSelectedLocations((prevSelectedLocations) => {
-            console.log('Previous selected locations:', prevSelectedLocations);
-            return {
-                ...prevSelectedLocations,
-                [detailId]: locations,
-            };
+            const existingIndex = prevSelectedLocations.findIndex((loc) => loc.detailId === detailId);
+
+            if (existingIndex !== -1) {
+                // If detailId already exists, update the locations
+                return prevSelectedLocations.map((loc, index) =>
+                    index === existingIndex ? { ...loc, locations } : loc
+                );
+            } else {
+                // If detailId doesn't exist, add a new entry
+                return [...prevSelectedLocations, { detailId, locations }];
+            }
         });
     };
+
     const handleOpenAddCategoryDialog = (detailId) => {
         setSelectedDetailId(detailId);
         setOpenAddCategoryDialog(true);
@@ -159,27 +157,29 @@ const AddLocationsForm = ({ open, onClose, dataReceiptDetail, updateDataReceiptD
                                             <TableCell>{detail.itemName}</TableCell>
                                             <TableCell>{detail.quantity}</TableCell>
                                             <TableCell>
-                                                {/* Log values to check */}
-                                                {console.log('locationQuantities:', locationQuantities)}
-                                                {console.log('selectedLocationsFlag:', selectedLocationsFlag)}
                                                 {console.log('selectedLocations:', selectedLocations)}
 
-                                                {/* Debugging log */}
-                                                {console.log('Is flag true?', selectedLocationsFlag[detail.id])}
-
-                                                {selectedLocations[detail.id] && (
-                                                    <div>
-                                                        {`${selectedLocations[detail.id].shelfNumber}`}-{`${selectedLocations[detail.id].binNumber}`}-{`${selectedLocations[detail.id].warehouse.name}`}
-
-
-                                                    </div>
+                                                {selectedLocations
+                                                    .filter((entry) => entry.detailId === detail.id)
+                                                    .map((entry) => (
+                                                        <div key={entry.detailId}>
+                                                            {entry.locations.map((location) => (
+                                                                <div key={location.toLocation_id}>
+                                                                    {`${location.shelfNumber} - ${location.binNumber} - ${location.quantity} cái`}
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    ))}
+                                                {selectedLocations.length === 0 && (
+                                                    <div>Vị trí chưa có hoặc chưa cập nhật!</div>
                                                 )}
-                                                {!selectedLocationsFlag[detail.id] && <div>Vị trí chưa có hay cập nhập!</div>}
                                             </TableCell>
+
                                             <TableCell>
                                                 {/* Log values to check */}
                                                 {console.log('Button Condition:', !locationQuantities[detail.id] < detail.quantity && !selectedLocationsFlag[detail.id])}
-                                                {!locationQuantities[detail.id] < detail.quantity && !selectedLocationsFlag[detail.id] && (
+
+                                                {locationQuantities[detail.id] > 0 && !selectedLocationsFlag[detail.id] && (
                                                     <Button
                                                         variant="contained"
                                                         color="primary"
@@ -197,7 +197,7 @@ const AddLocationsForm = ({ open, onClose, dataReceiptDetail, updateDataReceiptD
                                                 details={dataReceiptDetail.details}
                                                 detailId={selectedDetailId}
                                                 onUpdate={handleUpdateLocations}  // Pass the handleUpdateLocations function here
-                                                selectedLocations={selectedLocations}
+                                                selectedLocations={selectedLocations[selectedDetailId] || []}
                                                 toLocationData={toLocation_id}
                                             />
                                         </TableRow>

@@ -43,3 +43,7 @@ export const editItemLocations = async (itemId, editLocationsParams) => {
     const response = await axiosInstance.put(`/items/item-locations/${itemId}`, editLocationsParams);
     return response.data;
 }
+export const editItemLocationsExport = async (editLocationsExportParams) => {
+    const response = await axiosInstance.put(`/items/item-locations/warehouse-export`, editLocationsExportParams);
+    return response.data;
+}

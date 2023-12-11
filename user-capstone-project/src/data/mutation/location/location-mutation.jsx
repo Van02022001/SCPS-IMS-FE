@@ -15,6 +15,11 @@ export const editLocations = async (locationsId, editLocationsParams) => {
     return response.data;
 }
 
+export const getLocationDetails = async (locationId) => {
+    const response = await axiosInstance.get(`/locations/${locationId}`);
+    return response.data;
+}
+
 export const getAllLocationByItem = async (itemId) => {
     const response = await axiosInstance.get(`/locations/locations-by-item/${itemId}`);
     return response.data;

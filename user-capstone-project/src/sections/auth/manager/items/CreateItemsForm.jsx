@@ -26,15 +26,15 @@ import BoxComponent from '~/components/box/BoxComponent';
 // api
 import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
-import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
+// import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
 import { createItem } from '~/data/mutation/items/item-mutation';
 import { getAllSubCategoryActive } from '~/data/mutation/subCategory/subCategory-mutation';
 import { getAllBrands } from '~/data/mutation/brand/brands-mutation';
 import { getAllOrigins } from '~/data/mutation/origins/origins-mutation';
 import { getAllSuppliers } from '~/data/mutation/supplier/suppliers-mutation';
-import AddUnitForm from '../subCategory/AddUnitForm';
 import AddBrandItemForm from './AddBrandItemForm';
 import AddOriginItemForm from './AddOriginItemForm';
+import AddSupplierFrom from './AddSupplierFrom';
 
 
 const CreateItemsForm = (props) => {
@@ -44,7 +44,7 @@ const CreateItemsForm = (props) => {
     const [tab2Data, setTab2Data] = useState({});
 
     //=====================================mở popup form
-    const [openAddCategoryDialog, setOpenAddCategoryDialog] = useState(false);
+    const [openAddSuplierForm, setOpenAddSuplierForm] = useState(false);
     const [openAddOriginForm, setOpenAddOriginForm] = useState(false);
     const [openAddBrandForm, setOpenAddBrandForm] = useState(false);
 
@@ -85,18 +85,26 @@ const CreateItemsForm = (props) => {
     const handleCloseAddBrandForm = () => {
         setOpenAddBrandForm(false);
     };
-    const handleSaveBrand = () => {
-        handleCloseAddBrandForm();
-    };
-
     const handleOpenAddOriginForm = () => {
         setOpenAddOriginForm(true);
     };
     const handleCloseAddOriginForm = () => {
         setOpenAddOriginForm(false);
     };
+    const handleOpenAddSuplierForm = () => {
+        setOpenAddSuplierForm(true);
+    };
+    const handleCloseAddSuplierForm = () => {
+        setOpenAddSuplierForm(false);
+    };
+    const handleSaveBrand = () => {
+        handleCloseAddBrandForm();
+    };
     const handleSaveOrigin = () => {
         handleCloseAddOriginForm();
+    };
+    const handleSaveSupplier = () => {
+        handleCloseAddSuplierForm();
     };
     //================================================================================================================
     //========================== Hàm notification của trang ==================================
@@ -177,7 +185,6 @@ const CreateItemsForm = (props) => {
         // setOrigins_id([]);
     };
 
-    const handleAddCategories = async () => { };
 
     useEffect(() => {
         getAllSubCategoryActive()
@@ -308,7 +315,7 @@ const CreateItemsForm = (props) => {
                                                     size="small"
                                                     labelId="group-label"
                                                     id="group-select"
-                                                    sx={{ width: '90%', fontSize: '14px' }}
+                                                    sx={{ width: '82%', fontSize: '14px' }}
                                                     value={tab1Data.supplier_id}
                                                     onChange={handleTab1DataChange}
                                                     name="supplier_id"
@@ -319,6 +326,18 @@ const CreateItemsForm = (props) => {
                                                         </MenuItem>
                                                     ))}
                                                 </Select>
+                                                <Button
+                                                    variant="outlined"
+                                                    sx={{ padding: 0.8, minWidth: 0 }}
+                                                    onClick={handleOpenAddSuplierForm}
+                                                >
+                                                    <AddIcon />
+                                                </Button>
+                                                <AddSupplierFrom
+                                                    open={openAddSuplierForm}
+                                                    onClose={handleCloseAddSuplierForm}
+                                                    onSave={handleSaveSupplier}
+                                                />
                                             </Grid>
                                         </Grid>
 

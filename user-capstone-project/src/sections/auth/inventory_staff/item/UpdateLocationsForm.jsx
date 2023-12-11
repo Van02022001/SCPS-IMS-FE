@@ -11,12 +11,30 @@ import {
     MenuItem,
     FormControl,
     InputLabel,
+    List,
 } from '@mui/material';
 
 import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
 import { editItemLocations } from '~/data/mutation/items/item-mutation';
 import { getAllLocation } from '~/data/mutation/location/location-mutation';
+
+const locationStyle = {
+    border: '3px solid #ccc',
+    borderRadius: '8px',
+    boxShadow: '4px 4px 10px rgba(0, 0, 0, 0.1)',
+    padding: '10px',
+    cursor: 'pointer',
+    transition: 'border-color 0.3s',
+};
+
+const selectedLocationStyle = {
+    borderColor: 'green',
+};
+
+const occupiedLocationStyle = {
+    borderColor: 'red',
+};
 
 const UpdateLocationsForm = ({
     open,
@@ -27,31 +45,47 @@ const UpdateLocationsForm = ({
     selectedLocations,
 }) => {
     const [quantity, setQuantity] = useState('');
+    const [selectedLocation, setSelectedLocation] = useState(null);
     const [toLocation_id, setToLocation_id] = useState([]);
-    const [selectedLocationId, setSelectedLocationId] = useState('');
+
     const [showLocationSelection, setShowLocationSelection] = useState(false);
     const [locationQuantities, setLocationQuantities] = useState({});
-
+    //state chọn muti
+    const [selectedLocationsMuti, setSelectedLocationsMuti] = useState([]);
+    const [quantityMap, setQuantityMap] = useState({});
     // Thông báo
     const [isSuccess, setIsSuccess] = useState(false);
     const [isError, setIsError] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
+    const handleLocationClick = (location) => {
+        const isSelected = selectedLocationsMuti.some((selected) => selected.id === location.id);
+
+        if (isSelected) {
+            setSelectedLocationsMuti(selectedLocationsMuti.filter((selected) => selected.id !== location.id));
+        } else {
+            setSelectedLocationsMuti([...selectedLocationsMuti, location]);
+
+            // Only show location selection if the location is not occupied
+            if (location.item_quantity === 0) {
+                setShowLocationSelection(true);
+            }
+        }
+    };
+
     const handleClosePopup = () => {
         setShowLocationSelection(false);
         onClose();
-        // setQuantity('');
-        // setSelectedLocationId('');
     };
 
     const handleOpenPopup = () => {
         const initialQuantities = {};
         dataReceiptDetail.details.forEach((item) => {
-            initialQuantities[item.id] = item.quantity - (locationQuantities[item.id] || 0);
+            initialQuantities[item.id] = item.quantity - (quantityMap[item.id] || 0);
         });
 
-        setLocationQuantities(initialQuantities);
+        setQuantityMap(initialQuantities);
 
         const remainingQuantity = Object.values(initialQuantities).reduce(
             (acc, remaining) => acc + remaining,
@@ -63,28 +97,27 @@ const UpdateLocationsForm = ({
 
     const updateLocations = async () => {
         try {
+            const locationsToUpdate = selectedLocationsMuti.map((location) => ({
+                quantity: quantityMap[location.id],
+                toLocation_id: location.id,
+                shelfNumber: location.shelfNumber,
+                binNumber: location.binNumber,
+            }));
+
             const response = await editItemLocations(detailId, {
-                locations: [
-                    {
-                        quantity: quantity,
-                        toLocation_id: selectedLocationId,
-                    },
-                ],
+                locations: locationsToUpdate,
             });
-            const selectedLocation = toLocation_id.find(location => location.id === selectedLocationId);
-            const data = Array.isArray(response.data) ? response.data : [response.data];
 
-            onUpdate({
+            onUpdate && onUpdate({
                 detailId: detailId,
-                quantity: quantity,
-                locations: selectedLocation,
+                quantity: Object.values(quantityMap).reduce((acc, quantity) => acc + quantity, 0),
+                locations: locationsToUpdate,
             });
-
+            console.log('locationsToUpdate', locationsToUpdate);
             setIsSuccess(true);
             setIsError(false);
             setSuccessMessage('Update successful!');
 
-            // Close the popup only if there are no remaining quantities
             const remainingQuantity = Object.values(locationQuantities).reduce(
                 (acc, remaining) => acc + remaining,
                 0
@@ -93,7 +126,6 @@ const UpdateLocationsForm = ({
             if (remainingQuantity === 0) {
                 handleClosePopup();
             } else {
-                // If there are remaining quantities, update the form and keep it open
                 handleOpenPopup();
             }
         } catch (error) {
@@ -103,6 +135,7 @@ const UpdateLocationsForm = ({
             setErrorMessage('Error updating item locations. Please try again.');
         }
     };
+
 
     useEffect(() => {
         if (Object.keys(selectedLocations).length > 0) {
@@ -125,53 +158,54 @@ const UpdateLocationsForm = ({
         }
     }, [open]);
 
+    const handleQuantityChange = (locationId, event) => {
+        // Stop event propagation to prevent hiding the input
+        event.stopPropagation();
+
+        setQuantityMap((prevQuantityMap) => ({
+            ...prevQuantityMap,
+            [locationId]: event.target.value,
+        }));
+    };
     return (
         <>
-            <Dialog open={open} onClose={handleClosePopup}>
+            <Dialog open={open} onClose={handleClosePopup} maxWidth="md">
                 <DialogTitle>Hãy Chọn Địa Chỉ Trong Kho</DialogTitle>
-                <DialogContent>
-                    <Grid
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                        sx={{ marginBottom: 4, gap: 5 }}
-                    >
-                        <Typography variant="body1">Số lượng:</Typography>
-                        <TextField
-                            label="Số lượng"
-                            variant="outlined"
-                            fullWidth
-                            margin="normal"
-                            value={quantity}
-                            onChange={(e) => setQuantity(e.target.value)}
-                        />
+                <DialogContent >
+                    <Grid container spacing={2}>
+                        {/* Display a list of locations */}
+                        {toLocation_id.map((toLocation) => (
+                            <Grid item key={toLocation.id} xs={6} md={4} lg={3}>
+                                <div
+                                    style={{
+                                        ...locationStyle,
+                                        ...(selectedLocationsMuti.some((selected) => selected.id === toLocation.id) ? selectedLocationStyle : {}),
+                                        ...(toLocation.item_quantity > 0 ? occupiedLocationStyle : {}),
+                                    }}
+                                    onClick={() => handleLocationClick(toLocation)}
+                                >
+                                    <Typography variant="body1">
+                                        {`${toLocation.shelfNumber} - ${toLocation.binNumber} `}
+                                    </Typography>
+                                    {selectedLocationsMuti.some((selected) => selected.id === toLocation.id) && (
+                                        <div>
+                                            <TextField
+                                                size="small"
+                                                label="Số lượng"
+                                                variant="outlined"
+                                                fullWidth
+                                                margin="normal"
+                                                value={quantityMap[toLocation.id] || ''}
+                                                onChange={(event) => handleQuantityChange(toLocation.id, event)}
+                                                onClick={(event) => event.stopPropagation()} // Add this line
+                                            />
+                                        </div>
+                                    )}
+                                </div>
+                            </Grid>
+                        ))}
                     </Grid>
-                    <Grid
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                        sx={{ marginBottom: 4, gap: 5 }}
-                    >
-                        <InputLabel id="toLocation_id">Chọn vị trí</InputLabel>
-                        <Select
-                            labelId="group-label"
-                            id="group-select"
-                            sx={{ width: '100%', fontSize: '14px' }}
-                            value={selectedLocationId}
-                            onChange={(e) => setSelectedLocationId(e.target.value)}
-                        >
-                            {Array.isArray(toLocation_id) &&
-                                toLocation_id.map((toLocation) => (
-                                    <MenuItem key={toLocation.id} value={toLocation.id}>
-                                        {`${toLocation.binNumber} - ${toLocation.shelfNumber} `}
-                                    </MenuItem>
-                                ))}
-                        </Select>
-                    </Grid>
-                    {/* Display success or error messages */}
-                    {isSuccess && <SuccessAlerts message={successMessage} />}
-                    {isError && <ErrorAlerts errorMessage={errorMessage} />}
-                    <Button variant="contained" color="primary" onClick={updateLocations}>
+                    <Button variant="contained" color="primary" onClick={updateLocations} style={{ marginTop: 20 }}>
                         Lưu
                     </Button>
                 </DialogContent>
@@ -179,5 +213,4 @@ const UpdateLocationsForm = ({
         </>
     );
 };
-
 export default UpdateLocationsForm;
