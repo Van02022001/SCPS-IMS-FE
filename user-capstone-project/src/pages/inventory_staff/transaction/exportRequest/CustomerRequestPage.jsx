@@ -33,7 +33,7 @@ import ImportReaceiptDetailForm from '~/sections/auth/inventory_staff/importRece
 // import GoodsReceiptPage from '../GoodsReceiptPage';
 import { useNavigate } from 'react-router-dom';
 import ExportReceiptDetailForm from '~/sections/auth/inventory_staff/exportReceipt/ExportReceiptDetailForm';
-
+import dayjs from 'dayjs';
 
 
 
@@ -111,6 +111,8 @@ const CustomerRequestPage = () => {
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
     const navigate = useNavigate();
+    const startIndex = page * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
 
     // State data và xử lý data
     const [importRequestData, setImportRequestData] = useState([]);
@@ -258,7 +260,12 @@ const CustomerRequestPage = () => {
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
-                    setImportRequestData(data);
+                    const sortedData = data.sort((a, b) => {
+                        return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(
+                            dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
+                        );
+                    });
+                    setImportRequestData(sortedData);
                 } else {
                     console.error('API response is not an array:', data);
                 }
@@ -317,7 +324,7 @@ const CustomerRequestPage = () => {
                                 onSelectAllClick={handleSelectAllClick}
                             />
                             <TableBody>
-                                {allItems.map((importReceipt) => {
+                                {allItems.slice(startIndex, endIndex).map((importReceipt) => {
                                     return (
                                         <React.Fragment key={importReceipt.id}>
                                             <TableRow
@@ -438,7 +445,7 @@ const CustomerRequestPage = () => {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={PRODUCTSLIST.length}
+                    count={allItems.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}

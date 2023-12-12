@@ -34,9 +34,7 @@ import ImportReaceiptDetailForm from '~/sections/auth/inventory_staff/importRece
 // import GoodsReceiptPage from '../GoodsReceiptPage';
 import { useNavigate } from 'react-router-dom';
 import { getAllImportReceipt } from '~/data/mutation/importReceipt/ImportReceipt-mutation';
-
-
-
+import dayjs from 'dayjs';
 
 // ----------------------------------------------------------------------
 
@@ -117,7 +115,8 @@ const ImportReceiptPage = () => {
     const [productStatus, setProductStatus] = useState('');
 
     const [selectedProduct, setSelectedProduct] = useState(null);
-
+    const startIndex = page * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
     // Hàm để thay đổi data mỗi khi Edit xong api-------------------------------------------------------------
     const updateImportReceiptInList = (updatedImportReceipt) => {
         const importReceiptIndex = importReceiptData.findIndex((product) => product.id === updatedImportReceipt.id);
@@ -254,7 +253,12 @@ const ImportReceiptPage = () => {
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
-                    setImportReceiptData(data);
+                    const sortedData = data.sort((a, b) => {
+                        return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(
+                            dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
+                        );
+                    });
+                    setImportReceiptData(sortedData);
                 } else {
                     console.error('API response is not an array:', data);
                 }
@@ -304,7 +308,7 @@ const ImportReceiptPage = () => {
                                 onSelectAllClick={handleSelectAllClick}
                             />
                             <TableBody>
-                                {importReceiptData.map((importReceipt) => {
+                                {importReceiptData.slice(startIndex, endIndex).map((importReceipt) => {
                                     return (
                                         <React.Fragment key={importReceipt.id}>
                                             <TableRow
@@ -425,7 +429,7 @@ const ImportReceiptPage = () => {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={PRODUCTSLIST.length}
+                    count={importReceiptData.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}

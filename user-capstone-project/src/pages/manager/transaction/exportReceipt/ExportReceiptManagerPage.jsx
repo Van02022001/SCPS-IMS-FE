@@ -31,10 +31,7 @@ import ImportReceiptDetailManagerForm from '~/sections/auth/manager/transaction/
 // import GoodsReceiptPage from '../GoodsReceiptPage';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getAllExportReceipt } from '~/data/mutation/exportReceipt/ExportReceipt-mutation';
-
-
-
-
+import dayjs from 'dayjs';
 
 // ----------------------------------------------------------------------
 
@@ -115,7 +112,8 @@ const ExportReceiptManagerPage = () => {
     const [productStatus, setProductStatus] = useState('');
 
     const [selectedProduct, setSelectedProduct] = useState(null);
-
+    const startIndex = page * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
     // Hàm để thay đổi data mỗi khi Edit xong api-------------------------------------------------------------
     const updateImportReceiptInList = (updatedImportReceipt) => {
         const importReceiptIndex = importReceiptData.findIndex((product) => product.id === updatedImportReceipt.id);
@@ -252,7 +250,12 @@ const ExportReceiptManagerPage = () => {
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
-                    setImportReceiptData(data);
+                    const sortedData = data.sort((a, b) => {
+                        return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(
+                            dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
+                        );
+                    });
+                    setImportReceiptData(sortedData);
                 } else {
                     console.error('API response is not an array:', data);
                 }
@@ -317,7 +320,7 @@ const ExportReceiptManagerPage = () => {
                                 onSelectAllClick={handleSelectAllClick}
                             />
                             <TableBody>
-                                {importReceiptData.map((importReceipt) => {
+                                {importReceiptData.slice(startIndex, endIndex).map((importReceipt) => {
                                     return (
                                         <React.Fragment key={importReceipt.id}>
                                             <TableRow

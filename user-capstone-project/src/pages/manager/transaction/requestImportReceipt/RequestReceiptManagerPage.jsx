@@ -39,6 +39,7 @@ import ImportRequestReceiptDetailManagerForm from '~/sections/auth/manager/trans
 // import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import CreateGoodReceipt from './CreateGoodReceipt';
 import { getAllImportRequest } from '~/data/mutation/importRequestReceipt/ImportRequestReceipt-mutation';
+import dayjs from 'dayjs';
 
 
 // ----------------------------------------------------------------------
@@ -139,6 +140,8 @@ const RequestReceiptManagerPage = () => {
 
     const [personName, setPersonName] = React.useState([]);
     const navigate = useNavigate();
+    const startIndex = page * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
 
     const handleChange = (event) => {
         setPersonName(event.target.value);
@@ -295,7 +298,12 @@ const RequestReceiptManagerPage = () => {
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
-                    setImportRequestData(data);
+                    const sortedData = data.sort((a, b) => {
+                        return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(
+                            dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
+                        );
+                    });
+                    setImportRequestData(sortedData);
                 } else {
                     console.error('API response is not an array:', data);
                 }
@@ -391,7 +399,7 @@ const RequestReceiptManagerPage = () => {
                                 onSelectAllClick={handleSelectAllClick}
                             />
                             <TableBody>
-                                {allItems.map((importRequest) => {
+                                {allItems.slice(startIndex, endIndex).map((importRequest) => {
                                     return (
                                         <React.Fragment key={importRequest.id}>
                                             <TableRow
@@ -515,7 +523,7 @@ const RequestReceiptManagerPage = () => {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={PRODUCTSLIST.length}
+                    count={allItems.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}

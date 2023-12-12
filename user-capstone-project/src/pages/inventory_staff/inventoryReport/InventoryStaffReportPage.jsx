@@ -42,12 +42,13 @@ import PRODUCTSLIST from '../../../_mock/products';
 import { useNavigate } from 'react-router-dom';
 import { getAllImportReceipt } from '~/data/mutation/importReceipt/ImportReceipt-mutation';
 import ImportReceiptDetailManagerForm from '~/sections/auth/manager/transaction/importReceipt/ImportReceiptDetailManagerForm';
-import { getAllInventoryByItems, getAllInventoryByWarehouse, getAllInventoryReport } from '~/data/mutation/inventoryReport/InventoryReport-mutation';
+import {
+    getAllInventoryByItems,
+    getAllInventoryByWarehouse,
+    getAllInventoryReport,
+} from '~/data/mutation/inventoryReport/InventoryReport-mutation';
 import { getAllWarehouse } from '~/data/mutation/warehouse/warehouse-mutation';
-
-
-
-
+import dayjs from 'dayjs';
 
 // ----------------------------------------------------------------------
 
@@ -131,8 +132,10 @@ const InventoryStaffReportPage = () => {
     const [inventoryReportData, setInventoryReportData] = useState([]);
     const [warehouseData, setWarehouseData] = useState([]);
 
-    // Hàm để thay đổi data mỗi khi Edit xong api-------------------------------------------------------------
+    const startIndex = page * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
 
+    // Hàm để thay đổi data mỗi khi Edit xong api-------------------------------------------------------------
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
@@ -219,7 +222,12 @@ const InventoryStaffReportPage = () => {
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
-                    setInventoryReportData(data);
+                    const sortedData = data.sort((a, b) => {
+                        return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(
+                            dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
+                        );
+                    });
+                    setInventoryReportData(sortedData);
                 } else {
                     console.error('API response is not an array:', data);
                 }
@@ -242,7 +250,6 @@ const InventoryStaffReportPage = () => {
     }, []);
     console.log(inventoryReportData);
     useEffect(() => {
-
         if (selectedInventoryReport.length > 0) {
             const warehouseId = selectedInventoryReport[0];
             getAllInventoryByWarehouse(warehouseId)
@@ -325,7 +332,7 @@ const InventoryStaffReportPage = () => {
                                 onSelectAllClick={handleSelectAllClick}
                             />
                             <TableBody>
-                                {filteredInventoryReport.map((inventoryReport) => {
+                                {filteredInventoryReport.slice(startIndex, endIndex).map((inventoryReport) => {
                                     return (
                                         <React.Fragment key={inventoryReport.itemId}>
                                             <TableRow key={inventoryReport.itemId}>
@@ -379,15 +386,13 @@ const InventoryStaffReportPage = () => {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={PRODUCTSLIST.length}
+                    count={filteredInventoryReport.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </Card>
-
-
         </>
     );
 };

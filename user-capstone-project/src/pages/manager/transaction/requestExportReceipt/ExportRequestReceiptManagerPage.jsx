@@ -35,6 +35,7 @@ import SubCategoryDetailForm from '~/sections/auth/manager/subCategory/SubCatego
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import CreateExportReceipt from './CreateExportReceipt';
 import { getAllCustomerRequest } from '~/data/mutation/customerRequest/CustomerRequest-mutation';
+import dayjs from 'dayjs';
 
 // ----------------------------------------------------------------------
 
@@ -137,6 +138,8 @@ const ExportRequestReceiptManagerPage = () => {
 
     const [personName, setPersonName] = React.useState([]);
     const navigate = useNavigate();
+    const startIndex = page * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
 
     const handleChange = (event) => {
         setPersonName(event.target.value);
@@ -294,7 +297,12 @@ const ExportRequestReceiptManagerPage = () => {
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
-                    setExportReceiptData(data);
+                    const sortedData = data.sort((a, b) => {
+                        return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(
+                            dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
+                        );
+                    });
+                    setExportReceiptData(sortedData);
                 } else {
                     console.error('API response is not an array:', data);
                 }
@@ -392,7 +400,7 @@ const ExportRequestReceiptManagerPage = () => {
                                 onSelectAllClick={handleSelectAllClick}
                             />
                             <TableBody>
-                                {renderedTodoList.map((sub_category) => {
+                                {renderedTodoList.slice(startIndex, endIndex).map((sub_category) => {
                                     return (
                                         <React.Fragment key={sub_category.id}>
                                             <TableRow
@@ -508,7 +516,7 @@ const ExportRequestReceiptManagerPage = () => {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={PRODUCTSLIST.length}
+                    count={renderedTodoList.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}

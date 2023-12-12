@@ -35,8 +35,6 @@ import ImportReaceiptDetailForm from '~/sections/auth/inventory_staff/importRece
 import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 
-
-
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -110,6 +108,8 @@ const ViewReceiptPage = () => {
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
     const navigate = useNavigate();
+    const startIndex = page * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
 
     // State data và xử lý data
     const [importRequestData, setImportRequestData] = useState([]);
@@ -273,8 +273,10 @@ const ViewReceiptPage = () => {
     }, []);
     console.log(importRequestData);
 
-//==============================* filter *==============================
-    const pendingApprovalItems = importRequestData.filter((importRequest) => importRequest.status === 'Pending_Approval');
+    //==============================* filter *==============================
+    const pendingApprovalItems = importRequestData.filter(
+        (importRequest) => importRequest.status === 'Pending_Approval',
+    );
 
     const otherItems = importRequestData.filter((importRequest) => importRequest.status !== 'Pending_Approval');
 
@@ -321,7 +323,7 @@ const ViewReceiptPage = () => {
                                 onSelectAllClick={handleSelectAllClick}
                             />
                             <TableBody>
-                                {allItems.map((importReceipt) => {
+                                {allItems.slice(startIndex, endIndex).map((importReceipt) => {
                                     return (
                                         <React.Fragment key={importReceipt.id}>
                                             <TableRow
@@ -335,9 +337,11 @@ const ViewReceiptPage = () => {
                                                 <TableCell padding="checkbox">
                                                     <Checkbox
                                                         checked={selectedImportReceiptId === importReceipt.id}
-                                                        onChange={(event) => handleCheckboxChange(event, importReceipt.id)}
-                                                    // checked={selectedUser}
-                                                    // onChange={(event) => handleClick(event, name)}
+                                                        onChange={(event) =>
+                                                            handleCheckboxChange(event, importReceipt.id)
+                                                        }
+                                                        // checked={selectedUser}
+                                                        // onChange={(event) => handleClick(event, name)}
                                                     />
                                                 </TableCell>
 
@@ -367,7 +371,8 @@ const ViewReceiptPage = () => {
                                                 <TableCell align="left">
                                                     <Label
                                                         color={
-                                                            (importReceipt.status === 'Pending_Approval' && 'warning') ||
+                                                            (importReceipt.status === 'Pending_Approval' &&
+                                                                'warning') ||
                                                             (importReceipt.status === 'Approved' && 'success') ||
                                                             (importReceipt.status === ' IN_PROGRESS' && 'warning') ||
                                                             (importReceipt.status === 'Complete' && 'primary') ||
@@ -378,12 +383,12 @@ const ViewReceiptPage = () => {
                                                         {importReceipt.status === 'Pending_Approval'
                                                             ? 'Chờ phê duyệt'
                                                             : importReceipt.status === 'Approved'
-                                                                ? 'Đã xác nhận'
-                                                                : importReceipt.status === 'IN_PROGRESS'
-                                                                    ? 'Đang tiến hành'
-                                                                    : importReceipt.status === 'Complete'
-                                                                        ? 'Hoàn thành'
-                                                                        : 'Ngừng hoạt động'}
+                                                            ? 'Đã xác nhận'
+                                                            : importReceipt.status === 'IN_PROGRESS'
+                                                            ? 'Đang tiến hành'
+                                                            : importReceipt.status === 'Complete'
+                                                            ? 'Hoàn thành'
+                                                            : 'Ngừng hoạt động'}
                                                     </Label>
                                                 </TableCell>
                                             </TableRow>
@@ -396,7 +401,9 @@ const ViewReceiptPage = () => {
                                                             // productStatus={productStatus}
                                                             importReceiptId={selectedImportReceiptId}
                                                             updateImportReceiptInList={updateImportReceiptInList}
-                                                            updateImportReceiptConfirmInList={updateImportReceiptConfirmInList}
+                                                            updateImportReceiptConfirmInList={
+                                                                updateImportReceiptConfirmInList
+                                                            }
                                                             onClose={handleCloseProductDetails}
                                                         />
                                                     </TableCell>
@@ -442,7 +449,7 @@ const ViewReceiptPage = () => {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={PRODUCTSLIST.length}
+                    count={allItems.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}
@@ -450,8 +457,6 @@ const ViewReceiptPage = () => {
                 />
             </Card>
             {/* </Container> */}
-
-
         </>
     );
 };

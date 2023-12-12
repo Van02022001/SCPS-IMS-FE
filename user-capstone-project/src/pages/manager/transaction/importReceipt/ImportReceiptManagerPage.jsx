@@ -31,10 +31,7 @@ import ImportReceiptDetailManagerForm from '~/sections/auth/manager/transaction/
 // import GoodsReceiptPage from '../GoodsReceiptPage';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getAllImportReceipt } from '~/data/mutation/importReceipt/ImportReceipt-mutation';
-
-
-
-
+import dayjs from 'dayjs';
 
 // ----------------------------------------------------------------------
 
@@ -115,7 +112,8 @@ const ImportReceiptManagerPage = () => {
     const [productStatus, setProductStatus] = useState('');
 
     const [selectedProduct, setSelectedProduct] = useState(null);
-
+    const startIndex = page * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
     // Hàm để thay đổi data mỗi khi Edit xong api-------------------------------------------------------------
     const updateImportReceiptInList = (updatedImportReceipt) => {
         const importReceiptIndex = importReceiptData.findIndex((product) => product.id === updatedImportReceipt.id);
@@ -252,7 +250,12 @@ const ImportReceiptManagerPage = () => {
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
-                    setImportReceiptData(data);
+                    const sortedData = data.sort((a, b) => {
+                        return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(
+                            dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
+                        );
+                    });
+                    setImportReceiptData(sortedData);
                 } else {
                     console.error('API response is not an array:', data);
                 }
@@ -317,7 +320,7 @@ const ImportReceiptManagerPage = () => {
                                 onSelectAllClick={handleSelectAllClick}
                             />
                             <TableBody>
-                                {importReceiptData.map((importReceipt) => {
+                                {importReceiptData.slice(startIndex, endIndex).map((importReceipt) => {
                                     return (
                                         <React.Fragment key={importReceipt.id}>
                                             <TableRow
@@ -363,7 +366,8 @@ const ImportReceiptManagerPage = () => {
                                                 <TableCell align="left">
                                                     <Label
                                                         color={
-                                                            (importReceipt.status === 'Pending_Approval' && 'warning') ||
+                                                            (importReceipt.status === 'Pending_Approval' &&
+                                                                'warning') ||
                                                             (importReceipt.status === 'Approved' && 'primary') ||
                                                             (importReceipt.status === ' IN_PROGRESS' && 'warning') ||
                                                             (importReceipt.status === 'Completed' && 'success') ||
@@ -374,12 +378,12 @@ const ImportReceiptManagerPage = () => {
                                                         {importReceipt.status === 'Pending_Approval'
                                                             ? 'Chờ phê duyệt'
                                                             : importReceipt.status === 'Approved'
-                                                                ? 'Đã xác nhận'
-                                                                : importReceipt.status === 'IN_PROGRESS'
-                                                                    ? 'Đang tiến hành'
-                                                                    : importReceipt.status === 'Completed'
-                                                                        ? 'Hoàn thành'
-                                                                        : 'Ngừng hoạt động'}
+                                                            ? 'Đã xác nhận'
+                                                            : importReceipt.status === 'IN_PROGRESS'
+                                                            ? 'Đang tiến hành'
+                                                            : importReceipt.status === 'Completed'
+                                                            ? 'Hoàn thành'
+                                                            : 'Ngừng hoạt động'}
                                                     </Label>
                                                 </TableCell>
                                             </TableRow>
@@ -392,7 +396,9 @@ const ImportReceiptManagerPage = () => {
                                                             // productStatus={productStatus}
                                                             importReceiptId={selectedImportReceiptId}
                                                             updateImportReceiptInList={updateImportReceiptInList}
-                                                            updateImportReceiptConfirmInList={updateImportReceiptConfirmInList}
+                                                            updateImportReceiptConfirmInList={
+                                                                updateImportReceiptConfirmInList
+                                                            }
                                                             onClose={handleCloseProductDetails}
                                                         />
                                                     </TableCell>
@@ -446,8 +452,6 @@ const ImportReceiptManagerPage = () => {
                 />
             </Card>
             {/* </Container> */}
-
-
         </>
     );
 };
