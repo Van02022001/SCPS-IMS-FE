@@ -1,10 +1,4 @@
-import {
-    Button,
-    DialogContent,
-    IconButton,
-    Stack,
-    TextField,
-} from '@mui/material';
+import { Button, DialogContent, IconButton, Stack, TextField } from '@mui/material';
 import React, { useState } from 'react';
 //icon
 import Snackbar from '@mui/material/Snackbar';
@@ -16,25 +10,27 @@ import { createOrigins } from '~/data/mutation/origins/origins-mutation';
 import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
 import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
+import CustomDialog from '~/components/alert/ConfirmDialog';
 
 const CreateOriginForm = (props) => {
     const [open, setOpen] = React.useState(false);
     const [name, setName] = useState('');
     //thông báo
     const [message, setMessage] = useState('');
-    const [isSuccess, setIsSuccess] = useState(false);
-    const [isError, setIsError] = useState(false);
-    const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const [confirmOpen1, setConfirmOpen1] = useState(false);
 
-    //========================== Hàm notification của trang ==================================
+    //============================================================
+
     const handleMessage = (message) => {
         setOpen(true);
         // Đặt logic hiển thị nội dung thông báo từ API ở đây
-        if (message === 'Update SubCategory status successfully.') {
-            setMessage('Cập nhập trạng thái danh mục thành công')
+        if (message === 'Update sub category status successfully.') {
+            setMessage('Cập nhập trạng thái danh mục thành công');
         } else if (message === 'Update SubCategory successfully.') {
-            setMessage('Cập nhập danh mục thành công')
+            setMessage('Cập nhập danh mục thành công');
+            console.error('Error message:', errorMessage);
         }
     };
 
@@ -44,19 +40,30 @@ const CreateOriginForm = (props) => {
         }
 
         setOpen(false);
-
     };
 
     const action = (
         <React.Fragment>
-            <Button color="secondary" size="small" onClick={handleClose}>
-            </Button>
+            <Button color="secondary" size="small" onClick={handleClose}></Button>
             <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
                 <CloseIcon fontSize="lage" />
             </IconButton>
         </React.Fragment>
     );
-    //============================================================
+
+    const handleConfirm1 = () => {
+        setConfirmOpen1(true);
+    };
+
+    const handleConfirmClose1 = () => {
+        setConfirmOpen1(false);
+    };
+
+    const handleConfirmUpdate1 = () => {
+        setConfirmOpen1(false);
+        handleCreateOrigins();
+    };
+
     const handleCreateOrigins = async () => {
         const originParams = {
             name,
@@ -64,21 +71,12 @@ const CreateOriginForm = (props) => {
         try {
             const response = await createOrigins(originParams);
             console.log('Create origin response:', response);
-            if (response.status === "200 OK") {
-                setIsSuccess(true);
-                setIsError(false);
-                setSuccessMessage(response.data.message);
-
+            if (response.status === '200 OK') {
                 handleMessage(response.message);
                 props.onClose(response.data);
             }
         } catch (error) {
             console.error('Error creating origin:', error);
-            setIsError(true);
-            setIsSuccess(false);
-            if (error.response?.data?.message === 'Invalid request') {
-                setErrorMessage('Yêu cầu không hợp lệ');
-            }
         }
     };
 
@@ -93,19 +91,20 @@ const CreateOriginForm = (props) => {
                             label="Tên thương hiệu"
                             onChange={(e) => setName(capitalizeFirstLetter(e.target.value))}
                         />
-                        {isSuccess && <SuccessAlerts message={successMessage} />}
-                        {isError && <ErrorAlerts errorMessage={errorMessage} />}
-                        <Button color="primary" variant="contained" onClick={handleCreateOrigins}>
+                        <Button color="primary" variant="contained" onClick={handleConfirm1}>
                             Tạo
                         </Button>
-                        <Snackbar
+                        <CustomDialog
+                            open={confirmOpen1}
+                            onClose={handleConfirmClose1}
+                            title="Thông báo!"
+                            content="Bạn có chắc muốn cập nhật không?"
+                            onConfirm={handleConfirmUpdate1}
+                            confirmText="Xác nhận"
+                        />
+                        <SnackbarSuccess
                             open={open}
-                            autoHideDuration={6000}
-                            onClose={handleClose}
-                            anchorOrigin={{
-                                vertical: 'bottom',
-                                horizontal: 'right',
-                            }}
+                            handleClose={handleClose}
                             message={message}
                             action={action}
                             style={{ bottom: '16px', right: '16px' }}

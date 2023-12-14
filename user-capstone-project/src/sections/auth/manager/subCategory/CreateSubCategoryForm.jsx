@@ -155,18 +155,6 @@ const CreateSubCategoryForm = (props) => {
         }
     };
 
-    const handleDeleteUnit = async (id) => {
-        try {
-            const response = await deleteUnits(id);
-
-            if (response.status === 202) {
-                const updatedUnits = unit_id.filter((unit) => unit.id !== id);
-                setUnits_id(updatedUnits);
-            }
-        } catch (error) {
-            console.error('Error delete origins:', error);
-        }
-    };
     // hàm create category-----------------------------------------
     const handleCreateProduct = async () => {
         const productParams = {

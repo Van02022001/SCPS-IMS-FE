@@ -40,6 +40,10 @@ import ErrorAlerts from '~/components/alert/ErrorAlert';
 import AddSubCategoryMetaForm from './AddSubCategoryMetaForm';
 import { editSubCategorysMeta, getAllSubCategoryMeta } from '~/data/mutation/subCategoryMeta/subCategoryMeta-mutation';
 import { getItemsBySubCategory } from '~/data/mutation/items/item-mutation';
+import CustomDialog from '~/components/alert/ConfirmDialog';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
+import SnackbarError from '~/components/alert/SnackbarError';
+import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
 
 const SubCategoryDetailForm = ({
     subCategory,
@@ -50,8 +54,6 @@ const SubCategoryDetailForm = ({
     isOpen,
     mode,
 }) => {
-    const [open, setOpen] = React.useState(false);
-
     const [tab1Data, setTab1Data] = useState({ categories_id: [] });
     const [tab2Data, setTab2Data] = useState({});
     const [tab3Data, setTab3Data] = useState({});
@@ -75,23 +77,34 @@ const SubCategoryDetailForm = ({
     // form
     const [openAddSubCategoryMetaForm, setOpenAddSubCategoryMetaForm] = useState(false);
 
-    //thông báo
-    const [confirmOpen, setConfirmOpen] = useState(false);
-
-    const [isSuccess, setIsSuccess] = useState(false);
-    const [isError, setIsError] = useState(false);
-    const [message, setMessage] = useState('');
+    //========================== Hàm notification của trang ==================================
+    const [open, setOpen] = React.useState(false);
+    const [open1, setOpen1] = React.useState(false);
+    const [confirmOpen1, setConfirmOpen1] = useState(false);
+    const [confirmOpen2, setConfirmOpen2] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
-    const handleMessage = (message) => {
+    const handleSuccessMessage = (message) => {
         setOpen(true);
         // Đặt logic hiển thị nội dung thông báo từ API ở đây
         if (message === 'Update sub category status successfully.') {
-            setMessage('Cập nhập trạng thái danh mục thành công')
-        } else if (message === 'Update SubCategory successfully.') {
-            setMessage('Cập nhập danh mục thành công')
-            console.error('Error message:', errorMessage);
+            setSuccessMessage('Cập nhập trạng thái danh mục thành công');
+        } else if (message === 'Update sub category successfully.') {
+            setSuccessMessage('Cập nhập danh mục thành công');
+        }
+    };
+
+    const handleErrorMessage = (message) => {
+        setOpen1(true);
+        if (message === 'Category name was existed') {
+            setErrorMessage('Tên thể loại đã tồn tại !');
+        } else if (message === 'Invalid request') {
+            setErrorMessage('Yêu cầu không hợp lệ');
+        } else if (message === '404 NOT_FOUND') {
+            setErrorMessage('Mô tả quá dài');
+        } else if (message === 'Sub category name was existed') {
+            setErrorMessage('Tên đã tồn tại !');
         }
     };
 
@@ -101,34 +114,40 @@ const SubCategoryDetailForm = ({
         }
 
         setOpen(false);
-
+        setOpen1(false);
     };
 
     const action = (
         <React.Fragment>
-            <Button color="secondary" size="small" onClick={handleClose}>
-            </Button>
+            <Button color="secondary" size="small" onClick={handleClose}></Button>
             <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
                 <CloseIcon fontSize="lage" />
             </IconButton>
         </React.Fragment>
     );
-    const handleConfirmClose = () => {
-        setConfirmOpen(false);
+    const handleConfirmClose1 = () => {
+        setConfirmOpen1(false);
     };
 
-    const handleConfirmUpdate = () => {
-        setConfirmOpen(false);
+    const handleConfirmUpdate1 = () => {
+        setConfirmOpen1(false);
         updateSubCategory();
     };
-    const handleConfirmUpdateStatus = () => {
-        setConfirmOpen(false);
+
+    const handleConfirm1 = () => {
+        setConfirmOpen1(true);
+    };
+
+    const handleConfirmUpdateStatus2 = () => {
+        setConfirmOpen2(false);
         updateSubCategoryStatus();
     };
 
-    const handleConfirm = () => {
-        setConfirmOpen(true);
+    const handleConfirm2 = () => {
+        setConfirmOpen2(true);
     };
+
+    //========================== Hàm notification của trang ==================================
 
     const handleTab1DataChange = (event) => {
         // Cập nhật dữ liệu cho tab 1 tại đây
@@ -204,7 +223,6 @@ const SubCategoryDetailForm = ({
         }
     }, [subCategoryId, subCategory, mode]);
 
-
     useEffect(() => {
         getAllCategories()
             .then((respone) => {
@@ -275,24 +293,15 @@ const SubCategoryDetailForm = ({
             const response = await editSubCategory(subCategoryId, editedSubCategory);
 
             if (response.status === '200 OK') {
-                setIsSuccess(true);
-                setIsError(false);
                 setSuccessMessage(response.message);
-                handleMessage(response.message);
+                handleSuccessMessage(response.message);
             }
 
             updateSubCategoryInList(response.data);
-            console.log('Product updated:', response);
+            console.log('Product updated:', response.message);
         } catch (error) {
             console.error('An error occurred while updating the product:', error);
-            setIsError(true);
-            setIsSuccess(false);
-            if (error.response?.data?.message === 'Invalid request') {
-                setErrorMessage('Yêu cầu không hợp lệ');
-            }
-            if (error.response?.data?.error === '404 NOT_FOUND') {
-                setErrorMessage('Mô tả quá dài');
-            }
+            handleErrorMessage(error.response?.data?.message);
         }
     };
 
@@ -303,10 +312,8 @@ const SubCategoryDetailForm = ({
             const response = await editStatusCategory(subCategoryId, newStatus);
 
             if (response.status === '200 OK') {
-                setIsSuccess(true);
-                setIsError(false);
                 setSuccessMessage(response.message);
-                handleMessage(response.message);
+                handleSuccessMessage(response.message);
             }
 
             updateSubCategoryStatusInList(subCategoryId, newStatus);
@@ -315,16 +322,14 @@ const SubCategoryDetailForm = ({
             console.log('Product status updated:', response);
         } catch (error) {
             console.error('Error updating category status:', error);
-            setIsError(true);
-            setIsSuccess(false);
-            setErrorMessage(error.response.data.message);
+            handleErrorMessage(error.response.data.message)
             if (error.response) {
                 console.log('Error response:', error.response);
             }
         }
     };
 
-    const handleClear = () => { };
+    const handleClear = () => {};
 
     const handleEdit = (field, value) => {
         console.log(`Field: ${field}, Value: ${value}`);
@@ -348,9 +353,6 @@ const SubCategoryDetailForm = ({
         }
     };
 
-    const handleDelete = () => {
-        // Xử lý xóa
-    };
     const handleEditSubCategoryMeta = (field, value) => {
         setEditSubCategoryMeta((prevSubCategoryMeta) => ({
             ...prevSubCategoryMeta,
@@ -367,14 +369,10 @@ const SubCategoryDetailForm = ({
             const response = await editSubCategorysMeta(subCategoryId, editSubCategoryMeta);
 
             if (response.status === '200 OK') {
-                setIsSuccess(true);
-                setIsError(false);
                 setSuccessMessage(response.message);
             }
         } catch (error) {
             console.error('An error occurred while updating the product:', error);
-            setIsError(true);
-            setIsSuccess(false);
             setErrorMessage(error.response.data.message);
             if (error.response) {
                 console.log('Error response:', error.response);
@@ -417,7 +415,7 @@ const SubCategoryDetailForm = ({
                                         label="Tên sản phẩm"
                                         sx={{ width: '70%' }}
                                         value={editedSubCategory ? editedSubCategory.name : ''}
-                                        onChange={(e) => handleEdit('name', e.target.value)}
+                                        onChange={(e) => handleEdit('name', capitalizeFirstLetter(e.target.value))}
                                     />
                                 </Grid>
 
@@ -439,7 +437,7 @@ const SubCategoryDetailForm = ({
                                         label="Mô tả"
                                         sx={{ width: '70%' }}
                                         value={editedSubCategory ? editedSubCategory.description : ''}
-                                        onChange={(e) => handleEdit('description', e.target.value)}
+                                        onChange={(e) => handleEdit('description', capitalizeFirstLetter(e.target.value))}
                                     />
                                 </Grid>
                                 <Grid
@@ -664,7 +662,6 @@ const SubCategoryDetailForm = ({
                                                     fontFamily: 'bold',
                                                     padding: '10px 0 0 20px',
                                                 }}
-
                                             >
                                                 <TableCell>Mã sản phẩm</TableCell>
                                                 <TableCell>Số lượng</TableCell>
@@ -682,9 +679,7 @@ const SubCategoryDetailForm = ({
                                                         <TableCell>{items.quantity}</TableCell>
                                                         <TableCell>
                                                             {items.pricing !== null ? (
-                                                                <div>
-                                                                    {items.pricing.price}
-                                                                </div>
+                                                                <div>{items.pricing.price}</div>
                                                             ) : (
                                                                 'Chưa có'
                                                             )}
@@ -692,7 +687,6 @@ const SubCategoryDetailForm = ({
                                                         <TableCell>{items.brand.name}</TableCell>
                                                         <TableCell>{items.supplier.name}</TableCell>
                                                         <TableCell>{items.origin.name}</TableCell>
-
                                                     </TableRow>
                                                 );
                                             })}
@@ -703,61 +697,48 @@ const SubCategoryDetailForm = ({
                         </Card>
                     </div>
 
-                    {isSuccess && <SuccessAlerts message={successMessage} />}
-                    {isError && <ErrorAlerts errorMessage={errorMessage} />}
                     <Stack spacing={4} margin={2}>
                         <Grid container spacing={1} sx={{ gap: '10px' }}>
                             <Button
                                 variant="contained"
                                 color="primary"
                                 startIcon={<SaveIcon />}
-                                onClick={handleConfirm}
+                                onClick={handleConfirm1}
                             >
                                 Cập nhật
                             </Button>
-                            {/* Thông báo confirm */}
-                            <Dialog open={confirmOpen} onClose={handleConfirmClose}>
-                                <DialogTitle>Thông báo!</DialogTitle>
-                                <DialogContent>
-                                    <DialogContentText>Bạn có chắc muốn cập nhật không?</DialogContentText>
-                                </DialogContent>
-                                <DialogActions>
-                                    <Button onClick={handleConfirmClose} color="primary">
-                                        Hủy
-                                    </Button>
-                                    <Button onClick={handleConfirmUpdate} color="primary" autoFocus>
-                                        Xác nhận
-                                    </Button>
-                                </DialogActions>
-                            </Dialog>
+                            <CustomDialog
+                                open={confirmOpen1}
+                                onClose={handleConfirmClose1}
+                                title="Thông báo!"
+                                content="Bạn có chắc muốn cập nhật không?"
+                                onConfirm={handleConfirmUpdate1}
+                                confirmText="Xác nhận"
+                            />
                             <div>
-                                <Button variant="contained" color="error" onClick={handleConfirm}>
+                                <Button variant="contained" color="error" onClick={handleConfirm2}>
                                     Thay đổi trạng thái
                                 </Button>
                                 {/* Thông báo confirm */}
-                                <Dialog open={confirmOpen} onClose={handleConfirmClose}>
-                                    <DialogTitle>Thông báo!</DialogTitle>
-                                    <DialogContent>
-                                        <DialogContentText>Bạn có chắc muốn cập nhật không?</DialogContentText>
-                                    </DialogContent>
-                                    <DialogActions>
-                                        <Button onClick={handleConfirmClose} color="primary">
-                                            Hủy
-                                        </Button>
-                                        <Button onClick={handleConfirmUpdateStatus} color="primary" autoFocus>
-                                            Xác nhận
-                                        </Button>
-                                    </DialogActions>
-                                </Dialog>
-                                <Snackbar
+                                <CustomDialog
+                                    open={confirmOpen2}
+                                    onClose={handleConfirmClose1}
+                                    title="Thông báo!"
+                                    content="Bạn có chắc muốn cập nhật không?"
+                                    onConfirm={handleConfirmUpdateStatus2}
+                                    confirmText="Xác nhận"
+                                />
+                                <SnackbarSuccess
                                     open={open}
-                                    autoHideDuration={6000}
-                                    onClose={handleClose}
-                                    anchorOrigin={{
-                                        vertical: 'bottom',
-                                        horizontal: 'right',
-                                    }}
-                                    message={message}
+                                    handleClose={handleClose}
+                                    message={successMessage}
+                                    action={action}
+                                    style={{ bottom: '16px', right: '16px' }}
+                                />
+                                <SnackbarError
+                                    open={open1}
+                                    handleClose={handleClose}
+                                    message={errorMessage}
                                     action={action}
                                     style={{ bottom: '16px', right: '16px' }}
                                 />
@@ -818,7 +799,7 @@ const SubCategoryDetailForm = ({
                                 defaultValue="Mô tả"
                                 sx={{ width: '100%', border: 'none' }}
                                 value={editSubCategoryMeta ? editSubCategoryMeta.description : ''}
-                                onChange={(e) => handleEditSubCategoryMeta('description', e.target.value)}
+                                onChange={(e) => handleEditSubCategoryMeta('description', capitalizeFirstLetter(e.target.value))}
                             />
                         </CardContent>
                     </Card>

@@ -1,36 +1,52 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Button, Stack, Grid, TextField, IconButton, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
+import {
+    Typography,
+    Button,
+    Stack,
+    Grid,
+    TextField,
+    IconButton,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogContentText,
+    DialogActions,
+} from '@mui/material';
 import { deleteOrigins, editOrigins } from '~/data/mutation/origins/origins-mutation';
 
-import Snackbar from '@mui/material/Snackbar';
 import CloseIcon from '@mui/icons-material/Close';
-import SuccessAlerts from '~/components/alert/SuccessAlert';
-import ErrorAlerts from '~/components/alert/ErrorAlert';
 import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
+import CustomDialog from '~/components/alert/ConfirmDialog';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
+import SnackbarError from '~/components/alert/SnackbarError';
 
 const OriginDetailForm = ({ origins, originsId, onClose, isOpen, mode }) => {
     // const [expandedItem, setExpandedItem] = useState(originsId);
-    const [open, setOpen] = React.useState(false);
     const [formHeight, setFormHeight] = useState(0);
     const [selectedTab, setSelectedTab] = useState(0);
-    //thông báo
-    const [confirmOpen, setConfirmOpen] = useState(false);
+    const [editedOrigin, setEditedOrigin] = useState(null);
 
-    const [message, setMessage] = useState('');
-    const [isSuccess, setIsSuccess] = useState(false);
-    const [isError, setIsError] = useState(false);
+    //========================== Hàm notification của trang ==================================
+    const [open, setOpen] = React.useState(false);
+    const [open1, setOpen1] = React.useState(false);
+    const [confirmOpen1, setConfirmOpen1] = useState(false);
+    const [confirmOpen2, setConfirmOpen2] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
-    const [editedOrigin, setEditedOrigin] = useState(null);
-    //========================== Hàm notification của trang ==================================
-    const handleMessage = (message) => {
+    const handleSuccessMessage = (message) => {
         setOpen(true);
-        // Đặt logic hiển thị nội dung thông báo từ API ở đây
-        if (message === 'Update SubCategory status successfully.') {
-            setMessage('Cập nhập trạng thái danh mục thành công')
-        } else if (message === 'Update SubCategory successfully.') {
-            setMessage('Cập nhập danh mục thành công')
+        if (message === 'Create origin successfully') {
+            setSuccessMessage('Cập nhập nguồn gốc thành công !');
+        }
+    };
+
+    const handleErrorMessage = (message) => {
+        setOpen1(true);
+        if (message === 'Origin name was existed') {
+            setErrorMessage('Tên nguồn gốc đã tồn tại !');
+        } else if (message === 'Invalid request') {
+            setErrorMessage('Yêu cầu không hợp lệ !');
         }
     };
 
@@ -40,31 +56,31 @@ const OriginDetailForm = ({ origins, originsId, onClose, isOpen, mode }) => {
         }
 
         setOpen(false);
-
-    };
-    const handleConfirmClose = () => {
-        setConfirmOpen(false);
-    };
-
-    const handleConfirmUpdate = () => {
-        setConfirmOpen(false);
-        updateOrigin();
-    };
-
-    const handleConfirm = () => {
-        setConfirmOpen(true);
+        setOpen1(false);
     };
 
     const action = (
         <React.Fragment>
-            <Button color="secondary" size="small" onClick={handleClose}>
-            </Button>
+            <Button color="secondary" size="small" onClick={handleClose}></Button>
             <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
                 <CloseIcon fontSize="lage" />
             </IconButton>
         </React.Fragment>
     );
-    //============================================================
+    const handleConfirmClose1 = () => {
+        setConfirmOpen1(false);
+    };
+
+    const handleConfirmUpdate1 = () => {
+        setConfirmOpen1(false);
+        updateOrigin();
+    };
+
+    const handleConfirm1 = () => {
+        setConfirmOpen1(true);
+    };
+
+    //========================== Hàm notification của trang ==================================
     useEffect(() => {
         if (isOpen) {
             setFormHeight(1000);
@@ -111,10 +127,7 @@ const OriginDetailForm = ({ origins, originsId, onClose, isOpen, mode }) => {
                 // Call your API to update the category
                 const response = await editOrigins(originsId, updateData);
                 if (response.status === '200 OK') {
-                    setIsSuccess(true);
-                    setIsError(false);
-                    setSuccessMessage(response.message);
-                    handleMessage(response.message);
+                    handleSuccessMessage(response.message);
                 }
 
                 // Handle the response as needed
@@ -123,12 +136,11 @@ const OriginDetailForm = ({ origins, originsId, onClose, isOpen, mode }) => {
         } catch (error) {
             // Handle errors
             console.error('Error updating category:', error);
-            setIsError(true);
-            setIsSuccess(false);
-            setErrorMessage(error.response.data.message);
-            if (error.response) {
-                console.log('Error response:', error.response);
-            }
+            // setErrorMessage(error.response.data.message);
+            // if (error.response) {
+            //     console.log('Error response:', error.response);
+            // }
+            handleErrorMessage(error.response.data.message);
         }
     };
 
@@ -185,43 +197,37 @@ const OriginDetailForm = ({ origins, originsId, onClose, isOpen, mode }) => {
                                         sx={{ width: '70%' }}
                                         value={editedOrigin ? editedOrigin.name : ''}
                                         onChange={(e) => handleEdit('name', capitalizeFirstLetter(e.target.value))}
+                                        helperText="kích thước phải nằm trong khoảng từ 1 đến 100"
                                     />
                                 </Grid>
                             </Grid>
                         </Grid>
                     </Stack>
-                    {isSuccess && <SuccessAlerts />}
-                    {isError && <ErrorAlerts errorMessage={errorMessage} />}
                     <Stack spacing={4} margin={2}>
                         <Grid container spacing={1} sx={{ gap: '10px' }}>
-                            <Button variant="contained" color="primary" onClick={handleConfirm}>
+                            <Button variant="contained" color="primary" onClick={handleConfirm1}>
                                 Cập nhập
                             </Button>
                             {/* Thông báo confirm */}
-                            <Dialog open={confirmOpen} onClose={handleConfirmClose}>
-                                <DialogTitle>Thông báo!</DialogTitle>
-                                <DialogContent>
-                                    <DialogContentText>Bạn có chắc muốn cập nhật không?</DialogContentText>
-                                </DialogContent>
-                                <DialogActions>
-                                    <Button onClick={handleConfirmClose} color="primary">
-                                        Hủy
-                                    </Button>
-                                    <Button onClick={handleConfirmUpdate} color="primary" autoFocus>
-                                        Xác nhận
-                                    </Button>
-                                </DialogActions>
-                            </Dialog>
-                            {/* notificaiton */}
-                            <Snackbar
+                            <CustomDialog
+                                open={confirmOpen1}
+                                onClose={handleConfirmClose1}
+                                title="Thông báo!"
+                                content="Bạn có chắc muốn cập nhật không?"
+                                onConfirm={handleConfirmUpdate1}
+                                confirmText="Xác nhận"
+                            />
+                            <SnackbarSuccess
                                 open={open}
-                                autoHideDuration={6000}
-                                onClose={handleClose}
-                                anchorOrigin={{
-                                    vertical: 'bottom',
-                                    horizontal: 'right',
-                                }}
-                                message={message}
+                                handleClose={handleClose}
+                                message={successMessage}
+                                action={action}
+                                style={{ bottom: '16px', right: '16px' }}
+                            />
+                            <SnackbarError
+                                open={open1}
+                                handleClose={handleClose}
+                                message={errorMessage}
                                 action={action}
                                 style={{ bottom: '16px', right: '16px' }}
                             />

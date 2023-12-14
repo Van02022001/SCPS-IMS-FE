@@ -15,11 +15,11 @@ import {
 
 import { editCategories, editStatusCategories } from '~/data/mutation/categories/categories-mutation';
 
-import Snackbar from '@mui/material/Snackbar';
 import CloseIcon from '@mui/icons-material/Close';
-import SuccessAlerts from '~/components/alert/SuccessAlert';
-import ErrorAlerts from '~/components/alert/ErrorAlert';
 import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
+import CustomDialog from '~/components/alert/ConfirmDialog';
+import SnackbarError from '~/components/alert/SnackbarError';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 
 const CategoryDetailForm = ({
     categories,
@@ -31,7 +31,6 @@ const CategoryDetailForm = ({
     isOpen,
     mode,
 }) => {
-    const [open, setOpen] = React.useState(false);
     const [expandedItem, setExpandedItem] = useState(categoriesId);
     const [formHeight, setFormHeight] = useState(0);
     const [selectedTab, setSelectedTab] = useState(0);
@@ -39,24 +38,29 @@ const CategoryDetailForm = ({
     const [editedCategory, setEditedCategory] = useState(null);
     const [currentStatus, setCurrentStatus] = useState('');
 
-    //thông báo
-    const [confirmOpen, setConfirmOpen] = useState(false);
-
-    const [message, setMessage] = useState('');
-    const [isSuccess, setIsSuccess] = useState(false);
-    const [isError, setIsError] = useState(false);
+    //========================== Hàm notification của trang ==================================
+    const [open, setOpen] = React.useState(false);
+    const [open1, setOpen1] = React.useState(false);
+    const [confirmOpen1, setConfirmOpen1] = useState(false);
+    const [confirmOpen2, setConfirmOpen2] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
-    //========================== Hàm notification của trang ==================================
-    const handleMessage = (message) => {
+    const handleSuccessMessage = (message) => {
         setOpen(true);
-        // Đặt logic hiển thị nội dung thông báo từ API ở đây
         if (message === 'Update category status successfully') {
-            setMessage('Cập nhập trạng thái thể loại thành công');
-        } else if (message === 'Update SubCategory successfully.') {
-            setMessage('Cập nhập danh mục thành công');
-            console.error('Error message:', errorMessage);
+            setSuccessMessage('Cập nhập trạng thái thể loại thành công !');
+        } else if (message === 'Update category successfully') {
+            setSuccessMessage('Cập nhập thể loại thành công !');
+        }
+    };
+
+    const handleErrorMessage = (message) => {
+        setOpen1(true);
+        if (message === 'Category name was existed') {
+            setErrorMessage('Tên thể loại đã tồn tại !');
+        } else if (message === 'Update category successfully') {
+            setErrorMessage('Cập nhập thể loại thành công !');
         }
     };
 
@@ -66,7 +70,9 @@ const CategoryDetailForm = ({
         }
 
         setOpen(false);
+        setOpen1(false);
     };
+
     const action = (
         <React.Fragment>
             <Button color="secondary" size="small" onClick={handleClose}></Button>
@@ -75,23 +81,30 @@ const CategoryDetailForm = ({
             </IconButton>
         </React.Fragment>
     );
-    //============================================================
-    const handleConfirmClose = () => {
-        setConfirmOpen(false);
+    const handleConfirmClose1 = () => {
+        setConfirmOpen1(false);
     };
 
-    const handleConfirmUpdate = () => {
-        setConfirmOpen(false);
+    const handleConfirmUpdate1 = () => {
+        setConfirmOpen1(false);
         updateCategory();
     };
-    const handleConfirmUpdateStatus = () => {
-        setConfirmOpen(false);
+
+    const handleConfirm1 = () => {
+        setConfirmOpen1(true);
+    };
+
+    const handleConfirmUpdateStatus2 = () => {
+        setConfirmOpen2(false);
         updateCategoryStatus();
     };
 
-    const handleConfirm = () => {
-        setConfirmOpen(true);
+    const handleConfirm2 = () => {
+        setConfirmOpen2(true);
     };
+
+    //========================== Hàm notification của trang ==================================
+
     useEffect(() => {
         if (isOpen) {
             setFormHeight(1000);
@@ -143,10 +156,7 @@ const CategoryDetailForm = ({
                 const response = await editCategories(categoriesId, updateData);
 
                 if (response.status === '200 OK') {
-                    setIsSuccess(true);
-                    setIsError(false);
-                    setSuccessMessage(response.message);
-                    handleMessage(response.message);
+                    handleSuccessMessage(response.message); // thông báo
                 }
 
                 updateCategoryInList(response.data);
@@ -156,12 +166,10 @@ const CategoryDetailForm = ({
         } catch (error) {
             // Handle errors
             console.error('Error updating category:', error);
-            setIsError(true);
-            setIsSuccess(false);
-            setErrorMessage(error.response.data.message);
             if (error.response) {
                 console.log('Error response:', error.response);
             }
+            handleErrorMessage(error.response.data.message); // thông báo
         }
     };
 
@@ -180,10 +188,8 @@ const CategoryDetailForm = ({
             const response = await editStatusCategories(categoriesId, newStatus);
 
             if (response.status === '200 OK') {
-                setIsSuccess(true);
-                setIsError(false);
                 setSuccessMessage(response.message);
-                handleMessage(response.message);
+                handleSuccessMessage(response.message);
             }
 
             // Sử dụng hàm để cập nhật trạng thái trong danh sách categories trong CategoryPage
@@ -193,8 +199,6 @@ const CategoryDetailForm = ({
             console.log('Category status updated:', response);
         } catch (error) {
             console.error('Error updating category status:', error);
-            setIsError(true);
-            setIsSuccess(false);
             setErrorMessage(error.response.data.message);
             if (error.response) {
                 console.log('Error response:', error.response);
@@ -304,67 +308,44 @@ const CategoryDetailForm = ({
                         <div style={{ background: currentStatus === 'Active' ? 'green' : 'red' }} />
                         <Typography variant="body1">Trạng thái: {currentStatus}</Typography>
                     </Stack>
-                    {isSuccess && <SuccessAlerts />}
-                    {isError && <ErrorAlerts errorMessage={errorMessage} />}
                     <Stack spacing={4} margin={2}>
                         <Grid container spacing={1} sx={{ gap: '10px' }}>
-                            <Button variant="contained" color="primary" onClick={handleConfirm}>
+                            <Button variant="contained" color="primary" onClick={handleConfirm1}>
                                 Cập nhật
                             </Button>
                             {/* Thông báo confirm */}
-                            <Dialog open={confirmOpen} onClose={handleConfirmClose}>
-                                <DialogTitle>Thông báo!</DialogTitle>
-                                <DialogContent>
-                                    <DialogContentText>Bạn có chắc muốn cập nhật không?</DialogContentText>
-                                </DialogContent>
-                                <DialogActions>
-                                    <Button onClick={handleConfirmClose} color="primary">
-                                        Hủy
-                                    </Button>
-                                    <Button onClick={handleConfirmUpdate} color="primary" autoFocus>
-                                        Xác nhận
-                                    </Button>
-                                </DialogActions>
-                            </Dialog>
-                            <Snackbar
-                                open={open}
-                                autoHideDuration={6000}
-                                onClose={handleClose}
-                                anchorOrigin={{
-                                    vertical: 'bottom',
-                                    horizontal: 'right',
-                                }}
-                                message={message}
-                                action={action}
-                                style={{ bottom: '16px', right: '16px' }}
+                            <CustomDialog
+                                open={confirmOpen1}
+                                onClose={handleConfirmClose1}
+                                title="Thông báo!"
+                                content="Bạn có chắc muốn cập nhật không?"
+                                onConfirm={handleConfirmUpdate1}
+                                confirmText="Xác nhận"
                             />
-                            <Button variant="contained" color="error" onClick={handleConfirm}>
+
+                            <Button variant="contained" color="error" onClick={handleConfirm2}>
                                 Thay đổi trạng thái
                             </Button>
                             {/* Thông báo confirm */}
-                            <Dialog open={confirmOpen} onClose={handleConfirmClose}>
-                                <DialogTitle>Thông báo!</DialogTitle>
-                                <DialogContent>
-                                    <DialogContentText>Bạn có chắc muốn cập nhật không?</DialogContentText>
-                                </DialogContent>
-                                <DialogActions>
-                                    <Button onClick={handleConfirmClose} color="primary">
-                                        Hủy
-                                    </Button>
-                                    <Button onClick={handleConfirmUpdateStatus} color="primary" autoFocus>
-                                        Xác nhận
-                                    </Button>
-                                </DialogActions>
-                            </Dialog>
-                            <Snackbar
+                            <CustomDialog
+                                open={confirmOpen2}
+                                onClose={handleConfirmClose1}
+                                title="Thông báo!"
+                                content="Bạn có chắc muốn cập nhật không?"
+                                onConfirm={handleConfirmUpdateStatus2}
+                                confirmText="Xác nhận"
+                            />
+                            <SnackbarSuccess
                                 open={open}
-                                autoHideDuration={6000}
-                                onClose={handleClose}
-                                anchorOrigin={{
-                                    vertical: 'bottom',
-                                    horizontal: 'right',
-                                }}
-                                message={message}
+                                handleClose={handleClose}
+                                message={successMessage}
+                                action={action}
+                                style={{ bottom: '16px', right: '16px' }}
+                            />
+                            <SnackbarError
+                                open={open1}
+                                handleClose={handleClose}
+                                message={errorMessage}
                                 action={action}
                                 style={{ bottom: '16px', right: '16px' }}
                             />

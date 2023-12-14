@@ -21,6 +21,8 @@ import {
     DialogContent,
     DialogContentText,
     DialogActions,
+    FormControl,
+    Snackbar,
 } from '@mui/material';
 
 // import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
@@ -33,6 +35,11 @@ import { getAllOrigins } from '~/data/mutation/origins/origins-mutation';
 import { getAllSuppliers } from '~/data/mutation/supplier/suppliers-mutation';
 //icons
 import AddIcon from '@mui/icons-material/Add';
+import CustomDialog from '~/components/alert/ConfirmDialog';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
+import SnackbarError from '~/components/alert/SnackbarError';
 
 const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode, updateItemStatusInList }) => {
     const [expandedItem, setExpandedItem] = useState(itemId);
@@ -51,29 +58,73 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
     const [openAddCategoryDialog, setOpenAddCategoryDialog] = useState(false);
 
     //thông báo
-    const [confirmOpen, setConfirmOpen] = useState(false);
-
-    const [isSuccess, setIsSuccess] = useState(false);
-    const [isError, setIsError] = useState(false);
+    //========================== Hàm notification của trang ==================================
+    const [open, setOpen] = React.useState(false);
+    const [open1, setOpen1] = React.useState(false);
+    const [confirmOpen1, setConfirmOpen1] = useState(false);
+    const [confirmOpen2, setConfirmOpen2] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
-    const handleConfirmClose = () => {
-        setConfirmOpen(false);
+    const handleSuccessMessage = (message) => {
+        setOpen(true);
+        if (message === 'Update item status successfully') {
+            setSuccessMessage('Cập nhập trạng thái sản phẩm thành công !');
+        } else if (message === 'Update item successfully') {
+            setSuccessMessage('Cập nhập sản phẩm thành công !');
+        }
     };
 
-    const handleConfirmUpdate = () => {
-        setConfirmOpen(false);
+    const handleErrorMessage = (message) => {
+        setOpen1(true);
+        if (message === 'Category name was existed') {
+            setErrorMessage('Tên thể loại đã tồn tại !');
+        } else if (message === 'Update category successfully') {
+            setErrorMessage('Cập nhập thể loại thành công !');
+        }
+    };
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpen(false);
+        setOpen1(false);
+    };
+
+    const action = (
+        <React.Fragment>
+            <Button color="secondary" size="small" onClick={handleClose}></Button>
+            <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
+                <CloseIcon fontSize="lage" />
+            </IconButton>
+        </React.Fragment>
+    );
+    const handleConfirmClose1 = () => {
+        setConfirmOpen1(false);
+    };
+
+    const handleConfirmUpdate1 = () => {
+        setConfirmOpen1(false);
         updateItems();
     };
-    const handleConfirmUpdateStatus = () => {
-        setConfirmOpen(false);
+
+    const handleConfirm1 = () => {
+        setConfirmOpen1(true);
+    };
+
+    const handleConfirmUpdateStatus2 = () => {
+        setConfirmOpen2(false);
         updateItemStatus();
     };
 
-    const handleConfirm = () => {
-        setConfirmOpen(true);
+    const handleConfirm2 = () => {
+        setConfirmOpen2(true);
     };
+
+    //========================== Hàm notification của trang ==================================
+
     useEffect(() => {
         if (isOpen) {
             setFormHeight(1000);
@@ -97,6 +148,8 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
             console.log(item, 'Itemss day');
             if (item) {
                 const editedItem = {
+                    minStockLevel: item.minStockLevel,
+                    maxStockLevel: item.maxStockLevel,
                     sub_category_id: item.subCategory.id,
                     brand_id: item.brand.id,
                     supplier_id: item.supplier.id,
@@ -161,9 +214,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
             const response = await editStatusItem(itemId, newStatus);
 
             if (response.status === '200 OK') {
-                setIsSuccess(true);
-                setIsError(false);
-                setSuccessMessage(response.message);
+                handleSuccessMessage(response.message);
             }
 
             // Sử dụng hàm để cập nhật trạng thái trong danh sách categories trong CategoryPage
@@ -173,8 +224,6 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
             console.log('Item status updated:', response);
         } catch (error) {
             console.error('Error updating category status:', error);
-            setIsError(true);
-            setIsSuccess(false);
             setErrorMessage(error.response.data.message);
             if (error.response) {
                 console.log('Error response:', error.response);
@@ -194,21 +243,19 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
             const response = await editItem(itemId, editedItem);
 
             if (response.status === '200 OK') {
-                setIsSuccess(true);
-                setIsError(false);
                 setSuccessMessage(response.message);
+                handleSuccessMessage(response.message);
             }
 
             updateItemInList(response.data);
             console.log('Item updated:', response);
         } catch (error) {
             console.error('An error occurred while updating the item:', error);
-            setIsError(true);
-            setIsSuccess(false);
             setErrorMessage(error.response.data.message);
             if (error.response) {
                 console.log('Error response:', error.response);
             }
+            handleErrorMessage(error.response.data.message);
         }
     };
     const handleEdit = (field, value) => {
@@ -605,51 +652,86 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                         value={item.updatedAt}
                                     />
                                 </Grid>
+                                <Grid
+                                    container
+                                    spacing={1}
+                                    direction="row"
+                                    justifyContent="space-between"
+                                    alignItems="center"
+                                    sx={{ marginBottom: 4, gap: 2 }}
+                                >
+                                    <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
+                                        Định mức tồn:{' '}
+                                    </Typography>
+                                    <div style={{ display: 'flex', marginRight: 50, gap: 25 }}>
+                                        <FormControl sx={{ m: 0.2 }} variant="standard">
+                                            <TextField
+                                                id="demo-customized-textbox"
+                                                label="Ít nhất"
+                                                sx={{ width: '106%' }}
+                                                value={editedItem.minStockLevel}
+                                                onChange={(e) => handleEdit('minStockLevel', e.target.value)}
+                                                name="minStockLevel"
+                                            />
+                                        </FormControl>
+                                        <FormControl sx={{ m: 0.2 }} variant="standard">
+                                            <TextField
+                                                id="demo-customized-textbox"
+                                                label="Nhiều nhất"
+                                                sx={{ width: '106%' }}
+                                                value={editedItem.maxStockLevel}
+                                                onChange={(e) => handleEdit('maxStockLevel', e.target.value)}
+                                                name="maxStockLevel"
+                                            />
+                                        </FormControl>
+                                    </div>
+                                </Grid>
                             </Grid>
                         </Grid>
                     </Stack>
 
                     <div>
-                        {isSuccess && <SuccessAlerts message={successMessage} />}
-                        {isError && <ErrorAlerts errorMessage={errorMessage} />}
                         <Stack spacing={4} margin={2}>
                             <Grid container spacing={1} sx={{ gap: '20px' }}>
-                                <Button variant="contained" color="primary" onClick={updateItems}>
+                                <Button variant="contained" color="primary" onClick={handleConfirm1}>
                                     Cập nhật
                                 </Button>
                                 {/* Thông báo confirm */}
-                                <Dialog open={confirmOpen} onClose={handleConfirmClose}>
-                                    <DialogTitle>Thông báo!</DialogTitle>
-                                    <DialogContent>
-                                        <DialogContentText>Bạn có chắc muốn cập nhật không?</DialogContentText>
-                                    </DialogContent>
-                                    <DialogActions>
-                                        <Button onClick={handleConfirmClose} color="primary">
-                                            Hủy
-                                        </Button>
-                                        <Button onClick={handleConfirmUpdateStatus} color="primary" autoFocus>
-                                            Xác nhận
-                                        </Button>
-                                    </DialogActions>
-                                </Dialog>
-                                <Button variant="contained" color="error" onClick={updateItemStatus}>
+                                <CustomDialog
+                                    open={confirmOpen1}
+                                    onClose={handleConfirmClose1}
+                                    title="Thông báo!"
+                                    content="Bạn có chắc muốn cập nhật không?"
+                                    onConfirm={handleConfirmUpdate1}
+                                    confirmText="Xác nhận"
+                                />
+
+                                <Button variant="contained" color="error" onClick={handleConfirm2}>
                                     Thay đổi trạng thái
                                 </Button>
                                 {/* Thông báo confirm */}
-                                <Dialog open={confirmOpen} onClose={handleConfirmClose}>
-                                    <DialogTitle>Thông báo!</DialogTitle>
-                                    <DialogContent>
-                                        <DialogContentText>Bạn có chắc muốn cập nhật không?</DialogContentText>
-                                    </DialogContent>
-                                    <DialogActions>
-                                        <Button onClick={handleConfirmClose} color="primary">
-                                            Hủy
-                                        </Button>
-                                        <Button onClick={handleConfirmUpdateStatus} color="primary" autoFocus>
-                                            Xác nhận
-                                        </Button>
-                                    </DialogActions>
-                                </Dialog>
+                                <CustomDialog
+                                    open={confirmOpen2}
+                                    onClose={handleConfirmClose1}
+                                    title="Thông báo!"
+                                    content="Bạn có chắc muốn cập nhật không?"
+                                    onConfirm={handleConfirmUpdateStatus2}
+                                    confirmText="Xác nhận"
+                                />
+                                <SnackbarSuccess
+                                    open={open}
+                                    handleClose={handleClose}
+                                    message={successMessage}
+                                    action={action}
+                                    style={{ bottom: '16px', right: '16px' }}
+                                />
+                                <SnackbarError
+                                    open={open1}
+                                    handleClose={handleClose}
+                                    message={errorMessage}
+                                    action={action}
+                                    style={{ bottom: '16px', right: '16px' }}
+                                />
                             </Grid>
                         </Stack>
                     </div>
@@ -700,11 +782,20 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                             </Card>
                         </div>
                     </Stack>
-
-                    <div>
-                        {isSuccess && <SuccessAlerts message={successMessage} />}
-                        {isError && <ErrorAlerts errorMessage={errorMessage} />}
-                    </div>
+                    <SnackbarSuccess
+                        open={open}
+                        handleClose={handleClose}
+                        message={successMessage}
+                        action={action}
+                        style={{ bottom: '16px', right: '16px' }}
+                    />
+                    <SnackbarError
+                        open={open1}
+                        handleClose={handleClose}
+                        message={errorMessage}
+                        action={action}
+                        style={{ bottom: '16px', right: '16px' }}
+                    />
                 </div>
             )}
         </div>

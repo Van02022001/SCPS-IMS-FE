@@ -15,7 +15,7 @@ export const createUnits = async (unitParams) => {
     return response.data;
 }
 
-export const deleteUnits = async (id) => {
-    const response = await axiosInstance.delete(`/units/${id}`,);
+export const editUnits = async (id, unitParams) => {
+    const response = await axiosInstance.put(`/units/${id}`, unitParams);
     return response.data;
 }

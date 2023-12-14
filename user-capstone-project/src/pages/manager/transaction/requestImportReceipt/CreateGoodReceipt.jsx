@@ -348,7 +348,7 @@ function CreateGoodReceipt() {
                     <Grid item xs={7}>
                         {/* Toolbar */}
 
-                        <FormControl sx={{ minWidth: 200, marginRight: 5 }}>
+                        <FormControl sx={{ minWidth: 200, marginRight: 5, marginBottom: 2 }}>
                             <InputLabel id="warehouse-label">Chọn kho hàng...</InputLabel>
                             <Select
                                 labelId="warehouse-label"
@@ -404,7 +404,10 @@ function CreateGoodReceipt() {
                                 <Paper>
                                     <List>
                                         {selectedItems.map((selectedItem, index) => (
-                                            <ListItem key={`${selectedItem.id}-${index}`}>
+                                            <ListItem
+                                                key={`${selectedItem.id}-${index}`}
+                                                sx={{ display: 'flex', alignItems: 'center' }}
+                                            >
                                                 {/* <img
                                                     src={selectedItem.avatar}
                                                     alt={selectedItem.name}
@@ -415,12 +418,16 @@ function CreateGoodReceipt() {
                                                     // primary={selectedItem.id}
                                                     onChange={(e) => setItemId(e.target.value)}
                                                 />
-                                                <ListItemText primary={selectedItem.subCategory.name} />
-                                                <ListItemText>
+                                                <ListItemText sx={{ flexBasis: '44%' }}>
+                                                    <Typography variant="body1">
+                                                        {selectedItem.subCategory.name}
+                                                    </Typography>
+                                                </ListItemText>
+                                                <ListItemText sx={{ flexBasis: '28%' }}>
                                                     <TextField
                                                         type="number"
                                                         label="Số lượng"
-                                                        sx={{ width: '50%' }}
+                                                        sx={{ width: '100%' }}
                                                         value={selectedItem.quantity}
                                                         onChange={(e) =>
                                                             handleQuantityChange(
