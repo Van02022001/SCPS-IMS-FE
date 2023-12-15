@@ -275,11 +275,11 @@ const BrandPage = () => {
                                                     onClick={() => handleBrandClick(brand)}
                                                     style={{ height: 52 }}
                                                 >
-                                                    <TableCell padding="checkbox">
-                                                        {/* <Checkbox
+                                                    {/* <TableCell padding="checkbox">
+                                                        <Checkbox
                                                             onChange={(event) => handleClick(event, brand.name)}
-                                                        /> */}
-                                                    </TableCell>
+                                                        />
+                                                    </TableCell> */}
 
                                                     {/* tên  */}
                                                     <TableCell component="th" scope="row" padding="none">

@@ -322,14 +322,14 @@ const ExportReceiptPage = () => {
                                                 selected={selectedImportReceiptId === importReceipt.id}
                                                 onClick={() => handleProductClick(importReceipt)}
                                             >
-                                                <TableCell padding="checkbox">
+                                                {/* <TableCell padding="checkbox">
                                                     <Checkbox
                                                         checked={selectedImportReceiptId === importReceipt.id}
                                                         // onChange={(event) => handleCheckboxChange(event, importReceipt.id)}
                                                         // checked={selectedUser}
                                                         onChange={(event) => handleClick(event, importReceipt.name)}
                                                     />
-                                                </TableCell>
+                                                </TableCell> */}
 
                                                 <TableCell component="th" scope="row" padding="none">
                                                     <Stack direction="row" alignItems="center" spacing={2}>

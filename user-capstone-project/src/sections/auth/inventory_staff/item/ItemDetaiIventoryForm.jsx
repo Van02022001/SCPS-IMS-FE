@@ -251,6 +251,7 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                 <Tab label="Thông tin" />
                 <Tab label="Lịch sử giá mua" />
                 <Tab label="Lịch sử vận chuyển" />
+                <Tab label="Vị trí sản phẩm" />
             </Tabs>
 
             {selectedTab === 0 && (
@@ -266,13 +267,15 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
-                                    <Typography variant="body1">Mã sản phẩm:</Typography>
+                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>Mã sản phẩm:</Typography>
                                     <TextField
+                                        disabled
                                         size="small"
                                         variant="outlined"
                                         label="Mã sản phẩm"
-                                        sx={{ width: '65%', marginRight: 5 }}
+                                        sx={{ width: '64.5%', marginRight: 5.6 }}
                                         value={item.code}
+                                        InputProps={{ style: { color: 'inherit' } }}
                                     />
                                 </Grid>
                                 <Grid
@@ -283,7 +286,7 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 2 }}
                                 >
-                                    <Typography variant="body1">Danh mục sản phẩm:</Typography>
+                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>Danh mục sản phẩm:</Typography>
                                     <Grid xs={8.5}>
                                         <Select
                                             size="small"
@@ -312,7 +315,7 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
-                                    <Typography variant="body1">Thương hiệu:</Typography>
+                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>Thương hiệu:</Typography>
                                     <Grid xs={8.5}>
                                         <Select
                                             size="small"
@@ -341,7 +344,7 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
-                                    <Typography variant="body1">Nhà cung cấp:</Typography>
+                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>Nhà cung cấp:</Typography>
                                     <Grid xs={8.5}>
                                         <Select
                                             size="small"
@@ -370,12 +373,13 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
-                                    <Typography variant="body1">Người tạo:</Typography>
+                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>Người tạo:</Typography>
                                     <TextField
+                                        disabled
                                         size="small"
                                         variant="outlined"
                                         label="Người tạo"
-                                        sx={{ width: '65%', marginRight: 5 }}
+                                        sx={{ width: '64.5%', marginRight: 5.6 }}
                                         value={
                                             item.createdBy.firstName +
                                             ' ' +
@@ -393,7 +397,7 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
-                                    <Typography variant="body1">Nguồn gốc:</Typography>
+                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>Nguồn gốc:</Typography>
                                     <Grid xs={8.5}>
                                         <Select
                                             size="small"
@@ -413,7 +417,7 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                         </Select>
                                     </Grid>
                                 </Grid>
-                                <Grid
+                                {/* <Grid
                                     container
                                     spacing={1}
                                     direction="row"
@@ -438,7 +442,7 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                                 .join(',\n')}
                                         />
                                     </div>
-                                </Grid>
+                                </Grid> */}
                                 <Grid
                                     container
                                     spacing={1}
@@ -447,7 +451,7 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
-                                    <Typography variant="body1">Ngày tạo:</Typography>
+                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>Ngày tạo:</Typography>
                                     <TextField
                                         disabled
                                         size="small"
@@ -468,7 +472,7 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
-                                    <Typography variant="body1">Trạng thái:</Typography>
+                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>Trạng thái:</Typography>
                                     <TextField
                                         size="small"
                                         variant="outlined"
@@ -485,7 +489,7 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
-                                    <Typography variant="body1">Số lượng:</Typography>
+                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>Số lượng:</Typography>
                                     <TextField
                                         size="small"
                                         variant="outlined"
@@ -502,7 +506,7 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
-                                    <Typography variant="body1">Hàng có sẵn:</Typography>
+                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>Hàng có sẵn:</Typography>
                                     <TextField
                                         size="small"
                                         variant="outlined"
@@ -553,7 +557,7 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
-                                    <Typography variant="body1">Đã bán:</Typography>
+                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>Đã bán:</Typography>
                                     <TextField
                                         size="small"
                                         variant="outlined"
@@ -570,7 +574,7 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
-                                    <Typography variant="body1">Hàng trả lại:</Typography>
+                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>Hàng trả lại:</Typography>
                                     <TextField
                                         size="small"
                                         variant="outlined"
@@ -587,7 +591,7 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
-                                    <Typography variant="body1">Ngày cập nhật:</Typography>
+                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>Ngày cập nhật:</Typography>
                                     <TextField
                                         disabled
                                         size="small"
@@ -727,6 +731,59 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                                             </TableCell>
                                                             <TableCell>{items.notes}</TableCell>
                                                             <TableCell>{items.movedAt}</TableCell>
+                                                        </TableRow>
+                                                    );
+                                                })}
+                                            </TableBody>
+                                        </Table>
+                                    </TableContainer>
+                                </CardContent>
+                            </Card>
+                        </div>
+                    </Stack>
+
+                    <div>
+                        {isSuccess && <SuccessAlerts message={successMessage} />}
+                        {isError && <ErrorAlerts errorMessage={errorMessage} />}
+                    </div>
+                </div>
+            )}
+            {selectedTab === 3 && (
+                <div style={{ marginLeft: 50 }}>
+                    <Stack spacing={4} margin={2}>
+                        <div>
+                            <Typography variant="h4">Ví trí sản phẩm trong kho</Typography>
+                            <Card>
+                                <CardContent>
+                                    <TableContainer>
+                                        <Table>
+                                            <TableBody>
+                                                <TableRow
+                                                    variant="subtitle1"
+                                                    sx={{
+                                                        fontSize: '20px',
+                                                        backgroundColor: '#f0f1f3',
+                                                        height: 50,
+                                                        textAlign: 'start',
+                                                        fontFamily: 'bold',
+                                                        padding: '10px 0 0 20px',
+                                                    }}
+                                                >
+                                                    <TableCell>Vị trí trong kho</TableCell>
+                                                    <TableCell>Kho chứa</TableCell>
+                                                    <TableCell>Số lượng</TableCell>
+                                                </TableRow>
+                                                {item.locations.map((items) => {
+                                                    return (
+                                                        <TableRow key={items.id}>
+                                                            <TableCell>
+                                                                <div>
+                                                                    {items.shelfNumber} -{' '}
+                                                                    {items.binNumber}
+                                                                </div>
+                                                            </TableCell>
+                                                            <TableCell>{items.warehouse.name}</TableCell>
+                                                            <TableCell>{items.item_quantity}</TableCell>
                                                         </TableRow>
                                                     );
                                                 })}

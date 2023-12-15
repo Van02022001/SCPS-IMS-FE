@@ -256,11 +256,11 @@ const OriginPage = () => {
                                                     selected={selectedOriginId === origin.id}
                                                     onClick={() => handleOriginClick(origin)}
                                                 >
-                                                    <TableCell padding="checkbox">
+                                                    {/* <TableCell padding="checkbox">
                                                         <Checkbox
                                                             onChange={(event) => handleClick(event, origin.name)}
                                                         />
-                                                    </TableCell>
+                                                    </TableCell> */}
 
                                                     {/* tên  */}
                                                     <TableCell component="th" scope="row" padding="none">

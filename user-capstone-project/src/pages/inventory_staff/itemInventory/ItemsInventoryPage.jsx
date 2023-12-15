@@ -1,6 +1,5 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
-import { sentenceCase } from 'change-case';
 import React, { useEffect, useState } from 'react';
 // @mui
 import {
@@ -10,13 +9,11 @@ import {
     Paper,
     Avatar,
     Button,
-    Popover,
     Checkbox,
     TableRow,
     MenuItem,
     TableBody,
     TableCell,
-    Container,
     Typography,
     IconButton,
     TableContainer,
@@ -35,26 +32,30 @@ import Iconify from '../../../components/iconify';
 import Scrollbar from '../../../components/scrollbar';
 import CloseIcon from '@mui/icons-material/Close';
 // sections
-import { UserListHead, UserListToolbar } from '../../../sections/@dashboard/user';
+import { ItemsInventoryListHead, ItemsInventoryToolbar } from '~/sections/@dashboard/inventoryStaff/items';
 import CreateItemsForm from '~/sections/auth/manager/items/CreateItemsForm';
-import ItemDetailForm from '~/sections/auth/manager/items/ItemDetailForm';
+//api 
 import USERLIST from '../../../_mock/user';
 import { getAllItem } from '~/data/mutation/items/item-mutation';
-//icons
-import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import { getAllBrands } from '~/data/mutation/brand/brands-mutation';
 import { getAllSubCategory } from '~/data/mutation/subCategory/subCategory-mutation';
 import { getAllSuppliers } from '~/data/mutation/supplier/suppliers-mutation';
 import { getAllOrigins } from '~/data/mutation/origins/origins-mutation';
+
+//icons
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
+
 //calendar
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { LocalizationProvider } from '@mui/x-date-pickers-pro';
 import { AdapterDayjs } from '@mui/x-date-pickers-pro/AdapterDayjs';
 import { DateRangePicker } from '@mui/x-date-pickers-pro/DateRangePicker';
+
 import dayjs from 'dayjs';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import ItemDetaiIventoryForm from '~/sections/auth/inventory_staff/item/ItemDetaiIventoryForm';
+
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
 
@@ -135,8 +136,8 @@ const ItemsInventoryPage = () => {
 
     const [rowsPerPage, setRowsPerPage] = useState(5);
     //-------------------------------------------------
-    const [openOderFormDetail, setOpenOderFormDetail] = useState(false);
-    const [selectedOrderId, setSelectedOrderId] = useState(null);
+    // const [openOderFormDetail, setOpenOderFormDetail] = useState(false);
+    // const [selectedOrderId, setSelectedOrderId] = useState(null);
     const [selectedOrder, setSelectedOrder] = useState(null);
 
     const [selectedItemId, setSelectedItemId] = useState([]);
@@ -242,15 +243,15 @@ const ItemsInventoryPage = () => {
         }
     };
     // ============================================== Các hàm xử lý soft theo name==============================================
-    const handleCheckboxChange = (event, itemId) => {
-        if (event.target.checked) {
-            // Nếu người dùng chọn checkbox, thêm sản phẩm vào danh sách đã chọn.
-            setSelectedItemId([...selectedItemId, itemId]);
-        } else {
-            // Nếu người dùng bỏ chọn checkbox, loại bỏ sản phẩm khỏi danh sách đã chọn.
-            setSelectedItemId(selectedItemId.filter((id) => id !== itemId));
-        }
-    };
+    // const handleCheckboxChange = (event, itemId) => {
+    //     if (event.target.checked) {
+    //         // Nếu người dùng chọn checkbox, thêm sản phẩm vào danh sách đã chọn.
+    //         setSelectedItemId([...selectedItemId, itemId]);
+    //     } else {
+    //         // Nếu người dùng bỏ chọn checkbox, loại bỏ sản phẩm khỏi danh sách đã chọn.
+    //         setSelectedItemId(selectedItemId.filter((id) => id !== itemId));
+    //     }
+    // };
 
     //============================================== Hàm để thay đổi data mỗi khi Edit xong api=============================================
     const updateItemInList = (updatedItem) => {
@@ -504,7 +505,7 @@ const ItemsInventoryPage = () => {
             {/* ===========================================filter=========================================== */}
 
             <Card>
-                <UserListToolbar
+                <ItemsInventoryToolbar
                     numSelected={selected.length}
                     filterName={filterName}
                     onFilterName={handleFilterByName}
@@ -513,7 +514,7 @@ const ItemsInventoryPage = () => {
                 <Scrollbar>
                     <TableContainer sx={{ minWidth: 800 }}>
                         <Table>
-                            <UserListHead
+                            <ItemsInventoryListHead
                                 order={order}
                                 orderBy={orderBy}
                                 headLabel={TABLE_HEAD}
@@ -534,14 +535,14 @@ const ItemsInventoryPage = () => {
                                                 selected={selectedItemId === item.id}
                                                 onClick={() => handleItemClick(item)}
                                             >
-                                                <TableCell padding="checkbox">
+                                                {/* <TableCell padding="checkbox">
                                                     <Checkbox
                                                         checked={selectedItemId === item.id}
                                                         // onChange={(event) => handleCheckboxChange(event, item.id)}
                                                         // checked={selectedUser}
                                                         onChange={(event) => handleClick(event, item.name)}
                                                     />
-                                                </TableCell>
+                                                </TableCell> */}
 
                                                 <TableCell align="left">
                                                     <Typography variant="subtitle2" noWrap>
@@ -566,12 +567,6 @@ const ItemsInventoryPage = () => {
                                                             : 'Ngừng hoạt động'}
                                                     </Label>
                                                 </TableCell>
-
-                                                {/* <TableCell align="right">
-                                                    <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
-                                                        <Iconify icon={'eva:more-vertical-fill'} />
-                                                    </IconButton>
-                                                </TableCell> */}
                                             </TableRow>
 
                                             {selectedItemId === item.id && (

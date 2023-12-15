@@ -13,6 +13,19 @@ import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
 import { editItemLocationsExport } from '~/data/mutation/items/item-mutation';
 import { getAllLocationByItem } from '~/data/mutation/location/location-mutation';
+const locationStyle = {
+    border: '3px solid #ccc',
+    borderRadius: '8px',
+    boxShadow: '4px 4px 10px rgba(0, 0, 0, 0.1)',
+    padding: '10px',
+    cursor: 'pointer',
+    transition: 'border-color 0.3s',
+};
+
+const selectedLocationStyle = {
+    borderColor: 'green',
+};
+
 
 const UpdateLocationToExportForm = ({
     open,
@@ -25,12 +38,13 @@ const UpdateLocationToExportForm = ({
 }) => {
     const [quantity, setQuantity] = useState('');
     const [toLocation_id, setToLocation_id] = useState([]);
-    const [selectedLocationId, setSelectedLocationId] = useState('');
+
     const [showLocationSelection, setShowLocationSelection] = useState(false);
     const [locationQuantities, setLocationQuantities] = useState({});
     const [receiptDetailId, setReceiptDetailId] = useState(null);
     //state theo dõi vị trĩ
     const [selectedLocationsMuti, setSelectedLocationsMuti] = useState([]);
+    const [quantityMap, setQuantityMap] = useState({});
     // Thông báo
     const [isSuccess, setIsSuccess] = useState(false);
     const [isError, setIsError] = useState(false);
@@ -41,6 +55,7 @@ const UpdateLocationToExportForm = ({
         setShowLocationSelection(false);
         onClose();
     };
+
     const handleLocationClick = (location) => {
         const isSelected = selectedLocationsMuti.some((selected) => selected.id === location.id);
 
@@ -48,8 +63,13 @@ const UpdateLocationToExportForm = ({
             setSelectedLocationsMuti(selectedLocationsMuti.filter((selected) => selected.id !== location.id));
         } else {
             setSelectedLocationsMuti([...selectedLocationsMuti, location]);
+            // Only show location selection if the location is not occupied
+            if (location.item_quantity === 0) {
+                setShowLocationSelection(true);
+            }
         }
     };
+
     const handleOpenPopup = () => {
         const initialQuantities = {};
         dataReceiptDetail.details.forEach((item) => {
@@ -66,25 +86,35 @@ const UpdateLocationToExportForm = ({
         setShowLocationSelection(remainingQuantity > 0);
     };
 
+    const handleQuantityChange = (locationId, event) => {
+        // Stop event propagation to prevent hiding the input
+        event.stopPropagation();
+
+        setQuantityMap((prevQuantityMap) => ({
+            ...prevQuantityMap,
+            [locationId]: event.target.value,
+        }));
+    };
+
     const updateLocations = async () => {
         try {
+            const locationsArray = selectedLocationsMuti.map((selectedLocation) => ({
+                fromLocation_id: selectedLocation.id,
+                quantity: quantityMap[selectedLocation.id] || 0,
+            }));
+
             const response = await editItemLocationsExport({
                 receipt_detail_id: receiptDetailId,
-                locations: [
-                    {
-                        quantity: quantity,
-                        fromLocation_id: selectedLocationId,
-                    },
-                ],
+                locations: locationsArray,
             });
-            const selectedLocation = toLocation_id.find(location => location.id === selectedLocationId);
 
             onUpdate({
                 detailId: detailId,
-                quantity: quantity,
-                locations: selectedLocation,
+                quantity: Object.values(quantityMap).reduce((acc, quantity) => acc + Number(quantity), 0),
+                locations: selectedLocationsMuti,
             });
 
+            console.log('selectedLocations:', selectedLocationsMuti);
             setIsSuccess(true);
             setIsError(false);
             setSuccessMessage('Update successful!');
@@ -108,11 +138,9 @@ const UpdateLocationToExportForm = ({
             setErrorMessage('Error updating item locations. Please try again.');
         }
     };
-
     useEffect(() => {
         if (Object.keys(selectedLocations).length > 0) {
             handleClosePopup();
-            // Nếu cần thực hiện các hành động khác sau khi đóng pop-up, bạn có thể thêm vào đây
         }
     }, [selectedLocations]);
 
@@ -134,6 +162,7 @@ const UpdateLocationToExportForm = ({
             handleOpenPopup();
         }
     }, [open, details]);
+
     console.log(toLocation_id.locations);
     return (
         <>
@@ -147,13 +176,8 @@ const UpdateLocationToExportForm = ({
                                     <div
                                         key={location.id}
                                         style={{
-                                            border: '3px solid #ccc',
-                                            borderRadius: '8px',
-                                            boxShadow: '4px 4px 10px rgba(0, 0, 0, 0.1)',
-                                            padding: '10px',
-                                            cursor: 'pointer',
-                                            transition: 'border-color 0.3s',
-                                            backgroundColor: selectedLocations.some((selected) => selected.id === location.id) ? 'lightgreen' : 'white',
+                                            ...locationStyle,
+                                            ...(selectedLocationsMuti.some((selected) => selected.id === location.id) ? selectedLocationStyle : {}),
                                         }}
                                         onClick={() => handleLocationClick(location)}
                                     >
@@ -172,8 +196,9 @@ const UpdateLocationToExportForm = ({
                                                     variant="outlined"
                                                     fullWidth
                                                     margin="normal"
-                                                    value={quantity}
-                                                    onChange={(e) => setQuantity(e.target.value)}
+                                                    value={quantityMap[location.id] || ''}
+                                                    onChange={(event) => handleQuantityChange(location.id, event)}
+                                                    onClick={(event) => event.stopPropagation()}
                                                 />
                                             </Grid>
                                         </Typography>

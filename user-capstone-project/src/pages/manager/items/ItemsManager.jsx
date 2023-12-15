@@ -553,14 +553,14 @@ const ItemsManagerPage = () => {
                                                 selected={selectedItemId === item.id}
                                                 onClick={() => handleItemClick(item)}
                                             >
-                                                <TableCell padding="checkbox">
+                                                {/* <TableCell padding="checkbox">
                                                     <Checkbox
                                                         checked={selectedItemId === item.id}
                                                         // onChange={(event) => handleCheckboxChange(event, item.id)}
                                                         // checked={selectedUser}
                                                         onChange={(event) => handleClick(event, item.name)}
                                                     />
-                                                </TableCell>
+                                                </TableCell> */}
 
                                                 <TableCell align="left">
                                                     <Typography variant="subtitle2" noWrap>

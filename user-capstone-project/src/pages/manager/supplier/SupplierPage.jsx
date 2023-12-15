@@ -277,11 +277,11 @@ const SupplierPage = () => {
                                                     selected={selectedSupplierId === supplier.id}
                                                     onClick={() => handleSupplierClick(supplier)}
                                                 >
-                                                    <TableCell padding="checkbox">
+                                                    {/* <TableCell padding="checkbox">
                                                         <Checkbox
                                                             onChange={(event) => handleClick(event, supplier.name)}
                                                         />
-                                                    </TableCell>
+                                                    </TableCell> */}
                                                     {/* code  */}
                                                     <TableCell component="th" scope="row" padding="none">
                                                         <Stack direction="row" alignItems="center" spacing={2}>

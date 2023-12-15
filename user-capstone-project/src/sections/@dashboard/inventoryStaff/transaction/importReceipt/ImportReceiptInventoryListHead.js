@@ -16,7 +16,7 @@ const visuallyHidden = {
   clip: 'rect(0 0 0 0)',
 };
 
-UnitToolbar.propTypes = {
+ImportReceiptInventoryListHead.propTypes = {
   order: PropTypes.oneOf(['asc', 'desc']),
   orderBy: PropTypes.string,
   rowCount: PropTypes.number,
@@ -26,7 +26,7 @@ UnitToolbar.propTypes = {
   onSelectAllClick: PropTypes.func,
 };
 
-export default function UnitToolbar({
+export default function ImportReceiptInventoryListHead({
   order,
   orderBy,
   rowCount,
@@ -54,6 +54,8 @@ export default function UnitToolbar({
             key={headCell.id}
             align={headCell.alignRight ? 'right' : 'left'}
             sortDirection={orderBy === headCell.id ? order : false}
+            padding={headCell.disablePadding ? 'none' : 'normal'}
+            width={headCell.id === 'name' || headCell.id === 'description' ? '250px' : undefined}
           >
             <TableSortLabel
               hideSortIcon

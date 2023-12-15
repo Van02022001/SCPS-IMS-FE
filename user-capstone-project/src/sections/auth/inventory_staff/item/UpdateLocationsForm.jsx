@@ -113,6 +113,7 @@ const UpdateLocationsForm = ({
                 quantity: Object.values(quantityMap).reduce((acc, quantity) => acc + quantity, 0),
                 locations: locationsToUpdate,
             });
+
             console.log('locationsToUpdate', locationsToUpdate);
             setIsSuccess(true);
             setIsError(false);
@@ -197,7 +198,7 @@ const UpdateLocationsForm = ({
                                                 margin="normal"
                                                 value={quantityMap[toLocation.id] || ''}
                                                 onChange={(event) => handleQuantityChange(toLocation.id, event)}
-                                                onClick={(event) => event.stopPropagation()} // Add this line
+                                                onClick={(event) => event.stopPropagation()}
                                             />
                                         </div>
                                     )}

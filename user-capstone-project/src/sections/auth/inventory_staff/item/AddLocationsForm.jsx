@@ -179,7 +179,7 @@ const AddLocationsForm = ({ open, onClose, dataReceiptDetail, updateDataReceiptD
                                                 {/* Log values to check */}
                                                 {console.log('Button Condition:', !locationQuantities[detail.id] < detail.quantity && !selectedLocationsFlag[detail.id])}
 
-                                                {locationQuantities[detail.id] > 0 && !selectedLocationsFlag[detail.id] && (
+                                                {!locationQuantities[detail.id] > 0 && !selectedLocationsFlag[detail.id] && (
                                                     <Button
                                                         variant="contained"
                                                         color="primary"

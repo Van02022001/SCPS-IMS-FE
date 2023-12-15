@@ -8,8 +8,6 @@ import {
     Stack,
     Paper,
     Avatar,
-    Button,
-    Checkbox,
     TableRow,
     TableBody,
     TableCell,
@@ -24,17 +22,18 @@ import Scrollbar from '~/components/scrollbar/Scrollbar';
 import CloseIcon from '@mui/icons-material/Close';
 
 // sections
-import { ProductsListHead, ProductsListToolbar } from '~/sections/@dashboard/products';
+import { ImportReceiptInventoryListHead, ImportReceiptInventoryToolbar } from '~/sections/@dashboard/inventoryStaff/transaction/importReceipt';
 // mock
 import PRODUCTSLIST from '../../../../_mock/products';
 // api
+import { getAllImportReceipt } from '~/data/mutation/importReceipt/ImportReceipt-mutation';
 
 import ImportReaceiptDetailForm from '~/sections/auth/inventory_staff/importReceipt/ImportReceiptDetailForm';
 // import EditCategoryForm from '~/sections/auth/manager/categories/EditCategoryForm';
 // import GoodsReceiptPage from '../GoodsReceiptPage';
 import { useNavigate } from 'react-router-dom';
-import { getAllImportReceipt } from '~/data/mutation/importReceipt/ImportReceipt-mutation';
 import dayjs from 'dayjs';
+
 
 // ----------------------------------------------------------------------
 
@@ -289,7 +288,7 @@ const ImportReceiptPage = () => {
             </Stack>
 
             <Card>
-                <ProductsListToolbar
+                <ImportReceiptInventoryToolbar
                     numSelected={selected.length}
                     filterName={filterName}
                     onFilterName={handleFilterByName}
@@ -298,7 +297,7 @@ const ImportReceiptPage = () => {
                 <Scrollbar>
                     <TableContainer sx={{ minWidth: 800 }}>
                         <Table>
-                            <ProductsListHead
+                            <ImportReceiptInventoryListHead
                                 order={order}
                                 orderBy={orderBy}
                                 headLabel={TABLE_HEAD}
@@ -319,14 +318,14 @@ const ImportReceiptPage = () => {
                                                 selected={selectedImportReceiptId === importReceipt.id}
                                                 onClick={() => handleProductClick(importReceipt)}
                                             >
-                                                <TableCell padding="checkbox">
+                                                {/* <TableCell padding="checkbox">
                                                     <Checkbox
                                                         checked={selectedImportReceiptId === importReceipt.id}
                                                         // onChange={(event) => handleCheckboxChange(event, importReceipt.id)}
                                                         // checked={selectedUser}
                                                         onChange={(event) => handleClick(event, importReceipt.name)}
                                                     />
-                                                </TableCell>
+                                                </TableCell> */}
 
                                                 <TableCell component="th" scope="row" padding="none">
                                                     <Stack direction="row" alignItems="center" spacing={2}>

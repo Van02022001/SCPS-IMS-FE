@@ -334,7 +334,7 @@ const ViewReceiptPage = () => {
                                                 selected={selectedImportReceiptId === importReceipt.id}
                                                 onClick={() => handleProductClick(importReceipt)}
                                             >
-                                                <TableCell padding="checkbox">
+                                                {/* <TableCell padding="checkbox">
                                                     <Checkbox
                                                         checked={selectedImportReceiptId === importReceipt.id}
                                                         onChange={(event) =>
@@ -343,7 +343,7 @@ const ViewReceiptPage = () => {
                                                         // checked={selectedUser}
                                                         // onChange={(event) => handleClick(event, name)}
                                                     />
-                                                </TableCell>
+                                                </TableCell> */}
 
                                                 <TableCell component="th" scope="row" padding="none">
                                                     <Stack direction="row" alignItems="center" spacing={2}>
@@ -383,12 +383,12 @@ const ViewReceiptPage = () => {
                                                         {importReceipt.status === 'Pending_Approval'
                                                             ? 'Chờ phê duyệt'
                                                             : importReceipt.status === 'Approved'
-                                                            ? 'Đã xác nhận'
-                                                            : importReceipt.status === 'IN_PROGRESS'
-                                                            ? 'Đang tiến hành'
-                                                            : importReceipt.status === 'Complete'
-                                                            ? 'Hoàn thành'
-                                                            : 'Ngừng hoạt động'}
+                                                                ? 'Đã xác nhận'
+                                                                : importReceipt.status === 'IN_PROGRESS'
+                                                                    ? 'Đang tiến hành'
+                                                                    : importReceipt.status === 'Complete'
+                                                                        ? 'Hoàn thành'
+                                                                        : 'Ngừng hoạt động'}
                                                     </Label>
                                                 </TableCell>
                                             </TableRow>

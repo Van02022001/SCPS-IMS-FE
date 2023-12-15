@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
-import { sentenceCase } from 'change-case';
+
 import React, { useEffect, useState } from 'react';
 // @mui
 import {
@@ -10,13 +10,10 @@ import {
     Paper,
     Avatar,
     Button,
-    Popover,
     Checkbox,
     TableRow,
-    MenuItem,
     TableBody,
     TableCell,
-    Container,
     Typography,
     IconButton,
     TableContainer,
@@ -49,7 +46,6 @@ import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 
 const TABLE_HEAD = [
     { id: 'image', label: '', alignRight: false },
-    { id: 'id', label: 'Mã hàng', alignRight: false },
     { id: 'name', label: 'Tên sản phẩm', alignRight: false },
     { id: 'description', label: 'Mô tả', alignRight: false },
     { id: 'createdAt', label: 'Ngày tạo', alignRight: false },
@@ -347,25 +343,19 @@ const ProductInventoryPage = () => {
                                                 selected={selectedProductId === product.id}
                                                 onClick={() => handleProductClick(product)}
                                             >
-                                                <TableCell padding="checkbox">
+                                                {/* <TableCell padding="checkbox">
                                                     <Checkbox
                                                         checked={selectedProductId === product.id}
                                                         // onChange={(event) => handleCheckboxChange(event, product.id)}
                                                         // checked={selectedUser}
                                                         onChange={(event) => handleClick(event, product.name)}
                                                     />
-                                                </TableCell>
+                                                </TableCell> */}
 
                                                 <TableCell component="th" scope="row" padding="none">
                                                     <Stack direction="row" alignItems="center" spacing={2}>
                                                         {/* <Avatar alt={name} src={avatarUrl} /> */}
                                                     </Stack>
-                                                </TableCell>
-
-                                                <TableCell align="left">
-                                                    <Typography variant="subtitle2" noWrap>
-                                                        {product.id}
-                                                    </Typography>
                                                 </TableCell>
 
                                                 <TableCell component="th" scope="row" padding="none">
@@ -455,49 +445,6 @@ const ProductInventoryPage = () => {
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </Card>
-            {/* </Container> */}
-
-            {/* <Popover
-                open={Boolean(open)}
-                anchorEl={open}
-                onClose={handleCloseMenu}
-                anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                PaperProps={{
-                    sx: {
-                        p: 1,
-                        width: 140,
-                        '& .MuiMenuItem-root': {
-                            px: 1,
-                            typography: 'body2',
-                            borderRadius: 0.75,
-                        },
-                    },
-                }}
-            >
-                <MenuItem onClick={() => setOpenEditForm(true)}>
-                    <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-                    Edit
-                </MenuItem>
-                <Dialog fullWidth maxWidth open={openEditForm}>
-                    <DialogTitle>
-                        Cập Nhật Sản Phẩm{' '}
-                        <IconButton style={{ float: 'right' }} onClick={handleCloseEditsForm}>
-                            <CloseIcon color="primary" />
-                        </IconButton>{' '}
-                    </DialogTitle>
-                    <EditCategoryForm
-                        open={openEditForm}
-                        product={selectedProduct}
-                        handleClose={handleCloseEditsForm}
-                    />
-                </Dialog>
-
-                <MenuItem sx={{ color: 'error.main' }}>
-                    <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
-                    Delete
-                </MenuItem>
-            </Popover> */}
         </>
     );
 };

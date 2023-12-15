@@ -294,11 +294,11 @@ const CategoryPage = () => {
                                                     selected={selectedCategoryId === category.id}
                                                     onClick={() => handleCategoryClick(category)}
                                                 >
-                                                    <TableCell padding="checkbox">
+                                                    {/* <TableCell padding="checkbox">
                                                         <Checkbox
                                                             onChange={(event) => handleClick(event, category.name)}
                                                         />
-                                                    </TableCell>
+                                                    </TableCell> */}
                                                     {/* tên  */}
                                                     <TableCell component="th" scope="row" padding="none">
                                                         <Stack direction="row" alignItems="center" spacing={2}>

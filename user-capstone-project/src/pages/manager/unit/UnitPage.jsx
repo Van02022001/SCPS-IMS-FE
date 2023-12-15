@@ -252,9 +252,9 @@ const UnitPage = () => {
                                                     selected={selectedUnitId === unit.id}
                                                     onClick={() => handleUnitClick(unit)}
                                                 >
-                                                    <TableCell padding="checkbox">
+                                                    {/* <TableCell padding="checkbox">
                                                         <Checkbox onChange={(event) => handleClick(event, unit.name)} />
-                                                    </TableCell>
+                                                    </TableCell> */}
 
                                                     {/* tên  */}
                                                     <TableCell component="th" scope="row" padding="none">

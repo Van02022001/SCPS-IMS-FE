@@ -411,7 +411,7 @@ const ExportRequestReceiptManagerPage = () => {
                                                 selected={selectedExportReceiptId === sub_category.id}
                                                 onClick={() => handleSubCategoryClick(sub_category)}
                                             >
-                                                <TableCell padding="checkbox">
+                                                {/* <TableCell padding="checkbox">
                                                     <Checkbox
                                                         checked={selectedExportReceiptId === sub_category.id}
                                                         // onChange={(event) =>
@@ -420,7 +420,7 @@ const ExportRequestReceiptManagerPage = () => {
                                                         // checked={selectedUser}
                                                         onChange={(event) => handleClick(event, sub_category.name)}
                                                     />
-                                                </TableCell>
+                                                </TableCell> */}
 
                                                 <TableCell component="th" scope="row" padding="none">
                                                     <Stack direction="row" alignItems="center" spacing={2}>
