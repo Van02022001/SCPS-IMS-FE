@@ -32,11 +32,14 @@ import CloseIcon from '@mui/icons-material/Close';
 
 // sections
 import { UnitListHead, UnitToolbar } from '~/sections/@dashboard/manager/unit';
+import CreateUnitForm from '~/sections/auth/manager/unit/CreateUnitForm';
 
 // mock
 import { getAllUnit } from '~/data/mutation/unit/unit-mutation';
-import UnitForm from '~/sections/auth/manager/unit/UnitForm';
+
 import UnitDetailForm from '~/sections/auth/manager/unit/UnitDetailForm';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
+
 
 // ----------------------------------------------------------------------
 
@@ -97,6 +100,9 @@ const UnitPage = () => {
     const startIndex = page * rowsPerPage;
     const endIndex = startIndex + rowsPerPage;
 
+    const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
+    const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
+
     useEffect(() => {
         getAllUnit()
             .then((respone) => {
@@ -117,13 +123,6 @@ const UnitPage = () => {
             });
     }, []);
 
-    const handleOpenMenu = (event) => {
-        setOpen(event.currentTarget);
-    };
-
-    const handleCloseMenu = () => {
-        setOpen(null);
-    };
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -139,6 +138,16 @@ const UnitPage = () => {
         }
         setSelected([]);
     };
+    //===================================Những hàm update thay đổi data========================================
+    const handleCreateUnitSuccess = (newUnit, successMessage) => {
+        // Close the form
+        setOpenOderForm(false);
+        setUnitData((prevUnitData) => [...prevUnitData, newUnit]);
+
+        setSnackbarSuccessMessage(successMessage === 'Create unit successfully' ? 'Tạo đơn vị thành công!' : 'Thành công');
+        setSnackbarSuccessOpen(true);
+    };
+    //=========================================================================================================
 
     const handleClick = (event, name) => {
         const selectedIndex = selected.indexOf(name);
@@ -158,9 +167,9 @@ const UnitPage = () => {
     const handleUnitClick = (unit) => {
         if (selectedUnitId === unit.id) {
             console.log(selectedUnitId);
-            setSelectedUnitId(null); // Đóng nếu đã mở
+            setSelectedUnitId(null);
         } else {
-            setSelectedUnitId(unit.id); // Mở hoặc chuyển sang hóa đơn khác
+            setSelectedUnitId(unit.id);
         }
     };
 
@@ -217,7 +226,7 @@ const UnitPage = () => {
                                 <CloseIcon color="primary" />
                             </IconButton>{' '}
                         </DialogTitle>
-                        <UnitForm />
+                        <CreateUnitForm onClose={handleCreateUnitSuccess} open={openOderForm} />
                     </Dialog>
                 </Stack>
 
@@ -257,7 +266,7 @@ const UnitPage = () => {
                                                     </TableCell> */}
 
                                                     {/* tên  */}
-                                                    <TableCell component="th" scope="row" padding="none">
+                                                    <TableCell align="left">
                                                         <Stack direction="row" alignItems="center" spacing={2}>
                                                             {/* <Avatar alt={name} src={avatarUrl} /> */}
                                                             <Typography variant="subtitle2" noWrap>
@@ -325,25 +334,12 @@ const UnitPage = () => {
                     />
                 </Card>
             </Container>
-            {/* 
-            <Popover
-                open={Boolean(open)}
-                anchorEl={open}
-                onClose={handleCloseMenu}
-                anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                PaperProps={{
-                    sx: {
-                        p: 1,
-                        width: 140,
-                        '& .MuiMenuItem-root': {
-                            px: 1,
-                            typography: 'body2',
-                            borderRadius: 0.75,
-                        },
-                    },
-                }}
-            ></Popover> */}
+            <SnackbarSuccess
+                open={snackbarSuccessOpen}
+                handleClose={() => setSnackbarSuccessOpen(false)}
+                message={snackbarSuccessMessage}
+                style={{ bottom: '16px', right: '16px' }}
+            />
         </>
     );
 };

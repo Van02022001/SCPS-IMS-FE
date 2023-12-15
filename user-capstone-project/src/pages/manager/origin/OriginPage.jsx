@@ -36,6 +36,7 @@ import { getAllOrigins } from '~/data/mutation/origins/origins-mutation';
 import OriginDetailForm from '~/sections/auth/manager/origin/OriginDetailForm';
 import CreateOriginForm from '~/sections/auth/manager/origin/CreateOriginForm';
 import dayjs from 'dayjs';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 
 // ----------------------------------------------------------------------
 
@@ -96,6 +97,9 @@ const OriginPage = () => {
     const startIndex = page * rowsPerPage;
     const endIndex = startIndex + rowsPerPage;
 
+    const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
+    const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
+
     useEffect(() => {
         getAllOrigins()
             .then((respone) => {
@@ -115,14 +119,6 @@ const OriginPage = () => {
                 console.error('Error fetching users:', error);
             });
     }, []);
-
-    const handleOpenMenu = (event) => {
-        setOpen(event.currentTarget);
-    };
-
-    const handleCloseMenu = () => {
-        setOpen(null);
-    };
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -174,10 +170,13 @@ const OriginPage = () => {
         setOpenCreateOriginForm(false);
     };
 
-    const handleCreateCategorySuccess = (newOrigin) => {
+    const handleCreateCategorySuccess = (newOrigin, successMessage) => {
         // Close the form
         setOpenCreateOriginForm(false);
         setOriginData((prevOriginData) => [...prevOriginData, newOrigin]);
+        // Show success message
+        setSnackbarSuccessMessage(successMessage === 'Create category successfully' ? 'Tạo thể loại thành công!' : 'Thành công');
+        setSnackbarSuccessOpen(true);
     };
     //=========================Phân trang số lượng==========================
     const handleChangeRowsPerPage = (event) => {
@@ -263,7 +262,7 @@ const OriginPage = () => {
                                                     </TableCell> */}
 
                                                     {/* tên  */}
-                                                    <TableCell component="th" scope="row" padding="none">
+                                                    <TableCell align="left">
                                                         <Stack direction="row" alignItems="center" spacing={2}>
                                                             {/* <Avatar alt={name} src={avatarUrl} /> */}
                                                             <Typography variant="subtitle2" noWrap>
@@ -331,25 +330,13 @@ const OriginPage = () => {
                     />
                 </Card>
             </Container>
-            {/* 
-            <Popover
-                open={Boolean(open)}
-                anchorEl={open}
-                onClose={handleCloseMenu}
-                anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                PaperProps={{
-                    sx: {
-                        p: 1,
-                        width: 140,
-                        '& .MuiMenuItem-root': {
-                            px: 1,
-                            typography: 'body2',
-                            borderRadius: 0.75,
-                        },
-                    },
-                }}
-            ></Popover> */}
+            <SnackbarSuccess
+                open={snackbarSuccessOpen}
+                handleClose={() => setSnackbarSuccessOpen(false)}
+                message={snackbarSuccessMessage}
+                style={{ bottom: '16px', right: '16px' }}
+            />
+
         </>
     );
 };

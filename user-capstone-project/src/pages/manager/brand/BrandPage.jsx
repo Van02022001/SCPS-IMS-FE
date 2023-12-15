@@ -38,6 +38,7 @@ import { getAllOrigins } from '~/data/mutation/origins/origins-mutation';
 import { getAllBrands } from '~/data/mutation/brand/brands-mutation';
 import BrandForm from '~/sections/auth/manager/brand/CreateBrandForm';
 import BrandDetailForm from '~/sections/auth/manager/brand/BrandDetailForm';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 
 
 // ----------------------------------------------------------------------
@@ -102,6 +103,8 @@ const BrandPage = () => {
     const startIndex = page * rowsPerPage;
     const endIndex = startIndex + rowsPerPage;
 
+    const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
+    const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
 
     useEffect(() => {
         getAllBrands()
@@ -124,20 +127,14 @@ const BrandPage = () => {
     }, []);
     //===========================================================================================
 
-    const handleCreateBrandSuccess = (newBrand) => {
+    const handleCreateBrandSuccess = (newBrand, successMessage) => {
         // Close the form
         setOpenOderForm(false);
         setBrandData((prevBrandData) => [...prevBrandData, newBrand]);
+        setSnackbarSuccessMessage(successMessage === 'Create category successfully' ? 'Tạo thể loại thành công!' : 'Thành công');
+        setSnackbarSuccessOpen(true);
     };
     //===========================================================================================
-
-    // const handleOpenMenu = (event) => {
-    //     setOpen(event.currentTarget);
-    // };
-
-    const handleCloseMenu = () => {
-        setOpen(null);
-    };
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -201,7 +198,6 @@ const BrandPage = () => {
     };
 
     const handleDataSearch = (searchResult) => {
-        // Cập nhật state của trang chính với dữ liệu từ tìm kiếm
         setBrandData(searchResult);
         setDisplayedBrandData(searchResult);
     };
@@ -282,7 +278,7 @@ const BrandPage = () => {
                                                     </TableCell> */}
 
                                                     {/* tên  */}
-                                                    <TableCell component="th" scope="row" padding="none">
+                                                    <TableCell align="left">
                                                         <Stack direction="row" alignItems="center" spacing={2}>
                                                             {/* <Avatar alt={name} src={avatarUrl} /> */}
                                                             <Typography variant="subtitle2" noWrap>
@@ -356,26 +352,13 @@ const BrandPage = () => {
                         onRowsPerPageChange={handleChangeRowsPerPage}
                     />
                 </Card>
-
+                <SnackbarSuccess
+                    open={snackbarSuccessOpen}
+                    handleClose={() => setSnackbarSuccessOpen(false)}
+                    message={snackbarSuccessMessage}
+                    style={{ bottom: '16px', right: '16px' }}
+                />
             </Container>
-            {/* <Popover
-                open={Boolean(open)}
-                anchorEl={open}
-                onClose={handleCloseMenu}
-                anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                PaperProps={{
-                    sx: {
-                        p: 1,
-                        width: 140,
-                        '& .MuiMenuItem-root': {
-                            px: 1,
-                            typography: 'body2',
-                            borderRadius: 0.75,
-                        },
-                    },
-                }}
-            ></Popover> */}
         </>
     );
 };

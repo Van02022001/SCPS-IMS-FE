@@ -34,11 +34,7 @@ const BrandForm = (props) => {
                 setIsSuccess(true);
                 setIsError(false);
                 setSuccessMessage(response.data.message);
-                props.onClose(response.data);
-                //clear
-                // setName('');
-                // setDescription('');
-
+                props.onClose(response.data, response.message);
             }
         } catch (error) {
             console.error('Error creating brand:', error);

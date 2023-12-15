@@ -73,7 +73,7 @@ const CreateOriginForm = (props) => {
             console.log('Create origin response:', response);
             if (response.status === '200 OK') {
                 handleMessage(response.message);
-                props.onClose(response.data);
+                props.onClose(response.data, response.message);
             }
         } catch (error) {
             console.error('Error creating origin:', error);

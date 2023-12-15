@@ -6,7 +6,7 @@ import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter
 // api
 import { createUnits } from '~/data/mutation/unit/unit-mutation';
 
-const UnitForm = () => {
+const CreateUnitForm = (props) => {
     const [name, setName] = useState('');
     //thông báo
     const [isSuccess, setIsSuccess] = useState(false);
@@ -25,9 +25,9 @@ const UnitForm = () => {
                 setIsSuccess(true);
                 setIsError(false);
                 setSuccessMessage(response.data.message);
-                console.log(response.data.message);
+
+                props.onClose(response.data, response.message);
                 //clear
-                setName('');
             }
         } catch (error) {
             console.error('Error creating origin:', error);
@@ -43,7 +43,7 @@ const UnitForm = () => {
         <>
             <div style={{ textAlign: 'center' }}>
                 <DialogContent>
-                    {/* <DialogContentText>Do you want remove this user?</DialogContentText> */}
+
                     <Stack spacing={2} margin={2}>
                         <TextField
                             variant="outlined"
@@ -63,4 +63,4 @@ const UnitForm = () => {
     );
 };
 
-export default UnitForm;
+export default CreateUnitForm;

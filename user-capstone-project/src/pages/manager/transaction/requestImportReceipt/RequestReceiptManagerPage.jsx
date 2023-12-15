@@ -143,6 +143,9 @@ const RequestReceiptManagerPage = () => {
     const startIndex = page * rowsPerPage;
     const endIndex = startIndex + rowsPerPage;
 
+    const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
+    const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
+
     const handleChange = (event) => {
         setPersonName(event.target.value);
         const selectedValues = event.target.value.length > 0 ? event.target.value : null;
@@ -173,10 +176,12 @@ const RequestReceiptManagerPage = () => {
         }
     };
 
-    const handleCreateGoodReceiptSuccess = (newGoodReceipt) => {
-        // Close the form
+    const handleCreateGoodReceiptSuccess = (newGoodReceipt, successMessage) => {
         setOpenOderForm(false);
         setImportRequestData((prevGoodReceiptData) => [...prevGoodReceiptData, newGoodReceipt]);
+
+        setSnackbarSuccessMessage(successMessage === 'Create import request successfully' ? 'Tạo thể loại thành công!' : 'Thành công');
+        setSnackbarSuccessOpen(true);
     };
 
     const handleDataSearch = (searchResult) => {
@@ -242,15 +247,15 @@ const RequestReceiptManagerPage = () => {
         setSelected([]);
     };
 
-    const handleCheckboxChange = (event, subCategoryId) => {
-        if (event.target.checked) {
-            // Nếu người dùng chọn checkbox, thêm sản phẩm vào danh sách đã chọn.
-            setSelectedGoodReceiptId([...selectedGoodReceiptId, subCategoryId]);
-        } else {
-            // Nếu người dùng bỏ chọn checkbox, loại bỏ sản phẩm khỏi danh sách đã chọn.
-            setSelectedGoodReceiptId(selectedGoodReceiptId.filter((id) => id !== subCategoryId));
-        }
-    };
+    // const handleCheckboxChange = (event, subCategoryId) => {
+    //     if (event.target.checked) {
+    //         // Nếu người dùng chọn checkbox, thêm sản phẩm vào danh sách đã chọn.
+    //         setSelectedGoodReceiptId([...selectedGoodReceiptId, subCategoryId]);
+    //     } else {
+    //         // Nếu người dùng bỏ chọn checkbox, loại bỏ sản phẩm khỏi danh sách đã chọn.
+    //         setSelectedGoodReceiptId(selectedGoodReceiptId.filter((id) => id !== subCategoryId));
+    //     }
+    // };
     const handleRequestSort = (property) => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
@@ -283,9 +288,9 @@ const RequestReceiptManagerPage = () => {
         setOpenOderForm(false);
     };
 
-    const handleCloseEditsForm = () => {
-        setOpenEditForm(false);
-    };
+    // const handleCloseEditsForm = () => {
+    //     setOpenEditForm(false);
+    // };
 
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - PRODUCTSLIST.length) : 0;
 

@@ -55,6 +55,7 @@ import dayjs from 'dayjs';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import { getAllCategories } from '~/data/mutation/categories/categories-mutation';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
 
@@ -147,8 +148,6 @@ const SubCategoryPage = () => {
     const [subCategoryData, setSubCategoryData] = useState([]);
     const [subCategoryStatus, setSubCategoryStatus] = useState('');
 
-    const [selectedProduct, setSelectedProduct] = useState(null);
-
     const [filteredCategory, setFilteredCategory] = useState(null);
 
     // const [anchorElOptions, setAnchorElOptions] = useState(null);
@@ -156,6 +155,10 @@ const SubCategoryPage = () => {
     const [selectedFilterOptions, setSelectedFilterOptions] = useState(null);
 
     const [personName, setPersonName] = React.useState([]);
+
+    const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
+    const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
+
     //--------------------Filter------------------------
     const [selectedCategories, setSelectedCategories] = React.useState([]);
     const [categoryData, setCategoryData] = useState([]);
@@ -196,10 +199,13 @@ const SubCategoryPage = () => {
         }
     };
 
-    const handleCreateSubCategorySuccess = (newSubCategory) => {
+    const handleCreateSubCategorySuccess = (newSubCategory, successMessage) => {
         // Close the form
         setOpenOderForm(false);
         setSubCategoryData((prevSubCategoryData) => [newSubCategory, ...prevSubCategoryData]);
+
+        setSnackbarSuccessMessage(successMessage === 'Create category successfully' ? 'Tạo thể loại thành công!' : 'Thành công');
+        setSnackbarSuccessOpen(true);
     };
 
     //===========================================================================================
@@ -207,10 +213,6 @@ const SubCategoryPage = () => {
     //     setSelectedProduct(subCategory);
     //     setOpen(event.currentTarget);
     // };
-
-    const handleCloseMenu = () => {
-        setOpen(null);
-    };
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
@@ -483,7 +485,7 @@ const SubCategoryPage = () => {
                                                     />
                                                 </TableCell> */}
 
-                                                <TableCell component="th" scope="row" padding="none">
+                                                <TableCell align="left">
                                                     <Stack direction="row" alignItems="center" spacing={2}>
                                                         {/* <Avatar alt={name} src={avatarUrl} /> */}
                                                     </Stack>
@@ -585,49 +587,13 @@ const SubCategoryPage = () => {
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </Card>
-            {/* </Container> */}
+            <SnackbarSuccess
+                open={snackbarSuccessOpen}
+                handleClose={() => setSnackbarSuccessOpen(false)}
+                message={snackbarSuccessMessage}
+                style={{ bottom: '16px', right: '16px' }}
+            />
 
-            {/* <Popover
-                open={Boolean(open)}
-                anchorEl={open}
-                onClose={handleCloseMenu}
-                anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                PaperProps={{
-                    sx: {
-                        p: 1,
-                        width: 140,
-                        '& .MuiMenuItem-root': {
-                            px: 1,
-                            typography: 'body2',
-                            borderRadius: 0.75,
-                        },
-                    },
-                }}
-            >
-                <MenuItem onClick={() => setOpenEditForm(true)}>
-                    <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-                    Edit
-                </MenuItem>
-                <Dialog fullWidth maxWidth open={openEditForm}>
-                    <DialogTitle>
-                        Cập Nhật Sản Phẩm{' '}
-                        <IconButton style={{ float: 'right' }} onClick={handleCloseEditsForm}>
-                            <CloseIcon color="primary" />
-                        </IconButton>{' '}
-                    </DialogTitle>
-                    <EditCategoryForm
-                        open={openEditForm}
-                        product={selectedProduct}
-                        handleClose={handleCloseEditsForm}
-                    />
-                </Dialog>
-
-                <MenuItem sx={{ color: 'error.main' }}>
-                    <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
-                    Delete
-                </MenuItem>
-            </Popover> */}
         </>
     );
 };

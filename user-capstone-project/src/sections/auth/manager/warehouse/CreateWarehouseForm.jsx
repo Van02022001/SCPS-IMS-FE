@@ -30,10 +30,8 @@ const CreateWarehouseForm = ({ open, onClose, onSave, props }) => {
                 setIsSuccess(true);
                 setIsError(false);
                 setSuccessMessage(response.message);
-                props.onClose(response.data);
-                //clear
-                // setWarehouseName('');
-                // setWarehouseAddress('');
+
+                props.onClose(response.data, response.message);
             }
         } catch (error) {
             console.error("can't feaching category", error);

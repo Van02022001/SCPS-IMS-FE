@@ -38,6 +38,7 @@ import { getAllSuppliers } from '~/data/mutation/supplier/suppliers-mutation';
 import CreateSupplierForm from '~/sections/auth/manager/supplier/CreateSupplierForm';
 import SupplierDetailForm from '~/sections/auth/manager/supplier/SupplierDetailForm';
 import dayjs from 'dayjs';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 
 
 // ----------------------------------------------------------------------
@@ -106,6 +107,9 @@ const SupplierPage = () => {
     const startIndex = page * rowsPerPage;
     const endIndex = startIndex + rowsPerPage;
 
+    const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
+    const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
+
     useEffect(() => {
         getAllSuppliers()
             .then((respone) => {
@@ -125,14 +129,6 @@ const SupplierPage = () => {
                 console.error('Error fetching users:', error);
             });
     }, []);
-
-    const handleOpenMenu = (event) => {
-        setOpen(event.currentTarget);
-    };
-
-    const handleCloseMenu = () => {
-        setOpen(null);
-    };
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -205,10 +201,13 @@ const SupplierPage = () => {
             setSupplierData(updatedSupplierData);
         }
     };
-    const handleCreateSupplierSuccess = (newSupplier) => {
+    const handleCreateSupplierSuccess = (newSupplier, successMessage) => {
         // Close the form
         setOpenOderForm(false);
         setSupplierData((prevSupplierData) => [...prevSupplierData, newSupplier]);
+
+        setSnackbarSuccessMessage(successMessage === 'Create category successfully' ? 'Tạo thể loại thành công!' : 'Thành công');
+        setSnackbarSuccessOpen(true);
     };
     //==========================================================================================================
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
@@ -283,7 +282,7 @@ const SupplierPage = () => {
                                                         />
                                                     </TableCell> */}
                                                     {/* code  */}
-                                                    <TableCell component="th" scope="row" padding="none">
+                                                    <TableCell align="left">
                                                         <Stack direction="row" alignItems="center" spacing={2}>
                                                             <Typography variant="subtitle2" noWrap>
                                                                 {supplier.code}
@@ -389,25 +388,12 @@ const SupplierPage = () => {
                     />
                 </Card>
             </Container>
-
-            <Popover
-                open={Boolean(open)}
-                anchorEl={open}
-                onClose={handleCloseMenu}
-                anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                PaperProps={{
-                    sx: {
-                        p: 1,
-                        width: 140,
-                        '& .MuiMenuItem-root': {
-                            px: 1,
-                            typography: 'body2',
-                            borderRadius: 0.75,
-                        },
-                    },
-                }}
-            ></Popover>
+            <SnackbarSuccess
+                open={snackbarSuccessOpen}
+                handleClose={() => setSnackbarSuccessOpen(false)}
+                message={snackbarSuccessMessage}
+                style={{ bottom: '16px', right: '16px' }}
+            />
         </>
     );
 };

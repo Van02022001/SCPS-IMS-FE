@@ -17,11 +17,6 @@ import {
     TableBody,
     TableRow,
     TableCell,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogContentText,
-    DialogActions,
 } from '@mui/material';
 // icons
 // import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
@@ -40,6 +35,7 @@ import ErrorAlerts from '~/components/alert/ErrorAlert';
 import AddSubCategoryMetaForm from './AddSubCategoryMetaForm';
 import { editSubCategorysMeta, getAllSubCategoryMeta } from '~/data/mutation/subCategoryMeta/subCategoryMeta-mutation';
 import { getItemsBySubCategory } from '~/data/mutation/items/item-mutation';
+//Thông báo
 import CustomDialog from '~/components/alert/ConfirmDialog';
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 import SnackbarError from '~/components/alert/SnackbarError';
@@ -87,7 +83,6 @@ const SubCategoryDetailForm = ({
 
     const handleSuccessMessage = (message) => {
         setOpen(true);
-        // Đặt logic hiển thị nội dung thông báo từ API ở đây
         if (message === 'Update sub category status successfully.') {
             setSuccessMessage('Cập nhập trạng thái danh mục thành công');
         } else if (message === 'Update sub category successfully.') {
@@ -329,7 +324,7 @@ const SubCategoryDetailForm = ({
         }
     };
 
-    const handleClear = () => {};
+    const handleClear = () => { };
 
     const handleEdit = (field, value) => {
         console.log(`Field: ${field}, Value: ${value}`);

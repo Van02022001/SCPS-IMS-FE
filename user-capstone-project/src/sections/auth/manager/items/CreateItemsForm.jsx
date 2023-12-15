@@ -107,6 +107,7 @@ const CreateItemsForm = (props) => {
         handleCloseAddSuplierForm();
     };
     //================================================================================================================
+
     //========================== Hàm notification của trang ==================================
     const handleMessage = (message) => {
         setOpen(true);
@@ -163,7 +164,7 @@ const CreateItemsForm = (props) => {
                 // setIsError(false);
                 // setSuccessMessage(response.data.message);
                 handleMessage(response.message);
-                props.onClose(response.data);
+                props.onClose(response.data, response.message);
 
             }
         } catch (error) {

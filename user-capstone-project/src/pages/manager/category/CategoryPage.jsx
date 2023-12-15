@@ -28,16 +28,17 @@ import Label from '../../../components/label';
 import Iconify from '../../../components/iconify';
 import Scrollbar from '../../../components/scrollbar';
 import CloseIcon from '@mui/icons-material/Close';
-
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 // sections
 import { CategoryListHead, CategoryToolbar } from '~/sections/@dashboard/manager/category';
 // mock
-import USERLIST from '../../../_mock/user';
+// import USERLIST from '../../../_mock/user';
 import { getAllCategories } from '~/data/mutation/categories/categories-mutation';
 // form validation
 import CategoryDetailForm from '~/sections/auth/manager/categories/CategoryDetailForm';
 import CreateCategoriesForm from '~/sections/auth/manager/categories/CreateCategoryForm';
 import dayjs from 'dayjs';
+
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -104,6 +105,8 @@ const CategoryPage = () => {
     const startIndex = page * rowsPerPage;
     const endIndex = startIndex + rowsPerPage;
 
+    const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
+    const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
     //=============================================== Hàm để thay đổi data mỗi khi Edit xong api===============================================
     const updateCategoryInList = (updatedCategory) => {
         const categoryIndex = categoryData.findIndex((category) => category.id === updatedCategory.id);
@@ -126,20 +129,15 @@ const CategoryPage = () => {
             setCategoryData(updatedCategoryData);
         }
     };
-    const handleCreateCategorySuccess = (newCategory) => {
-        // Close the form
+    const handleCreateCategorySuccess = (newCategory, successMessage) => {
         setOpenCreateCategoryForm(false);
         setCategoryData((prevCategoryData) => [...prevCategoryData, newCategory]);
+
+        // Show success message
+        setSnackbarSuccessMessage(successMessage === 'Create category successfully' ? 'Tạo thể loại thành công!' : 'Thành công');
+        setSnackbarSuccessOpen(true);
     };
     //===========================================================================================
-
-    // const handleOpenMenu = (event) => {
-    //     setOpen(event.currentTarget);
-    // };
-
-    // const handleCloseMenu = () => {
-    //     setOpen(null);
-    // };
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -183,9 +181,9 @@ const CategoryPage = () => {
     const handleCategoryClick = (category) => {
         if (selectedCategoryId === category.id) {
             console.log(selectedCategoryId);
-            setSelectedCategoryId(null); // Đóng nếu đã mở
+            setSelectedCategoryId(null);
         } else {
-            setSelectedCategoryId(category.id); // Mở hoặc chuyển sang hóa đơn khác
+            setSelectedCategoryId(category.id);
         }
     };
 
@@ -194,7 +192,6 @@ const CategoryPage = () => {
     };
     //Search
     const handleDataSearch = (searchResult) => {
-        // Cập nhật state của trang chính với dữ liệu từ tìm kiếm
         setCategoryData(searchResult);
     };
 
@@ -300,7 +297,7 @@ const CategoryPage = () => {
                                                         />
                                                     </TableCell> */}
                                                     {/* tên  */}
-                                                    <TableCell component="th" scope="row" padding="none">
+                                                    <TableCell align="left">
                                                         <Stack direction="row" alignItems="center" spacing={2}>
                                                             {/* <Avatar alt={name} src={avatarUrl} /> */}
                                                             <Typography variant="subtitle2" noWrap>
@@ -393,6 +390,13 @@ const CategoryPage = () => {
                     />
                 </Card>
             </Container>
+            {/* Snackbar for success message */}
+            <SnackbarSuccess
+                open={snackbarSuccessOpen}
+                handleClose={() => setSnackbarSuccessOpen(false)}
+                message={snackbarSuccessMessage}
+                style={{ bottom: '16px', right: '16px' }}
+            />
         </>
     );
 };

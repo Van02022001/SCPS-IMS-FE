@@ -5,7 +5,6 @@ import {
     Grid,
     Table,
     Button,
-    DialogActions,
     DialogContent,
     Stack,
     TextField,
@@ -22,8 +21,6 @@ import {
     Card,
     CardContent,
 } from '@mui/material';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useState } from 'react';
 // sections
 import { UserListHead } from '~/sections/@dashboard/user';
@@ -37,6 +34,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import { useNavigate } from 'react-router-dom';
 import CreateGoodReceiptListHead from '~/sections/@dashboard/manager/transaction/createGoodReceipt/CreateGoodReceiptToolbar';
 import { CreateGoodReceiptToolbar } from '~/sections/@dashboard/manager/transaction/createGoodReceipt';
+
 import { createImportRequestReceipt } from '~/data/mutation/importRequestReceipt/ImportRequestReceipt-mutation';
 import { useEffect } from 'react';
 import { getAllItem } from '~/data/mutation/items/item-mutation';
@@ -45,22 +43,22 @@ import { getAllWarehouse, getInventoryStaffByWarehouseId } from '~/data/mutation
 import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
 
-function CreateGoodReceipt() {
+function CreateGoodReceipt(props) {
     const [order, setOrder] = useState('asc');
 
     const [orderBy, setOrderBy] = useState('name');
 
     const [selected, setSelected] = useState([]);
-    // state form create===============================================
-    const [warehouseId, setWarehouseId] = useState(null);
-    const [inventoryStaffId, setInventoryStaffId] = useState(null);
+    // state form create==============================================
     const [descriptionReceipt, setDescriptionReceipt] = useState('');
     const [itemId, setItemId] = useState([]);
     const [quantity, setQuantity] = useState(null);
     const [unitPrice, setUnitPrice] = useState(null);
     const [unitId, setUnitId] = useState([]);
     const [descriptionItems, setDescriptionItems] = useState('');
+
     // ===============================================
+
     const [itemsData, setItemsData] = useState([]);
     const [selectedItems, setSelectedItems] = useState([]);
     const [selectedUnitId, setSelectedUnitId] = useState('');
@@ -153,6 +151,7 @@ function CreateGoodReceipt() {
                 setIsSuccess(true);
                 setIsError(false);
                 setSuccessMessage(response.data.message);
+                props.onClose(response.data, response.message);
             }
             navigate('/dashboard/request-import-receipt');
         } catch (error) {

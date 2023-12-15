@@ -1,7 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Snackbar from '@mui/material/Snackbar';
-import IconButton from '@mui/material/IconButton';
-import CloseIcon from '@mui/icons-material/Close';
 import PropTypes from 'prop-types';
 import MuiAlert from '@mui/material/Alert';
 
@@ -10,11 +8,29 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 });
 
 const SnackbarSuccess = ({ open, handleClose, message, action, style }) => {
+    const [messageToShow, setMessageToShow] = useState('');
+
+    useEffect(() => {
+      if (message) {
+        setMessageToShow(message);
+      }
+    }, [message]);
+
+    const handleSnackbarClose = (event, reason) => {
+        if (reason === 'clickaway') {
+          return;
+        }
+        setMessageToShow('');
+        handleClose(event, reason);
+      };
+    
+
+
     return (
         <Snackbar
             open={open}
-            autoHideDuration={6000}
-            onClose={handleClose}
+            autoHideDuration={5000}
+            onClose={handleSnackbarClose}
             anchorOrigin={{
                 vertical: 'bottom',
                 horizontal: 'right',
@@ -23,7 +39,7 @@ const SnackbarSuccess = ({ open, handleClose, message, action, style }) => {
             style={style}
         >
             <Alert severity="success" sx={{ width: '100%' }}>
-                {message}
+                {messageToShow}
             </Alert>
         </Snackbar>
     );

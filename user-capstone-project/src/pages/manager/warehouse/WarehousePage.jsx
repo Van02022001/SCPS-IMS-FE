@@ -40,6 +40,7 @@ import { getAllWarehouse } from '~/data/mutation/warehouse/warehouse-mutation';
 // form validation
 import CreateWarehouseForm from '~/sections/auth/manager/warehouse/CreateWarehouseForm';
 import WarehouseDetailForm from '~/sections/auth/manager/warehouse/WarehouseDetailForm';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 
 
 
@@ -108,6 +109,8 @@ const WarehousePage = () => {
     const startIndex = page * rowsPerPage;
     const endIndex = startIndex + rowsPerPage;
 
+    const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
+    const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
     //Hàm để thay đổi data mỗi khi Edit xong api-------------------------------------------------------------
     const updateWarehouseInList = (updatedWarehouse) => {
         const warehouseIndex = warehouseData.findIndex((warehouse) => warehouse.id === updatedWarehouse.id);
@@ -131,6 +134,14 @@ const WarehousePage = () => {
         }
     };
 
+    const handleCreateWarehouseSuccess = (newWarehouse, successMessage) => {
+        // Close the form
+        setOpenOderForm(false);
+        setWarehouseData((prevWarehouseData) => [...prevWarehouseData, newWarehouse]);
+
+        setSnackbarSuccessMessage(successMessage === 'Create warehouse successfully' ? 'Tạo đơn vị thành công!' : 'Thành công');
+        setSnackbarSuccessOpen(true);
+    };
     //----------------------------------------------------------------
     const handleOpenMenu = (event) => {
         setOpen(event.currentTarget);
@@ -255,7 +266,7 @@ const WarehousePage = () => {
                                 <CloseIcon color="primary" />
                             </IconButton>{' '}
                         </DialogTitle>
-                        <CreateWarehouseForm />
+                        <CreateWarehouseForm onClose={handleCreateWarehouseSuccess} open={openOderForm} />
                     </Dialog>
                 </Stack>
 
@@ -291,13 +302,13 @@ const WarehousePage = () => {
                                                     selected={selectedWarehouseId === warehouse.id}
                                                     onClick={() => handleWarehouseClick(warehouse)}
                                                 >
-                                                    <TableCell padding="checkbox">
+                                                    {/* <TableCell padding="checkbox">
                                                         <Checkbox
                                                             onChange={(event) => handleClick(event, warehouse.name)}
                                                         />
-                                                    </TableCell>
+                                                    </TableCell> */}
                                                     {/* tên  */}
-                                                    <TableCell component="th" scope="row" padding="none">
+                                                    <TableCell align="left">
                                                         <Stack direction="row" alignItems="center" spacing={2}>
                                                             {/* <Avatar alt={name} src={avatarUrl} /> */}
                                                             <Typography variant="subtitle2" noWrap>
@@ -389,7 +400,12 @@ const WarehousePage = () => {
                     />
                 </Card>
             </Container>
-
+            <SnackbarSuccess
+                open={snackbarSuccessOpen}
+                handleClose={() => setSnackbarSuccessOpen(false)}
+                message={snackbarSuccessMessage}
+                style={{ bottom: '16px', right: '16px' }}
+            />
         </>
     );
 };

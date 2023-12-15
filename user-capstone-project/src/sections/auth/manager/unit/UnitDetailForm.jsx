@@ -7,14 +7,6 @@ import {
     Stack,
     Grid,
     TextField,
-    FormControl,
-    Select,
-    MenuItem,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogContentText,
-    DialogActions,
     IconButton,
 } from '@mui/material';
 import { deleteOrigins, editOrigins } from '~/data/mutation/origins/origins-mutation';
@@ -132,10 +124,8 @@ const UnitDetailForm = ({ units, unitsId, onClose, isOpen, mode }) => {
                     name: editedUnit.name,
                 };
 
-                // Call your API to update the category
                 const response = await editUnits(unitsId, updateData);
 
-                // Handle the response as needed
                 console.log('Category updated:', response);
                 if (response.status === '200 OK') {
                     handleSuccessMessage(response.message);

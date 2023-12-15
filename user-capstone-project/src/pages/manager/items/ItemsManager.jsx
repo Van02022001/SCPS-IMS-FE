@@ -52,6 +52,7 @@ import { DateRangePicker } from '@mui/x-date-pickers-pro/DateRangePicker';
 import dayjs from 'dayjs';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -64,7 +65,7 @@ const TABLE_HEAD = [
     { id: 'role', label: 'Số lượng', alignRight: false },
     { id: 'status', label: 'Thương hiệu', alignRight: false },
     { id: 'isVerified', label: 'Nhà cung cấp', alignRight: false },
-    { id: 'status', label: 'Nguồn gốc', alignRight: false },
+    { id: 'origin', label: 'Nguồn gốc', alignRight: false },
     { id: 'status', label: 'Trạng thái', alignRight: false },
     { id: '' },
 ];
@@ -165,6 +166,9 @@ const ItemsManagerPage = () => {
     const [endDate, setEndDate] = useState(null);
     const startIndex = page * rowsPerPage;
     const endIndex = startIndex + rowsPerPage;
+
+    const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
+    const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
 
     const handleChange = (event) => {
         setPersonName(event.target.value);
@@ -273,10 +277,13 @@ const ItemsManagerPage = () => {
             setItemData(updatedItemData);
         }
     };
-    const handleCreateItemsSuccess = (newItems) => {
+    const handleCreateItemsSuccess = (newItems, successMessage) => {
         // Close the form
         setOpenOderForm(false);
         setItemData((prevItemsData) => [newItems, ...prevItemsData]);
+        // Show success message
+        setSnackbarSuccessMessage(successMessage === 'Create category successfully' ? 'Tạo thể loại thành công!' : 'Thành công');
+        setSnackbarSuccessOpen(true);
     };
     //===========================================================================================
 
@@ -642,6 +649,12 @@ const ItemsManagerPage = () => {
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </Card>
+            <SnackbarSuccess
+                open={snackbarSuccessOpen}
+                handleClose={() => setSnackbarSuccessOpen(false)}
+                message={snackbarSuccessMessage}
+                style={{ bottom: '16px', right: '16px' }}
+            />
         </>
     );
 };
