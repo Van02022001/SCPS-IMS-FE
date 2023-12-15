@@ -110,6 +110,8 @@ const SubCategoryDetailForm = ({
 
         setOpen(false);
         setOpen1(false);
+        setSuccessMessage('');
+        setErrorMessage('');
     };
 
     const action = (

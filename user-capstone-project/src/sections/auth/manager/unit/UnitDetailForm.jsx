@@ -58,6 +58,8 @@ const UnitDetailForm = ({ units, unitsId, onClose, isOpen, mode }) => {
 
         setOpen(false);
         setOpen1(false);
+        setSuccessMessage('');
+        setErrorMessage('');
     };
 
     const action = (

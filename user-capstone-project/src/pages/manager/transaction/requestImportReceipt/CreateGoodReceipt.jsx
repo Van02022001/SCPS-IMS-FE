@@ -30,6 +30,8 @@ import Scrollbar from '~/components/scrollbar/Scrollbar';
 // icons
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditIcon from '@mui/icons-material/Edit';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 
 import { useNavigate } from 'react-router-dom';
 import CreateGoodReceiptListHead from '~/sections/@dashboard/manager/transaction/createGoodReceipt/CreateGoodReceiptToolbar';
@@ -42,6 +44,9 @@ import { getAllUnit } from '~/data/mutation/unit/unit-mutation';
 import { getAllWarehouse, getInventoryStaffByWarehouseId } from '~/data/mutation/warehouse/warehouse-mutation';
 import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
+import CustomDialog from '~/components/alert/ConfirmDialog';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
+import SnackbarError from '~/components/alert/SnackbarError';
 
 function CreateGoodReceipt(props) {
     const [order, setOrder] = useState('asc');
@@ -75,10 +80,68 @@ function CreateGoodReceipt(props) {
         details: [],
     });
     //thông báo
-    const [isSuccess, setIsSuccess] = useState(false);
-    const [isError, setIsError] = useState(false);
+    //========================== Hàm notification của trang ==================================
+    const [open, setOpen] = React.useState(false);
+    const [open1, setOpen1] = React.useState(false);
+    const [confirmOpen1, setConfirmOpen1] = useState(false);
+    const [confirmOpen2, setConfirmOpen2] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+
+    const handleSuccessMessage = (message) => {
+        setOpen(true);
+        if (message === 'Import request receipt created successfully') {
+            setSuccessMessage('Tạo phiếu thành công');
+        } else if (message === 'Update sub category successfully.') {
+            setSuccessMessage('Cập nhập danh mục thành công');
+        }
+    };
+
+    const handleErrorMessage = (message) => {
+        setOpen1(true);
+        if (message === 'Inventory Staff not found!') {
+            setErrorMessage('Không tìm thấy nhân viên !');
+        } else if (message === 'Invalid request') {
+            setErrorMessage('Yêu cầu không hợp lệ');
+        } else if (message === '404 NOT_FOUND') {
+            setErrorMessage('Mô tả quá dài');
+        } else if (message === 'Warehouse not found!') {
+            setErrorMessage('Hãy chọn kho và nhân viên !');
+        }
+    };
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpen(false);
+        setOpen1(false);
+        setSuccessMessage('');
+        setErrorMessage('');
+    };
+
+    const action = (
+        <React.Fragment>
+            <Button color="secondary" size="small" onClick={handleClose}></Button>
+            <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
+                <CloseIcon fontSize="lage" />
+            </IconButton>
+        </React.Fragment>
+    );
+    const handleConfirmClose1 = () => {
+        setConfirmOpen1(false);
+    };
+
+    const handleConfirmUpdate1 = () => {
+        setConfirmOpen1(false);
+        handleCreateImportReceipt();
+    };
+
+    const handleConfirm1 = () => {
+        setConfirmOpen1(true);
+    };
+
+    //========================== Hàm notification của trang ==================================
 
     const navigate = useNavigate();
 
@@ -148,25 +211,13 @@ function CreateGoodReceipt(props) {
             const response = await createImportRequestReceipt(recieptParams);
             if (response.status === '201 CREATED') {
                 // Xử lý khi tạo phiếu nhập thành công
-                setIsSuccess(true);
-                setIsError(false);
-                setSuccessMessage(response.data.message);
+                handleSuccessMessage(response.message);
                 props.onClose(response.data, response.message);
             }
             navigate('/dashboard/request-import-receipt');
         } catch (error) {
-            console.error('Error creating product:', error.response);
-            setIsError(true);
-            setIsSuccess(false);
-            if (error.response?.data?.message === 'Invalid request') {
-                setErrorMessage('Yêu cầu không hợp lệ');
-            }
-            if (error.response?.data?.message === 'Unit not found') {
-                setErrorMessage('Hãy chọn đơn vị !');
-            }
-            if (error.response?.data?.message === 'Warehouse not found!') {
-                setErrorMessage('Hãy chọn kho và nhân viên !');
-            }
+            console.error('Error creating product:', error);
+            handleErrorMessage(error.response?.data?.message);
         }
     };
 
@@ -561,12 +612,32 @@ function CreateGoodReceipt(props) {
                                         <Typography variant="body2">Chọn kho hàng trước khi thêm sản phẩm.</Typography>
                                     )}
                                 </List>
-                                {isSuccess && <SuccessAlerts message={successMessage} />}
-                                {isError && <ErrorAlerts errorMessage={errorMessage} />}
-                                <Button color="primary" variant="contained" onClick={handleCreateImportReceipt}>
+                                <Button color="primary" variant="contained" onClick={handleConfirm1}>
                                     Lưu
                                 </Button>
                             </DialogContent>
+                            <CustomDialog
+                                open={confirmOpen1}
+                                onClose={handleConfirmClose1}
+                                title="Thông báo!"
+                                content="Bạn có chắc muốn cập nhật không?"
+                                onConfirm={handleConfirmUpdate1}
+                                confirmText="Xác nhận"
+                            />
+                            <SnackbarSuccess
+                                open={open}
+                                handleClose={handleClose}
+                                message={successMessage}
+                                action={action}
+                                style={{ bottom: '16px', right: '16px' }}
+                            />
+                            <SnackbarError
+                                open={open1}
+                                handleClose={handleClose}
+                                message={errorMessage}
+                                action={action}
+                                style={{ bottom: '16px', right: '16px' }}
+                            />
                         </div>
                     </Grid>
                 </Grid>

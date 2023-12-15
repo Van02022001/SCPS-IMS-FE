@@ -67,6 +67,8 @@ const SupplierDetailForm = ({ suppliers, suppliersId, onClose, isOpen, mode, upd
 
         setOpen(false);
         setOpen1(false);
+        setSuccessMessage('');
+        setErrorMessage('');
     };
 
     const action = (

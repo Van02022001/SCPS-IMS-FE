@@ -65,6 +65,8 @@ const BrandDetailForm = ({ brands, brandsId, onClose, isOpen, mode }) => {
 
         setOpen(false);
         setOpen1(false);
+        setSuccessMessage('');
+        setErrorMessage('');
     };
 
     const action = (

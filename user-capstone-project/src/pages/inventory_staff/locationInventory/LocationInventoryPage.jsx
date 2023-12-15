@@ -36,10 +36,12 @@ import USERLIST from '../../../_mock/user';
 import { getAllLocation } from '~/data/mutation/location/location-mutation';
 import CreateLocationForm from '~/sections/auth/inventory_staff/location/CreateLocationForm';
 import LocationDetailForm from '~/sections/auth/inventory_staff/location/LocationDetailForm';
+import dayjs from 'dayjs';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
+    { id: '', label: '', alignRight: false },
     { id: 'shelfNumber', label: 'Số kệ', alignRight: false },
     { id: 'binNumber', label: 'Số ngăn', alignRight: false },
     { id: 'warehouse', label: 'Tên kho', alignRight: false },
@@ -98,13 +100,20 @@ const LocationInventoryPage = () => {
     // Search data
     const [displayedBrandData, setDisplayedBrandData] = useState([]);
     const [locationData, setLocationData] = useState([]);
+    const startIndex = page * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
 
     useEffect(() => {
         getAllLocation()
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
-                    setLocationData(data);
+                    const sortedData = data.sort((a, b) => {
+                        return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(
+                            dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
+                        );
+                    });
+                    setLocationData(sortedData);
                 } else {
                     console.error('API response is not an array:', data);
                 }
@@ -251,7 +260,7 @@ const LocationInventoryPage = () => {
                                     onSelectAllClick={handleSelectAllClick}
                                 />
                                 <TableBody>
-                                    {locationData.map((location) => {
+                                    {locationData.slice(startIndex, endIndex).map((location) => {
                                         return (
                                             <React.Fragment key={location.id}>
                                                 <TableRow

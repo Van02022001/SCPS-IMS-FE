@@ -91,6 +91,8 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
 
         setOpen(false);
         setOpen1(false);
+        setSuccessMessage('');
+        setErrorMessage('');
     };
 
     const action = (
