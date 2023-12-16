@@ -80,11 +80,11 @@ export default function ProductsListToolbar({ numSelected, filterName, onFilterN
             }
           />
 
-          <Tooltip title="Filter list">
+          {/* <Tooltip title="Filter list">
             <IconButton onClick={handleFilterClick}>
               <Iconify icon="ic:round-filter-list" />
             </IconButton>
-          </Tooltip>
+          </Tooltip> */}
 
           <Menu
             anchorEl={anchorEl}

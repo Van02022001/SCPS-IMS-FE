@@ -1,22 +1,70 @@
 import React, { useState } from 'react';
-import { Dialog, DialogTitle, DialogContent, TextField, Button } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, TextField, Button, IconButton } from '@mui/material';
 
 import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
 import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
 // api
 import { createWarehouse } from '~/data/mutation/warehouse/warehouse-mutation';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
+import SnackbarError from '~/components/alert/SnackbarError';
+import CloseIcon from '@mui/icons-material/Close';
 
-const CreateWarehouseForm = ({ open, onClose, onSave, props }) => {
+
+const CreateWarehouseForm = ({ onSave, props }) => {
     const [warehouseName, setWarehouseName] = useState('');
     const [warehouseAddress, setWarehouseAddress] = useState('');
     const [showNotification, setShowNotification] = useState(false);
 
     //thông báo
-    const [isSuccess, setIsSuccess] = useState(false);
-    const [isError, setIsError] = useState(false);
+    //========================== Hàm notification của trang ==================================
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const [open, setOpen] = React.useState(false);
+    const [open1, setOpen1] = React.useState(false);
+
+    const handleSuccessMessage = (message) => {
+        setOpen(true);
+        if (message === 'Create category successfully') {
+            setSuccessMessage('Tạo nhóm hàng thành công');
+        } else if (message === 'Update SubCategory successfully.') {
+            setSuccessMessage('Cập nhập danh mục thành công');
+        }
+    };
+
+    const handleErrorMessage = (message) => {
+        setOpen1(true);
+        if (message === 'Invalid request') {
+            setErrorMessage('Yêu cầu không hợp lệ !');
+        } else if (message === 'Warehouse name was existed') {
+            setErrorMessage('Tên bị trùng lặp !');
+        }
+    };
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        console.log('Closing Snackbar...');
+        setOpen(false);
+        setOpen1(false);
+        setSuccessMessage('');
+        setErrorMessage('');
+    };
+
+    const action = (
+        <React.Fragment>
+            <Button color="secondary" size="small" onClick={handleClose}></Button>
+            <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
+                <CloseIcon fontSize="lage" />
+            </IconButton>
+        </React.Fragment>
+    );
+    const handleCloseSnackbar = () => {
+        setOpen(false);
+        setOpen1(false);
+    };
+    //============================================================
 
     const handleSave = async () => {
         const warehouseParams = {
@@ -27,22 +75,13 @@ const CreateWarehouseForm = ({ open, onClose, onSave, props }) => {
             const response = await createWarehouse(warehouseParams);
 
             if (response.status === '200 OK') {
-                setIsSuccess(true);
-                setIsError(false);
-                setSuccessMessage(response.message);
-
+                handleSuccessMessage(response.message);
+                handleCloseSnackbar();
                 props.onClose(response.data, response.message);
             }
         } catch (error) {
             console.error("can't feaching category", error);
-            setIsError(true);
-            setIsSuccess(false);
-            if (error.response?.data?.message === 'Invalid request') {
-                setErrorMessage('Yêu cầu không hợp lệ');
-            }
-            if (error.response?.data?.error === '404 NOT_FOUND') {
-                setErrorMessage('Mô tả quá dài');
-            }
+            handleErrorMessage(error.response?.data?.message);
         }
     };
 
@@ -66,13 +105,25 @@ const CreateWarehouseForm = ({ open, onClose, onSave, props }) => {
                     value={warehouseAddress}
                     onChange={(e) => setWarehouseAddress(capitalizeFirstLetter(e.target.value))}
                 />
-                {isSuccess && <SuccessAlerts message={successMessage} />}
-                {isError && <ErrorAlerts errorMessage={errorMessage} />}
             </DialogContent>
             <div style={{ padding: '16px' }}>
                 <Button variant="contained" color="primary" onClick={handleSave}>
                     lưu
                 </Button>
+                <SnackbarSuccess
+                    open={open}
+                    handleClose={handleCloseSnackbar}
+                    message={successMessage}
+                    action={action}
+                    style={{ bottom: '16px', right: '16px' }}
+                />
+                <SnackbarError
+                    open={open1}
+                    handleClose={handleCloseSnackbar}
+                    message={errorMessage}
+                    action={action}
+                    style={{ bottom: '16px', right: '16px' }}
+                />
             </div>
         </>
     );

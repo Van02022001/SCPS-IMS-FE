@@ -385,7 +385,7 @@ const InventoryReportPage = () => {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={warehouseData.length}
+                    count={filteredInventoryReport.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}

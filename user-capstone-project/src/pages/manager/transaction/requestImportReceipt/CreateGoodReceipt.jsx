@@ -212,7 +212,7 @@ function CreateGoodReceipt(props) {
             if (response.status === '201 CREATED') {
                 // Xử lý khi tạo phiếu nhập thành công
                 handleSuccessMessage(response.message);
-                props.onClose(response.data, response.message);
+                props(response.data, response.message);
             }
             navigate('/dashboard/request-import-receipt');
         } catch (error) {
@@ -612,18 +612,18 @@ function CreateGoodReceipt(props) {
                                         <Typography variant="body2">Chọn kho hàng trước khi thêm sản phẩm.</Typography>
                                     )}
                                 </List>
-                                <Button color="primary" variant="contained" onClick={handleConfirm1}>
+                                <Button color="primary" variant="contained" onClick={handleCreateImportReceipt}>
                                     Lưu
                                 </Button>
                             </DialogContent>
-                            <CustomDialog
+                            {/* <CustomDialog
                                 open={confirmOpen1}
                                 onClose={handleConfirmClose1}
                                 title="Thông báo!"
                                 content="Bạn có chắc muốn cập nhật không?"
                                 onConfirm={handleConfirmUpdate1}
                                 confirmText="Xác nhận"
-                            />
+                            /> */}
                             <SnackbarSuccess
                                 open={open}
                                 handleClose={handleClose}

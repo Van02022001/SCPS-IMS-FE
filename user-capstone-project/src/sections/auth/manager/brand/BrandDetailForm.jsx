@@ -42,8 +42,8 @@ const BrandDetailForm = ({ brands, brandsId, onClose, isOpen, mode }) => {
 
     const handleSuccessMessage = (message) => {
         setOpen(true);
-        if (message === 'Create origin successfully') {
-            setSuccessMessage('Cập nhập nguồn gốc thành công !');
+        if (message === 'Update brand successfully') {
+            setSuccessMessage('Cập nhập thành công !');
         }
     };
 

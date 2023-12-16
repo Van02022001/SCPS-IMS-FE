@@ -400,6 +400,7 @@ const CreateItemsForm = (props) => {
                                                     <TextField
                                                         id="demo-customized-textbox"
                                                         label="Ít nhất"
+                                                        helperText="Ít nhất phải 5"
                                                         value={minStockLevel}
                                                         onChange={(e) => setMinStockLevel(e.target.value)}
                                                     />

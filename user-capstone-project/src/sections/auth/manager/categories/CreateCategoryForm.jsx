@@ -12,17 +12,15 @@ import SnackbarError from '~/components/alert/SnackbarError';
 
 
 const CreateCategoriesForm = (props) => {
+    const [name, setName] = useState('');
+    const [description, setDescription] = useState('');
+    
+    //========================== Hàm notification của trang ==================================
+    const [successMessage, setSuccessMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
     const [open, setOpen] = React.useState(false);
     const [open1, setOpen1] = React.useState(false);
 
-    const [name, setName] = useState('');
-    const [description, setDescription] = useState('');
-
-    //thông báo
-    const [successMessage, setSuccessMessage] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
-
-    //========================== Hàm notification của trang ==================================
     const handleSuccessMessage = (message) => {
         setOpen(true);
         if (message === 'Create category successfully') {
@@ -34,10 +32,10 @@ const CreateCategoriesForm = (props) => {
 
     const handleErrorMessage = (message) => {
         setOpen1(true);
-        if (message === 'Category name was existed') {
-            setErrorMessage('Tên thể loại đã tồn tại !');
-        } else if (message === 'Update category successfully') {
-            setErrorMessage('Cập nhập thể loại thành công !');
+        if (message === 'Invalid request') {
+            setErrorMessage('Yêu cầu không hợp lệ !');
+        } else if (message === 'Category name was existed') {
+            setErrorMessage('Tên thể loại bị trùng !');
         }
     };
 
@@ -47,6 +45,9 @@ const CreateCategoriesForm = (props) => {
         }
         console.log('Closing Snackbar...');
         setOpen(false);
+        setOpen1(false);
+        setSuccessMessage('');
+        setErrorMessage('');
     };
 
     const action = (
@@ -58,11 +59,11 @@ const CreateCategoriesForm = (props) => {
             </IconButton>
         </React.Fragment>
     );
-    //============================================================
     const handleCloseSnackbar = () => {
         setOpen(false);
         setOpen1(false);
     };
+    //============================================================
 
     const handleCreateCategory = async () => {
         const categoriesParams = {
@@ -83,11 +84,11 @@ const CreateCategoriesForm = (props) => {
         } catch (error) {
             console.error("Can't fetch category", error.response);
             handleErrorMessage(error.response?.data?.message)
-            if (error.response?.data?.message === 'Invalid request') {
-                handleErrorMessage('Yêu cầu không hợp lệ');
-            } else if (error.response?.data?.message === "You must be logged in with proper permissions to access this resource") {
-                handleErrorMessage('Yêu cầu không hợp lệ');
-            }
+            // if (error.response?.data?.message === 'Invalid request') {
+            //     handleErrorMessage('Yêu cầu không hợp lệ');
+            // } else if (error.response?.data?.message === "You must be logged in with proper permissions to access this resource") {
+            //     handleErrorMessage('Yêu cầu không hợp lệ');
+            // }
         }
     };
 
@@ -106,6 +107,8 @@ const CreateCategoriesForm = (props) => {
                         <TextField
                             variant="outlined"
                             label="Mô tả"
+                            multiline
+                            rows={3}
                             value={description}
                             onChange={(e) => setDescription(capitalizeFirstLetter(e.target.value))}
                         />

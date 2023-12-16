@@ -91,6 +91,8 @@ const CreateSubCategoryForm = (props) => {
         }
 
         setOpenSubAddCategory(false);
+        setSuccessMessage('');
+        setErrorMessage('');
     };
 
     const action = (

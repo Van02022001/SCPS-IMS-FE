@@ -400,13 +400,13 @@ const ItemsInventoryPage = () => {
                 <Typography variant="h4" gutterBottom>
                     Quản lý sản phẩm
                 </Typography>
-                <Button
+                {/* <Button
                     variant="contained"
                     startIcon={<Iconify icon="eva:plus-fill" />}
                     onClick={() => setOpenOderForm(true)}
                 >
                     Thêm sản phẩm
-                </Button>
+                </Button> */}
                 <Dialog fullWidth maxWidth="md" open={openOderForm}>
                     <DialogTitle>
                         Tạo sản phẩm{' '}
