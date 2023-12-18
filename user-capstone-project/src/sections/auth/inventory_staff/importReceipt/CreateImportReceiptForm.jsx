@@ -13,7 +13,7 @@ import {
     Typography,
 } from '@mui/material';
 import { createImportReceipt } from '~/data/mutation/importReceipt/ImportReceipt-mutation';
-import AddLocationsForm from '../item/AddLocationsForm';
+import AddLocationsForm from '../itemInventory/AddLocationsForm';
 
 const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst }) => {
     const [quantities, setQuantities] = useState({});

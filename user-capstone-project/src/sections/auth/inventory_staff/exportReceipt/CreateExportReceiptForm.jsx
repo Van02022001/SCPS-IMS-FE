@@ -12,7 +12,7 @@ import {
     Grid,
     Typography,
 } from '@mui/material';
-import AddLocationsForm from '../item/AddLocationsForm';
+import AddLocationsForm from '../itemInventory/AddLocationsForm';
 import { createExportReceipt } from '~/data/mutation/exportReceipt/ExportReceipt-mutation';
 import AddLocationToExportReceipt from './AddLocationToExportReceipt';
 

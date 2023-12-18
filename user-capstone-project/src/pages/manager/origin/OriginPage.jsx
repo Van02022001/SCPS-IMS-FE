@@ -175,7 +175,7 @@ const OriginPage = () => {
         setOpenCreateOriginForm(false);
         setOriginData((prevOriginData) => [...prevOriginData, newOrigin]);
         // Show success message
-        setSnackbarSuccessMessage(successMessage === 'Create category successfully' ? 'Tạo thể loại thành công!' : 'Thành công');
+        setSnackbarSuccessMessage(successMessage === 'Create origin successfully' ? 'Tạo thể loại thành công!' : 'Thành công');
         setSnackbarSuccessOpen(true);
     };
     //=========================Phân trang số lượng==========================
@@ -285,11 +285,11 @@ const OriginPage = () => {
                                             </React.Fragment>
                                         );
                                     })}
-                                    {/* {emptyRows > 0 && (
+                                    {emptyRows > 0 && (
                                         <TableRow style={{ height: 53 * emptyRows }}>
                                             <TableCell colSpan={6} />
                                         </TableRow>
-                                    )} */}
+                                    )}
                                 </TableBody>
 
                                 {isNotFound && (

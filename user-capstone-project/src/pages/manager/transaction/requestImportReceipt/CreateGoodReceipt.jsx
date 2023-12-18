@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import {
     Box,
@@ -21,9 +21,10 @@ import {
     Card,
     CardContent,
 } from '@mui/material';
-import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 // sections
-import { UserListHead } from '~/sections/@dashboard/user';
+import { CreateGoodReceiptListHead } from '~/sections/@dashboard/manager/transaction/createGoodReceipt';
+import { createImportRequestReceipt } from '~/data/mutation/importRequestReceipt/ImportRequestReceipt-mutation';
 // mock
 import USERLIST from '~/_mock/user';
 import Scrollbar from '~/components/scrollbar/Scrollbar';
@@ -32,23 +33,14 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditIcon from '@mui/icons-material/Edit';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-
-import { useNavigate } from 'react-router-dom';
-import CreateGoodReceiptListHead from '~/sections/@dashboard/manager/transaction/createGoodReceipt/CreateGoodReceiptToolbar';
-import { CreateGoodReceiptToolbar } from '~/sections/@dashboard/manager/transaction/createGoodReceipt';
-
-import { createImportRequestReceipt } from '~/data/mutation/importRequestReceipt/ImportRequestReceipt-mutation';
-import { useEffect } from 'react';
+//api
 import { getAllItem } from '~/data/mutation/items/item-mutation';
 import { getAllUnit } from '~/data/mutation/unit/unit-mutation';
 import { getAllWarehouse, getInventoryStaffByWarehouseId } from '~/data/mutation/warehouse/warehouse-mutation';
-import SuccessAlerts from '~/components/alert/SuccessAlert';
-import ErrorAlerts from '~/components/alert/ErrorAlert';
-import CustomDialog from '~/components/alert/ConfirmDialog';
-import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
+
 import SnackbarError from '~/components/alert/SnackbarError';
 
-function CreateGoodReceipt(props) {
+const CreateGoodReceipt = () => {
     const [order, setOrder] = useState('asc');
 
     const [orderBy, setOrderBy] = useState('name');
@@ -87,6 +79,7 @@ function CreateGoodReceipt(props) {
     const [confirmOpen2, setConfirmOpen2] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+
 
     const handleSuccessMessage = (message) => {
         setOpen(true);
@@ -180,6 +173,23 @@ function CreateGoodReceipt(props) {
         fetchInventoryStaff();
     }, [selectedWarehouse, selectedInventoryStaff]);
 
+    const handleCreateImportReceipt = async () => {
+        try {
+            // Gọi API và xử lý thành công
+            const response = await createImportRequestReceipt(recieptParams);
+            if (response.status === '201 CREATED') {
+                handleSuccessMessage(response.message);
+                // Chuyển hướng và truyền thông báo
+                navigate('/dashboard/request-import-receipt', {
+                    state: { successMessage: response.message },
+                });
+            }
+        } catch (error) {
+            console.error('Error creating product:', error);
+            handleErrorMessage(error.response?.data?.message);
+        }
+    };
+
     // const handleSearch = (selectedWarehouseId, selectedInventoryStaffId) => {
     //     setWarehouseId(selectedWarehouseId);
     //     setInventoryStaffId(selectedInventoryStaffId);
@@ -206,20 +216,7 @@ function CreateGoodReceipt(props) {
         setSelected([]);
     };
 
-    const handleCreateImportReceipt = async () => {
-        try {
-            const response = await createImportRequestReceipt(recieptParams);
-            if (response.status === '201 CREATED') {
-                // Xử lý khi tạo phiếu nhập thành công
-                handleSuccessMessage(response.message);
-                props(response.data, response.message);
-            }
-            navigate('/dashboard/request-import-receipt');
-        } catch (error) {
-            console.error('Error creating product:', error);
-            handleErrorMessage(error.response?.data?.message);
-        }
-    };
+
 
     const handleNavigate = () => {
         navigate('/dashboard/request-import-receipt');
@@ -439,7 +436,7 @@ function CreateGoodReceipt(props) {
                         <Scrollbar>
                             <TableContainer sx={{ minWidth: 800 }}>
                                 <Table>
-                                    <UserListHead
+                                    <CreateGoodReceiptListHead
                                         order={order}
                                         orderBy={orderBy}
                                         headLabel={TABLE_HEAD}
@@ -464,10 +461,10 @@ function CreateGoodReceipt(props) {
                                                     width="48"
                                                     height="48"
                                                 /> */}
-                                                <ListItemText
+                                                {/* <ListItemText
                                                     // primary={selectedItem.id}
                                                     onChange={(e) => setItemId(e.target.value)}
-                                                />
+                                                /> */}
                                                 <ListItemText sx={{ flexBasis: '44%' }}>
                                                     <Typography variant="body1">
                                                         {selectedItem.subCategory.name}
@@ -624,13 +621,13 @@ function CreateGoodReceipt(props) {
                                 onConfirm={handleConfirmUpdate1}
                                 confirmText="Xác nhận"
                             /> */}
-                            <SnackbarSuccess
+                            {/* <SnackbarSuccess
                                 open={open}
                                 handleClose={handleClose}
                                 message={successMessage}
                                 action={action}
                                 style={{ bottom: '16px', right: '16px' }}
-                            />
+                            /> */}
                             <SnackbarError
                                 open={open1}
                                 handleClose={handleClose}

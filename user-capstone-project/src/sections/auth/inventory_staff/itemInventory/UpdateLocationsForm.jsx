@@ -5,17 +5,10 @@ import {
     DialogContent,
     TextField,
     Button,
-    Select,
     Typography,
     Grid,
-    MenuItem,
-    FormControl,
-    InputLabel,
-    List,
 } from '@mui/material';
 
-import SuccessAlerts from '~/components/alert/SuccessAlert';
-import ErrorAlerts from '~/components/alert/ErrorAlert';
 import { editItemLocations } from '~/data/mutation/items/item-mutation';
 import { getAllLocation } from '~/data/mutation/location/location-mutation';
 
@@ -54,10 +47,7 @@ const UpdateLocationsForm = ({
     const [selectedLocationsMuti, setSelectedLocationsMuti] = useState([]);
     const [quantityMap, setQuantityMap] = useState({});
     // Thông báo
-    const [isSuccess, setIsSuccess] = useState(false);
-    const [isError, setIsError] = useState(false);
-    const [successMessage, setSuccessMessage] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
+
 
     const handleLocationClick = (location) => {
         const isSelected = selectedLocationsMuti.some((selected) => selected.id === location.id);
@@ -115,9 +105,6 @@ const UpdateLocationsForm = ({
             });
 
             console.log('locationsToUpdate', locationsToUpdate);
-            setIsSuccess(true);
-            setIsError(false);
-            setSuccessMessage('Update successful!');
 
             const remainingQuantity = Object.values(locationQuantities).reduce(
                 (acc, remaining) => acc + remaining,
@@ -131,9 +118,7 @@ const UpdateLocationsForm = ({
             }
         } catch (error) {
             console.error('Error updating item locations:', error);
-            setIsError(true);
-            setIsSuccess(false);
-            setErrorMessage('Error updating item locations. Please try again.');
+
         }
     };
 

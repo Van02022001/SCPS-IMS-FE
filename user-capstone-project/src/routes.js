@@ -22,7 +22,7 @@ import ForgotPassword from './pages/login/ForgotPassword';
 import WarehousePage from './pages/manager/warehouse/WarehousePage';
 import CreateRequestCustomerPage from './pages/sale/requestCustomer/CreateRequestCustomerPage';
 import CustomerRequestSalePage from './pages/sale/requestCustomer/CustomerRequestSalePage';
-import ProductInventoryPage from './pages/inventory_staff/product/ProductInventoryPage';
+import SubCategoryInventoryPage from './pages/inventory_staff/subCategory/SubCategoryInventoryPage';
 import ItemsSalePage from './pages/sale/items/ItemsSalePage';
 import CustomerSalePage from './pages/sale/customer/CustomerSalePage';
 import GoodsReceiptPage from './pages/inventory_staff/transaction/GoodsReceiptPage';
@@ -115,7 +115,7 @@ const Router = () => {
             path: '/inventory-staff',
             element: <DashboardLayout />,
             children: [
-                { path: 'product', element: <ProductInventoryPage /> },
+                { path: 'product', element: <SubCategoryInventoryPage /> },
                 { path: 'itemsInventory', element: <ItemsInventoryPage /> },
                 { path: 'locationsInventory', element: <LocationInventoryPage /> },
                 {path: 'warehousesInventory', element: <WarehouseInventoryPage />},

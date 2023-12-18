@@ -42,6 +42,7 @@ import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
 import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
 import SnackbarError from '~/components/alert/SnackbarError';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 
 const CreateSubCategoryForm = (props) => {
     const [openSubAddCategory, setOpenSubAddCategory] = React.useState(false);
@@ -75,6 +76,8 @@ const CreateSubCategoryForm = (props) => {
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [open1, setOpen1] = React.useState(false);
+    const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
+    const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
     //========================== Hàm notification của trang ==================================
     const handleMessage = (message) => {
         setOpenSubAddCategory(true);
@@ -162,7 +165,12 @@ const CreateSubCategoryForm = (props) => {
     const handleCloseAddCategoryDialog = () => {
         setOpenAddCategoryDialog(false);
     };
+    const handleSaveCategory = (successMessage) => {
+        handleCloseAddCategoryDialog();
 
+        setSnackbarSuccessMessage(successMessage === 'Create category successfully' ? 'Tạo thể loại thành công!' : 'Thành công');
+        setSnackbarSuccessOpen(true);
+    };
     // const handleOpenAddOriginForm = () => {
     //     setOpenAddOriginForm(true);
     // };
@@ -175,8 +183,14 @@ const CreateSubCategoryForm = (props) => {
         setOpenAddUnitForm(true);
     };
 
-    const handleCloseAddUnitFormm = () => {
+    const handleCloseAddUnitForm = () => {
         setOpenAddUnitForm(false);
+    };
+    const handleSaveUnit = (successMessage) => {
+        handleCloseAddUnitForm();
+
+        setSnackbarSuccessMessage(successMessage === 'Create unit successfully' ? 'Tạo thể loại thành công!' : 'Thành công');
+        setSnackbarSuccessOpen(true);
     };
     // Hàm delete của trang ---------------------------------------------------------------------
     const handleDeleteOrigin = async (id) => {
@@ -240,7 +254,7 @@ const CreateSubCategoryForm = (props) => {
         // setUnit_mea_id([]);
     };
 
-    const handleAddCategories = async () => {};
+    const handleAddCategories = async () => { };
 
     useEffect(() => {
         getAllCategoriesActive()
@@ -368,6 +382,7 @@ const CreateSubCategoryForm = (props) => {
                                                     <AddCategoryForm
                                                         open={openAddCategoryDialog}
                                                         onClose={handleCloseAddCategoryDialog}
+                                                        onSave={handleSaveCategory}
                                                     />
                                                 </Grid>
                                             </Grid>
@@ -425,7 +440,8 @@ const CreateSubCategoryForm = (props) => {
                                                     </Button>
                                                     <AddUnitForm
                                                         open={openAddUnitForm}
-                                                        onClose={handleCloseAddUnitFormm}
+                                                        onClose={handleCloseAddUnitForm}
+                                                        onSave={handleSaveUnit}
                                                     />
                                                 </Grid>
                                             </Grid>
@@ -689,6 +705,12 @@ const CreateSubCategoryForm = (props) => {
                     )}
                 </DialogContent>
             </div>
+            <SnackbarSuccess
+                open={snackbarSuccessOpen}
+                handleClose={() => setSnackbarSuccessOpen(false)}
+                message={snackbarSuccessMessage}
+                style={{ bottom: '16px', right: '16px' }}
+            />
         </>
     );
 };

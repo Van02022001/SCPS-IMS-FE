@@ -31,7 +31,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { SubCategoryListHead, SubCategoryToolbar } from '~/sections/@dashboard/manager/subCategory';
 // mock
 import PRODUCTSLIST from '../../../_mock/products';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 // api
 import ImportRequestReceiptDetailManagerForm from '~/sections/auth/manager/transaction/importRequestReceipt/ImportRequestReceiptDetailManagerForm';
 //icons
@@ -39,6 +39,7 @@ import ImportRequestReceiptDetailManagerForm from '~/sections/auth/manager/trans
 // import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import { getAllCustomerRequest } from '~/data/mutation/customerRequest/CustomerRequest-mutation';
 import CreateRequestCustomerPage from './CreateRequestCustomerPage';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 
 
 // ----------------------------------------------------------------------
@@ -108,6 +109,9 @@ const MenuProps = {
 // const filterOptions = ['Ren', 'Ron', 'Abc', 'Test1', 'Test12', 'Test123'];
 
 const CustomerRequestSalePage = () => {
+    const location = useLocation();
+    const { state } = location;
+    const successMessage = state?.successMessage;
     // State mở các form----------------------------------------------------------------
     const [open, setOpen] = useState(null);
     const [openOderForm, setOpenOderForm] = useState(false);
@@ -139,6 +143,9 @@ const CustomerRequestSalePage = () => {
 
     const [personName, setPersonName] = React.useState([]);
     const navigate = useNavigate();
+
+    const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
+    const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
 
     const handleChange = (event) => {
         setPersonName(event.target.value);
@@ -305,6 +312,23 @@ const CustomerRequestSalePage = () => {
             });
     }, []);
 
+    const mapSuccessMessageToVietnamese = (englishMessage) => {
+        switch (englishMessage) {
+            case 'Import request receipt created successfully':
+                return 'Tạo phiếu yêu cầu xuất kho thành công';
+            // Thêm các trường hợp khác nếu cần
+            default:
+                return englishMessage;
+        }
+    };
+
+    useEffect(() => {
+        if (successMessage) {
+            const vietnameseMessage = mapSuccessMessageToVietnamese(successMessage);
+            setSnackbarSuccessOpen(true);
+            setSnackbarSuccessMessage(vietnameseMessage);
+        }
+    }, [successMessage]);
     //==============================* filter *==============================
     const pendingApprovalItems = importRequestData.filter((importRequest) => importRequest.status === 'Pending_Approval');
 
@@ -399,14 +423,14 @@ const CustomerRequestSalePage = () => {
                                                 selected={selectedGoodReceiptId === importRequest.id}
                                                 onClick={() => handleSubCategoryClick(importRequest)}
                                             >
-                                                <TableCell padding="checkbox">
+                                                {/* <TableCell padding="checkbox">
                                                     <Checkbox
                                                         checked={selectedGoodReceiptId === importRequest.id}
                                                         // onChange={(event) => handleCheckboxChange(event, importRequest.id)}
                                                         // checked={selectedUser}
                                                         onChange={(event) => handleClick(event, importRequest.name)}
                                                     />
-                                                </TableCell>
+                                                </TableCell> */}
 
                                                 <TableCell component="th" scope="row" padding="none">
                                                     <Stack direction="row" alignItems="center" spacing={2}>
@@ -519,6 +543,12 @@ const CustomerRequestSalePage = () => {
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </Card>
+            <SnackbarSuccess
+                open={snackbarSuccessOpen}
+                handleClose={() => setSnackbarSuccessOpen(false)}
+                message={snackbarSuccessMessage}
+                style={{ bottom: '16px', right: '16px' }}
+            />
         </>
     );
 };

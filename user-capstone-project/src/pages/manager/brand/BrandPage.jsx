@@ -131,6 +131,7 @@ const BrandPage = () => {
         // Close the form
         setOpenOderForm(false);
         setBrandData((prevBrandData) => [...prevBrandData, newBrand]);
+
         setSnackbarSuccessMessage(successMessage === 'Create category successfully' ? 'Tạo thể loại thành công!' : 'Thành công');
         setSnackbarSuccessOpen(true);
     };

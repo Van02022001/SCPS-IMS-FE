@@ -210,17 +210,17 @@ const managerNavConfig = [
 
 // Cấu hình navbar cho vai trò INVENTORY
 const inventoryNavConfig = [
-    {
-        title: 'Hàng hóa',
-        icon: <ShoppingCart />,
-        children: [
-            {
-                title: 'Danh mục',
-                path: '/inventory-staff/product',
-                icon: <ClassOutlined />,
-            }
-        ],
-    },
+    // {
+    //     title: 'Hàng hóa',
+    //     icon: <ShoppingCart />,
+    //     children: [
+    //         {
+    //             title: 'Danh mục',
+    //             path: '/inventory-staff/product',
+    //             icon: <ClassOutlined />,
+    //         }
+    //     ],
+    // },
     {
         title: 'Quản lý kho',
         icon: <Person />,
@@ -311,16 +311,7 @@ const saleNavConfig = [
         path: '/sale-staff/request-customer',
         icon: <Payments />,
     },
-    {
-        title: 'Bán hàng',
-        path: '/sale',
-        icon: icon('ic_disabled'),
-    },
-    {
-        title: 'login',
-        path: '/login',
-        icon: icon('ic_lock'),
-    },
+
 
     // ...
 ];

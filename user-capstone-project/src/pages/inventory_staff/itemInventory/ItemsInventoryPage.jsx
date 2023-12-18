@@ -54,7 +54,7 @@ import { DateRangePicker } from '@mui/x-date-pickers-pro/DateRangePicker';
 import dayjs from 'dayjs';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
-import ItemDetaiIventoryForm from '~/sections/auth/inventory_staff/item/ItemDetaiIventoryForm';
+import ItemDetaiIventoryForm from '~/sections/auth/inventory_staff/itemInventory/ItemDetaiIventoryForm';
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -398,7 +398,7 @@ const ItemsInventoryPage = () => {
 
             <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                 <Typography variant="h4" gutterBottom>
-                    Quản lý sản phẩm
+                    Quản lý sản phẩm kho
                 </Typography>
                 {/* <Button
                     variant="contained"

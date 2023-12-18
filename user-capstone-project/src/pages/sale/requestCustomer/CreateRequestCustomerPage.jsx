@@ -236,7 +236,9 @@ const CreateRequestCustomerPage = () => {
             if (response.status === '201 CREATED') {
                 // Xử lý khi tạo phiếu nhập thành công
             }
-            navigate('/sale-staff/request-customer');
+            navigate('/sale-staff/request-customer', {
+                state: { successMessage: response.message }
+            });
         } catch (error) {
             console.error('Error creating product:', error.response);
         }

@@ -23,7 +23,7 @@ const CustomerDetailForm = ({
 
     const [expandedItem, setExpandedItem] = useState(customerId);
     const [formHeight, setFormHeight] = useState(0);
-    const [currentTab, setCurrentTab] = useState(0);
+    const [selectedTab, setSelectedTab] = useState(0);
 
     // const [categories_id, setCategories_id] = useState([]);
     // const [unit_id, setUnits_id] = useState([]);
@@ -50,9 +50,7 @@ const CustomerDetailForm = ({
         // Cập nhật dữ liệu cho tab 2 tại đây
         setTab2Data({ ...tab2Data, [event.target.name]: event.target.value });
     };
-    const handleChangeTab = (event, newValue) => {
-        setCurrentTab(newValue);
-    };
+
     useEffect(() => {
         if (isOpen) {
             setFormHeight(1000);
@@ -74,7 +72,7 @@ const CustomerDetailForm = ({
                 description: '',
             });
         } else {
-            const customers = customer.find((o) => o.id === customerId);
+            const customers = customer.find((o) => o.customerId === customerId);
             console.log(customers);
             if (customers) {
 
@@ -181,11 +179,9 @@ const CustomerDetailForm = ({
         }
     };
 
-    const handleDelete = () => {
-        // Xử lý xóa
-    };
 
-    return editedCustomer ? (
+
+    return (
         <div
             id="customerDetailForm"
             className="CustomerDetailForm"
@@ -194,14 +190,12 @@ const CustomerDetailForm = ({
                 zIndex: 999,
             }}
         >
-            <Tabs value={currentTab} onChange={handleChangeTab} indicatorColor="primary" textColor="primary">
+            <Tabs value={selectedTab} onChange={(event, newValue) => setSelectedTab(newValue)} indicatorColor="primary" textColor="primary">
                 <Tab label="Thông tin" />
-                <Tab label="Thẻ kho" />
-                <Tab label="Tồn kho" />
             </Tabs>
 
-            {currentTab === 0 && (
-                <div>
+            {selectedTab === 0 && (
+                <div style={{ marginLeft: 50 }}>
                     <Stack spacing={4} margin={2}>
                         <Grid container spacing={2}>
                             <Grid item xs={6}>
@@ -217,9 +211,9 @@ const CustomerDetailForm = ({
                                     <TextField
                                         size="small"
                                         variant="outlined"
-                                        label="Mã hàng"
-                                        sx={{ width: '60%' }}
-                                        value={customers ? customers.code : ''}
+                                        label="Mã khách hàng"
+                                        sx={{ width: '65%', marginRight: 5 }}
+                                        value={editedCustomer ? editedCustomer.code : ''}
                                     />
                                 </Grid>
                                 <Grid
@@ -235,13 +229,11 @@ const CustomerDetailForm = ({
                                         size="small"
                                         variant="outlined"
                                         label="Tên sản phẩm"
-                                        sx={{ width: '60%' }}
+                                        sx={{ width: '65%', marginRight: 5 }}
                                         value={editedCustomer ? editedCustomer.name : ''}
                                         onChange={(e) => handleEdit('name', e.target.value)}
                                     />
                                 </Grid>
-
-
                                 <Grid
                                     container
                                     spacing={1}
@@ -256,7 +248,7 @@ const CustomerDetailForm = ({
                                         size="small"
                                         variant="outlined"
                                         label="Số điện thoại"
-                                        sx={{ width: '60%', cursor: 'none' }}
+                                        sx={{ width: '65%', marginRight: 5 }}
                                         value={editedCustomer ? editedCustomer.phone : ''}
                                     />
                                 </Grid>
@@ -274,139 +266,89 @@ const CustomerDetailForm = ({
                                         size="small"
                                         variant="outlined"
                                         label="Email"
-                                        sx={{ width: '60%' }}
-                                        value={editedCustomer.email}
+                                        sx={{ width: '65%', marginRight: 5 }}
+                                        value={editedCustomer ? editedCustomer.email : ''}
                                     />
                                 </Grid>
                             </Grid>
 
                             {/* 5 field bên phải*/}
                             <Grid item xs={6}>
-                                <div style={{ marginLeft: 30 }}>
-                                    <Grid
-                                        container
-                                        spacing={1}
-                                        direction="row"
-                                        justifyContent="space-between"
-                                        alignItems="center"
-                                        sx={{ marginBottom: 4, gap: 5 }}
-                                    >
-                                        <Typography variant="body1">Trạng thái:</Typography>
-                                        <TextField
-                                            size="small"
-                                            variant="outlined"
-                                            label="Trạng thái"
-                                            sx={{ width: '60%' }}
-                                            value={currentStatus === 'Active' ? 'Đang hoạt động' : 'Ngưng hoạt động'}
-                                        />
-                                    </Grid>
+                                <Grid
+                                    container
+                                    spacing={1}
+                                    direction="row"
+                                    justifyContent="space-between"
+                                    alignItems="center"
+                                    sx={{ marginBottom: 4, gap: 5 }}
+                                >
+                                    <Typography variant="body1">Trạng thái:</Typography>
+                                    <TextField
+                                        size="small"
+                                        variant="outlined"
+                                        label="Trạng thái"
+                                        sx={{ width: '70%', marginRight: 5 }}
+                                        value={currentStatus === 'Active' ? 'Đang hoạt động' : 'Ngưng hoạt động'}
+                                    />
+                                </Grid>
 
-                                    <Grid
-                                        container
-                                        spacing={1}
-                                        direction="row"
-                                        justifyContent="space-between"
-                                        alignItems="center"
-                                        sx={{ marginBottom: 4, gap: 5 }}
-                                    >
-                                        <Typography variant="body1">Mã thuế:</Typography>
-                                        <TextField
-                                            size="small"
-                                            variant="outlined"
-                                            label="Mã thuế"
-                                            sx={{ width: '60%' }}
-                                            value={editedCustomer.taxCode}
-                                        />
-                                    </Grid>
+                                <Grid
+                                    container
+                                    spacing={1}
+                                    direction="row"
+                                    justifyContent="space-between"
+                                    alignItems="center"
+                                    sx={{ marginBottom: 4, gap: 5 }}
+                                >
+                                    <Typography variant="body1">Mã thuế:</Typography>
+                                    <TextField
+                                        size="small"
+                                        variant="outlined"
+                                        label="Mã thuế"
+                                        sx={{ width: '70%', marginRight: 5 }}
+                                        value={editedCustomer ? editedCustomer.taxCode : ''}
+                                    />
+                                </Grid>
 
-                                    <Grid
-                                        container
-                                        spacing={1}
-                                        direction="row"
-                                        justifyContent="space-between"
-                                        alignItems="center"
-                                        sx={{ marginBottom: 4, gap: 5 }}
-                                    >
-                                        <Typography variant="body1">Vị trí khách hàng:</Typography>
-                                        <TextField
-                                            size="small"
-                                            variant="outlined"
-                                            label="Vị trí khách hàng"
-                                            sx={{ width: '60%' }}
-                                            value={editedCustomer.type}
-                                        />
-                                    </Grid>
+                                <Grid
+                                    container
+                                    spacing={1}
+                                    direction="row"
+                                    justifyContent="space-between"
+                                    alignItems="center"
+                                    sx={{ marginBottom: 4, gap: 5 }}
+                                >
+                                    <Typography variant="body1">Vị trí khách hàng:</Typography>
+                                    <TextField
+                                        size="small"
+                                        variant="outlined"
+                                        label="Vị trí khách hàng"
+                                        sx={{ width: '70%', marginRight: 5 }}
+                                        value={editedCustomer ? editedCustomer.type : ''}
+                                    />
+                                </Grid>
 
-                                    <Grid
-                                        container
-                                        spacing={1}
-                                        direction="row"
-                                        justifyContent="space-between"
-                                        alignItems="center"
-                                        sx={{ marginBottom: 4, gap: 5 }}
-                                    >
-                                        <Typography variant="body1">Mô tả:</Typography>
-                                        <TextField
-                                            id="outlined-multiline-static"
-                                            multiline
-                                            rows={4}
-                                            size="small"
-                                            variant="outlined"
-                                            label="Mô tả"
-                                            sx={{ width: '60%' }}
-                                            value={editedCustomer ? editedCustomer.description : ''}
-                                            onChange={(e) => handleEdit('description', e.target.value)}
-                                        />
-                                    </Grid>
-
-
-                                    {/* <Grid
-                                        container
-                                        spacing={1}
-                                        direction="row"
-                                        justifyContent="space-between"
-                                        alignItems="center"
-                                        sx={{ marginBottom: 4, gap: 2 }}
-                                    >
-                                        <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
-                                            Kích thước:{' '}
-                                        </Typography>
-                                        <div style={{ display: 'flex' }}>
-                                            <FormControl sx={{ m: 0.2 }} variant="standard">
-                                                <TextField
-                                                    id="demo-customized-textbox"
-                                                    label="Chiều dài"
-                                                    value={editedCustomer ? editedCustomer.size.length : 0}
-                                                    onChange={(e) => handleEdit('length', e.target.value)}
-                                                />
-                                            </FormControl>
-                                            <FormControl sx={{ m: 0.2 }} variant="standard">
-                                                <TextField
-                                                    id="demo-customized-textbox"
-                                                    label="Chiều rộng"
-                                                    value={editedCustomer ? editedCustomer.size.width : 0}
-                                                    onChange={(e) => handleEdit('width', e.target.value)}
-                                                />
-                                            </FormControl>
-                                            <FormControl sx={{ m: 0.2 }} variant="standard">
-                                                <TextField
-                                                    id="demo-customized-textbox"
-                                                    label="Chiều cao"
-                                                    value={editedCustomer ? editedCustomer.size.height : 0}
-                                                    onChange={(e) => handleEdit('height', e.target.value)}
-                                                />
-                                            </FormControl>
-                                            <FormControl sx={{ m: 0.2 }} variant="standard">
-                                                <TextField
-                                                    id="demo-customized-textbox"
-                                                    label="Đường kính"
-                                                    value={editedCustomer ? editedCustomer.size.diameter : 0}
-                                                    onChange={(e) => handleEdit('diameter', e.target.value)}
-                                                />
-                                            </FormControl>
-                                        </div>
-                                    </Grid> */}
-                                </div>
+                                <Grid
+                                    container
+                                    spacing={1}
+                                    direction="row"
+                                    justifyContent="space-between"
+                                    alignItems="center"
+                                    sx={{ marginBottom: 4, gap: 5 }}
+                                >
+                                    <Typography variant="body1">Mô tả:</Typography>
+                                    <TextField
+                                        id="outlined-multiline-static"
+                                        multiline
+                                        rows={4}
+                                        size="small"
+                                        variant="outlined"
+                                        label="Mô tả"
+                                        sx={{ width: '70%', marginRight: 5 }}
+                                        value={editedCustomer ? editedCustomer.description : ''}
+                                        onChange={(e) => handleEdit('description', e.target.value)}
+                                    />
+                                </Grid>
                             </Grid>
                         </Grid>
                     </Stack>
@@ -420,9 +362,6 @@ const CustomerDetailForm = ({
                             <Button variant="contained" color="error" onClick={updateProductStatus}>
                                 Thay đổi trạng thái
                             </Button>
-                            {/* <Button variant="contained" color="error" onClick={handleDelete}>
-                                Xóa
-                            </Button> */}
                             <Button variant="outlined" color="error" onClick={handleClear}>
                                 Hủy bỏ
                             </Button>
@@ -431,11 +370,7 @@ const CustomerDetailForm = ({
                 </div>
             )}
 
-            {currentTab === 1 && (
-                <div style={{ flex: 1 }}>{/* Hiển thị nội dung cho tab "Lịch sử thanh toán" ở đây */}</div>
-            )}
         </div>
-    ) : null;
+    );
 };
-
 export default CustomerDetailForm;

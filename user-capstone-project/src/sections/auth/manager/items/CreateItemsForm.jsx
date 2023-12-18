@@ -35,6 +35,7 @@ import { getAllSuppliers } from '~/data/mutation/supplier/suppliers-mutation';
 import AddBrandItemForm from './AddBrandItemForm';
 import AddOriginItemForm from './AddOriginItemForm';
 import AddSupplierFrom from './AddSupplierFrom';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 
 
 const CreateItemsForm = (props) => {
@@ -63,6 +64,9 @@ const CreateItemsForm = (props) => {
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
+    const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
+    const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
+
     const handleTab1DataChange = (event) => {
         // Cập nhật dữ liệu cho tab 1 tại đây
         setTab1Data({ ...tab1Data, [event.target.name]: event.target.value });
@@ -85,26 +89,43 @@ const CreateItemsForm = (props) => {
     const handleCloseAddBrandForm = () => {
         setOpenAddBrandForm(false);
     };
+
     const handleOpenAddOriginForm = () => {
         setOpenAddOriginForm(true);
     };
+
     const handleCloseAddOriginForm = () => {
         setOpenAddOriginForm(false);
     };
+
     const handleOpenAddSuplierForm = () => {
         setOpenAddSuplierForm(true);
     };
+
     const handleCloseAddSuplierForm = () => {
         setOpenAddSuplierForm(false);
     };
-    const handleSaveBrand = () => {
+
+    const handleSaveBrand = (successMessage) => {
         handleCloseAddBrandForm();
+
+        console.log(successMessage);
+        setSnackbarSuccessMessage(successMessage === 'Create brand successfully' ? 'Tạo thể loại thành công!' : 'Thành công');
+        setSnackbarSuccessOpen(true);
     };
-    const handleSaveOrigin = () => {
+
+    const handleSaveOrigin = (successMessage) => {
         handleCloseAddOriginForm();
+
+        setSnackbarSuccessMessage(successMessage === 'Create origin successfully' ? 'Tạo thể loại thành công!' : 'Thành công');
+        setSnackbarSuccessOpen(true);
     };
-    const handleSaveSupplier = () => {
+
+    const handleSaveSupplier = (successMessage) => {
         handleCloseAddSuplierForm();
+
+        setSnackbarSuccessMessage(successMessage === 'Create supplier successfully' ? 'Tạo thể loại thành công!' : 'Thành công');
+        setSnackbarSuccessOpen(true);
     };
     //================================================================================================================
 
@@ -459,6 +480,12 @@ const CreateItemsForm = (props) => {
                     )}
                 </DialogContent>
             </div>
+            <SnackbarSuccess
+                open={snackbarSuccessOpen}
+                handleClose={() => setSnackbarSuccessOpen(false)}
+                message={snackbarSuccessMessage}
+                style={{ bottom: '16px', right: '16px' }}
+            />
         </>
     );
 };

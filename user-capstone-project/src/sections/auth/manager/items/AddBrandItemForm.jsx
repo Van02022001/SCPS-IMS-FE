@@ -79,10 +79,10 @@ const AddBrandItemForm = ({ open, onClose, onSave }) => {
         try {
             const response = await createBrands(originParams);
             console.log(response);
-
-            onSave && onSave();
+            onSave && onSave(response.message);
             // Đóng form
             onClose && onClose();
+
         } catch (error) {
             console.error("can't feaching category", error);
             const errorMessage = error.response?.data?.data?.[0] || error.response?.data?.message;

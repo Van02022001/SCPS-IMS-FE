@@ -282,7 +282,7 @@ const ItemsManagerPage = () => {
         setOpenOderForm(false);
         setItemData((prevItemsData) => [newItems, ...prevItemsData]);
         // Show success message
-        setSnackbarSuccessMessage(successMessage === 'Create category successfully' ? 'Tạo thể loại thành công!' : 'Thành công');
+        setSnackbarSuccessMessage(successMessage === 'Create item successfully' ? 'Tạo thể loại thành công!' : 'Thành công');
         setSnackbarSuccessOpen(true);
     };
     //===========================================================================================

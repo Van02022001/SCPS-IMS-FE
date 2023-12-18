@@ -81,7 +81,7 @@ const AddCategoryForm = ({ open, onClose, onSave }) => {
         try {
             const response = await createCategories(categoriesParams);
             if (response.status === '200 OK') {
-                onSave && onSave();
+                onSave && onSave(response.message);
                 // Đóng form
                 onClose && onClose();
             }

@@ -81,7 +81,7 @@ const AddUnitForm = ({ open, onClose, onSave }) => {
 
             if (response.status === '200 OK') {
                 setUnitName('');
-                onSave && onSave();
+                onSave && onSave(response.message);
                 // Đóng form
                 onClose && onClose();
             }

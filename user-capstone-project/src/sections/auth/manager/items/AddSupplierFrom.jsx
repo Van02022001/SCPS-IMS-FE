@@ -47,9 +47,9 @@ const AddSupplierFrom = ({ open, onClose, onSave }) => {
             setErrorMessage('Vui lòng nhập tên !');
         } else if (message === 'email: Invalid email format.') {
             setErrorMessage('Email không đúng định dạng !');
-        }else if (message === 'email: Email cannot be null') {
+        } else if (message === 'email: Email cannot be null') {
             setErrorMessage('Vui lòng nhập Email !');
-        }  else if (message === 'address: Address cannot be null') {
+        } else if (message === 'address: Address cannot be null') {
             setErrorMessage('Vui lòng nhập Địa chỉ !');
         } else if (message === 'name: size must be between 1 and 100') {
             setErrorMessage('Tên chỉ phải từ 1 - 100 ký tự !');
@@ -57,9 +57,9 @@ const AddSupplierFrom = ({ open, onClose, onSave }) => {
             setErrorMessage('Số điện thoại đã được sử dụng !');
         } else if (message === 'Email already in use!') {
             setErrorMessage('Email đã được sử dụng !');
-        }  else if (message === 'Tax code already in use!') {
+        } else if (message === 'Tax code already in use!') {
             setErrorMessage('Mã số thuế đã được sử dụng !');
-        } 
+        }
     };
 
     const handleClose = (event, reason) => {
@@ -97,10 +97,10 @@ const AddSupplierFrom = ({ open, onClose, onSave }) => {
         };
         try {
             const response = await createSuppliers(supplierParams);
-            console.log(response);
-            onSave && onSave();
+            onSave && onSave(response.message);
             // Đóng form
             onClose && onClose();
+
         } catch (error) {
             console.error("can't feaching category", error);
             const errorMessage = error.response?.data?.data?.[0] || error.response?.data?.message;
@@ -161,12 +161,12 @@ const AddSupplierFrom = ({ open, onClose, onSave }) => {
                         Tạo thêm
                     </Button>
                     <SnackbarError
-                    open={open1}
-                    handleClose={handleCloseSnackbar}
-                    message={errorMessage}
-                    action={action}
-                    style={{ bottom: '16px', right: '16px' }}
-                />
+                        open={open1}
+                        handleClose={handleCloseSnackbar}
+                        message={errorMessage}
+                        action={action}
+                        style={{ bottom: '16px', right: '16px' }}
+                    />
                 </div>
             </DialogContent>
         </Dialog>

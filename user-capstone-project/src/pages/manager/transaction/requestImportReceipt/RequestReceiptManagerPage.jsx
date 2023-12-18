@@ -1,6 +1,5 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
-
 import React, { useEffect, useState } from 'react';
 // @mui
 import {
@@ -31,7 +30,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { SubCategoryListHead, SubCategoryToolbar } from '~/sections/@dashboard/manager/subCategory';
 // mock
 import PRODUCTSLIST from '../../../../_mock/products';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 // api
 import ImportRequestReceiptDetailManagerForm from '~/sections/auth/manager/transaction/importRequestReceipt/ImportRequestReceiptDetailManagerForm';
 //icons
@@ -40,6 +39,7 @@ import ImportRequestReceiptDetailManagerForm from '~/sections/auth/manager/trans
 import CreateGoodReceipt from './CreateGoodReceipt';
 import { getAllImportRequest } from '~/data/mutation/importRequestReceipt/ImportRequestReceipt-mutation';
 import dayjs from 'dayjs';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 
 
 // ----------------------------------------------------------------------
@@ -106,9 +106,12 @@ const MenuProps = {
     },
 };
 
-// const filterOptions = ['Ren', 'Ron', 'Abc', 'Test1', 'Test12', 'Test123'];
 
 const RequestReceiptManagerPage = () => {
+    const location = useLocation();
+    const { state } = location;
+    const successMessage = state?.successMessage;
+
     // State mở các form----------------------------------------------------------------
     const [open, setOpen] = useState(null);
     const [openOderForm, setOpenOderForm] = useState(false);
@@ -145,6 +148,7 @@ const RequestReceiptManagerPage = () => {
 
     const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
     const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
+    console.log(successMessage, 'aaaaaaa');
 
     const handleChange = (event) => {
         setPersonName(event.target.value);
@@ -176,13 +180,10 @@ const RequestReceiptManagerPage = () => {
         }
     };
 
-    const handleCreateGoodReceiptSuccess = (newGoodReceipt, successMessage) => {
-        setOpenOderForm(false);
-        setImportRequestData((prevGoodReceiptData) => [...prevGoodReceiptData, newGoodReceipt]);
-
-        setSnackbarSuccessMessage(successMessage === 'Create import request successfully' ? 'Tạo thể loại thành công!' : 'Thành công');
-        setSnackbarSuccessOpen(true);
-    };
+    // const handleCreateGoodReceiptSuccess = ({ newGoodReceipt, successMessage }) => {
+    //     setOpenOderForm(false);
+    //     setImportRequestData((prevGoodReceiptData) => [...prevGoodReceiptData, newGoodReceipt]);
+    // };
 
     const handleDataSearch = (searchResult) => {
         // Cập nhật state của trang chính với dữ liệu từ tìm kiếm
@@ -192,29 +193,21 @@ const RequestReceiptManagerPage = () => {
     };
 
     //===========================================================================================
-    // const handleOpenMenu = (event, subCategory) => {
-    //     setSelectedProduct(subCategory);
-    //     setOpen(event.currentTarget);
+
+    // const handleClick = (event, name) => {
+    //     const selectedIndex = selected.indexOf(name);
+    //     let newSelected = [];
+    //     if (selectedIndex === -1) {
+    //         newSelected = newSelected.concat(selected, name);
+    //     } else if (selectedIndex === 0) {
+    //         newSelected = newSelected.concat(selected.slice(1));
+    //     } else if (selectedIndex === selected.length - 1) {
+    //         newSelected = newSelected.concat(selected.slice(0, -1));
+    //     } else if (selectedIndex > 0) {
+    //         newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
+    //     }
+    //     setSelected(newSelected);
     // };
-
-    const handleCloseMenu = () => {
-        setOpen(null);
-    };
-
-    const handleClick = (event, name) => {
-        const selectedIndex = selected.indexOf(name);
-        let newSelected = [];
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, name);
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-        }
-        setSelected(newSelected);
-    };
 
     const handleSubCategoryClick = (subCategory) => {
         if (selectedGoodReceiptId === subCategory.id) {
@@ -247,15 +240,6 @@ const RequestReceiptManagerPage = () => {
         setSelected([]);
     };
 
-    // const handleCheckboxChange = (event, subCategoryId) => {
-    //     if (event.target.checked) {
-    //         // Nếu người dùng chọn checkbox, thêm sản phẩm vào danh sách đã chọn.
-    //         setSelectedGoodReceiptId([...selectedGoodReceiptId, subCategoryId]);
-    //     } else {
-    //         // Nếu người dùng bỏ chọn checkbox, loại bỏ sản phẩm khỏi danh sách đã chọn.
-    //         setSelectedGoodReceiptId(selectedGoodReceiptId.filter((id) => id !== subCategoryId));
-    //     }
-    // };
     const handleRequestSort = (property) => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
@@ -288,25 +272,18 @@ const RequestReceiptManagerPage = () => {
         setOpenOderForm(false);
     };
 
-    // const handleCloseEditsForm = () => {
-    //     setOpenEditForm(false);
-    // };
-
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - PRODUCTSLIST.length) : 0;
 
     const filteredUsers = applySortFilter(PRODUCTSLIST, getComparator(order, orderBy), filterName);
 
     const isNotFound = !filteredUsers.length && !!filterName;
-
     useEffect(() => {
         getAllImportRequest()
-            .then((respone) => {
-                const data = respone.data;
+            .then((response) => {
+                const data = response.data;
                 if (Array.isArray(data)) {
                     const sortedData = data.sort((a, b) => {
-                        return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(
-                            dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
-                        );
+                        return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'));
                     });
                     setImportRequestData(sortedData);
                 } else {
@@ -314,9 +291,26 @@ const RequestReceiptManagerPage = () => {
                 }
             })
             .catch((error) => {
-                console.error('Error fetching users:', error);
+                console.error('Error fetching import requests:', error);
             });
     }, []);
+    const mapSuccessMessageToVietnamese = (englishMessage) => {
+        switch (englishMessage) {
+            case 'Import request receipt created successfully':
+                return 'Tạo phiếu yêu cầu nhập kho thành công';
+            // Thêm các trường hợp khác nếu cần
+            default:
+                return englishMessage;
+        }
+    };
+
+    useEffect(() => {
+        if (successMessage) {
+            const vietnameseMessage = mapSuccessMessageToVietnamese(successMessage);
+            setSnackbarSuccessOpen(true);
+            setSnackbarSuccessMessage(vietnameseMessage);
+        }
+    }, [successMessage]);
 
     //==============================* filter *==============================
     const pendingApprovalItems = importRequestData.filter((importRequest) => importRequest.status === 'Pending_Approval');
@@ -351,7 +345,7 @@ const RequestReceiptManagerPage = () => {
                             <CloseIcon color="primary" />
                         </IconButton>{' '}
                     </DialogTitle>
-                    <CreateGoodReceipt onClose={handleCreateGoodReceiptSuccess} open={openOderForm} />
+                    <CreateGoodReceipt />
                 </Dialog>
             </Stack>
 
@@ -535,6 +529,12 @@ const RequestReceiptManagerPage = () => {
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </Card>
+            <SnackbarSuccess
+                open={snackbarSuccessOpen}
+                handleClose={() => setSnackbarSuccessOpen(false)}
+                message={snackbarSuccessMessage}
+                style={{ bottom: '16px', right: '16px' }}
+            />
         </>
     );
 };

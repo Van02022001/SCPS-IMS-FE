@@ -58,7 +58,7 @@ const AddOriginForm = ({ open, onClose, onSave }) => {
       const response = await createOrigins(originParams);
       console.log(response);
       handleMessage(response.message)
-      onSave && onSave();
+      onSave && onSave(response.message);
       // Đóng form
       onClose && onClose();
     } catch (error) {

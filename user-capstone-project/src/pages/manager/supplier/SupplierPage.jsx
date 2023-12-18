@@ -206,7 +206,7 @@ const SupplierPage = () => {
         setOpenOderForm(false);
         setSupplierData((prevSupplierData) => [...prevSupplierData, newSupplier]);
 
-        setSnackbarSuccessMessage(successMessage === 'Create category successfully' ? 'Tạo thể loại thành công!' : 'Thành công');
+        setSnackbarSuccessMessage(successMessage === 'Create supplier successfully' ? 'Tạo thể loại thành công!' : 'Thành công');
         setSnackbarSuccessOpen(true);
     };
     //==========================================================================================================

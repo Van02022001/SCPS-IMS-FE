@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
-import { sentenceCase } from 'change-case';
+
 import React, { useEffect, useState } from 'react';
 // @mui
 import {
@@ -9,20 +9,13 @@ import {
     Stack,
     Paper,
     Avatar,
-    Button,
-    Popover,
     Checkbox,
     TableRow,
-    MenuItem,
     TableBody,
     TableCell,
-    Container,
     Typography,
-    IconButton,
     TableContainer,
     TablePagination,
-    Dialog,
-    DialogTitle,
 } from '@mui/material';
 // components
 import Label from '~/components/label/Label';
@@ -31,14 +24,20 @@ import Scrollbar from '~/components/scrollbar/Scrollbar';
 import CloseIcon from '@mui/icons-material/Close';
 
 // sections
-import { ProductsListHead, ProductsListToolbar } from '~/sections/@dashboard/products';
-import CreateCustomerForm from '~/sections/auth/sale/manageCustomer/CreateCustomerForm';
-import CustomerDetailForm from '~/sections/auth/sale/manageCustomer/CustomerDetailForm';
+import { SubCategoryInventoryListHead, SubCategoryInventoryToolbar } from '~/sections/@dashboard/inventoryStaff/subCategory';
 // mock
 import PRODUCTSLIST from '../../../_mock/products';
+import SubCategoryInventoryDetailForm from '~/sections/auth/inventory_staff/subcategoryInventory/SubCategoryInventoryDetailForm';
 // api
-import EditCategoryForm from '~/sections/auth/manager/categories/EditCategoryForm';
-import { getAllCustomer } from '~/data/mutation/customer/customer-mutation';
+import { getAllSubCategory } from '~/data/mutation/subCategory/subCategory-mutation';
+import { getAllCategories } from '~/data/mutation/categories/categories-mutation';
+// filter
+import dayjs from 'dayjs';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+
+
+
 
 
 
@@ -46,15 +45,10 @@ import { getAllCustomer } from '~/data/mutation/customer/customer-mutation';
 
 const TABLE_HEAD = [
     { id: 'image', label: '', alignRight: false },
-    { id: 'id', label: 'Mã khách hàng', alignRight: false },
-    { id: 'name', label: 'Tên khách hàng', alignRight: false },
-    { id: 'phone', label: 'Số điện thoại', alignRight: false },
-    { id: 'email', label: 'Email', alignRight: false },
-    { id: 'taxCode', label: 'Mã thuế', alignRight: false },
-    { id: 'address', label: 'Địa chỉ', alignRight: false },
-    { id: 'type', label: 'Vị trí', alignRight: false },
-    // { id: 'isVerified', label: 'Phân loại', alignRight: false },
+    { id: 'name', label: 'Tên sản phẩm', alignRight: false },
     { id: 'description', label: 'Mô tả', alignRight: false },
+    { id: 'createdAt', label: 'Ngày tạo', alignRight: false },
+    { id: 'categories', label: 'Nhóm hàng', alignRight: false },
     { id: 'status', label: 'Trạng thái', alignRight: false },
     { id: '' },
 ];
@@ -99,14 +93,14 @@ function formatDate(dateString) {
     return `${day}/${month}/${year}`;
 }
 
-const CustomerSalePage = () => {
+const SubCategoryInventoryPage = () => {
     // State mở các form----------------------------------------------------------------
     const [open, setOpen] = useState(null);
     const [openOderForm, setOpenOderForm] = useState(false);
     const [openEditForm, setOpenEditForm] = useState(false);
 
     const [selected, setSelected] = useState([]);
-    const [selectedCustomerId, setSelectedCustomerId] = useState([]);
+    const [selectedProductId, setSelectedProductId] = useState([]);
 
     // State cho phần soft theo name-------------------------------------------------------
     const [filterName, setFilterName] = useState('');
@@ -117,40 +111,50 @@ const CustomerSalePage = () => {
     const [sortedProduct, setSortedProduct] = useState([]);
 
     const [rowsPerPage, setRowsPerPage] = useState(5);
+    //--------------------Filter------------------------
+    const [selectedCategories, setSelectedCategories] = React.useState([]);
+    const [categoryData, setCategoryData] = useState([]);
+    const filterCategories = categoryData.map((category) => category.name);
 
     // State data và xử lý data
-    const [customerData, setCustomerData] = useState([]);
+    const [subCategoryData, setSubCategoryData] = useState([]);
     const [productStatus, setProductStatus] = useState('');
 
     const [selectedProduct, setSelectedProduct] = useState(null);
+    const [displayedSubCategoryData, setDisplayedSubCategoryData] = useState([]);
+    // fiter createdAt //
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
+    const startIndex = page * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
 
     // Hàm để thay đổi data mỗi khi Edit xong api-------------------------------------------------------------
-    const updateProductInList = (updatedProduct) => {
-        const productIndex = customerData.findIndex((product) => product.id === updatedProduct.id);
+    const updateSubCategoryInList = (updatedSubCategory) => {
+        const subCategoryIndex = subCategoryData.findIndex((subCategory) => subCategory.id === updatedSubCategory.id);
 
-        if (productIndex !== -1) {
-            const updatedProductData = [...customerData];
-            updatedProductData[productIndex] = updatedProduct;
+        if (subCategoryIndex !== -1) {
+            const updatedSubCategoryData = [...subCategoryData];
+            updatedSubCategoryData[subCategoryIndex] = updatedSubCategory;
 
-            setCustomerData(updatedProductData);
+            setSubCategoryData(updatedSubCategoryData);
         }
     };
 
-    const updateProductStatusInList = (productId, newStatus) => {
-        const productIndex = customerData.findIndex((product) => product.id === productId);
+    const updateSubCategoryStatusInList = (subCategoryId, newStatus) => {
+        const subCategoryIndex = subCategoryData.findIndex((subCategory) => subCategory.id === subCategoryId);
 
-        if (productIndex !== -1) {
-            const updatedProductData = [...customerData];
-            updatedProductData[productIndex].status = newStatus;
+        if (subCategoryIndex !== -1) {
+            const updatedSubCategoryData = [...subCategoryData];
+            updatedSubCategoryData[subCategoryIndex].status = newStatus;
 
-            setCustomerData(updatedProductData);
+            setSubCategoryData(updatedSubCategoryData);
         }
     };
 
-    const handleCreateCustomerSuccess = (newProduct) => {
+    const handleCreateProductSuccess = (newProduct) => {
         // Close the form
         setOpenOderForm(false);
-        setCustomerData((prevProductData) => [...prevProductData, newProduct]);
+        setSubCategoryData((prevProductData) => [...prevProductData, newProduct]);
     };
 
     //----------------------------------------------------------------
@@ -166,7 +170,7 @@ const CustomerSalePage = () => {
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelecteds = customerData.map((n) => n.name);
+            const newSelecteds = subCategoryData.map((n) => n.name);
             setSelected(newSelecteds);
             return;
         }
@@ -188,17 +192,16 @@ const CustomerSalePage = () => {
         setSelected(newSelected);
     };
 
-    const handleCustomerClick = (customer) => {
-        console.log(customer);
-        if (selectedCustomerId === customer.customerId) {
-            setSelectedCustomerId(null);
+    const handleProductClick = (product) => {
+        if (selectedProductId === product.id) {
+            setSelectedProductId(null); // Đóng nếu đã mở
         } else {
-            setSelectedCustomerId(customer.customerId);
+            setSelectedProductId(product.id); // Mở hoặc chuyển sang sản phẩm khác
         }
     };
 
-    const handleCloseCustomerDetails = () => {
-        setSelectedCustomerId(null);
+    const handleCloseProductDetails = () => {
+        setSelectedProductId(null);
     };
 
 
@@ -211,13 +214,13 @@ const CustomerSalePage = () => {
         setRowsPerPage(parseInt(event.target.value, 10));
     };
     // Các hàm xử lý soft theo name--------------------------------------------------------------------------------------------------------------------------------
-    const handleCheckboxChange = (event, customerId) => {
+    const handleCheckboxChange = (event, productId) => {
         if (event.target.checked) {
             // Nếu người dùng chọn checkbox, thêm sản phẩm vào danh sách đã chọn.
-            setSelectedCustomerId([...selectedCustomerId, customerId]);
+            setSelectedProductId([...selectedProductId, productId]);
         } else {
             // Nếu người dùng bỏ chọn checkbox, loại bỏ sản phẩm khỏi danh sách đã chọn.
-            setSelectedCustomerId(selectedCustomerId.filter((id) => id !== customerId));
+            setSelectedProductId(selectedProductId.filter((id) => id !== productId));
         }
     };
     const handleRequestSort = (property) => {
@@ -225,7 +228,7 @@ const CustomerSalePage = () => {
         setOrder(isAsc ? 'desc' : 'asc');
         setOrderBy(property);
         // Sắp xếp danh sách sản phẩm dựa trên trường và hướng đã chọn
-        const sortedProduct = [...customerData].sort((a, b) => {
+        const sortedProduct = [...subCategoryData].sort((a, b) => {
             const valueA = a[property];
             const valueB = b[property];
             if (valueA < valueB) {
@@ -247,16 +250,29 @@ const CustomerSalePage = () => {
         const filteredUsers = applySortFilter(sortedProduct, getComparator(order, sortBy), query);
         setSortedProduct(filteredUsers)
     };
+    const handleDataSearch = (searchResult) => {
+        setSubCategoryData(searchResult);
+        setDisplayedSubCategoryData(searchResult)
+    };
+    //==============================* filter *==============================
+    const applyFilters = (sub_category) => {
+        const isCategoriesMatch =
+            !selectedCategories ||
+            selectedCategories.length === 0 ||
+            (Array.isArray(sub_category.categories) &&
+                sub_category.categories.some((categories) => selectedCategories.includes(categories.name))) ||
+            (!Array.isArray(sub_category.categories) && selectedCategories.includes(sub_category.categories.name));
 
-    const handleCloseOdersForm = () => {
-        setOpenOderForm(false);
+        const isDateInRange =
+            (!startDate ||
+                dayjs(sub_category.createdAt, 'DD/MM/YYYY HH:mm:ss').isSameOrAfter(dayjs(startDate), 'day')) &&
+            (!endDate || dayjs(sub_category.createdAt, 'DD/MM/YYYY HH:mm:ss').isSameOrBefore(dayjs(endDate), 'day'));
+
+        return isCategoriesMatch && isDateInRange;
     };
 
-    const handleCloseEditsForm = () => {
-        setOpenEditForm(false);
-    };
-
-
+    const filteredSubcate = subCategoryData.filter(applyFilters);
+    //==============================* filter *==============================
 
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - PRODUCTSLIST.length) : 0;
 
@@ -265,12 +281,29 @@ const CustomerSalePage = () => {
     const isNotFound = !filteredUsers.length && !!filterName;
 
     useEffect(() => {
-        getAllCustomer()
+        getAllSubCategory()
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
-                    setCustomerData(data);
-                    setSortedProduct(data);
+                    const sortedData = data.sort((a, b) => {
+                        return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(
+                            dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
+                        );
+                    });
+                    setSubCategoryData(sortedData);
+                    setSortedProduct(sortedData);
+                } else {
+                    console.error('API response is not an array:', data);
+                }
+            })
+            .catch((error) => {
+                console.error('Error fetching users:', error);
+            });
+        getAllCategories()
+            .then((respone) => {
+                const data = respone.data;
+                if (Array.isArray(data)) {
+                    setCategoryData(data);
                 } else {
                     console.error('API response is not an array:', data);
                 }
@@ -283,69 +316,54 @@ const CustomerSalePage = () => {
     return (
         <>
             <Helmet>
-                <title> Danh sách khách hàng</title>
+                <title> Quản lý sản phẩm | Minimal UI </title>
             </Helmet>
 
             {/* <Container> */}
             <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                 <Typography variant="h4" gutterBottom>
-                    Danh sách khách hàng
+                    Quản lý danh mục
                 </Typography>
-                <Button
-                    variant="contained"
-                    startIcon={<Iconify icon="eva:plus-fill" />}
-                    onClick={() => setOpenOderForm(true)}
-                >
-                    Thêm khách hàng
-                </Button>
-                <Dialog maxWidth="md" fullWidth open={openOderForm}>
-                    <DialogTitle>
-                        Tạo thông tin khách hàng{' '}
-                        <IconButton style={{ float: 'right' }} onClick={handleCloseOdersForm}>
-                            <CloseIcon color="primary" />
-                        </IconButton>{' '}
-                    </DialogTitle>
-                    <CreateCustomerForm onClose={handleCreateCustomerSuccess} open={openOderForm} />
-                </Dialog>
             </Stack>
 
             <Card>
-                <ProductsListToolbar
+                <SubCategoryInventoryToolbar
                     numSelected={selected.length}
                     filterName={filterName}
                     onFilterName={handleFilterByName}
+                    onDataSearch={handleDataSearch}
                 />
 
                 <Scrollbar>
                     <TableContainer sx={{ minWidth: 800 }}>
                         <Table>
-                            <ProductsListHead
+                            <SubCategoryInventoryListHead
                                 order={order}
                                 orderBy={orderBy}
                                 headLabel={TABLE_HEAD}
-                                rowCount={customerData.length}
+                                rowCount={subCategoryData.length}
                                 numSelected={selected.length}
                                 onRequestSort={handleRequestSort}
                                 onSelectAllClick={handleSelectAllClick}
                             />
                             <TableBody>
-                                {customerData.map((customer) => {
+                                {subCategoryData.map((product) => {
                                     return (
-                                        <React.Fragment key={customer.customerId}>
+                                        <React.Fragment key={product.id}>
                                             <TableRow
                                                 hover
-                                                key={customer.customerId}
+                                                key={product.id}
                                                 tabIndex={-1}
                                                 role="checkbox"
-                                                selected={selectedCustomerId === customer.customerId}
-                                                onClick={() => handleCustomerClick(customer)}
+                                                selected={selectedProductId === product.id}
+                                                onClick={() => handleProductClick(product)}
                                             >
                                                 {/* <TableCell padding="checkbox">
                                                     <Checkbox
-                                                        checked={selectedCustomerId === customer.id}
-                                                        // onChange={(event) => handleCheckboxChange(event, customer.id)}
+                                                        checked={selectedProductId === product.id}
+                                                        // onChange={(event) => handleCheckboxChange(event, product.id)}
                                                         // checked={selectedUser}
-                                                        onChange={(event) => handleClick(event, customer.name)}
+                                                        onChange={(event) => handleClick(event, product.name)}
                                                     />
                                                 </TableCell> */}
 
@@ -355,43 +373,42 @@ const CustomerSalePage = () => {
                                                     </Stack>
                                                 </TableCell>
 
-                                                <TableCell align="left">
-                                                    <Typography variant="subtitle2" noWrap>
-                                                        {customer.code}
-                                                    </Typography>
-                                                </TableCell>
-
                                                 <TableCell component="th" scope="row" padding="none">
                                                     <Stack direction="row" alignItems="center" spacing={2}>
                                                         {/* <Avatar alt={name} src={avatarUrl} /> */}
                                                         <Typography variant="subtitle2" noWrap>
-                                                            {customer.name}
+                                                            {product.name}
                                                         </Typography>
                                                     </Stack>
                                                 </TableCell>
-                                                <TableCell align="left">{customer.phone}</TableCell>
-                                                <TableCell align="left">{customer.email}</TableCell>
-                                                <TableCell align="left">{customer.taxCode}</TableCell>
-                                                <TableCell align="left">{customer.address}</TableCell>
-                                                <TableCell align="left">{customer.type}</TableCell>
-                                                <TableCell align="left">{customer.description}</TableCell>
-
+                                                <TableCell align="left">{product.description}</TableCell>
+                                                <TableCell align="left">{product.createdAt}</TableCell>
                                                 <TableCell align="left">
-                                                    <Label color={(customer.status === 'Inactive' && 'error') || 'success'}>
-                                                        {(customer.status === 'Active') ? 'Đang hoạt động' : 'Ngừng hoạt động'}
+                                                    <Typography variant="subtitle2" noWrap>
+                                                        {product.categories.map((category, index) => {
+                                                            return index === product.categories.length - 1
+                                                                ? category.name
+                                                                : `${category.name}, `;
+                                                        })}
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell align="left">
+                                                    <Label color={(product.status === 'Inactive' && 'error') || 'success'}>
+                                                        {(product.status === 'Active') ? 'Đang hoạt động' : 'Ngừng hoạt động'}
                                                     </Label>
                                                 </TableCell>
                                             </TableRow>
 
-                                            {selectedCustomerId === customer.customerId && (
+                                            {selectedProductId === product.id && (
                                                 <TableRow>
                                                     <TableCell colSpan={8}>
-                                                        <CustomerDetailForm
-                                                            customer={customerData}
-                                                            customerId={selectedCustomerId}
-                                                            updateProductInList={updateProductInList}
-                                                            updateProductStatusInList={updateProductStatusInList}
-                                                            onClose={handleCloseCustomerDetails} />
+                                                        <SubCategoryInventoryDetailForm
+                                                            subCategory={subCategoryData}
+                                                            subCategorytatus={productStatus}
+                                                            subCategoryId={selectedProductId}
+                                                            updateSubCategoryInList={updateSubCategoryInList}
+                                                            updateSubCategoryStatusInList={updateSubCategoryStatusInList}
+                                                            onClose={handleCloseProductDetails} />
                                                     </TableCell>
                                                 </TableRow>
                                             )}
@@ -442,9 +459,7 @@ const CustomerSalePage = () => {
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </Card>
-            {/* </Container> */}
-
         </>
     );
 };
-export default CustomerSalePage;
+export default SubCategoryInventoryPage;
