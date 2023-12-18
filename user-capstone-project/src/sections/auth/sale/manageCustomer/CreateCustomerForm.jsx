@@ -9,18 +9,18 @@ import {
     FormControl,
     Select,
     MenuItem,
+    IconButton,
 } from '@mui/material';
 import SuccessAlerts from '../../../../components/alert/SuccessAlert';
 import ErrorAlerts from '../../../../components/alert/ErrorAlert';
 import capitalizeFirstLetter from '../../../../components/validation/capitalizeFirstLetter';
 // api
 import { createCustomer } from '~/data/mutation/customer/customer-mutation';
-
-
-
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
+import SnackbarError from '~/components/alert/SnackbarError';
+import CloseIcon from '@mui/icons-material/Close';
 
 const CreateCustomerForm = ({ onClose, onSave }) => {
-    const [open, openchange] = useState(false);
     const [code, setCode] = useState('');
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
@@ -30,13 +30,59 @@ const CreateCustomerForm = ({ onClose, onSave }) => {
     const [type, setType] = useState('');
     const [description, setDescription] = useState('');
 
-
     //thông báo
-    const [isSuccess, setIsSuccess] = useState(false);
-    const [isError, setIsError] = useState(false);
+    //========================== Hàm notification của trang ==================================
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const [open1, setOpen1] = React.useState(false);
+    const [open, setOpen] = React.useState(false);
 
+    const handleSuccessMessage = (message) => {
+        setOpen(true);
+        if (message === 'Create unit successfully') {
+            setSuccessMessage('Tạo thành công');
+        } else if (message === 'Update SubCategory successfully.') {
+            setSuccessMessage('Cập nhập danh mục thành công');
+        }
+    };
+
+    const handleErrorMessage = (message) => {
+        setOpen1(true);
+        if (message === 'Invalid request') {
+            setErrorMessage('Yêu cầu không hợp lệ !');
+        } else if (message === 'Email already in use!') {
+            setErrorMessage('Email đã tồn tại !');
+        } else if (message === 'Phone number already in use!!') {
+            setErrorMessage('Số điện thoại đã được sử dụng !');
+        } else if (message === 'Tax code already in use!') {
+            setErrorMessage('Tax code đã tồn tại !');
+        }
+    };
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        console.log('Closing Snackbar...');
+        setOpen(false);
+        setOpen1(false);
+        setSuccessMessage('');
+        setErrorMessage('');
+    };
+
+    const action = (
+        <React.Fragment>
+            <Button color="secondary" size="small" onClick={handleClose}></Button>
+            <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
+                <CloseIcon fontSize="lage" />
+            </IconButton>
+        </React.Fragment>
+    );
+    const handleCloseSnackbar = () => {
+        setOpen(false);
+        setOpen1(false);
+    };
+    //============================================================
 
     const handleSubmit = async () => {
         try {
@@ -54,22 +100,12 @@ const CreateCustomerForm = ({ onClose, onSave }) => {
             const response = await createCustomer(customerParams);
             console.log('Customer created:', response);
             if (response.status === '200 OK') {
-                setIsSuccess(true);
-                setIsError(false);
-                setSuccessMessage('Tạo thành công');
+                handleSuccessMessage(response.message);
+                handleCloseSnackbar();
             }
         } catch (error) {
             console.error('Error creating user:', error);
-            setIsError(true);
-            setIsSuccess(false);
-            if (error.response?.data?.message === 'Email already exists.') {
-                setErrorMessage('Email đã tồn tại.');
-            } else if (error.response?.data?.message === 'Phone already exists.') {
-                setErrorMessage('Phone đã tồn tại.');
-            }
-            if (error.response) {
-                console.error('Error response:', error.response);
-            }
+            handleErrorMessage(error.response?.data?.message);
         }
     };
     return (
@@ -248,14 +284,25 @@ const CreateCustomerForm = ({ onClose, onSave }) => {
                                             sx={{ width: '70%' }}
                                         />
                                     </Grid>
-
                                 </Grid>
                             </Grid>
-                            {isSuccess && <SuccessAlerts message={successMessage} />}
-                            {isError && <ErrorAlerts errorMessage={errorMessage} />}
                             <Button color="primary" variant="contained" onClick={handleSubmit}>
                                 Tạo
                             </Button>
+                            <SnackbarSuccess
+                                open={open}
+                                handleClose={handleCloseSnackbar}
+                                message={successMessage}
+                                action={action}
+                                style={{ bottom: '16px', right: '16px' }}
+                            />
+                            <SnackbarError
+                                open={open1}
+                                handleClose={handleCloseSnackbar}
+                                message={errorMessage}
+                                action={action}
+                                style={{ bottom: '16px', right: '16px' }}
+                            />
                         </Stack>
                     </div>
                 </DialogContent>

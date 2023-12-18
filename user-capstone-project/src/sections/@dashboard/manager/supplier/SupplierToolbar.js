@@ -101,11 +101,11 @@ export default function SupplierToolbar({ numSelected, onFilterName, onDataSearc
             }
           />
 
-          <Tooltip title="Filter list">
+          {/* <Tooltip title="Filter list">
             <IconButton onClick={handleFilterClick}>
               <Iconify icon="ic:round-filter-list" />
             </IconButton>
-          </Tooltip>
+          </Tooltip> */}
 
           <Menu
             anchorEl={anchorEl}

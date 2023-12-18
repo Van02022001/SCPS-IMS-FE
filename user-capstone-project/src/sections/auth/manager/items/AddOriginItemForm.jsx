@@ -12,20 +12,43 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 // api
 import { createOrigins } from '~/data/mutation/origins/origins-mutation';
+import SnackbarError from '~/components/alert/SnackbarError';
 
 const AddOriginItemForm = ({ open, onClose, onSave }) => {
     const [openMsg, setOpenMsg] = React.useState(false);
     const [originName, setOriginName] = useState('');
-    const [message, setMessage] = useState('');
+    //thông báo
+    const [errorMessage, setErrorMessage] = useState('');
+    const [open1, setOpen1] = React.useState(false);
 
     //========================== Hàm notification của trang ==================================
-    const handleMessage = (message) => {
-        setOpenMsg(true);
-        // Đặt logic hiển thị nội dung thông báo từ API ở đây
-        if (message === 'Update SubCategory status successfully.') {
-            setMessage('Cập nhập trạng thái danh mục thành công')
-        } else if (message === 'Update SubCategory successfully.') {
-            setMessage('Cập nhập danh mục thành công')
+
+    const handleErrorMessage = (message) => {
+        setOpen1(true);
+        if (message === 'Invalid request') {
+            setErrorMessage('Yêu cầu không hợp lệ !');
+        } else if (message === 'Origin name was existed') {
+            setErrorMessage('Tên bị trùng lặp !');
+        } else if (message === 'unit_mea_id: Unit of measurement id is required') {
+            setErrorMessage('Vui lòng chọn đơn vị đo lường !');
+        } else if (message === 'unit_id: Required field') {
+            setErrorMessage('Vui lòng chọn đơn vị !');
+        } else if (message === 'name: size must be between 1 and 100') {
+            setErrorMessage('Tên phải từ 1 - 100 ký tự !');
+        } else if (message === 'description: Required field') {
+            setErrorMessage('Vui lòng nhập mô tả !');
+        } else if (message === 'name: Name of product not null') {
+            setErrorMessage('Tên không được để trống !');
+        } else if (message === 'description: Description not null') {
+            setErrorMessage('Mô tả không được để trống !');
+        } else if (message === 'name: The first letter must be uppercase.') {
+            setErrorMessage('Chữ cái đầu của tên phải viết hoa !');
+        } else if (message === 'description: The first letter must be uppercase.') {
+            setErrorMessage('Chữ cái đầu của mô tả phải viết hoa !');
+        } else if (message === 'name: Required field.') {
+            setErrorMessage('Vui lòng nhập tên !');
+        } else if (message === 'SubCategory must have at least one category') {
+            setErrorMessage('Vui lòng chọn nhóm hàng !');
         }
     };
 
@@ -34,18 +57,22 @@ const AddOriginItemForm = ({ open, onClose, onSave }) => {
             return;
         }
 
-        setOpenMsg(false);
-
+        setOpen1(false);
     };
+
     const action = (
         <React.Fragment>
-            <Button color="secondary" size="small" onClick={handleClose}>
-            </Button>
+            <Button color="secondary" size="small" onClick={handleClose}></Button>
             <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
                 <CloseIcon fontSize="lage" />
             </IconButton>
         </React.Fragment>
     );
+
+    const handleCloseSnackbar = () => {
+        setOpen1(false);
+        setOpen1('');
+    };
     //============================================================
 
     const handleSave = async () => {
@@ -58,9 +85,11 @@ const AddOriginItemForm = ({ open, onClose, onSave }) => {
             onSave && onSave();
             // Đóng form
             onClose && onClose();
-            handleMessage(response.message);
         } catch (error) {
             console.error("can't feaching category", error);
+            const errorMessage = error.response?.data?.data?.[0] || error.response?.data?.message;
+
+            handleErrorMessage(errorMessage);
         }
     };
 
@@ -85,15 +114,10 @@ const AddOriginItemForm = ({ open, onClose, onSave }) => {
                 >
                     Tạo thêm
                 </Button>
-                <Snackbar
-                    open={open}
-                    autoHideDuration={6000}
-                    onClose={handleClose}
-                    anchorOrigin={{
-                        vertical: 'bottom',
-                        horizontal: 'right',
-                    }}
-                    message={message}
+                <SnackbarError
+                    open={open1}
+                    handleClose={handleCloseSnackbar}
+                    message={errorMessage}
                     action={action}
                     style={{ bottom: '16px', right: '16px' }}
                 />

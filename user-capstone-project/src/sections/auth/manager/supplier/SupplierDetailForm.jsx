@@ -54,7 +54,7 @@ const SupplierDetailForm = ({ suppliers, suppliersId, onClose, isOpen, mode, upd
         } else if (message === 'Phone number already in use!') {
             setErrorMessage('Số điện thoại đã tồn tại !');
         } else if (message === 'Tax code already in use!') {
-            setErrorMessage('Tax code đã tồn tại !');
+            setErrorMessage('Mã số thuế đã tồn tại !');
         } else if (message === 'could not execute!') {
             setErrorMessage('Yêu cầu không hợp lệ !');
         }
@@ -114,7 +114,7 @@ const SupplierDetailForm = ({ suppliers, suppliersId, onClose, isOpen, mode, upd
     useEffect(() => {
         if (mode === 'create') {
             setEditedSupplier({
-                code: '',
+                // code: '',
                 name: '',
                 phone: '',
                 email: '',
@@ -127,7 +127,7 @@ const SupplierDetailForm = ({ suppliers, suppliersId, onClose, isOpen, mode, upd
             if (supplier) {
                 // Create a new object with only the desired fields
                 const editedSupplier = {
-                    code: supplier.code,
+                    // code: supplier.code,
                     name: supplier.name,
                     phone: supplier.phone,
                     email: supplier.email,
@@ -151,7 +151,7 @@ const SupplierDetailForm = ({ suppliers, suppliersId, onClose, isOpen, mode, upd
             if (editedSupplier) {
                 // Define the update data
                 const updateData = {
-                    code: editedSupplier.code,
+                    // code: editedSupplier.code,
                     name: editedSupplier.name,
                     phone: editedSupplier.phone,
                     email: editedSupplier.email,
@@ -243,7 +243,7 @@ const SupplierDetailForm = ({ suppliers, suppliersId, onClose, isOpen, mode, upd
                                         variant="outlined"
                                         label="Mã người bán"
                                         sx={{ width: '70%' }}
-                                        value={editedSupplier ? editedSupplier.code : ''}
+                                        value={supplier ? supplier.code : ''}
                                         onChange={(e) => handleEdit('code', e.target.value)}
                                     />
                                 </Grid>
@@ -255,7 +255,7 @@ const SupplierDetailForm = ({ suppliers, suppliersId, onClose, isOpen, mode, upd
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
-                                    <Typography variant="body1">Tên người bán:</Typography>
+                                    <Typography variant="body1">Nhà cung cấp:</Typography>
                                     <TextField
                                         size="small"
                                         variant="outlined"
@@ -309,7 +309,7 @@ const SupplierDetailForm = ({ suppliers, suppliersId, onClose, isOpen, mode, upd
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
-                                    <Typography variant="body1">taxCode:</Typography>
+                                    <Typography variant="body1">Mã số thuế:</Typography>
                                     <TextField
                                         size="small"
                                         variant="outlined"

@@ -23,6 +23,7 @@ import {
     DialogActions,
     FormControl,
     Snackbar,
+    TablePagination,
 } from '@mui/material';
 
 // import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
@@ -40,12 +41,16 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 import SnackbarError from '~/components/alert/SnackbarError';
+import dayjs from 'dayjs';
 
 const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode, updateItemStatusInList }) => {
     const [expandedItem, setExpandedItem] = useState(itemId);
     const [formHeight, setFormHeight] = useState(0);
     const [selectedTab, setSelectedTab] = useState(0);
     const [tab1Data, setTab1Data] = useState({ categories_id: [] });
+
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [page, setPage] = useState(0);
 
     const [editedItem, setEditedItem] = useState({});
 
@@ -73,6 +78,15 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
         } else if (message === 'Update item successfully') {
             setSuccessMessage('Cập nhập sản phẩm thành công !');
         }
+    };
+
+    const handleChangeRowsPerPage = (event) => {
+        setPage(0);
+        setRowsPerPage(parseInt(event.target.value, 10));
+    };
+
+    const handleChangePage = (event, newPage) => {
+        setPage(newPage);
     };
 
     const handleErrorMessage = (message) => {
@@ -194,7 +208,16 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
         getItemsByPriceHistory(itemId)
             .then((respone) => {
                 const data = respone.data;
-                setItemPriceData(data);
+                if (Array.isArray(data)) {
+                    const sortedData = data.sort((a, b) => {
+                        return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(
+                            dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
+                        );
+                    });
+                    setItemPriceData(sortedData);
+                } else {
+                    console.error('API response is not an array:', data);
+                }
             })
             .catch((error) => console.error('Error fetching Items:', error));
     }, []);
@@ -284,6 +307,9 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
     const handleCloseAddCategoryDialog = () => {
         setOpenAddCategoryDialog(false);
     };
+
+    const startIndex = page * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
 
     return (
         <div
@@ -766,7 +792,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                                     <TableCell>Giá cũ</TableCell>
                                                     <TableCell>Giá mới</TableCell>
                                                 </TableRow>
-                                                {itemPriceData.map((items) => {
+                                                {itemPriceData.slice(startIndex, endIndex).map((items) => {
                                                     return (
                                                         <TableRow key={items.id}>
                                                             <TableCell>{items.itemName}</TableCell>
@@ -781,6 +807,15 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                         </Table>
                                     </TableContainer>
                                 </CardContent>
+                                <TablePagination
+                                    rowsPerPageOptions={[5, 10, 25]}
+                                    component="div"
+                                    count={itemPriceData.length}
+                                    rowsPerPage={rowsPerPage}
+                                    page={page}
+                                    onPageChange={handleChangePage}
+                                    onRowsPerPageChange={handleChangeRowsPerPage}
+                                />
                             </Card>
                         </div>
                     </Stack>

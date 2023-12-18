@@ -220,7 +220,7 @@ const CategoryPage = () => {
                             dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
                         );
                     });
-                    setCategoryData(data);
+                    setCategoryData(sortedData);
                 } else {
                     console.error('API response is not an array:', data);
                 }

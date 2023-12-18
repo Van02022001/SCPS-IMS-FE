@@ -20,7 +20,6 @@ const CreateSupplierForm = (props) => {
 
     const handleCreateSupplier = async () => {
         const supplierParams = {
-            code,
             name,
             phone,
             email,
@@ -57,12 +56,6 @@ const CreateSupplierForm = (props) => {
                 <DialogContent>
                     {/* <DialogContentText>Do you want remove this user?</DialogContentText> */}
                     <Stack spacing={2} margin={2}>
-                        <TextField
-                            variant="outlined"
-                            value={code}
-                            label="Mã người bán"
-                            onChange={(e) => setCode(e.target.value)}
-                        />
                         <TextField
                             variant="outlined"
                             value={name}

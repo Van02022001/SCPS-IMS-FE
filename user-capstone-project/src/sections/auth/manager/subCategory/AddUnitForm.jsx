@@ -9,27 +9,43 @@ import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
 // api
 import { createUnits } from '~/data/mutation/unit/unit-mutation';
+import SnackbarError from '~/components/alert/SnackbarError';
 
 const AddUnitForm = ({ open, onClose, onSave }) => {
-    const [openAddCategoryMeta, setOpenAddCategoryMeta] = React.useState(false);
     const [unitName, setUnitName] = useState('');
 
-
     //thông báo
-    const [message, setMessage] = useState('');
-    const [isSuccess, setIsSuccess] = useState(false);
-    const [isError, setIsError] = useState(false);
-    const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const [open1, setOpen1] = React.useState(false);
 
     //========================== Hàm notification của trang ==================================
-    const handleMessage = (message) => {
-        setOpenAddCategoryMeta(true);
-        // Đặt logic hiển thị nội dung thông báo từ API ở đây
-        if (message === 'Update SubCategory status successfully.') {
-            setMessage('Cập nhập trạng thái danh mục thành công')
-        } else if (message === 'Update SubCategory successfully.') {
-            setMessage('Cập nhập danh mục thành công')
+
+    const handleErrorMessage = (message) => {
+        setOpen1(true);
+        if (message === 'Invalid request') {
+            setErrorMessage('Yêu cầu không hợp lệ !');
+        } else if (message === 'Unit name was existed') {
+            setErrorMessage('Tên bị trùng lặp !');
+        } else if (message === 'unit_mea_id: Unit of measurement id is required') {
+            setErrorMessage('Vui lòng chọn đơn vị đo lường !');
+        } else if (message === 'unit_id: Required field') {
+            setErrorMessage('Vui lòng chọn đơn vị !');
+        } else if (message === 'name: size must be between 1 and 100') {
+            setErrorMessage('Tên phải từ 1 - 100 ký tự !');
+        } else if (message === 'description: Required field') {
+            setErrorMessage('Vui lòng nhập mô tả !');
+        } else if (message === 'name: Name of product not null') {
+            setErrorMessage('Tên không được để trống !');
+        } else if (message === 'description: Description not null') {
+            setErrorMessage('Mô tả không được để trống !');
+        } else if (message === 'name: The first letter must be uppercase.') {
+            setErrorMessage('Chữ cái đầu của tên phải viết hoa !');
+        } else if (message === 'description: The first letter must be uppercase.') {
+            setErrorMessage('Chữ cái đầu của mô tả phải viết hoa !');
+        } else if (message === 'name: Required field.') {
+            setErrorMessage('Vui lòng nhập tên !');
+        } else if (message === 'SubCategory must have at least one category') {
+            setErrorMessage('Vui lòng chọn nhóm hàng !');
         }
     };
 
@@ -38,21 +54,23 @@ const AddUnitForm = ({ open, onClose, onSave }) => {
             return;
         }
 
-        setOpenAddCategoryMeta(false);
-
+        setOpen1(false);
     };
 
     const action = (
         <React.Fragment>
-            <Button color="secondary" size="small" onClick={handleClose}>
-            </Button>
+            <Button color="secondary" size="small" onClick={handleClose}></Button>
             <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
                 <CloseIcon fontSize="lage" />
             </IconButton>
         </React.Fragment>
     );
-    //============================================================
 
+    const handleCloseSnackbar = () => {
+        setOpen1(false);
+        setOpen1('');
+    };
+    //============================================================
 
     const handleSave = async () => {
         const unitParams = {
@@ -63,29 +81,15 @@ const AddUnitForm = ({ open, onClose, onSave }) => {
 
             if (response.status === '200 OK') {
                 setUnitName('');
-
-                setIsSuccess(true);
-                setIsError(false);
-                setSuccessMessage(response.message);
-
-                handleMessage(response.message)
                 onSave && onSave();
                 // Đóng form
                 onClose && onClose();
             }
         } catch (error) {
             console.error("can't feaching category", error);
-            setIsError(true);
-            setIsSuccess(false);
-            if (error.response?.data?.message === 'Invalid request') {
-                setErrorMessage('Yêu cầu không hợp lệ');
-            }
-            if (error.response?.data?.message === 'Unit name already exists') {
-                setErrorMessage('Đơn vị này đã tồn tại !');
-            }
-            if (error.response) {
-                console.log('Error response:', error.response.data.message);
-            }
+            const errorMessage = error.response?.data?.data?.[0] || error.response?.data?.message;
+
+            handleErrorMessage(errorMessage);
         }
     };
 
@@ -101,22 +105,15 @@ const AddUnitForm = ({ open, onClose, onSave }) => {
                     value={unitName}
                     onChange={(e) => setUnitName(capitalizeFirstLetter(e.target.value))}
                 />
-                {isSuccess && <SuccessAlerts message={successMessage} />}
-                {isError && <ErrorAlerts errorMessage={errorMessage} />}
             </DialogContent>
             <div style={{ padding: '16px' }}>
                 <Button variant="contained" color="primary" onClick={handleSave}>
                     lưu
                 </Button>
-                <Snackbar
-                    open={openAddCategoryMeta}
-                    autoHideDuration={6000}
-                    onClose={handleClose}
-                    anchorOrigin={{
-                        vertical: 'bottom',
-                        horizontal: 'right',
-                    }}
-                    message={message}
+                <SnackbarError
+                    open={open1}
+                    handleClose={handleCloseSnackbar}
+                    message={errorMessage}
                     action={action}
                     style={{ bottom: '16px', right: '16px' }}
                 />
