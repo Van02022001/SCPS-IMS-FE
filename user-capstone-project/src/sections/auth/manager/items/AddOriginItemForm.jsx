@@ -13,6 +13,7 @@ import CloseIcon from '@mui/icons-material/Close';
 // api
 import { createOrigins } from '~/data/mutation/origins/origins-mutation';
 import SnackbarError from '~/components/alert/SnackbarError';
+import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
 
 const AddOriginItemForm = ({ open, onClose, onSave }) => {
     const [openMsg, setOpenMsg] = React.useState(false);
@@ -103,7 +104,7 @@ const AddOriginItemForm = ({ open, onClose, onSave }) => {
                     fullWidth
                     margin="normal"
                     value={originName}
-                    onChange={(e) => setOriginName(e.target.value)}
+                    onChange={(e) => setOriginName(capitalizeFirstLetter(e.target.value))}
                 />
             </DialogContent>
             <div style={{ padding: '16px' }}>

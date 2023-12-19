@@ -190,11 +190,6 @@ const managerNavConfig = [
             },
         ],
     },
-    {
-        title: 'Chuyển kho',
-        icon: <WarehouseIcon />,
-        path: '/dashboard/warehousesInventory',
-    },
 
     // {
     //   title: 'login',

@@ -46,6 +46,7 @@ import CustomerRequestPage from './pages/inventory_staff/transaction/exportReque
 import ExportReceiptPage from './pages/inventory_staff/transaction/exportReceipt/ExportReceiptPage';
 import ExportRequestReceiptManagerPage from './pages/manager/transaction/requestExportReceipt/ExportRequestReceiptManagerPage';
 import ExportReceiptManagerPage from './pages/manager/transaction/exportReceipt/ExportReceiptManagerPage';
+import CreateTransferForm from './sections/auth/inventory_staff/warehouseInventory/CreateTransferForm';
 
 // ----------------------------------------------------------------------
 
@@ -119,6 +120,7 @@ const Router = () => {
                 { path: 'itemsInventory', element: <ItemsInventoryPage /> },
                 { path: 'locationsInventory', element: <LocationInventoryPage /> },
                 {path: 'warehousesInventory', element: <WarehouseInventoryPage />},
+                { path: 'warehouse-transfer', element: <CreateTransferForm/> },
                 
                 // { path: 'order-sale', element: <OrderSalePage /> },
                 { path: 'requests-import-receipt', element: <ViewReceiptPage /> },

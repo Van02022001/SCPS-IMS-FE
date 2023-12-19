@@ -512,7 +512,7 @@ const SubCategoryDetailForm = ({
                                                 size="small"
                                                 labelId="group-label"
                                                 id="group-select"
-                                                sx={{ width: '100%', fontSize: '14px' }}
+                                                sx={{ width: '99%', fontSize: '14px', marginLeft: 0.6 }}
                                                 multiple
                                                 value={editedSubCategory.categories_id}
                                                 onChange={(e) => handleEdit('categories_id', e.target.value)}
@@ -740,9 +740,9 @@ const SubCategoryDetailForm = ({
                                     style={{ bottom: '16px', right: '16px' }}
                                 />
                             </div>
-                            <Button variant="outlined" color="error" onClick={handleClear}>
+                            {/* <Button variant="outlined" color="error" onClick={handleClear}>
                                 Hủy bỏ
-                            </Button>
+                            </Button> */}
                         </Grid>
                     </Stack>
                 </div>

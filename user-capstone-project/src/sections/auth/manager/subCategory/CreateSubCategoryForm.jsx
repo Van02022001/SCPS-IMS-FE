@@ -109,7 +109,7 @@ const CreateSubCategoryForm = (props) => {
             setErrorMessage('Mô tả không được để trống !');
         } else if (message === 'name: The first letter must be uppercase.') {
             setErrorMessage('Chữ cái đầu của tên phải viết hoa !');
-        }  else if (message === 'description: The first letter must be uppercase.') {
+        } else if (message === 'description: The first letter must be uppercase.') {
             setErrorMessage('Chữ cái đầu của mô tả phải viết hoa !');
         } else if (message === 'name: Required field.') {
             setErrorMessage('Vui lòng nhập tên !');
@@ -168,7 +168,9 @@ const CreateSubCategoryForm = (props) => {
     const handleSaveCategory = (successMessage) => {
         handleCloseAddCategoryDialog();
 
-        setSnackbarSuccessMessage(successMessage === 'Create category successfully' ? 'Tạo thể loại thành công!' : 'Thành công');
+        setSnackbarSuccessMessage(
+            successMessage === 'Create category successfully' ? 'Tạo thể loại thành công!' : 'Thành công',
+        );
         setSnackbarSuccessOpen(true);
     };
     // const handleOpenAddOriginForm = () => {
@@ -189,7 +191,9 @@ const CreateSubCategoryForm = (props) => {
     const handleSaveUnit = (successMessage) => {
         handleCloseAddUnitForm();
 
-        setSnackbarSuccessMessage(successMessage === 'Create unit successfully' ? 'Tạo thể loại thành công!' : 'Thành công');
+        setSnackbarSuccessMessage(
+            successMessage === 'Create unit successfully' ? 'Tạo đơn vị thành công!' : 'Thành công',
+        );
         setSnackbarSuccessOpen(true);
     };
     // Hàm delete của trang ---------------------------------------------------------------------
@@ -237,7 +241,6 @@ const CreateSubCategoryForm = (props) => {
             const errorMessage = error.response?.data?.data?.[0] || error.response?.data?.message;
 
             handleErrorMessage(errorMessage);
-
         }
     };
 
@@ -254,7 +257,7 @@ const CreateSubCategoryForm = (props) => {
         // setUnit_mea_id([]);
     };
 
-    const handleAddCategories = async () => { };
+    const handleAddCategories = async () => {};
 
     useEffect(() => {
         getAllCategoriesActive()
@@ -707,7 +710,10 @@ const CreateSubCategoryForm = (props) => {
             </div>
             <SnackbarSuccess
                 open={snackbarSuccessOpen}
-                handleClose={() => setSnackbarSuccessOpen(false)}
+                handleClose={() => {
+                    setSnackbarSuccessOpen(false);
+                    setSnackbarSuccessMessage('');
+                }}
                 message={snackbarSuccessMessage}
                 style={{ bottom: '16px', right: '16px' }}
             />

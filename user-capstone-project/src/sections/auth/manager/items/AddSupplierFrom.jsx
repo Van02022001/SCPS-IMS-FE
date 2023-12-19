@@ -13,6 +13,7 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import { createSuppliers } from '~/data/mutation/supplier/suppliers-mutation';
 import SnackbarError from '~/components/alert/SnackbarError';
+import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
 // api
 
 
@@ -125,7 +126,7 @@ const AddSupplierFrom = ({ open, onClose, onSave }) => {
                         variant="outlined"
                         value={name}
                         label="Tên nhà cung cấp"
-                        onChange={(e) => setName(e.target.value)}
+                        onChange={(e) => setName(capitalizeFirstLetter(e.target.value))}
                     />
                     <TextField
                         variant="outlined"

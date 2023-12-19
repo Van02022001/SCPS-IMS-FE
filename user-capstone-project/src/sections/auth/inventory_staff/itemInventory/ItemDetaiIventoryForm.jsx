@@ -19,6 +19,7 @@ import {
     Table,
     Select,
     MenuItem,
+    TablePagination,
 } from '@mui/material';
 
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
@@ -33,6 +34,7 @@ import { getAllSuppliers } from '~/data/mutation/supplier/suppliers-mutation';
 import AddIcon from '@mui/icons-material/Add';
 import { getItemsByMovementsHistory } from '~/data/mutation/items-movement/items-movement-mutation';
 import AddItemsMovementForm from './AddItemsMovementForm';
+import dayjs from 'dayjs';
 
 const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode, updateItemStatusInList }) => {
     const [expandedItem, setExpandedItem] = useState(itemId);
@@ -59,6 +61,22 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
     const [isError, setIsError] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    // phân trang
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [page, setPage] = useState(0);
+
+    const handleChangeRowsPerPage = (event) => {
+        setPage(0);
+        setRowsPerPage(parseInt(event.target.value, 10));
+    };
+
+    const startIndex = page * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
+
+    const handleChangePage = (event, newPage) => {
+        setPage(newPage);
+    };
+    //========================================================
 
     useEffect(() => {
         if (isOpen) {
@@ -125,7 +143,16 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
         getItemsByPriceHistory(itemId)
             .then((respone) => {
                 const data = respone.data;
-                setItemPriceData(data);
+                if (Array.isArray(data)) {
+                    const sortedData = data.sort((a, b) => {
+                        return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(
+                            dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
+                        );
+                    });
+                    setItemPriceData(sortedData);
+                } else {
+                    console.error('API response is not an array:', data);
+                }
             })
             .catch((error) => console.error('Error fetching Items:', error));
         getItemsByMovementsHistory(itemId)
@@ -472,7 +499,7 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                         size="small"
                                         variant="outlined"
                                         label="Ngày tạo"
-                                        sx={{ width: '65%', marginRight: 5 }}
+                                        sx={{ width: '65%', marginRight: 5.5 }}
                                         value={item.createdAt}
                                     />
                                 </Grid>
@@ -684,7 +711,7 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                                     <TableCell>Giá cũ</TableCell>
                                                     <TableCell>Giá mới</TableCell>
                                                 </TableRow>
-                                                {itemPriceData.map((items) => {
+                                                {itemPriceData.slice(startIndex, endIndex).map((items) => {
                                                     return (
                                                         <TableRow key={items.id}>
                                                             <TableCell>{items.itemName}</TableCell>
@@ -699,6 +726,15 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                         </Table>
                                     </TableContainer>
                                 </CardContent>
+                                <TablePagination
+                                    rowsPerPageOptions={[5, 10, 25]}
+                                    component="div"
+                                    count={itemPriceData.length}
+                                    rowsPerPage={rowsPerPage}
+                                    page={page}
+                                    onPageChange={handleChangePage}
+                                    onRowsPerPageChange={handleChangeRowsPerPage}
+                                />
                             </Card>
                         </div>
                     </Stack>
@@ -737,7 +773,7 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                                     <TableCell>Ghi chú</TableCell>
                                                     <TableCell>Vận chuyển ngày</TableCell>
                                                 </TableRow>
-                                                {itemMovementsData.map((items) => {
+                                                {itemMovementsData.slice(startIndex, endIndex).map((items) => {
                                                     return (
                                                         <TableRow key={items.id}>
                                                             <TableCell>{items.toLocation.warehouse.name}</TableCell>
@@ -765,6 +801,15 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                         </Table>
                                     </TableContainer>
                                 </CardContent>
+                                <TablePagination
+                                    rowsPerPageOptions={[5, 10, 25]}
+                                    component="div"
+                                    count={itemMovementsData.length}
+                                    rowsPerPage={rowsPerPage}
+                                    page={page}
+                                    onPageChange={handleChangePage}
+                                    onRowsPerPageChange={handleChangeRowsPerPage}
+                                />
                             </Card>
                         </div>
                     </Stack>
@@ -800,7 +845,7 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                                     <TableCell>Kho chứa</TableCell>
                                                     <TableCell>Số lượng</TableCell>
                                                 </TableRow>
-                                                {item.locations.map((items) => {
+                                                {item.locations.slice(startIndex, endIndex).map((items) => {
                                                     return (
                                                         <TableRow key={items.id}>
                                                             <TableCell>
@@ -817,6 +862,15 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                         </Table>
                                     </TableContainer>
                                 </CardContent>
+                                <TablePagination
+                                    rowsPerPageOptions={[5, 10, 25]}
+                                    component="div"
+                                    count={item.locations.length}
+                                    rowsPerPage={rowsPerPage}
+                                    page={page}
+                                    onPageChange={handleChangePage}
+                                    onRowsPerPageChange={handleChangeRowsPerPage}
+                                />
                             </Card>
                         </div>
                     </Stack>

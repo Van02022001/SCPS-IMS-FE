@@ -363,7 +363,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                             labelId="group-label"
                                             id="group-select"
                                             label="Danh mục"
-                                            sx={{ width: '91%', fontSize: '14px' }}
+                                            sx={{ width: '92%', fontSize: '14px', marginLeft: 0.2 }}
                                             value={editedItem.sub_category_id ? editedItem.sub_category_id : ''}
                                             onChange={(e) => handleEdit('sub_category_id', e.target.value)}
                                             name="sub_category_id"
@@ -392,7 +392,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                             labelId="group-label"
                                             id="group-select"
                                             label="Chi nhánh"
-                                            sx={{ width: '91%', fontSize: '14px' }}
+                                            sx={{ width: '92%', fontSize: '14px' }}
                                             value={editedItem.brand_id ? editedItem.brand_id : ''}
                                             onChange={(e) => handleEdit('brand_id', e.target.value)}
                                             name="brand_id"
@@ -421,7 +421,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                             labelId="group-label"
                                             id="group-select"
                                             label="Nhà cung cấp"
-                                            sx={{ width: '91%', fontSize: '14px' }}
+                                            sx={{ width: '92%', fontSize: '14px' }}
                                             value={editedItem.supplier_id ? editedItem.supplier_id : ''}
                                             onChange={(e) => handleEdit('supplier_id', e.target.value)}
                                             name="supplier_id"
@@ -449,7 +449,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                         size="small"
                                         variant="outlined"
                                         label="Người tạo"
-                                        sx={{ width: '65%', marginRight: 5 }}
+                                        sx={{ width: '65%', marginRight: 5.4 }}
                                         value={
                                             item.createdBy.firstName +
                                             ' ' +
@@ -474,7 +474,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                             labelId="group-label"
                                             id="group-select"
                                             label="Nguồn gốc"
-                                            sx={{ width: '91%', fontSize: '14px' }}
+                                            sx={{ width: '92%', fontSize: '14px' }}
                                             value={editedItem.origin_id ? editedItem.origin_id : ''}
                                             onChange={(e) => handleEdit('origin_id', e.target.value)}
                                             name="origin_id"
@@ -503,7 +503,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                             label="Vị trí"
                                             disabled
                                             multiline
-                                            sx={{ width: '91%', marginRight: 1 }}
+                                            sx={{ width: '92%', marginRight: 1 }}
                                             value={
                                                 item.locations
                                                     ? item.locations
@@ -691,7 +691,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                     <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
                                         Định mức tồn:{' '}
                                     </Typography>
-                                    <div style={{ display: 'flex', marginRight: 50, gap: 25 }}>
+                                    <div style={{ display: 'flex', marginRight: 50, gap: 38 }}>
                                         <FormControl sx={{ m: 0.2 }} variant="standard">
                                             <TextField
                                                 id="demo-customized-textbox"

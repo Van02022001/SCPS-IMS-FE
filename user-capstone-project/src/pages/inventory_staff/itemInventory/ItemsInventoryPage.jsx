@@ -167,6 +167,9 @@ const ItemsInventoryPage = () => {
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
 
+    const startIndex = page * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
+
     const handleChange = (event) => {
         setPersonName(event.target.value);
         const selectedValues = event.target.value.length > 0 ? event.target.value : null;
@@ -524,7 +527,7 @@ const ItemsInventoryPage = () => {
                                 onSelectAllClick={handleSelectAllClick}
                             />
                             <TableBody>
-                                {filteredItems.map((item) => {
+                                {filteredItems.slice(startIndex, endIndex).map((item) => {
                                     return (
                                         <React.Fragment key={item.id}>
                                             <TableRow
@@ -617,7 +620,7 @@ const ItemsInventoryPage = () => {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={USERLIST.length}
+                    count={filteredItems.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}

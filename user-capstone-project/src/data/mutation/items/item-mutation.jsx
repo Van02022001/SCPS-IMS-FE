@@ -5,6 +5,11 @@ export const getAllItem = async () => {
     return response.data;
 }
 
+export const getItemByWarehouseId = async (warehouseId) => {
+    const response = await axiosInstance.get(`/items/items-by-warehouse/${warehouseId}`);
+    return response.data;
+}
+
 export const createItem = async (itemParams) => {
     const response = await axiosInstance.post("/items", itemParams);
     return response.data;

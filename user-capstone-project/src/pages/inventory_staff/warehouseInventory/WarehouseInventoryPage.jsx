@@ -45,6 +45,7 @@ import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import { getAllWarehouseTransfer } from '~/data/mutation/warehouseTransfer/warehouseTransfer-mutation';
 import CreateTransferForm from '~/sections/auth/inventory_staff/warehouseInventory/CreateTransferForm';
+import { useNavigate } from 'react-router-dom';
 
 // ----------------------------------------------------------------------
 
@@ -148,6 +149,8 @@ const WarehouseInventoryPage = () => {
     // fiter createdAt //
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
+    const navigate = useNavigate();
+
 
     const handleChange = (event) => {
         setPersonName(event.target.value);
@@ -356,7 +359,7 @@ const WarehouseInventoryPage = () => {
                 <Button
                     variant="contained"
                     startIcon={<Iconify icon="eva:plus-fill" />}
-                    onClick={() => setOpenOderForm(true)}
+                    onClick={() => navigate('/inventory-staff/warehouse-transfer')}
                 >
                     Chuyển kho
                 </Button>
@@ -367,7 +370,7 @@ const WarehouseInventoryPage = () => {
                             <CloseIcon color="primary" />
                         </IconButton>{' '}
                     </DialogTitle>
-                    <CreateTransferForm onClose={handleCreateTransferSuccess} open={openOderForm} />
+                    <CreateTransferForm />
                 </Dialog>
             </Stack>
 

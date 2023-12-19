@@ -37,7 +37,6 @@ import AddOriginItemForm from './AddOriginItemForm';
 import AddSupplierFrom from './AddSupplierFrom';
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 
-
 const CreateItemsForm = (props) => {
     const [open, setOpen] = React.useState(false);
     const [currentTab, setCurrentTab] = useState(0);
@@ -110,21 +109,27 @@ const CreateItemsForm = (props) => {
         handleCloseAddBrandForm();
 
         console.log(successMessage);
-        setSnackbarSuccessMessage(successMessage === 'Create brand successfully' ? 'Tạo thể loại thành công!' : 'Thành công');
+        setSnackbarSuccessMessage(
+            successMessage === 'Create brand successfully' ? 'Tạo thể loại thành công!' : 'Thành công',
+        );
         setSnackbarSuccessOpen(true);
     };
 
     const handleSaveOrigin = (successMessage) => {
         handleCloseAddOriginForm();
 
-        setSnackbarSuccessMessage(successMessage === 'Create origin successfully' ? 'Tạo thể loại thành công!' : 'Thành công');
+        setSnackbarSuccessMessage(
+            successMessage === 'Create origin successfully' ? 'Tạo thể loại thành công!' : 'Thành công',
+        );
         setSnackbarSuccessOpen(true);
     };
 
     const handleSaveSupplier = (successMessage) => {
         handleCloseAddSuplierForm();
 
-        setSnackbarSuccessMessage(successMessage === 'Create supplier successfully' ? 'Tạo thể loại thành công!' : 'Thành công');
+        setSnackbarSuccessMessage(
+            successMessage === 'Create supplier successfully' ? 'Tạo thể loại thành công!' : 'Thành công',
+        );
         setSnackbarSuccessOpen(true);
     };
     //================================================================================================================
@@ -134,9 +139,9 @@ const CreateItemsForm = (props) => {
         setOpen(true);
         // Đặt logic hiển thị nội dung thông báo từ API ở đây
         if (message === 'Update SubCategory status successfully.') {
-            setMessage('Cập nhập trạng thái danh mục thành công')
+            setMessage('Cập nhập trạng thái danh mục thành công');
         } else if (message === 'Update SubCategory successfully.') {
-            setMessage('Cập nhập danh mục thành công')
+            setMessage('Cập nhập danh mục thành công');
             console.error('Error message:', errorMessage);
         }
     };
@@ -147,12 +152,10 @@ const CreateItemsForm = (props) => {
         }
 
         setOpen(false);
-
     };
     const action = (
         <React.Fragment>
-            <Button color="secondary" size="small" onClick={handleClose}>
-            </Button>
+            <Button color="secondary" size="small" onClick={handleClose}></Button>
             <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
                 <CloseIcon fontSize="lage" />
             </IconButton>
@@ -180,19 +183,18 @@ const CreateItemsForm = (props) => {
         };
         try {
             const response = await createItem(itemParams);
-            if (response.status === "200 OK") {
+            if (response.status === '200 OK') {
                 // setIsSuccess(true);
                 // setIsError(false);
                 // setSuccessMessage(response.data.message);
                 handleMessage(response.message);
                 props.onClose(response.data, response.message);
-
             }
         } catch (error) {
             console.error('Error creating product:', error.response.status);
             setIsError(true);
             setIsSuccess(false);
-            if (error.response?.data?.message === "Min stock cannot be greater than max stock") {
+            if (error.response?.data?.message === 'Min stock cannot be greater than max stock') {
                 setErrorMessage('Số lượng tồn kho tối thiểu không thể lớn hơn lượng hàng tồn kho tối đa');
             }
         }
@@ -206,7 +208,6 @@ const CreateItemsForm = (props) => {
         // setSuppliers_id([]);
         // setOrigins_id([]);
     };
-
 
     useEffect(() => {
         getAllSubCategoryActive()
@@ -234,7 +235,7 @@ const CreateItemsForm = (props) => {
                 setSuppliers_id(data);
             })
             .catch((error) => console.error('Error fetching brands:', error));
-    }, [openAddOriginForm, openAddBrandForm]);
+    }, [openAddOriginForm, openAddBrandForm, openAddSuplierForm]);
 
     return (
         <>
@@ -482,7 +483,10 @@ const CreateItemsForm = (props) => {
             </div>
             <SnackbarSuccess
                 open={snackbarSuccessOpen}
-                handleClose={() => setSnackbarSuccessOpen(false)}
+                handleClose={() => {
+                    setSnackbarSuccessOpen(false);
+                    setSnackbarSuccessMessage('');
+                }}
                 message={snackbarSuccessMessage}
                 style={{ bottom: '16px', right: '16px' }}
             />

@@ -28,6 +28,8 @@ import SaveIcon from '@mui/icons-material/Save';
 import Snackbar from '@mui/material/Snackbar';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+
 //components
 import BoxComponent from '~/components/box/BoxComponent';
 // sections
@@ -63,6 +65,9 @@ const CreateTransferForm = (props) => {
     const [isError, setIsError] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+
+    const navigate = useNavigate();
+
 
     const [recieptParams, setRecieptParams] = useState({
         details: [],
@@ -175,6 +180,10 @@ const CreateTransferForm = (props) => {
 
     console.log(selectedItems);
 
+    const handleNavigate = () => {
+        navigate('/inventory-staff/warehouse-transfer');
+    };
+
     return (
         <>
             <Helmet>
@@ -182,6 +191,14 @@ const CreateTransferForm = (props) => {
             </Helmet>
 
             <Box sx={{ flexGrow: 1 }}>
+                <Stack direction="row" alignItems="center" mb={5}>
+                    <Button onClick={handleNavigate}>
+                        <ArrowBackIcon fontSize="large" color="action" />
+                    </Button>
+                    <Typography variant="h4" gutterBottom>
+                        Chuyển kho
+                    </Typography>
+                </Stack>
                 <Grid container spacing={2}>
                     <Grid item xs={7}>
                         {/* Toolbar */}
