@@ -33,3 +33,8 @@ export const getInventoryStaffByWarehouseId = async (warehouseId) => {
     const response = await axiosInstance.get(`/warehouses/inventory-staffs/${warehouseId}`);
     return response.data;
 };
+
+export const getOtherWarehouse = async () => {
+    const response = await axiosInstance.get("/warehouses/other-warehouses");
+    return response.data;
+}

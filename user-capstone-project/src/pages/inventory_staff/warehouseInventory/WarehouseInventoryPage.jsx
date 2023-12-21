@@ -151,6 +151,9 @@ const WarehouseInventoryPage = () => {
     const [endDate, setEndDate] = useState(null);
     const navigate = useNavigate();
 
+    const startIndex = page * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
+
 
     const handleChange = (event) => {
         setPersonName(event.target.value);
@@ -394,7 +397,7 @@ const WarehouseInventoryPage = () => {
                                 onSelectAllClick={handleSelectAllClick}
                             />
                             <TableBody>
-                                {transferData.map((transfer) => {
+                                {transferData.slice(startIndex, endIndex).map((transfer) => {
                                     return (
                                         <React.Fragment key={transfer.id}>
                                             <TableRow
@@ -483,7 +486,7 @@ const WarehouseInventoryPage = () => {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={USERLIST.length}
+                    count={transferData.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}

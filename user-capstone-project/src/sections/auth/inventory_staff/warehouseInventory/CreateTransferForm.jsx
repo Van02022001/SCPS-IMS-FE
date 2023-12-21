@@ -37,13 +37,14 @@ import { UserListHead } from '~/sections/@dashboard/user';
 // api
 import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
-import { createItem, getAllItem } from '~/data/mutation/items/item-mutation';
+import { createItem, getAllItem, getItemByWarehouse } from '~/data/mutation/items/item-mutation';
 
 // icons
 // mock
 import USERLIST from '~/_mock/user';
 import Scrollbar from '~/components/scrollbar/Scrollbar';
 import { createTransfer } from '~/data/mutation/warehouseTransfer/warehouseTransfer-mutation';
+import { getOtherWarehouse } from '~/data/mutation/warehouse/warehouse-mutation';
 
 const CreateTransferForm = (props) => {
     const [order, setOrder] = useState('asc');
@@ -57,6 +58,7 @@ const CreateTransferForm = (props) => {
 
     //=====================================
     const [itemsData, setItemsData] = useState([]);
+    const [destinationWarehouseId, setDestinationWarehouseId] = useState([]);
     const [selectedItems, setSelectedItems] = useState([]);
 
     //thông báo
@@ -66,11 +68,13 @@ const CreateTransferForm = (props) => {
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
+    const [selectedWarehouseId, setSelectedWarehouseId] = useState(null);
+
     const navigate = useNavigate();
 
-
     const [recieptParams, setRecieptParams] = useState({
-        details: [],
+        destinationWarehouseId: null,
+        items: [],
     });
 
     const TABLE_HEAD = [
@@ -111,18 +115,15 @@ const CreateTransferForm = (props) => {
 
     //============================================================
     // hàm create category-----------------------------------------
+
+    console.log(selectedItems);
+
     const handleCreateTransfer = async () => {
         try {
             // Prepare the data based on the selected items
-            const transferData = selectedItems.map((selectedItem) => ({
-                itemId: selectedItem.itemId,
-                sourceWarehouseId: selectedItem.sourceWarehouseId,
-                destinationWarehouseId: selectedItem.destinationWarehouseId,
-                quantity: selectedItem.quantity,
-            }));
 
             // Make the API call
-            const response = await createTransfer(transferData);
+            const response = await createTransfer(recieptParams);
 
             if (response.status === '201 CREATED') {
                 // Handle success
@@ -147,14 +148,17 @@ const CreateTransferForm = (props) => {
             {
                 ...selectedProduct,
                 itemId: selectedProduct.id,
+                quantity: 0,
             },
         ];
 
         const newRecieptParams = {
-            details: [
-                ...recieptParams.details,
+            destinationWarehouseId: selectedWarehouseId,
+            items: [
+                ...recieptParams.items,
                 {
                     itemId: selectedProduct.id,
+                    quantity: 0,
                 },
             ],
         };
@@ -163,8 +167,47 @@ const CreateTransferForm = (props) => {
         setSelectedItems(updatedSelectedItems);
     };
 
+    const handleWarehouseIdChange = (index, value) => {
+        console.log('Selected Warehouse ID:', value);
+
+        // Update the selected warehouse ID
+        setSelectedWarehouseId(value);
+
+        const updatedItems = [...selectedItems];
+        updatedItems[index].destinationWarehouseId = value;
+        setSelectedItems(updatedItems);
+
+        // Update recieptParams
+        const updatedRecieptParams = {
+            destinationWarehouseId: value,
+            items: updatedItems.map((item) => ({
+                itemId: item.itemId,
+                quantity: item.quantity,
+            })),
+        };
+
+        setRecieptParams(updatedRecieptParams);
+    };
+
+    const handleQuantityChange = (index, value) => {
+        const updatedItems = [...selectedItems];
+        updatedItems[index].quantity = value;
+        setSelectedItems(updatedItems);
+
+        // Update recieptParams
+        const updatedRecieptParams = {
+            ...recieptParams,
+            items: updatedItems.map((item) => ({
+                itemId: item.itemId,
+                quantity: item.quantity,
+            })),
+        };
+
+        setRecieptParams(updatedRecieptParams);
+    };
+
     useEffect(() => {
-        getAllItem()
+        getItemByWarehouse()
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
@@ -178,11 +221,27 @@ const CreateTransferForm = (props) => {
             });
     }, []);
 
+    useEffect(() => {
+        getOtherWarehouse()
+            .then((response) => {
+                const data = response.data;
+                setDestinationWarehouseId(data);
+
+                // Thay đổi giá trị của selectedWarehouseId
+                if (!selectedWarehouseId && data.length > 0) {
+                    setSelectedWarehouseId(data[0].id);
+                }
+            })
+            .catch((error) => console.error('Error fetching warehouses:', error));
+    }, [selectedWarehouseId]);
+
     console.log(selectedItems);
 
     const handleNavigate = () => {
-        navigate('/inventory-staff/warehouse-transfer');
+        navigate('/inventory-staff/warehousesInventory');
     };
+
+    console.log('selectedWarehouseId:', selectedWarehouseId);
 
     return (
         <>
@@ -236,56 +295,29 @@ const CreateTransferForm = (props) => {
 
                                                 <ListItemText>
                                                     <Select
-                                                        label="Kho nguồn"
-                                                        sx={{ width: '50%' }}
-                                                        // value={selectedItem.unitId}
-                                                        // onChange={(e) =>
-                                                        //     handleUnitIdChange(
-                                                        //         selectedItems.indexOf(selectedItem),
-                                                        //         e.target.value,
-                                                        //     )
-                                                        // }
-                                                    >
-                                                        {/* {unitId.map((unit) => (
-                                                            <MenuItem
-                                                                sx={{
-                                                                    display: 'flex',
-                                                                    justifyContent: 'space-between',
-                                                                    alignItems: 'center',
-                                                                }}
-                                                                key={unit.id}
-                                                                value={unit.id}
-                                                            >
-                                                                {unit.name}
-                                                            </MenuItem>
-                                                        ))} */}
-                                                    </Select>
-                                                </ListItemText>
-                                                <ListItemText>
-                                                    <Select
                                                         label="Kho đến"
                                                         sx={{ width: '50%' }}
-                                                        // value={selectedItem.unitId}
-                                                        // onChange={(e) =>
-                                                        //     handleUnitIdChange(
-                                                        //         selectedItems.indexOf(selectedItem),
-                                                        //         e.target.value,
-                                                        //     )
-                                                        // }
+                                                        value={selectedItem.destinationWarehouseId || ''}
+                                                        onChange={(e) =>
+                                                            handleWarehouseIdChange(
+                                                                selectedItems.indexOf(selectedItem),
+                                                                e.target.value,
+                                                            )
+                                                        }
                                                     >
-                                                        {/* {unitId.map((unit) => (
+                                                        {destinationWarehouseId.map((other) => (
                                                             <MenuItem
                                                                 sx={{
                                                                     display: 'flex',
                                                                     justifyContent: 'space-between',
                                                                     alignItems: 'center',
                                                                 }}
-                                                                key={unit.id}
-                                                                value={unit.id}
+                                                                key={other.id}
+                                                                value={other.id}
                                                             >
-                                                                {unit.name}
+                                                                {other.name}
                                                             </MenuItem>
-                                                        ))} */}
+                                                        ))}
                                                     </Select>
                                                 </ListItemText>
                                                 <ListItemText>
@@ -294,12 +326,12 @@ const CreateTransferForm = (props) => {
                                                         label="Số lượng"
                                                         sx={{ width: '50%' }}
                                                         // value={selectedItem.quantity}
-                                                        // onChange={(e) =>
-                                                        //     handleQuantityChange(
-                                                        //         selectedItems.indexOf(selectedItem),
-                                                        //         e.target.value,
-                                                        //     )
-                                                        // }
+                                                        onChange={(e) =>
+                                                            handleQuantityChange(
+                                                                selectedItems.indexOf(selectedItem),
+                                                                e.target.value,
+                                                            )
+                                                        }
                                                     />
                                                 </ListItemText>
                                                 {/* <Button onClick={() => handleRemoveFromCart(index)}>Xóa</Button> */}
