@@ -35,7 +35,7 @@ import { getAllItem } from '~/data/mutation/items/item-mutation';
 import { getAllWarehouse, getInventoryStaffByWarehouseId } from '~/data/mutation/warehouse/warehouse-mutation';
 import { createRequestCustomer } from '~/data/mutation/customerRequest/CustomerRequest-mutation';
 import { getAllCustomer } from '~/data/mutation/customer/customer-mutation';
-
+import { CreateGoodReceiptListHead } from '~/sections/@dashboard/manager/transaction/createGoodReceipt';
 
 const CreateRequestCustomerPage = () => {
     const [order, setOrder] = useState('asc');
@@ -54,7 +54,6 @@ const CreateRequestCustomerPage = () => {
     const [selectedCustomerId, setSelectedCustomerId] = useState(null);
     const [warehouseList, setWarehouseList] = useState([]);
     const [inventoryStaffList, setInventoryStaffList] = useState([]);
-
 
     const [selectedProducts, setSelectedProducts] = useState([]);
     const [recieptParams, setRecieptParams] = useState({
@@ -76,7 +75,6 @@ const CreateRequestCustomerPage = () => {
     const TABLE_HEAD = [
         { id: 'name', label: 'Tên sản phẩm', alignRight: false },
         { id: 'quality', label: 'Số lượng', alignRight: false },
-
         { id: '' },
     ];
 
@@ -109,7 +107,6 @@ const CreateRequestCustomerPage = () => {
     };
 
     const handleSearchChange = (event) => {
-
         setSearchText(event.target.value);
     };
 
@@ -182,20 +179,18 @@ const CreateRequestCustomerPage = () => {
     };
 
     useEffect(() => {
-        getAllItem()
-            .then((respone) => {
-                const data = respone.data;
-                if (Array.isArray(data)) {
-                    setItemsData(data);
-                } else {
-                    console.error('API response is not an array:', data);
-                }
-            })
+        getAllItem().then((respone) => {
+            const data = respone.data;
+            if (Array.isArray(data)) {
+                setItemsData(data);
+            } else {
+                console.error('API response is not an array:', data);
+            }
+        });
         getAllCustomer()
             .then((respone) => {
                 const data = respone.data;
                 setCustomerData(data);
-
             })
             .catch((error) => {
                 console.error('Error fetching users:', error);
@@ -237,7 +232,7 @@ const CreateRequestCustomerPage = () => {
                 // Xử lý khi tạo phiếu nhập thành công
             }
             navigate('/sale-staff/request-customer', {
-                state: { successMessage: response.message }
+                state: { successMessage: response.message },
             });
         } catch (error) {
             console.error('Error creating product:', error.response);
@@ -260,7 +255,7 @@ const CreateRequestCustomerPage = () => {
                 </Stack>
 
                 <Card>
-
+                    
                     <Stack spacing={4} margin={2} style={{ minHeight: '70vh', }}>
                         <Grid container spacing={2}>
 
@@ -340,7 +335,6 @@ const CreateRequestCustomerPage = () => {
                                 </Paper>
                             </Grid>
 
-
                             {/* Danh sách sản phẩm bên phải */}
                             <Grid item xs={6} style={{ padding: '20px' }}>
                                 <Paper style={{ border: '1px solid #ccc', borderRadius: '8px', boxShadow: '4px 4px 10px rgba(0, 0, 0, 0.1)', minHeight: '70vh' }}>
@@ -369,11 +363,17 @@ const CreateRequestCustomerPage = () => {
                                                     value={selectedCustomerId ? selectedCustomerId.customerId : ''}
                                                     onChange={(e) =>
                                                         setSelectedCustomerId(
-                                                            customerData.find((customer) => customer.customerId === e.target.value),
-                                                        )}
+                                                            customerData.find(
+                                                                (customer) => customer.customerId === e.target.value,
+                                                            ),
+                                                        )
+                                                    }
                                                 >
                                                     {customerData.map((customers) => (
-                                                        <MenuItem key={customers.customerId} value={customers.customerId}>
+                                                        <MenuItem
+                                                            key={customers.customerId}
+                                                            value={customers.customerId}
+                                                        >
                                                             {customers.name}
                                                         </MenuItem>
                                                     ))}
@@ -399,7 +399,9 @@ const CreateRequestCustomerPage = () => {
                                                     value={selectedWarehouse ? selectedWarehouse.id : ''}
                                                     onChange={(e) =>
                                                         setSelectedWarehouse(
-                                                            warehouseList.find((warehouse) => warehouse.id === e.target.value),
+                                                            warehouseList.find(
+                                                                (warehouse) => warehouse.id === e.target.value,
+                                                            ),
                                                         )
                                                     }
                                                 >
@@ -432,7 +434,6 @@ const CreateRequestCustomerPage = () => {
                                         </Grid>
                                     </Grid>
 
-
                                     <div style={{ textAlign: 'center' }}>
                                         <DialogContent>
                                             <List>
@@ -452,25 +453,34 @@ const CreateRequestCustomerPage = () => {
                                                         >
                                                             <img src={items.avatar} alt={items.name} width="100%" />
                                                             <div style={{ padding: '8px' }}>
-                                                                <Typography variant="body1">{items.subCategory.name}</Typography>
+                                                                <Typography variant="body1">
+                                                                    {items.subCategory.name}
+                                                                </Typography>
                                                             </div>
                                                         </ListItem>
                                                     ))
                                                 ) : (
-                                                    <Typography variant="body2">Chọn kho hàng trước khi thêm sản phẩm.</Typography>
+                                                    <Typography variant="body2">
+                                                        Chọn kho hàng trước khi thêm sản phẩm.
+                                                    </Typography>
                                                 )}
                                             </List>
                                             {/* Nút chuyển trang 1/2 (nếu cần) và nút thanh toán */}
                                             <div style={{ position: 'absolute', bottom: 50, right: 35 }}>
                                                 <Button>Trang</Button>
-                                                <Button color="primary" variant="contained" onClick={handleCreateImportReceipt}>Lưu</Button>
+                                                <Button
+                                                    color="primary"
+                                                    variant="contained"
+                                                    onClick={handleCreateImportReceipt}
+                                                >
+                                                    Lưu
+                                                </Button>
                                             </div>
                                         </DialogContent>
                                     </div>
                                 </Paper>
                             </Grid>
                         </Grid>
-
                     </Stack>
                 </Card>
             </Box>

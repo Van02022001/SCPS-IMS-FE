@@ -39,7 +39,7 @@ import PRODUCTSLIST from '../../../_mock/products';
 // api
 import EditCategoryForm from '~/sections/auth/manager/categories/EditCategoryForm';
 import { getAllCustomer } from '~/data/mutation/customer/customer-mutation';
-
+import dayjs from 'dayjs';
 
 
 // ----------------------------------------------------------------------
@@ -123,6 +123,8 @@ const CustomerSalePage = () => {
     const [productStatus, setProductStatus] = useState('');
 
     const [selectedProduct, setSelectedProduct] = useState(null);
+    const startIndex = page * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
 
     // Hàm để thay đổi data mỗi khi Edit xong api-------------------------------------------------------------
     const updateProductInList = (updatedProduct) => {
@@ -269,8 +271,13 @@ const CustomerSalePage = () => {
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
-                    setCustomerData(data);
-                    setSortedProduct(data);
+                    const sortedData = data.sort((a, b) => {
+                        return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(
+                            dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
+                        );
+                    });
+                    setCustomerData(sortedData);
+                    setSortedProduct(sortedData);
                 } else {
                     console.error('API response is not an array:', data);
                 }
@@ -320,8 +327,8 @@ const CustomerSalePage = () => {
                     <TableContainer sx={{ minWidth: 800 }}>
                         <Table>
                             <ProductsListHead
-                                order={order}
-                                orderBy={orderBy}
+                                // order={order}
+                                // orderBy={orderBy}
                                 headLabel={TABLE_HEAD}
                                 rowCount={customerData.length}
                                 numSelected={selected.length}
@@ -329,7 +336,7 @@ const CustomerSalePage = () => {
                                 onSelectAllClick={handleSelectAllClick}
                             />
                             <TableBody>
-                                {customerData.map((customer) => {
+                                {customerData.slice(startIndex, endIndex).map((customer) => {
                                     return (
                                         <React.Fragment key={customer.customerId}>
                                             <TableRow
@@ -385,7 +392,7 @@ const CustomerSalePage = () => {
 
                                             {selectedCustomerId === customer.customerId && (
                                                 <TableRow>
-                                                    <TableCell colSpan={8}>
+                                                    <TableCell colSpan={12}>
                                                         <CustomerDetailForm
                                                             customer={customerData}
                                                             customerId={selectedCustomerId}
@@ -398,11 +405,11 @@ const CustomerSalePage = () => {
                                         </React.Fragment>
                                     );
                                 })}
-                                {emptyRows > 0 && (
+                                {/* {emptyRows > 0 && (
                                     <TableRow style={{ height: 53 * emptyRows }}>
                                         <TableCell colSpan={6} />
                                     </TableRow>
-                                )}
+                                )} */}
                             </TableBody>
 
                             {isNotFound && (
@@ -435,7 +442,7 @@ const CustomerSalePage = () => {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={PRODUCTSLIST.length}
+                    count={customerData.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}

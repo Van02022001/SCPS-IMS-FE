@@ -42,8 +42,10 @@ const SupplierDetailForm = ({ suppliers, suppliersId, onClose, isOpen, mode, upd
 
     const handleSuccessMessage = (message) => {
         setOpen(true);
-        if (message === 'Create origin successfully') {
+        if (message === 'Updated supplier successfully!') {
             setSuccessMessage('Cập nhập nguồn gốc thành công !');
+        } else if (message === 'Update supplier status successfully!') {
+            setSuccessMessage('Cập nhập trạng thái thành công !');
         }
     };
 
@@ -414,9 +416,6 @@ const SupplierDetailForm = ({ suppliers, suppliersId, onClose, isOpen, mode, upd
                                 action={action}
                                 style={{ bottom: '16px', right: '16px' }}
                             />
-                            <Button variant="outlined" color="error">
-                                Hủy bỏ
-                            </Button>
                         </Grid>
                     </Stack>
                 </div>

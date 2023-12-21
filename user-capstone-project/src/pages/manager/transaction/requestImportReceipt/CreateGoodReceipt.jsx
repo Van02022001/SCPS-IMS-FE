@@ -80,7 +80,6 @@ const CreateGoodReceipt = () => {
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
-
     const handleSuccessMessage = (message) => {
         setOpen(true);
         if (message === 'Import request receipt created successfully') {
@@ -215,8 +214,6 @@ const CreateGoodReceipt = () => {
         }
         setSelected([]);
     };
-
-
 
     const handleNavigate = () => {
         navigate('/dashboard/request-import-receipt');
@@ -437,8 +434,8 @@ const CreateGoodReceipt = () => {
                             <TableContainer sx={{ minWidth: 800 }}>
                                 <Table>
                                     <CreateGoodReceiptListHead
-                                        order={order}
-                                        orderBy={orderBy}
+                                        // order={order}
+                                        // orderBy={orderBy}
                                         headLabel={TABLE_HEAD}
                                         rowCount={USERLIST.length}
                                         numSelected={selected.length}
@@ -470,11 +467,11 @@ const CreateGoodReceipt = () => {
                                                         {selectedItem.subCategory.name}
                                                     </Typography>
                                                 </ListItemText>
-                                                <ListItemText sx={{ flexBasis: '28%' }}>
+                                                <ListItemText sx={{ flexBasis: '34%' }}>
                                                     <TextField
                                                         type="number"
                                                         label="Số lượng"
-                                                        sx={{ width: '100%' }}
+                                                        sx={{ width: '40%' }}
                                                         value={selectedItem.quantity}
                                                         onChange={(e) =>
                                                             handleQuantityChange(
@@ -555,14 +552,12 @@ const CreateGoodReceipt = () => {
                                                 onChange={(e) => setDescriptionReceipt(e.target.value)}
                                             />
                                         </Stack>
-                                        <div>
-                                            <Typography variant="subtitle1" sx={{ fontSize: '16px' }}>
-                                                Tổng số lượng: {calculateTotalQuantity()}
-                                            </Typography>
-                                            <Typography variant="subtitle1" sx={{ fontSize: '16px' }}>
+                                        <Typography variant="subtitle1" sx={{ fontSize: '16px' }}>
+                                            Tổng số lượng: {calculateTotalQuantity()}
+                                        </Typography>
+                                        {/* <Typography variant="subtitle1" sx={{ fontSize: '16px' }}>
                                                 Tổng tiền hàng: {calculateTotalAmount().toLocaleString()}
-                                            </Typography>
-                                        </div>
+                                            </Typography> */}
                                     </CardContent>
                                 </Card>
                             </div>
@@ -641,6 +636,6 @@ const CreateGoodReceipt = () => {
             </Box>
         </>
     );
-}
+};
 
 export default CreateGoodReceipt;

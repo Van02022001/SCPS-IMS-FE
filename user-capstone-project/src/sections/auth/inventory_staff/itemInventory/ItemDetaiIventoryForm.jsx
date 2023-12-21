@@ -370,7 +370,7 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                     </Grid>
                                 </Grid>
 
-                                <Grid
+                                {/* <Grid
                                     container
                                     spacing={1}
                                     direction="row"
@@ -399,7 +399,7 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                             ))}
                                         </Select>
                                     </Grid>
-                                </Grid>
+                                </Grid> */}
 
                                 <Grid
                                     container

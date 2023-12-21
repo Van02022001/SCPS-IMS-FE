@@ -70,7 +70,6 @@ const TABLE_HEAD = [
     // { id: 'updatedAt', label: 'Ngày cập nhập', alignRight: false },
     { id: 'categories', label: 'Nhóm hàng', alignRight: false },
     { id: 'status', label: 'Trạng thái', alignRight: false },
-    { id: '' },
 ];
 
 // ----------------------------------------------------------------------

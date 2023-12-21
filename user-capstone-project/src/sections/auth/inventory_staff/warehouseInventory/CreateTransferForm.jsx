@@ -79,7 +79,6 @@ const CreateTransferForm = (props) => {
 
     const TABLE_HEAD = [
         { id: 'name', label: 'Tên sản phẩm', alignRight: false },
-        { id: 'pricing', label: 'Kho nguồn', alignRight: false },
         { id: 'unit', label: 'Kho đến', alignRight: false },
         { id: 'quality', label: 'Số lượng', alignRight: false },
     ];
