@@ -82,6 +82,23 @@ const CreateCustomerForm = ({ onClose, onSave }) => {
         setOpen(false);
         setOpen1(false);
     };
+    const validateName = (value) => {
+        if (!value.trim()) {
+            return "Tên hàng hóa không được để trống"
+        } else if (!/^\p{Lu}/u.test(value)) {
+            return "Chữ cái đầu phải in hoa.";
+        }
+
+        return null;
+    };
+
+    const validateDescription = (value) => {
+        if (!value.trim()) {
+            return "Mô tả hàng hóa không được để trống.";
+        }
+        return null;
+    };
+
     //============================================================
 
     const handleSubmit = async () => {

@@ -67,7 +67,6 @@ const TABLE_HEAD = [
     { id: 'isVerified', label: 'Nhà cung cấp', alignRight: false },
     { id: 'origin', label: 'Nguồn gốc', alignRight: false },
     { id: 'status', label: 'Trạng thái', alignRight: false },
-    { id: '' },
 ];
 // const orderDetailFormStyles = {
 //     maxHeight: 0,

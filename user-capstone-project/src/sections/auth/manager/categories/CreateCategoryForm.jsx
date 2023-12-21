@@ -14,7 +14,8 @@ import SnackbarError from '~/components/alert/SnackbarError';
 const CreateCategoriesForm = (props) => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
-    
+    const [nameError, setNameError] = useState(null);
+    const [descriptionError, setDescriptionError] = useState(null);
     //========================== Hàm notification của trang ==================================
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
@@ -63,6 +64,36 @@ const CreateCategoriesForm = (props) => {
         setOpen(false);
         setOpen1(false);
     };
+    const validateName = (value) => {
+        if (!value.trim()) {
+            return "Tên hàng hóa không được để trống"
+        } else if (!/^\p{Lu}/u.test(value)) {
+            return "Chữ cái đầu phải in hoa.";
+        }
+
+        return null;
+    };
+
+    const validateDescription = (value) => {
+        if (!value.trim()) {
+            return "Mô tả hàng hóa không được để trống.";
+        }
+        return null;
+    };
+
+    const handleNameChange = (e) => {
+        const newName = capitalizeFirstLetter(e.target.value);
+        setName(newName);
+
+        setNameError(validateName(newName));
+    };
+
+    const handleDescriptionChange = (e) => {
+        const newDescription = capitalizeFirstLetter(e.target.value);
+        setDescription(newDescription);
+
+        setDescriptionError(validateDescription(newDescription));
+    };
     //============================================================
 
     const handleCreateCategory = async () => {
@@ -84,11 +115,6 @@ const CreateCategoriesForm = (props) => {
         } catch (error) {
             console.error("Can't fetch category", error.response);
             handleErrorMessage(error.response?.data?.message)
-            // if (error.response?.data?.message === 'Invalid request') {
-            //     handleErrorMessage('Yêu cầu không hợp lệ');
-            // } else if (error.response?.data?.message === "You must be logged in with proper permissions to access this resource") {
-            //     handleErrorMessage('Yêu cầu không hợp lệ');
-            // }
         }
     };
 
@@ -96,21 +122,24 @@ const CreateCategoriesForm = (props) => {
         <>
             <div style={{ textAlign: 'center' }}>
                 <DialogContent>
-                    {/* <DialogContentText>Do you want remove this user?</DialogContentText> */}
                     <Stack spacing={2} margin={2}>
                         <TextField
+                            helperText={nameError}
+                            error={Boolean(nameError)}
                             variant="outlined"
                             label="Tên thể loại"
                             value={name}
-                            onChange={(e) => setName(capitalizeFirstLetter(e.target.value))}
+                            onChange={handleNameChange}
                         />
                         <TextField
+                            helperText={descriptionError}
+                            error={Boolean(descriptionError)}
                             variant="outlined"
                             label="Mô tả"
                             multiline
                             rows={3}
                             value={description}
-                            onChange={(e) => setDescription(capitalizeFirstLetter(e.target.value))}
+                            onChange={handleDescriptionChange}
                         />
                         <Button color="primary" variant="contained" onClick={handleCreateCategory}>
                             Tạo

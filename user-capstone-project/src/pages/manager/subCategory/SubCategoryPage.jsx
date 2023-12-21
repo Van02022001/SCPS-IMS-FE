@@ -203,7 +203,7 @@ const SubCategoryPage = () => {
         setOpenOderForm(false);
         setSubCategoryData((prevSubCategoryData) => [newSubCategory, ...prevSubCategoryData]);
 
-        setSnackbarSuccessMessage(successMessage === 'Create category successfully' ? 'Tạo thể loại thành công!' : 'Thành công');
+        setSnackbarSuccessMessage(successMessage === 'Create sub category successfully.' ? 'Tạo danh mục sản phẩm thành công!' : 'Thành công');
         setSnackbarSuccessOpen(true);
     };
 

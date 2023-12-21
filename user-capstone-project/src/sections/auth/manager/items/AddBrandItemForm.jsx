@@ -1,7 +1,6 @@
 import { Button, Dialog, DialogContent, DialogTitle, Stack, TextField } from '@mui/material';
 import React, { useState } from 'react';
 // icon
-import Snackbar from '@mui/material/Snackbar';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
@@ -10,9 +9,10 @@ import { createBrands } from '~/data/mutation/brand/brands-mutation';
 import SnackbarError from '~/components/alert/SnackbarError';
 
 const AddBrandItemForm = ({ open, onClose, onSave }) => {
-    const [openMsg, setOpenMsg] = React.useState(false);
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
+    const [nameError, setNameError] = useState(null);
+    const [descriptionError, setDescriptionError] = useState(null);
     //thông báo
     const [errorMessage, setErrorMessage] = useState('');
     const [open1, setOpen1] = React.useState(false);
@@ -31,21 +31,17 @@ const AddBrandItemForm = ({ open, onClose, onSave }) => {
             setErrorMessage('Vui lòng chọn đơn vị !');
         } else if (message === 'name: size must be between 1 and 100') {
             setErrorMessage('Tên phải từ 1 - 100 ký tự !');
-        } else if (message === 'description: Required field') {
-            setErrorMessage('Vui lòng nhập mô tả !');
         } else if (message === 'name: Name of product not null') {
             setErrorMessage('Tên không được để trống !');
-        } else if (message === 'description: Description not null') {
-            setErrorMessage('Mô tả không được để trống !');
-        } else if (message === 'name: The first letter must be uppercase.') {
-            setErrorMessage('Chữ cái đầu của tên phải viết hoa !');
-        } else if (message === 'description: The first letter must be uppercase.') {
-            setErrorMessage('Chữ cái đầu của mô tả phải viết hoa !');
-        } else if (message === 'name: Required field.') {
-            setErrorMessage('Vui lòng nhập tên !');
-        } else if (message === 'SubCategory must have at least one category') {
-            setErrorMessage('Vui lòng chọn nhóm hàng !');
         }
+    };
+
+    const resetForm = () => {
+        setName('');
+        setDescription('');
+        setNameError(null);
+        setDescriptionError(null);
+        setErrorMessage('');
     };
 
     const handleClose = (event, reason) => {
@@ -53,6 +49,7 @@ const AddBrandItemForm = ({ open, onClose, onSave }) => {
             return;
         }
 
+        resetForm();
         setOpen1(false);
     };
 
@@ -68,6 +65,37 @@ const AddBrandItemForm = ({ open, onClose, onSave }) => {
     const handleCloseSnackbar = () => {
         setOpen1(false);
         setOpen1('');
+    };
+
+    const validateName = (value) => {
+        if (!value.trim()) {
+            return "Tên hàng hóa không được để trống"
+        } else if (!/^\p{Lu}/u.test(value)) {
+            return "Chữ cái đầu phải in hoa.";
+        }
+
+        return null;
+    };
+
+    const validateDescription = (value) => {
+        if (!value.trim()) {
+            return "Mô tả hàng hóa không được để trống.";
+        }
+        return null;
+    };
+
+    const handleNameChange = (e) => {
+        const newName = capitalizeFirstLetter(e.target.value);
+        setName(newName);
+
+        setNameError(validateName(newName));
+    };
+
+    const handleDescriptionChange = (e) => {
+        const newDescription = capitalizeFirstLetter(e.target.value);
+        setDescription(newDescription);
+
+        setDescriptionError(validateDescription(newDescription));
     };
     //============================================================
 
@@ -97,18 +125,22 @@ const AddBrandItemForm = ({ open, onClose, onSave }) => {
             <DialogContent sx={{ width: 500 }}>
                 <Stack spacing={2} margin={2}>
                     <TextField
+                        helperText={nameError}
+                        error={Boolean(nameError)}
                         variant="outlined"
                         value={name}
                         label="Tên đơn vị"
-                        onChange={(e) => setName(capitalizeFirstLetter(e.target.value))}
+                        onChange={handleNameChange}
                     />
                     <TextField
+                        helperText={descriptionError}
+                        error={Boolean(descriptionError)}
                         variant="outlined"
                         value={description}
                         multiline
                         rows={3}
                         label="Mô tả"
-                        onChange={(e) => setDescription(capitalizeFirstLetter(e.target.value))}
+                        onChange={handleDescriptionChange}
                     />
                     <Button color="primary" variant="contained" onClick={handleSave}>
                         Tạo thêm

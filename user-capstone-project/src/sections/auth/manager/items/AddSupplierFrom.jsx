@@ -8,7 +8,6 @@ import {
     Stack,
 } from '@mui/material';
 // icon
-import Snackbar from '@mui/material/Snackbar';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import { createSuppliers } from '~/data/mutation/supplier/suppliers-mutation';
@@ -18,9 +17,8 @@ import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter
 
 
 const AddSupplierFrom = ({ open, onClose, onSave }) => {
-    const [openMsg, setOpenMsg] = React.useState(false);
 
-    const [code, setCode] = useState('');
+    // const [code, setCode] = useState('');
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
@@ -67,7 +65,6 @@ const AddSupplierFrom = ({ open, onClose, onSave }) => {
         if (reason === 'clickaway') {
             return;
         }
-
         setOpen1(false);
     };
 
@@ -86,7 +83,6 @@ const AddSupplierFrom = ({ open, onClose, onSave }) => {
     };
     //============================================================
 
-
     const handleSave = async () => {
         const supplierParams = {
             // code,
@@ -101,7 +97,6 @@ const AddSupplierFrom = ({ open, onClose, onSave }) => {
             onSave && onSave(response.message);
             // Đóng form
             onClose && onClose();
-
         } catch (error) {
             console.error("can't feaching category", error);
             const errorMessage = error.response?.data?.data?.[0] || error.response?.data?.message;

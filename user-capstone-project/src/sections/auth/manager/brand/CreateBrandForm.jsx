@@ -19,6 +19,8 @@ import SnackbarError from '~/components/alert/SnackbarError';
 const BrandForm = (props) => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
+    const [nameError, setNameError] = useState(null);
+    const [descriptionError, setDescriptionError] = useState(null);
     //========================== Hàm notification của trang ==================================
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
@@ -67,6 +69,36 @@ const BrandForm = (props) => {
         setOpen(false);
         setOpen1(false);
     };
+    const validateName = (value) => {
+        if (!value.trim()) {
+            return "Tên hàng hóa không được để trống"
+        } else if (!/^\p{Lu}/u.test(value)) {
+            return "Chữ cái đầu phải in hoa.";
+        }
+
+        return null;
+    };
+
+    const validateDescription = (value) => {
+        if (!value.trim()) {
+            return "Mô tả hàng hóa không được để trống.";
+        }
+        return null;
+    };
+
+    const handleNameChange = (e) => {
+        const newName = capitalizeFirstLetter(e.target.value);
+        setName(newName);
+
+        setNameError(validateName(newName));
+    };
+
+    const handleDescriptionChange = (e) => {
+        const newDescription = capitalizeFirstLetter(e.target.value);
+        setDescription(newDescription);
+
+        setDescriptionError(validateDescription(newDescription));
+    };
     //============================================================
 
 
@@ -96,18 +128,22 @@ const BrandForm = (props) => {
                     {/* <DialogContentText>Do you want remove this user?</DialogContentText> */}
                     <Stack spacing={2} margin={2}>
                         <TextField
+                            helperText={nameError}
+                            error={Boolean(nameError)}
                             variant="outlined"
                             value={name}
                             label="Tên đơn vị"
-                            onChange={(e) => setName(capitalizeFirstLetter(e.target.value))}
+                            onChange={handleNameChange}
                         />
                         <TextField
+                            helperText={descriptionError}
+                            error={Boolean(descriptionError)}
                             variant="outlined"
                             value={description}
                             multiline
                             rows={3}
                             label="Mô tả"
-                            onChange={(e) => setDescription(capitalizeFirstLetter(e.target.value))}
+                            onChange={handleDescriptionChange}
                         />
                         <Button color="primary" variant="contained" onClick={handleCreateBrand}>
                             Tạo

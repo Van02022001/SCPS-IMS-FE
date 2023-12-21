@@ -7,23 +7,21 @@ import CloseIcon from '@mui/icons-material/Close';
 // import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 // import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { createOrigins } from '~/data/mutation/origins/origins-mutation';
-import SuccessAlerts from '~/components/alert/SuccessAlert';
-import ErrorAlerts from '~/components/alert/ErrorAlert';
 import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
-import CustomDialog from '~/components/alert/ConfirmDialog';
+
 import SnackbarError from '~/components/alert/SnackbarError';
 
 const CreateOriginForm = (props) => {
     const [name, setName] = useState('');
-
+    const [nameError, setNameError] = useState('');
     //========================== Hàm notification của trang ==================================
 
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [open, setOpen] = React.useState(false);
     const [open1, setOpen1] = React.useState(false);
-    
+
     const handleSuccessMessage = (message) => {
         setOpen(true);
         if (message === 'Create origin successfully') {
@@ -42,6 +40,22 @@ const CreateOriginForm = (props) => {
         }
     };
 
+    const validateName = (value) => {
+        if (!value.trim()) {
+            return "Tên hàng hóa không được để trống"
+        } else if (!/^\p{Lu}/u.test(value)) {
+            return "Chữ cái đầu phải in hoa.";
+        }
+
+        return null;
+    };
+
+    const handleNameChange = (e) => {
+        const newName = capitalizeFirstLetter(e.target.value);
+        setName(newName);
+
+        setNameError(validateName(newName));
+    };
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') {
             return;
@@ -89,10 +103,12 @@ const CreateOriginForm = (props) => {
                 <DialogContent>
                     <Stack spacing={2} margin={2}>
                         <TextField
+                            helperText={nameError}
+                            error={Boolean(nameError)}
                             variant="outlined"
                             value={name}
                             label="Tên thương hiệu"
-                            onChange={(e) => setName(capitalizeFirstLetter(e.target.value))}
+                            onChange={handleNameChange}
                         />
                         <Button color="primary" variant="contained" onClick={handleCreateOrigins}>
                             Tạo

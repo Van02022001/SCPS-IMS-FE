@@ -2,6 +2,7 @@ import {
     Button,
     DialogContent,
     FormControl,
+    FormHelperText,
     Grid,
     MenuItem,
     Select,
@@ -22,20 +23,18 @@ import CloseIcon from '@mui/icons-material/Close';
 //components
 import BoxComponent from '~/components/box/BoxComponent';
 // form popup
-
+import AddBrandItemForm from './AddBrandItemForm';
+import AddOriginItemForm from './AddOriginItemForm';
+import AddSupplierFrom from './AddSupplierFrom';
 // api
-import SuccessAlerts from '~/components/alert/SuccessAlert';
-import ErrorAlerts from '~/components/alert/ErrorAlert';
-// import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
 import { createItem } from '~/data/mutation/items/item-mutation';
 import { getAllSubCategoryActive } from '~/data/mutation/subCategory/subCategory-mutation';
 import { getAllBrands } from '~/data/mutation/brand/brands-mutation';
 import { getAllOrigins } from '~/data/mutation/origins/origins-mutation';
 import { getAllSuppliers } from '~/data/mutation/supplier/suppliers-mutation';
-import AddBrandItemForm from './AddBrandItemForm';
-import AddOriginItemForm from './AddOriginItemForm';
-import AddSupplierFrom from './AddSupplierFrom';
+// import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
+import SnackbarError from '~/components/alert/SnackbarError';
 
 const CreateItemsForm = (props) => {
     const [open, setOpen] = React.useState(false);
@@ -56,26 +55,66 @@ const CreateItemsForm = (props) => {
     const [supplier_id, setSuppliers_id] = useState([]);
     const [origin_id, setOrigins_id] = useState([]);
 
+    const [subcategoryError, setSubcategoryError] = useState(null);
+    const [brandError, setBrandError] = useState(null);
+    const [supplierError, setSupplierError] = useState(null);
+    const [originError, setOriginError] = useState(null);
     //thông báo
     const [message, setMessage] = useState('');
-    const [isSuccess, setIsSuccess] = useState(false);
-    const [isError, setIsError] = useState(false);
-    const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
     const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
     const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
 
     const handleTab1DataChange = (event) => {
-        // Cập nhật dữ liệu cho tab 1 tại đây
-        setTab1Data({ ...tab1Data, [event.target.name]: event.target.value });
-        console.log('setTab1Data: ', setTab1Data);
+        const { name, value } = event.target;
+        if (name === "sub_category_id") {
+            setSubcategoryError(null);
+        } else if (name === "brand_id") {
+            setBrandError(null);
+        } else if (name === "supplier_id") {
+            setSupplierError(null);
+        } else if (name === "origin_id") {
+            setOriginError(null);
+        }
+
+        if (name === "sub_category_id") {
+            setSubcategoryError(null);
+            setTab1Data((prevData) => ({
+                ...prevData,
+                [name]: [value],
+            }));
+        } else if (name === "brand_id") {
+            setBrandError(null);
+            setTab1Data((prevData) => ({
+                ...prevData,
+                [name]: [value],
+            }));
+        } else if (name === "supplier_id") {
+            setSupplierError(null);
+            setTab1Data((prevData) => ({
+                ...prevData,
+                [name]: [value],
+            }));
+        } else if (name === "origin_id") {
+            setOriginError(null);
+            setTab1Data((prevData) => ({
+                ...prevData,
+                [name]: [value],
+            }));
+        } else {
+            setTab1Data((prevData) => ({
+                ...prevData,
+                [name]: value,
+            }));
+        }
     };
 
-    const handleTab2DataChange = (event) => {
-        // Cập nhật dữ liệu cho tab 2 tại đây
-        setTab2Data({ ...tab2Data, [event.target.name]: event.target.value });
-    };
+    // const handleTab2DataChange = (event) => {
+    //     // Cập nhật dữ liệu cho tab 2 tại đây
+    //     setTab2Data({ ...tab2Data, [event.target.name]: event.target.value });
+
+    // };
 
     const handleChangeTab = (event, newValue) => {
         setCurrentTab(newValue);
@@ -133,7 +172,9 @@ const CreateItemsForm = (props) => {
         setSnackbarSuccessOpen(true);
     };
     //================================================================================================================
-
+    const handleCloseSnackbar = () => {
+        setOpen(false);
+    };
     //========================== Hàm notification của trang ==================================
     const handleMessage = (message) => {
         setOpen(true);
@@ -164,37 +205,54 @@ const CreateItemsForm = (props) => {
     //============================================================
     // hàm create category-----------------------------------------
     const handleCreateItem = async () => {
-        if (parseInt(minStockLevel) < 5) {
-            setIsError(true);
-            setIsSuccess(false);
-            if (isError) {
-                setErrorMessage('Số lượng tồn kho tối thiểu phải nhập ít nhất là 5');
-            }
+        if (!tab1Data.sub_category_id || !tab1Data.sub_category_id.length) {
+            setSubcategoryError("Vui lòng chọn danh mục sản phẩm");
+            return;
+        } else if (!tab1Data.brand_id || !tab1Data.brand_id.length) {
+            setBrandError("Vui lòng chọn thương hiệu");
+            return;
+        } else if (!tab1Data.supplier_id || !tab1Data.supplier_id.length) {
+            setSupplierError("Vui lòng chọn nhà cung cấp");
+            return;
+        } else if (!tab1Data.origin_id || !tab1Data.origin_id.length) {
+            setOriginError('Vui lòng chọn nguồn góc')
             return;
         }
 
+        const parsedMinStockLevel = parseInt(minStockLevel) || 0;
+        const parsedMaxStockLevel = parseInt(maxStockLevel) || 0;
+        const parsedSubCategoryId = parseInt(tab1Data.sub_category_id) || 0;
+        const parsedBrandId = parseInt(tab1Data.brand_id) || 0;
+        const parsedSupplierId = parseInt(tab1Data.supplier_id) || 0;
+        const parsedOriginId = parseInt(tab1Data.origin_id) || 0;
+
+        // Validate minStockLevel
+        // if (parsedMinStockLevel < 5) {
+        //     setErrorMessage('Số lượng tồn kho tối thiểu phải nhập ít nhất là 5');
+        //     return;
+        // }
+
         const itemParams = {
-            minStockLevel,
-            maxStockLevel,
-            sub_category_id: tab1Data.sub_category_id,
-            brand_id: tab1Data.brand_id,
-            supplier_id: tab1Data.supplier_id,
-            origin_id: tab1Data.origin_id,
+            minStockLevel: parsedMinStockLevel,
+            maxStockLevel: parsedMaxStockLevel,
+            sub_category_id: parsedSubCategoryId,
+            brand_id: parsedBrandId,
+            supplier_id: parsedSupplierId,
+            origin_id: parsedOriginId,
         };
         try {
             const response = await createItem(itemParams);
-            if (response.status === '200 OK') {
-                // setIsSuccess(true);
-                // setIsError(false);
-                // setSuccessMessage(response.data.message);
+            if (response.status === "200 OK") {
+                setSubcategoryError(null);
+                setBrandError(null);
+                setSupplierError(null);
+                setOriginError(null);
                 handleMessage(response.message);
                 props.onClose(response.data, response.message);
             }
         } catch (error) {
             console.error('Error creating product:', error.response.status);
-            setIsError(true);
-            setIsSuccess(false);
-            if (error.response?.data?.message === 'Min stock cannot be greater than max stock') {
+            if (error.response?.data?.message === "Min stock cannot be greater than max stock") {
                 setErrorMessage('Số lượng tồn kho tối thiểu không thể lớn hơn lượng hàng tồn kho tối đa');
             }
         }
@@ -216,7 +274,6 @@ const CreateItemsForm = (props) => {
                 setSub_category_id(data);
             })
             .catch((error) => console.error('Error fetching sub_categories:', error));
-
         getAllBrands()
             .then((respone) => {
                 const data = respone.data;
@@ -250,162 +307,185 @@ const CreateItemsForm = (props) => {
                             <Stack spacing={4} margin={2}>
                                 <Grid container spacing={2}>
                                     <Grid item xs={12}>
-                                        <Grid
-                                            container
-                                            spacing={1}
-                                            direction="row"
-                                            justifyContent="space-between"
-                                            alignItems="center"
-                                            sx={{ marginBottom: 4, gap: 5 }}
-                                        >
-                                            <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
-                                                Danh mục sản phẩm:{' '}
-                                            </Typography>
-                                            <Grid xs={8.5}>
-                                                <Select
-                                                    size="small"
-                                                    labelId="group-label"
-                                                    id="group-select"
-                                                    sx={{ width: '90%', fontSize: '14px' }}
-                                                    value={tab1Data.sub_category_id}
-                                                    onChange={handleTab1DataChange}
-                                                    name="sub_category_id"
-                                                >
-                                                    {sub_category_id.map((category) => (
-                                                        <MenuItem key={category.id} value={category.id}>
-                                                            {category.name}
-                                                        </MenuItem>
-                                                    ))}
-                                                </Select>
+                                        <FormControl size="small" variant="outlined" sx={{ width: '100%' }}>
+                                            <Grid
+                                                container
+                                                spacing={1}
+                                                direction="row"
+                                                justifyContent="space-between"
+                                                alignItems="center"
+                                                sx={{ marginBottom: 4, gap: 5 }}
+                                            >
+                                                <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
+                                                    Danh mục sản phẩm:{' '}
+                                                </Typography>
+                                                <Grid xs={8.5}>
+                                                    <Select
+                                                        size="small"
+                                                        labelId="group-label"
+                                                        id="group-select"
+                                                        sx={{ width: '98%', fontSize: '14px' }}
+                                                        value={tab1Data.sub_category_id}
+                                                        onChange={handleTab1DataChange}
+                                                        name="sub_category_id"
+                                                        error={Boolean(subcategoryError)}
+                                                    >
+                                                        {sub_category_id.map((category) => (
+                                                            <MenuItem key={category.id} value={category.id}>
+                                                                {category.name}
+                                                            </MenuItem>
+                                                        ))}
+                                                    </Select>
+                                                    <FormHelperText error={Boolean(subcategoryError)}>
+                                                        {subcategoryError}
+                                                    </FormHelperText>
+                                                </Grid>
                                             </Grid>
-                                        </Grid>
+                                        </FormControl>
 
-                                        <Grid
-                                            container
-                                            spacing={1}
-                                            direction="row"
-                                            justifyContent="space-between"
-                                            alignItems="center"
-                                            sx={{ marginBottom: 4, gap: 5 }}
-                                        >
-                                            <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
-                                                Thương hiệu:{' '}
-                                            </Typography>
-                                            <Grid xs={8.5}>
-                                                <Select
-                                                    size="small"
-                                                    labelId="group-label"
-                                                    id="group-select"
-                                                    sx={{ width: '82%', fontSize: '14px' }}
-                                                    value={tab1Data.brand_id}
-                                                    onChange={handleTab1DataChange}
-                                                    name="brand_id"
-                                                >
-                                                    {brand_id.map((brand) => (
-                                                        <MenuItem key={brand.id} value={brand.id}>
-                                                            {brand.name}
-                                                        </MenuItem>
-                                                    ))}
-                                                </Select>
-                                                <Button
-                                                    variant="outlined"
-                                                    sx={{ padding: 0.8, minWidth: 0 }}
-                                                    onClick={handleOpenAddBrandForm}
-                                                >
-                                                    <AddIcon />
-                                                </Button>
-                                                <AddBrandItemForm
-                                                    open={openAddBrandForm}
-                                                    onClose={handleCloseAddBrandForm}
-                                                    onSave={handleSaveBrand}
-                                                />
+                                        <FormControl size="small" variant="outlined" sx={{ width: '100%' }}>
+                                            <Grid
+                                                container
+                                                spacing={1}
+                                                direction="row"
+                                                justifyContent="space-between"
+                                                alignItems="center"
+                                                sx={{ marginBottom: 4, gap: 5 }}
+                                            >
+                                                <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
+                                                    Thương hiệu:{' '}
+                                                </Typography>
+                                                <Grid xs={8.5}>
+                                                    <Select
+                                                        size="small"
+                                                        labelId="group-label"
+                                                        id="group-select"
+                                                        sx={{ width: '90%', fontSize: '14px' }}
+                                                        value={tab1Data.brand_id}
+                                                        onChange={handleTab1DataChange}
+                                                        name="brand_id"
+                                                        error={Boolean(brandError)}
+                                                    >
+                                                        {brand_id.map((brand) => (
+                                                            <MenuItem key={brand.id} value={brand.id}>
+                                                                {brand.name}
+                                                            </MenuItem>
+                                                        ))}
+                                                    </Select>
+                                                    <Button
+                                                        variant="outlined"
+                                                        sx={{ padding: 0.8, minWidth: 0 }}
+                                                        onClick={handleOpenAddBrandForm}
+                                                    >
+                                                        <AddIcon />
+                                                    </Button>
+                                                    <AddBrandItemForm
+                                                        open={openAddBrandForm}
+                                                        onClose={handleCloseAddBrandForm}
+                                                        onSave={handleSaveBrand}
+                                                    />
+                                                    <FormHelperText error={Boolean(brandError)}>
+                                                        {brandError}
+                                                    </FormHelperText>
+                                                </Grid>
                                             </Grid>
-                                        </Grid>
+                                        </FormControl>
 
-                                        <Grid
-                                            container
-                                            spacing={1}
-                                            direction="row"
-                                            justifyContent="space-between"
-                                            alignItems="center"
-                                            sx={{ marginBottom: 4, gap: 5 }}
-                                        >
-                                            <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
-                                                Nhà cung cấp:{' '}
-                                            </Typography>
-                                            <Grid xs={8.5}>
-                                                <Select
-                                                    size="small"
-                                                    labelId="group-label"
-                                                    id="group-select"
-                                                    sx={{ width: '82%', fontSize: '14px' }}
-                                                    value={tab1Data.supplier_id}
-                                                    onChange={handleTab1DataChange}
-                                                    name="supplier_id"
-                                                >
-                                                    {supplier_id.map((supplier) => (
-                                                        <MenuItem key={supplier.id} value={supplier.id}>
-                                                            {supplier.name}
-                                                        </MenuItem>
-                                                    ))}
-                                                </Select>
-                                                <Button
-                                                    variant="outlined"
-                                                    sx={{ padding: 0.8, minWidth: 0 }}
-                                                    onClick={handleOpenAddSuplierForm}
-                                                >
-                                                    <AddIcon />
-                                                </Button>
-                                                <AddSupplierFrom
-                                                    open={openAddSuplierForm}
-                                                    onClose={handleCloseAddSuplierForm}
-                                                    onSave={handleSaveSupplier}
-                                                />
+                                        <FormControl size="small" variant="outlined" sx={{ width: '100%' }}>
+                                            <Grid
+                                                container
+                                                spacing={1}
+                                                direction="row"
+                                                justifyContent="space-between"
+                                                alignItems="center"
+                                                sx={{ marginBottom: 4, gap: 5 }}
+                                            >
+                                                <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
+                                                    Nhà cung cấp:{' '}
+                                                </Typography>
+                                                <Grid xs={8.5}>
+                                                    <Select
+                                                        size="small"
+                                                        labelId="group-label"
+                                                        id="group-select"
+                                                        sx={{ width: '90%', fontSize: '14px' }}
+                                                        value={tab1Data.supplier_id}
+                                                        onChange={handleTab1DataChange}
+                                                        name="supplier_id"
+                                                        error={Boolean(supplierError)}
+                                                    >
+                                                        {supplier_id.map((supplier) => (
+                                                            <MenuItem key={supplier.id} value={supplier.id}>
+                                                                {supplier.name}
+                                                            </MenuItem>
+                                                        ))}
+                                                    </Select>
+                                                    <Button
+                                                        variant="outlined"
+                                                        sx={{ padding: 0.8, minWidth: 0 }}
+                                                        onClick={handleOpenAddSuplierForm}
+                                                    >
+                                                        <AddIcon />
+                                                    </Button>
+                                                    <AddSupplierFrom
+                                                        open={openAddSuplierForm}
+                                                        onClose={handleCloseAddSuplierForm}
+                                                        onSave={handleSaveSupplier}
+                                                    />
+                                                    <FormHelperText error={Boolean(supplierError)}>
+                                                        {supplierError}
+                                                    </FormHelperText>
+                                                </Grid>
                                             </Grid>
-                                        </Grid>
+                                        </FormControl>
 
-                                        <Grid
-                                            container
-                                            spacing={1}
-                                            direction="row"
-                                            justifyContent="space-between"
-                                            alignItems="center"
-                                            sx={{ marginBottom: 4, gap: 5 }}
-                                        >
-                                            <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
-                                                Nguồn gốc:{' '}
-                                            </Typography>
-                                            <Grid xs={8.5}>
-                                                <Select
-                                                    size="small"
-                                                    labelId="group-label"
-                                                    id="group-select"
-                                                    sx={{ width: '82%', fontSize: '14px' }}
-                                                    value={tab1Data.origin_id}
-                                                    onChange={handleTab1DataChange}
-                                                    name="origin_id"
-                                                >
-                                                    {origin_id.map((origin) => (
-                                                        <MenuItem key={origin.id} value={origin.id}>
-                                                            {origin.name}
-                                                        </MenuItem>
-                                                    ))}
-                                                </Select>
-                                                <Button
-                                                    variant="outlined"
-                                                    sx={{ padding: 0.8, minWidth: 0 }}
-                                                    onClick={handleOpenAddOriginForm}
-                                                >
-                                                    <AddIcon />
-                                                </Button>
-                                                <AddOriginItemForm
-                                                    open={openAddOriginForm}
-                                                    onClose={handleCloseAddOriginForm}
-                                                    onSave={handleSaveOrigin}
-                                                />
+                                        <FormControl size="small" variant="outlined" sx={{ width: '100%' }}>
+                                            <Grid
+                                                container
+                                                spacing={1}
+                                                direction="row"
+                                                justifyContent="space-between"
+                                                alignItems="center"
+                                                sx={{ marginBottom: 4, gap: 5 }}
+                                            >
+                                                <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
+                                                    Nguồn gốc:{' '}
+                                                </Typography>
+                                                <Grid xs={8.5}>
+                                                    <Select
+                                                        size="small"
+                                                        labelId="group-label"
+                                                        id="group-select"
+                                                        sx={{ width: '90%', fontSize: '14px' }}
+                                                        value={tab1Data.origin_id}
+                                                        onChange={handleTab1DataChange}
+                                                        name="origin_id"
+                                                        error={Boolean(originError)}
+                                                    >
+                                                        {origin_id.map((origin) => (
+                                                            <MenuItem key={origin.id} value={origin.id}>
+                                                                {origin.name}
+                                                            </MenuItem>
+                                                        ))}
+                                                    </Select>
+                                                    <Button
+                                                        variant="outlined"
+                                                        sx={{ padding: 0.8, minWidth: 0 }}
+                                                        onClick={handleOpenAddOriginForm}
+                                                    >
+                                                        <AddIcon />
+                                                    </Button>
+                                                    <AddOriginItemForm
+                                                        open={openAddOriginForm}
+                                                        onClose={handleCloseAddOriginForm}
+                                                        onSave={handleSaveOrigin}
+                                                    />
+                                                    <FormHelperText error={Boolean(originError)}>
+                                                        {originError}
+                                                    </FormHelperText>
+                                                </Grid>
                                             </Grid>
-                                        </Grid>
-
+                                        </FormControl>
                                         <Grid
                                             container
                                             spacing={1}
@@ -444,8 +524,7 @@ const CreateItemsForm = (props) => {
                                     <BoxComponent />
                                     <BoxComponent />
                                 </Grid>
-                                {isSuccess && <SuccessAlerts message={successMessage} />}
-                                {isError && <ErrorAlerts errorMessage={errorMessage} />}
+
                                 <Grid container spacing={1} sx={{ gap: '20px' }}>
                                     <Button
                                         color="primary"
@@ -464,6 +543,13 @@ const CreateItemsForm = (props) => {
                                             horizontal: 'right',
                                         }}
                                         message={message}
+                                        action={action}
+                                        style={{ bottom: '16px', right: '16px' }}
+                                    />
+                                    <SnackbarError
+                                        open={open}
+                                        handleClose={handleCloseSnackbar}
+                                        message={errorMessage}
                                         action={action}
                                         style={{ bottom: '16px', right: '16px' }}
                                     />

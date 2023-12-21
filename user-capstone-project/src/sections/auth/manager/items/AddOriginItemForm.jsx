@@ -7,17 +7,17 @@ import {
     Button,
 } from '@mui/material';
 // icon
-import Snackbar from '@mui/material/Snackbar';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
 // api
 import { createOrigins } from '~/data/mutation/origins/origins-mutation';
 import SnackbarError from '~/components/alert/SnackbarError';
-import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
+
 
 const AddOriginItemForm = ({ open, onClose, onSave }) => {
-    const [openMsg, setOpenMsg] = React.useState(false);
     const [originName, setOriginName] = useState('');
+    const [originNameError, setOriginNameError] = useState('');
     //thông báo
     const [errorMessage, setErrorMessage] = useState('');
     const [open1, setOpen1] = React.useState(false);
@@ -74,6 +74,23 @@ const AddOriginItemForm = ({ open, onClose, onSave }) => {
         setOpen1(false);
         setOpen1('');
     };
+
+    const validateName = (value) => {
+        if (!value.trim()) {
+            return "Tên hàng hóa không được để trống"
+        } else if (!/^\p{Lu}/u.test(value)) {
+            return "Chữ cái đầu phải in hoa.";
+        }
+
+        return null;
+    };
+
+    const handleNameChange = (e) => {
+        const newName = capitalizeFirstLetter(e.target.value);
+        setOriginName(newName);
+
+        setOriginNameError(validateName(newName));
+    };
     //============================================================
 
     const handleSave = async () => {
@@ -99,12 +116,14 @@ const AddOriginItemForm = ({ open, onClose, onSave }) => {
             <DialogTitle>Thêm xuất sứ</DialogTitle>
             <DialogContent sx={{ width: 500 }}>
                 <TextField
+                    helperText={originNameError}
+                    error={Boolean(originNameError)}
                     label="Tên xuất xứ"
                     variant="outlined"
                     fullWidth
                     margin="normal"
                     value={originName}
-                    onChange={(e) => setOriginName(capitalizeFirstLetter(e.target.value))}
+                    onChange={handleNameChange}
                 />
             </DialogContent>
             <div style={{ padding: '16px' }}>

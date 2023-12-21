@@ -138,8 +138,6 @@ const ItemsSalePage = () => {
 
     const [rowsPerPage, setRowsPerPage] = useState(5);
     //-------------------------------------------------
-    // const [openOderFormDetail, setOpenOderFormDetail] = useState(false);
-    // const [selectedOrderId, setSelectedOrderId] = useState(null);
     const [selectedOrder, setSelectedOrder] = useState(null);
 
     const [selectedItemId, setSelectedItemId] = useState([]);

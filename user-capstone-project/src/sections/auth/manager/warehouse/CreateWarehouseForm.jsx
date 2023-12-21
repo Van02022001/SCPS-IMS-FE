@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
-import { Dialog, DialogTitle, DialogContent, TextField, Button, IconButton } from '@mui/material';
+import { DialogContent, TextField, Button, IconButton } from '@mui/material';
 
 import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
-import SuccessAlerts from '~/components/alert/SuccessAlert';
-import ErrorAlerts from '~/components/alert/ErrorAlert';
 // api
 import { createWarehouse } from '~/data/mutation/warehouse/warehouse-mutation';
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
@@ -14,12 +12,12 @@ import CloseIcon from '@mui/icons-material/Close';
 const CreateWarehouseForm = ({ onSave, props }) => {
     const [warehouseName, setWarehouseName] = useState('');
     const [warehouseAddress, setWarehouseAddress] = useState('');
-    const [showNotification, setShowNotification] = useState(false);
-
+    const [warehouseNameError, setWarehouseNameError] = useState('');
+    const [warehouseAddressError, setWarehouseAddressError] = useState('');
     //thông báo
-    //========================== Hàm notification của trang ==================================
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    //========================== Hàm notification của trang ==================================
     const [open, setOpen] = React.useState(false);
     const [open1, setOpen1] = React.useState(false);
 
@@ -40,7 +38,36 @@ const CreateWarehouseForm = ({ onSave, props }) => {
             setErrorMessage('Tên bị trùng lặp !');
         }
     };
+    const validateName = (value) => {
+        if (!value.trim()) {
+            return "Tên hàng hóa không được để trống"
+        } else if (!/^\p{Lu}/u.test(value)) {
+            return "Chữ cái đầu phải in hoa.";
+        }
 
+        return null;
+    };
+
+    const validateAdress = (value) => {
+        if (!value.trim()) {
+            return "Mô tả hàng hóa không được để trống.";
+        }
+        return null;
+    };
+    const handleWarehouseNameChange = (e) => {
+        const newName = capitalizeFirstLetter(e.target.value);
+        setWarehouseName(newName);
+
+        setWarehouseNameError(validateName(newName));
+    };
+
+    const handleWarehouseAddressChange = (e) => {
+        const newAddress = capitalizeFirstLetter(e.target.value);
+        setWarehouseAddress(newAddress);
+
+        setWarehouseAddressError(validateAdress(newAddress));
+    };
+    //============================================================
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') {
             return;
@@ -89,21 +116,24 @@ const CreateWarehouseForm = ({ onSave, props }) => {
         <>
             <DialogContent sx={{ width: 500 }}>
                 <TextField
+                    helperText={warehouseNameError}
+                    error={Boolean(warehouseNameError)}
                     label="Tên kho"
                     variant="outlined"
                     fullWidth
                     margin="normal"
                     value={warehouseName}
-                    onChange={(e) => setWarehouseName(capitalizeFirstLetter(e.target.value))}
+                    onChange={handleWarehouseNameChange}
                 />
                 <TextField
-                    helperText="Địa chỉ phải có từ 1 đến 200 ký tự."
+                    helperText={warehouseAddressError}
+                    error={Boolean(warehouseAddressError)}
                     label="Địa chỉ kho"
                     variant="outlined"
                     fullWidth
                     margin="normal"
                     value={warehouseAddress}
-                    onChange={(e) => setWarehouseAddress(capitalizeFirstLetter(e.target.value))}
+                    onChange={handleWarehouseAddressChange}
                 />
             </DialogContent>
             <div style={{ padding: '16px' }}>

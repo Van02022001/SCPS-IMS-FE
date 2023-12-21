@@ -51,7 +51,6 @@ const TABLE_HEAD = [
     { id: 'name', label: 'Tên', alignRight: false },
     { id: 'address', label: 'Địa chỉ', alignRight: false },
     { id: 'status', label: 'Trạng thái', alignRight: false },
-    { id: '' },
 ];
 
 // ----------------------------------------------------------------------
@@ -329,7 +328,7 @@ const WarehousePage = () => {
                                                         </Label>
                                                     </TableCell>
 
-                                                    <TableCell align="right">
+                                                    {/* <TableCell align="right">
                                                         <IconButton
                                                             size="large"
                                                             color="inherit"
@@ -337,7 +336,7 @@ const WarehousePage = () => {
                                                         >
                                                             <Iconify icon={'eva:more-vertical-fill'} />
                                                         </IconButton>
-                                                    </TableCell>
+                                                    </TableCell> */}
                                                 </TableRow>
                                                 {selectedWarehouseId === warehouse.id && (
                                                     <TableRow>

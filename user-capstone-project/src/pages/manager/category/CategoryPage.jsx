@@ -45,7 +45,6 @@ const TABLE_HEAD = [
     { id: 'name', label: 'Tên', alignRight: false },
     { id: 'description', label: 'Mô tả', alignRight: false },
     { id: 'status', label: 'Trạng thái', alignRight: false },
-    { id: '' },
 ];
 
 // ----------------------------------------------------------------------
