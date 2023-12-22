@@ -354,7 +354,7 @@ const CustomerDetailForm = ({
                     </Stack>
                     {isSuccess && <SuccessAlerts message={successMessage} />}
                     {isError && <ErrorAlerts errorMessage={errorMessage} />}
-                    <Stack spacing={4} margin={2}>
+                    {/* <Stack spacing={4} margin={2}>
                         <Grid container spacing={1} sx={{ gap: '10px' }}>
                             <Button variant="contained" color="primary" onClick={updateProduct}>
                                 Cập nhập
@@ -366,7 +366,7 @@ const CustomerDetailForm = ({
                                 Hủy bỏ
                             </Button>
                         </Grid>
-                    </Stack>
+                    </Stack> */}
                 </div>
             )}
 

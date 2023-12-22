@@ -421,6 +421,7 @@ const ImportRequestReceiptDetailManagerForm = ({
                                         id="outlined-multiline-static"
                                         multiline
                                         rows={4}
+                                        disabled
                                         size="small"
                                         variant="outlined"
                                         label="Mô tả"
@@ -553,7 +554,7 @@ const ImportRequestReceiptDetailManagerForm = ({
                                         </TableBody>
                                     </Table>
                                     <TableBody style={{ marginTop: 30 }}>
-                                        <Typography variant="h6">Thông tin phiếu</Typography>
+                                        <Typography mt={2} variant="h6">Thông tin phiếu</Typography>
                                         <TableRow>
                                             <TableCell >Tổng số lượng:</TableCell>
                                             <TableCell>{importReceipst.totalQuantity}</TableCell>

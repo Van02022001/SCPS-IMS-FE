@@ -553,7 +553,7 @@ const ImportReceiptDetailManagerForm = ({
                                         </TableBody>
                                     </Table>
                                     <TableBody style={{ marginTop: 30 }}>
-                                        <Typography variant="h6">Thông tin phiếu</Typography>
+                                        <Typography mt={2} variant="h6">Thông tin phiếu</Typography>
                                         <TableRow>
                                             <TableCell >Tổng số lượng:</TableCell>
                                             <TableCell>{importReceipst.totalQuantity}</TableCell>

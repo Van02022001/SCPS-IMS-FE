@@ -45,6 +45,7 @@ import USERLIST from '~/_mock/user';
 import Scrollbar from '~/components/scrollbar/Scrollbar';
 import { createTransfer } from '~/data/mutation/warehouseTransfer/warehouseTransfer-mutation';
 import { getOtherWarehouse } from '~/data/mutation/warehouse/warehouse-mutation';
+import { CreateGoodReceiptListHead } from '~/sections/@dashboard/manager/transaction/createGoodReceipt';
 
 const CreateTransferForm = (props) => {
     const [order, setOrder] = useState('asc');
@@ -205,6 +206,22 @@ const CreateTransferForm = (props) => {
         setRecieptParams(updatedRecieptParams);
     };
 
+    const handleRemoveFromCart = (index) => {
+        const updatedItems = [...selectedItems];
+        updatedItems.splice(index, 1);
+        setSelectedItems(updatedItems);
+
+        const updatedRecieptParams = {
+            ...recieptParams,
+            items: updatedItems.map((item) => ({
+                itemId: item.itemId,
+                quantity: item.quantity,
+            })),
+        };
+
+        setRecieptParams(updatedRecieptParams);
+    };
+
     useEffect(() => {
         getItemByWarehouse()
             .then((respone) => {
@@ -264,9 +281,9 @@ const CreateTransferForm = (props) => {
                         <Scrollbar>
                             <TableContainer sx={{ minWidth: 800 }}>
                                 <Table>
-                                    <UserListHead
-                                        order={order}
-                                        orderBy={orderBy}
+                                    <CreateGoodReceiptListHead
+                                        // order={order}
+                                        // orderBy={orderBy}
                                         headLabel={TABLE_HEAD}
                                         rowCount={USERLIST.length}
                                         numSelected={selected.length}
@@ -279,20 +296,26 @@ const CreateTransferForm = (props) => {
                                 <Paper>
                                     <List>
                                         {selectedItems.map((selectedItem, index) => (
-                                            <ListItem key={`${selectedItem.id}-${index}`}>
+                                            <ListItem
+                                                key={`${selectedItem.id}-${index}`}
+                                                sx={{ display: 'flex', alignItems: 'center' }}
+                                            >
                                                 {/* <img
                                                     src={selectedItem.avatar}
                                                     alt={selectedItem.name}
                                                     width="48"
                                                     height="48"
                                                 /> */}
-                                                <ListItemText
+                                                {/* <ListItemText
                                                     // primary={selectedItem.id}
                                                     onChange={(e) => setItemId(e.target.value)}
-                                                />
-                                                <ListItemText primary={selectedItem.subCategory.name} />
-
-                                                <ListItemText>
+                                                /> */}
+                                                <ListItemText sx={{ flexBasis: '44%' }}>
+                                                    <Typography variant="body1">
+                                                        {selectedItem.subCategory.name}
+                                                    </Typography>
+                                                </ListItemText>
+                                                <ListItemText sx={{ flexBasis: '32%' }}>
                                                     <Select
                                                         label="Kho đến"
                                                         sx={{ width: '50%' }}
@@ -319,11 +342,11 @@ const CreateTransferForm = (props) => {
                                                         ))}
                                                     </Select>
                                                 </ListItemText>
-                                                <ListItemText>
+                                                <ListItemText sx={{ flexBasis: '22%' }}>
                                                     <TextField
                                                         type="number"
                                                         label="Số lượng"
-                                                        sx={{ width: '50%' }}
+                                                        sx={{ width: '80%' }}
                                                         // value={selectedItem.quantity}
                                                         onChange={(e) =>
                                                             handleQuantityChange(
@@ -333,7 +356,7 @@ const CreateTransferForm = (props) => {
                                                         }
                                                     />
                                                 </ListItemText>
-                                                {/* <Button onClick={() => handleRemoveFromCart(index)}>Xóa</Button> */}
+                                                <Button onClick={() => handleRemoveFromCart(index)}>Xóa</Button>
                                             </ListItem>
                                         ))}
                                     </List>

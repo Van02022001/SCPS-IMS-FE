@@ -19,6 +19,12 @@ import {
     TablePagination,
     Dialog,
     DialogTitle,
+    Select,
+    FormControl,
+    InputLabel,
+    OutlinedInput,
+    MenuItem,
+    ListItemText,
 } from '@mui/material';
 // components
 import Label from '~/components/label/Label';
@@ -35,12 +41,11 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import ImportRequestReceiptDetailManagerForm from '~/sections/auth/manager/transaction/importRequestReceipt/ImportRequestReceiptDetailManagerForm';
 //icons
 
-// import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import CreateGoodReceipt from './CreateGoodReceipt';
 import { getAllImportRequest } from '~/data/mutation/importRequestReceipt/ImportRequestReceipt-mutation';
 import dayjs from 'dayjs';
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
-
 
 // ----------------------------------------------------------------------
 
@@ -106,7 +111,6 @@ const MenuProps = {
     },
 };
 
-
 const RequestReceiptManagerPage = () => {
     const location = useLocation();
     const { state } = location;
@@ -146,6 +150,12 @@ const RequestReceiptManagerPage = () => {
     const startIndex = page * rowsPerPage;
     const endIndex = startIndex + rowsPerPage;
 
+    const [selectedStatus, setSelectedStatus] = React.useState([]);
+
+    const handleStatusChange = (event) => {
+        setSelectedStatus(event.target.value);
+    };
+
     const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
     const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
     console.log(successMessage, 'aaaaaaa');
@@ -159,7 +169,9 @@ const RequestReceiptManagerPage = () => {
 
     // ========================== Hàm để thay đổi data mỗi khi Edit xong api=======================================
     const updateGoodReceiptInList = (updatedGoodReceipt) => {
-        const importRquestReceiptIndex = importRequestData.findIndex((good_receipt) => good_receipt.id === updatedGoodReceipt.id);
+        const importRquestReceiptIndex = importRequestData.findIndex(
+            (good_receipt) => good_receipt.id === updatedGoodReceipt.id,
+        );
 
         if (importRquestReceiptIndex !== -1) {
             const UpdatedGoodReceipt = [...importRequestData];
@@ -170,7 +182,9 @@ const RequestReceiptManagerPage = () => {
     };
 
     const updateGoodReceiptStatusInList = (goodReceiptId, newStatus) => {
-        const importRquestReceiptIndex = importRequestData.findIndex((good_receipt) => good_receipt.id === goodReceiptId);
+        const importRquestReceiptIndex = importRequestData.findIndex(
+            (good_receipt) => good_receipt.id === goodReceiptId,
+        );
 
         if (importRquestReceiptIndex !== -1) {
             const UpdatedGoodReceipt = [...importRequestData];
@@ -281,9 +295,12 @@ const RequestReceiptManagerPage = () => {
         getAllImportRequest()
             .then((response) => {
                 const data = response.data;
+                console.log(data);
                 if (Array.isArray(data)) {
                     const sortedData = data.sort((a, b) => {
-                        return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'));
+                        return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(
+                            dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
+                        );
                     });
                     setImportRequestData(sortedData);
                 } else {
@@ -313,12 +330,23 @@ const RequestReceiptManagerPage = () => {
     }, [successMessage]);
 
     //==============================* filter *==============================
-    const pendingApprovalItems = importRequestData.filter((importRequest) => importRequest.status === 'Pending_Approval');
+    const pendingApprovalItems = importRequestData.filter(
+        (importRequest) => importRequest.status === 'Pending_Approval',
+    );
 
     const otherItems = importRequestData.filter((importRequest) => importRequest.status !== 'Pending_Approval');
 
     const allItems = [...pendingApprovalItems, ...otherItems];
+
+    console.log(allItems);
+
+    const statusArray = allItems.map((item) => item.status);
+
+    console.log(statusArray);
     //==============================* filter *==============================
+    const filteredItems = allItems.filter((item) =>
+        selectedStatus.length === 0 ? true : selectedStatus.includes(item.status),
+    );
 
     return (
         <>
@@ -350,31 +378,46 @@ const RequestReceiptManagerPage = () => {
             </Stack>
 
             {/* ===========================================filter=========================================== */}
-            {/* <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
                 <FilterAltIcon color="action" />
                 <Typography gutterBottom variant="h6" color="text.secondary" component="div" sx={{ m: 1 }}>
                     Bộ lọc tìm kiếm
                 </Typography>
-            </div> */}
-            {/* <FormControl sx={{ m: 1, width: 300, mb: 2 }}>
-                <InputLabel id="demo-multiple-checkbox-label">Nhóm hàng</InputLabel>
+            </div>
+            <FormControl sx={{ m: 1, width: 300, mb: 2 }}>
+                <InputLabel id="demo-multiple-checkbox-label">Trạng thái</InputLabel>
                 <Select
                     labelId="demo-multiple-checkbox-label"
                     id="demo-multiple-checkbox"
                     multiple
-                    value={personName}
-                    onChange={handleChange}
-                    input={<OutlinedInput label="Nhóm hàng" />}
+                    value={selectedStatus}
+                    onChange={handleStatusChange}
+                    input={<OutlinedInput label="Trạng thái" />}
                     renderValue={(selected) => selected.join(', ')}
                     MenuProps={MenuProps}
                 >
-                    {filterOptions.map((name) => (
+                    {statusArray.map((name) => (
                         <MenuItem key={name} value={name}>
-                            <Checkbox checked={personName.indexOf(name) > -1} />
+                            <Checkbox checked={selectedStatus.indexOf(name) > -1} />
                             <ListItemText primary={name} />
                         </MenuItem>
                     ))}
                 </Select>
+            </FormControl>
+            {/* <FormControl sx={{ ml: 114, width: 300 }}>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DemoContainer components={['DateRangePicker']}>
+                        <DateRangePicker
+                            startText="Check-in"
+                            endText="Check-out"
+                            value={[startDate, endDate]}
+                            onChange={(newValue) => {
+                                setStartDate(newValue[0]);
+                                setEndDate(newValue[1]);
+                            }}
+                        />
+                    </DemoContainer>
+                </LocalizationProvider>
             </FormControl> */}
             {/* ===========================================filter=========================================== */}
             <Card>
@@ -398,7 +441,7 @@ const RequestReceiptManagerPage = () => {
                                 onSelectAllClick={handleSelectAllClick}
                             />
                             <TableBody>
-                                {allItems.slice(startIndex, endIndex).map((importRequest) => {
+                                {filteredItems.slice(startIndex, endIndex).map((importRequest) => {
                                     return (
                                         <React.Fragment key={importRequest.id}>
                                             <TableRow
@@ -456,12 +499,12 @@ const RequestReceiptManagerPage = () => {
                                                         {importRequest.status === 'Pending_Approval'
                                                             ? 'Chờ phê duyệt'
                                                             : importRequest.status === 'Approved'
-                                                                ? 'Đã xác nhận'
-                                                                : importRequest.status === 'IN_PROGRESS'
-                                                                    ? 'Đang tiến hành'
-                                                                    : importRequest.status === 'Complete'
-                                                                        ? 'Hoàn thành'
-                                                                        : 'Ngừng hoạt động'}
+                                                            ? 'Đã xác nhận'
+                                                            : importRequest.status === 'IN_PROGRESS'
+                                                            ? 'Đang tiến hành'
+                                                            : importRequest.status === 'Complete'
+                                                            ? 'Hoàn thành'
+                                                            : 'Ngừng hoạt động'}
                                                     </Label>
                                                 </TableCell>
                                             </TableRow>

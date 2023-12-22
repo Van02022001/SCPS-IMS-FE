@@ -27,7 +27,7 @@ import { ProductsListHead, ProductsListToolbar } from '~/sections/@dashboard/pro
 // mock
 import PRODUCTSLIST from '../../../../_mock/products';
 // api
-import { getAllCustomerRequest } from '~/data/mutation/customerRequest/CustomerRequest-mutation';
+import { getAllCustomerRequestOfWarehouse } from '~/data/mutation/customerRequest/CustomerRequest-mutation';
 import ImportReaceiptDetailForm from '~/sections/auth/inventory_staff/importReceipt/ImportReceiptDetailForm';
 
 // import GoodsReceiptPage from '../GoodsReceiptPage';
@@ -256,7 +256,7 @@ const CustomerRequestPage = () => {
     const isNotFound = !filteredUsers.length && !!filterName;
 
     useEffect(() => {
-        getAllCustomerRequest()
+        getAllCustomerRequestOfWarehouse()
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {

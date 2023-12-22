@@ -482,7 +482,7 @@ const ItemsSalePage = () => {
                 </Select>
             </FormControl>
 
-            <FormControl sx={{ ml: 74, width: 300 }}>
+            <FormControl sx={{ ml: 70, width: 300 }}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DemoContainer components={['DateRangePicker']}>
                         <DateRangePicker

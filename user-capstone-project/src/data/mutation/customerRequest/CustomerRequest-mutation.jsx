@@ -13,3 +13,8 @@ export const editExportRequestReceipt = async (customerRequestReceiptId, editExp
     const response = await axiosInstance.put(`/customer-request-receipts/${customerRequestReceiptId}/start-export`, editExportReceiptParams);
     return response.data;
 }
+
+export const getAllCustomerRequestOfWarehouse = async () => {
+    const response = await axiosInstance.get(`/customer-request-receipts/warehouse`);
+    return response.data;
+}

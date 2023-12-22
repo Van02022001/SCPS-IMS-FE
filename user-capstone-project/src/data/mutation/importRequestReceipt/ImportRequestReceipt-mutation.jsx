@@ -24,3 +24,8 @@ export const editReceiptStartImport = async (importReceiptId) => {
     const response = await axiosInstance.put(`/import-request-receipts/${importReceiptId}/start-import`);
     return response.data;
 }
+
+export const getAllImportRequestOfWarehouse = async () => {
+    const response = await axiosInstance.get(`/import-request-receipts/warehouse`);
+    return response.data;
+}

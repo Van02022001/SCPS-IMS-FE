@@ -255,19 +255,17 @@ const CreateRequestCustomerPage = () => {
                 </Stack>
 
                 <Card>
-                    
-                    <Stack spacing={4} margin={2} style={{ minHeight: '70vh', }}>
+                    <Stack spacing={4} margin={2} style={{ minHeight: '70vh' }}>
                         <Grid container spacing={2}>
-
                             {/* Danh sách sản phẩm đã thêm bên trái */}
-                            <Grid item xs={6}>
+                            <Grid item xs={7}>
                                 <Paper>
                                     <Scrollbar>
                                         <TableContainer sx={{ minWidth: 800 }}>
                                             <Table>
-                                                <UserListHead
-                                                    order={order}
-                                                    orderBy={orderBy}
+                                                <CreateGoodReceiptListHead
+                                                    // order={order}
+                                                    // orderBy={orderBy}
                                                     headLabel={TABLE_HEAD}
                                                     rowCount={USERLIST.length}
                                                     numSelected={selected.length}
@@ -280,19 +278,26 @@ const CreateRequestCustomerPage = () => {
                                             <Paper>
                                                 <List>
                                                     {selectedItems.map((selectedItem, index) => (
-                                                        <ListItem key={`${selectedItem.id}-${index}`}>
+                                                        <ListItem
+                                                            key={`${selectedItem.id}-${index}`}
+                                                            sx={{ display: 'flex', alignItems: 'center' }}
+                                                        >
                                                             {/* <img
                                                     src={selectedItem.avatar}
                                                     alt={selectedItem.name}
                                                     width="48"
                                                     height="48"
                                                 /> */}
-                                                            <ListItemText
+                                                            {/* <ListItemText
                                                                 // primary={selectedItem.id}
                                                                 onChange={(e) => setItemId(e.target.value)}
-                                                            />
-                                                            <ListItemText primary={selectedItem.subCategory.name} />
-                                                            <ListItemText>
+                                                            /> */}
+                                                            <ListItemText sx={{ flexBasis: '44%' }}>
+                                                                <Typography variant="body1">
+                                                                    {selectedItem.subCategory.name}
+                                                                </Typography>
+                                                            </ListItemText>
+                                                            <ListItemText sx={{ flexBasis: '34%' }}>
                                                                 <TextField
                                                                     type="number"
                                                                     label="Số lượng"
@@ -306,7 +311,9 @@ const CreateRequestCustomerPage = () => {
                                                                     }
                                                                 />
                                                             </ListItemText>
-                                                            <Button onClick={() => handleRemoveFromCart(index)}>Xóa</Button>
+                                                            <Button onClick={() => handleRemoveFromCart(index)}>
+                                                                Xóa
+                                                            </Button>
                                                         </ListItem>
                                                     ))}
                                                 </List>
@@ -315,17 +322,20 @@ const CreateRequestCustomerPage = () => {
                                     </Scrollbar>
                                     {/* Thêm phần hiển thị thông tin khách hàng và tổng tiền */}
 
-                                    <FormControl sx={{ margin: 1 }}
+                                    <FormControl
+                                        sx={{ margin: 1 }}
                                         style={{
-                                            position: 'absolute',
-                                            bottom: 35,
-                                            left: 25,
+                                            position: 'relative',
+                                            bottom: 10,
+                                            left: 0,
                                             borderColor: 'black',
                                             borderWidth: 1,
                                             boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
                                             borderRadius: 5,
-                                            minWidth: 750
-                                        }}>
+                                            minWidth: 850,
+                                            padding: 20,
+                                        }}
+                                    >
                                         <Typography variant="h6">Thông tin đơn hàng</Typography>
                                         <Typography variant="body1">Tên khách hàng:</Typography>
                                         <Typography variant="body1">Địa chỉ:</Typography>
@@ -336,10 +346,16 @@ const CreateRequestCustomerPage = () => {
                             </Grid>
 
                             {/* Danh sách sản phẩm bên phải */}
-                            <Grid item xs={6} style={{ padding: '20px' }}>
-                                <Paper style={{ border: '1px solid #ccc', borderRadius: '8px', boxShadow: '4px 4px 10px rgba(0, 0, 0, 0.1)', minHeight: '70vh' }}>
-
-                                    <Grid container spacing={2} alignItems="center">
+                            <Grid item xs={5} style={{ padding: '20px' }}>
+                                <Paper
+                                    style={{
+                                        border: '1px solid #ccc',
+                                        borderRadius: '8px',
+                                        boxShadow: '4px 4px 10px rgba(0, 0, 0, 0.1)',
+                                        minHeight: '70vh',
+                                    }}
+                                >
+                                    <Grid container spacing={2} padding={2} alignItems="center">
                                         <Grid item xs={4}>
                                             {/* <FormControl style={{ border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#f0f0f0', margin: '10px' }}>
                                                 <div style={{ display: 'flex', alignItems: 'center' }}>

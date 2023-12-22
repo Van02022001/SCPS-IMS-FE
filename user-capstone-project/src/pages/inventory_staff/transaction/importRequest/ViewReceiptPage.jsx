@@ -28,7 +28,7 @@ import { ProductsListHead, ProductsListToolbar } from '~/sections/@dashboard/pro
 // mock
 import PRODUCTSLIST from '../../../../_mock/products';
 // api
-import { getAllImportRequest } from '~/data/mutation/importRequestReceipt/ImportRequestReceipt-mutation';
+import { getAllImportRequestOfWarehouse } from '~/data/mutation/importRequestReceipt/ImportRequestReceipt-mutation';
 import ImportReaceiptDetailForm from '~/sections/auth/inventory_staff/importReceipt/ImportReceiptDetailForm';
 
 // import GoodsReceiptPage from '../GoodsReceiptPage';
@@ -253,7 +253,7 @@ const ViewReceiptPage = () => {
     const isNotFound = !filteredUsers.length && !!filterName;
 
     useEffect(() => {
-        getAllImportRequest()
+        getAllImportRequestOfWarehouse()
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
