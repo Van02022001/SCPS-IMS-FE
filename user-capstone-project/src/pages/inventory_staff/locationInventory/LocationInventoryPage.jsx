@@ -45,7 +45,7 @@ const TABLE_HEAD = [
     { id: 'shelfNumber', label: 'Số kệ', alignRight: false },
     { id: 'binNumber', label: 'Số ngăn', alignRight: false },
     { id: 'warehouse', label: 'Tên kho', alignRight: false },
-    { id: 'tags', label: 'Ống', alignRight: false },
+    { id: 'tags', label: 'Nhãn', alignRight: false },
 ];
 
 // ----------------------------------------------------------------------

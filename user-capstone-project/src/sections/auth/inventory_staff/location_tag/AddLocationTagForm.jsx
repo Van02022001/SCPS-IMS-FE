@@ -86,10 +86,10 @@ const AddLocationTagForm = ({ open, onClose, onSave }) => {
 
     return (
         <Dialog open={open} onClose={onClose}>
-            <DialogTitle>Thêm ống</DialogTitle>
+            <DialogTitle>Thêm Nhãn</DialogTitle>
             <DialogContent>
                 <TextField
-                    label="Tên ống"
+                    label="Tên nhãn"
                     variant="outlined"
                     fullWidth
                     margin="normal"

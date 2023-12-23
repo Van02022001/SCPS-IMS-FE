@@ -46,6 +46,8 @@ import Scrollbar from '~/components/scrollbar/Scrollbar';
 import { createTransfer } from '~/data/mutation/warehouseTransfer/warehouseTransfer-mutation';
 import { getOtherWarehouse } from '~/data/mutation/warehouse/warehouse-mutation';
 import { CreateGoodReceiptListHead } from '~/sections/@dashboard/manager/transaction/createGoodReceipt';
+import SnackbarError from '~/components/alert/SnackbarError';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 
 const CreateTransferForm = (props) => {
     const [order, setOrder] = useState('asc');
@@ -63,11 +65,45 @@ const CreateTransferForm = (props) => {
     const [selectedItems, setSelectedItems] = useState([]);
 
     //thông báo
-    const [message, setMessage] = useState('');
-    const [isSuccess, setIsSuccess] = useState(false);
-    const [isError, setIsError] = useState(false);
-    const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    //========================== Hàm notification của trang ==================================
+    const [open, setOpen] = React.useState(false);
+    const [open1, setOpen1] = React.useState(false);
+
+    const handleErrorMessage = (message) => {
+        setOpen1(true);
+        if (message === 'Invalid request') {
+            setErrorMessage('Yêu cầu không hợp lệ !');
+        } else if (message === 'Error during item transfer: The given id must not be null') {
+            setErrorMessage('Vui lòng chọn và điền đầy đủ thông tin !');
+        } else if (message === 'Error during item transfer: Item inventory not found in source warehouse') {
+            setErrorMessage('Không tìm thấy vật phẩm trong kho này !');
+        }
+    };
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        console.log('Closing Snackbar...');
+        setOpen(false);
+        setOpen1(false);
+        setErrorMessage('');
+    };
+
+    const action = (
+        <React.Fragment>
+            <Button color="secondary" size="small" onClick={handleClose}></Button>
+            <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
+                <CloseIcon fontSize="lage" />
+            </IconButton>
+        </React.Fragment>
+    );
+
+    const handleCloseSnackbar = () => {
+        setOpen(false);
+        setOpen1(false);
+    };
 
     const [selectedWarehouseId, setSelectedWarehouseId] = useState(null);
 
@@ -125,20 +161,16 @@ const CreateTransferForm = (props) => {
             // Make the API call
             const response = await createTransfer(recieptParams);
 
-            if (response.status === '201 CREATED') {
+            if (response.status === '200 OK') {
                 // Handle success
-                setIsSuccess(true);
-                setIsError(false);
-                setSuccessMessage(response.data.message);
+                // Chuyển hướng và truyền thông báo
+                navigate('/inventory-staff/warehousesInventory', {
+                    state: { successMessage: response.message },
+                });
             }
         } catch (error) {
             console.error('Error creating transfer:', error.response);
-            setIsError(true);
-            setIsSuccess(false);
-
-            if (error.response?.data?.message === 'Invalid request') {
-                setErrorMessage('Yêu cầu không hợp lệ');
-            }
+            handleErrorMessage(error.response?.data?.message);
         }
     };
 
@@ -153,7 +185,6 @@ const CreateTransferForm = (props) => {
         ];
 
         const newRecieptParams = {
-            destinationWarehouseId: selectedWarehouseId,
             items: [
                 ...recieptParams.items,
                 {
@@ -259,6 +290,8 @@ const CreateTransferForm = (props) => {
 
     console.log('selectedWarehouseId:', selectedWarehouseId);
 
+    
+
     return (
         <>
             <Helmet>
@@ -347,7 +380,7 @@ const CreateTransferForm = (props) => {
                                                         type="number"
                                                         label="Số lượng"
                                                         sx={{ width: '80%' }}
-                                                        // value={selectedItem.quantity}
+                                                        value={selectedItem.quantity}
                                                         onChange={(e) =>
                                                             handleQuantityChange(
                                                                 selectedItems.indexOf(selectedItem),
@@ -401,8 +434,13 @@ const CreateTransferForm = (props) => {
                                         </ListItem>
                                     ))}
                                 </List>
-                                {isSuccess && <SuccessAlerts message={successMessage} />}
-                                {isError && <ErrorAlerts errorMessage={errorMessage} />}
+                                <SnackbarError
+                                    open={open1}
+                                    handleClose={handleCloseSnackbar}
+                                    message={errorMessage}
+                                    action={action}
+                                    style={{ bottom: '16px', right: '16px' }}
+                                />
                                 <Button color="primary" variant="contained" onClick={handleCreateTransfer}>
                                     Lưu
                                 </Button>
@@ -411,6 +449,7 @@ const CreateTransferForm = (props) => {
                     </Grid>
                 </Grid>
             </Box>
+            
         </>
     );
 };

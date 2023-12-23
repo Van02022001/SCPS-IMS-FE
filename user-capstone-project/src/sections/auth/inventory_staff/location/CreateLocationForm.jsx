@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, DialogContent, Grid, MenuItem, Select, Stack, TextField } from '@mui/material';
+import { Button, DialogContent, Grid, IconButton, MenuItem, Select, Stack, TextField } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
 import SuccessAlerts from '~/components/alert/SuccessAlert';
@@ -7,6 +7,8 @@ import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter
 import { createLocations } from '~/data/mutation/location/location-mutation';
 import AddLocationTagForm from '../location_tag/AddLocationTagForm';
 import { getAllLocation_tag } from '~/data/mutation/location_tag/location_tag-mutaion';
+import SnackbarError from '~/components/alert/SnackbarError';
+import CloseIcon from '@mui/icons-material/Close';
 
 const CreateLocationForm = (props) => {
     const [shelfNumber, setShelfNumber] = useState('');
@@ -14,10 +16,47 @@ const CreateLocationForm = (props) => {
     const [tags_id, setTags_id] = useState([]);
     const [openAddCategoryDialog, setOpenAddCategoryDialog] = useState(false);
     const [tab1Data, setTab1Data] = useState({ tags_id: [] });
-    const [isSuccess, setIsSuccess] = useState(false);
-    const [isError, setIsError] = useState(false);
-    const [successMessage, setSuccessMessage] = useState('');
+
+    //thông báo
     const [errorMessage, setErrorMessage] = useState('');
+    //========================== Hàm notification của trang ==================================
+    const [open, setOpen] = React.useState(false);
+    const [open1, setOpen1] = React.useState(false);
+
+    const handleErrorMessage = (message) => {
+        setOpen1(true);
+        if (message === 'Invalid request') {
+            setErrorMessage('Yêu cầu không hợp lệ !');
+        } else if (message === 'Error during item transfer: The given id must not be null') {
+            setErrorMessage('Vui lòng chọn và điền đầy đủ thông tin !');
+        } else if (message === 'Error during item transfer: Item inventory not found in source warehouse') {
+            setErrorMessage('Không tìm thấy vật phẩm trong kho này !');
+        }
+    };
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        console.log('Closing Snackbar...');
+        setOpen(false);
+        setOpen1(false);
+        setErrorMessage('');
+    };
+
+    const action = (
+        <React.Fragment>
+            <Button color="secondary" size="small" onClick={handleClose}></Button>
+            <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
+                <CloseIcon fontSize="lage" />
+            </IconButton>
+        </React.Fragment>
+    );
+
+    const handleCloseSnackbar = () => {
+        setOpen(false);
+        setOpen1(false);
+    };
 
     const handleTab1DataChange = (event) => {
         setTab1Data({ ...tab1Data, [event.target.name]: event.target.value });
@@ -35,26 +74,13 @@ const CreateLocationForm = (props) => {
             console.log('Create location response:', response);
 
             if (response.status === 200) {
-                setIsSuccess(true);
-                setIsError(false);
-                setSuccessMessage(response.data.message);
                 props.onClose(response.data);
             } else {
                 console.error('Unexpected response status:', response.status);
-                setIsError(true);
-                setErrorMessage('Failed to create location. Please try again.');
             }
         } catch (error) {
             console.error('Error creating location:', error);
-            setIsError(true);
-            setIsSuccess(false);
-            setErrorMessage('Failed to create location. Please try again.');
-
-            if (error.response) {
-                console.log('Error response data:', error.response.data);
-            } else {
-                console.log('Error without response data:', error.message);
-            }
+            handleErrorMessage(error.response?.data?.message);
         }
     };
 
@@ -129,8 +155,13 @@ const CreateLocationForm = (props) => {
                             </Button>
                         </Grid>
                         <AddLocationTagForm open={openAddCategoryDialog} onClose={handleCloseAddCategoryDialog} />
-                        {isSuccess && <SuccessAlerts message={successMessage} />}
-                        {isError && <ErrorAlerts errorMessage={errorMessage} />}
+                        <SnackbarError
+                            open={open1}
+                            handleClose={handleCloseSnackbar}
+                            message={errorMessage}
+                            action={action}
+                            style={{ bottom: '16px', right: '16px' }}
+                        />
                         <Button color="primary" variant="contained" onClick={handleCreateLocation}>
                             Tạo
                         </Button>

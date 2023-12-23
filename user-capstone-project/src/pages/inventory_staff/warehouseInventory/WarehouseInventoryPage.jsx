@@ -45,7 +45,9 @@ import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import { getAllWarehouseTransfer } from '~/data/mutation/warehouseTransfer/warehouseTransfer-mutation';
 import CreateTransferForm from '~/sections/auth/inventory_staff/warehouseInventory/CreateTransferForm';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
+import { getItemsByName } from '~/data/mutation/items/item-mutation';
 
 // ----------------------------------------------------------------------
 
@@ -125,6 +127,8 @@ const WarehouseInventoryPage = () => {
     const [selectedOrder, setSelectedOrder] = useState(null);
 
     const [selectedTransferId, setSelectedTransferId] = useState([]);
+    const [itemsName, setItemsName] = useState([]);
+
     // State data và xử lý data
     const [transferData, setTransferData] = useState([]);
     const [itemStatus, setItemStatus] = useState('');
@@ -153,7 +157,6 @@ const WarehouseInventoryPage = () => {
 
     const startIndex = page * rowsPerPage;
     const endIndex = startIndex + rowsPerPage;
-
 
     const handleChange = (event) => {
         setPersonName(event.target.value);
@@ -241,8 +244,6 @@ const WarehouseInventoryPage = () => {
             }
         });
     };
-    
-    
 
     //============================================== Hàm để thay đổi data mỗi khi Edit xong api=============================================
     // const updateItemInList = (updatedItem) => {
@@ -290,6 +291,20 @@ const WarehouseInventoryPage = () => {
                         );
                     });
                     setTransferData(sortedData);
+
+                    // Extracting unique item IDs from transfers
+                    const itemIds = sortedData.map((transfer) => transfer.itemId);
+
+                    // Fetching item details based on item IDs
+                    getItemsByName(itemIds)
+                        .then((response) => {
+                            const data = response.data;
+                            setItemsName(data);
+                            console.log('itemsName:', setItemsName(data)); // Log the fetched data
+                        })
+                        .catch((error) => {
+                            console.error('Error fetching items:', error);
+                        });
                 } else {
                     console.error('API response is not an array:', data);
                 }
@@ -297,57 +312,41 @@ const WarehouseInventoryPage = () => {
             .catch((error) => {
                 console.error('Error fetching transfers:', error);
             });
-        // getAllBrands()
-        //     .then((respone) => {
-        //         const data = respone.data;
-        //         if (Array.isArray(data)) {
-        //             setBrandData(data);
-        //         } else {
-        //             console.error('API response is not an array:', data);
-        //         }
-        //     })
-        //     .catch((error) => {
-        //         console.error('Error fetching users:', error);
-        //     });
-        // getAllSubCategory()
-        //     .then((respone) => {
-        //         const data = respone.data;
-        //         if (Array.isArray(data)) {
-        //             setSubCategoryData(data);
-        //         } else {
-        //             console.error('API response is not an array:', data);
-        //         }
-        //     })
-        //     .catch((error) => {
-        //         console.error('Error fetching users:', error);
-        //     });
-        // getAllSuppliers()
-        //     .then((respone) => {
-        //         const data = respone.data;
-        //         if (Array.isArray(data)) {
-        //             setSupplierData(data);
-        //         } else {
-        //             console.error('API response is not an array:', data);
-        //         }
-        //     })
-        //     .catch((error) => {
-        //         console.error('Error fetching users:', error);
-        //     });
-        // getAllOrigins()
-        //     .then((respone) => {
-        //         const data = respone.data;
-        //         if (Array.isArray(data)) {
-        //             setOriginData(data);
-        //         } else {
-        //             console.error('API response is not an array:', data);
-        //         }
-        //     })
-        //     .catch((error) => {
-        //         console.error('Error fetching users:', error);
-        //     });
     }, []);
 
     console.log(transferData);
+
+    // thông báo
+    const location = useLocation();
+    const { state } = location;
+    const successMessage = state?.successMessage;
+    const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
+    const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
+
+    const mapSuccessMessageToVietnamese = (englishMessage) => {
+        switch (englishMessage) {
+            case 'Items transferred successfully':
+                return 'Chuyển kho thành công !';
+            // Thêm các trường hợp khác nếu cần
+            default:
+                return englishMessage;
+        }
+    };
+
+    useEffect(() => {
+        if (successMessage) {
+            const vietnameseMessage = mapSuccessMessageToVietnamese(successMessage);
+            setSnackbarSuccessOpen(true);
+            setSnackbarSuccessMessage(vietnameseMessage);
+        }
+    }, [successMessage]);
+
+    const getItemNameById = (itemId) => {
+        console.log('itemsName:', itemsName); // Log itemsName to the console
+        const item = itemsName.find((item) => item.id === itemId);
+        console.log('item:', item); // Log the found item to the console
+        return item ? item.name : 'Item Not Found';
+    };
 
     return (
         <>
@@ -419,7 +418,7 @@ const WarehouseInventoryPage = () => {
 
                                                 <TableCell align="left">
                                                     <Typography variant="subtitle2" noWrap>
-                                                        {transfer.itemId}
+                                                        {getItemNameById(transfer.itemId)}
                                                     </Typography>
                                                 </TableCell>
 
@@ -491,6 +490,12 @@ const WarehouseInventoryPage = () => {
                     page={page}
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+                <SnackbarSuccess
+                    open={snackbarSuccessOpen}
+                    handleClose={() => setSnackbarSuccessOpen(false)}
+                    message={snackbarSuccessMessage}
+                    style={{ bottom: '16px', right: '16px' }}
                 />
             </Card>
         </>

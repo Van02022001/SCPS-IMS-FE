@@ -22,18 +22,18 @@ import { authenValidation, logout, refreshTokenNew } from '~/data/mutation/login
 // ----------------------------------------------------------------------
 
 const MENU_OPTIONS = [
-    {
-        label: 'Home',
-        icon: 'eva:home-fill',
-    },
+    // {
+    //     label: 'Home',
+    //     icon: 'eva:home-fill',
+    // },
     {
         label: 'Hồ sơ',
         icon: 'eva:person-fill',
     },
-    {
-        label: 'Settings',
-        icon: 'eva:settings-2-fill',
-    },
+    // {
+    //     label: 'Settings',
+    //     icon: 'eva:settings-2-fill',
+    // },
 ];
 
 // ----------------------------------------------------------------------
