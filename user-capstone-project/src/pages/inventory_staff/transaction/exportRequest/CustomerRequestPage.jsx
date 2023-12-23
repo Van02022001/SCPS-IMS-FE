@@ -12,13 +12,19 @@ import {
     TableRow,
     TableBody,
     TableCell,
-    Container,
+    FormControl,
+    OutlinedInput,
+    InputLabel,
+    Select,
+    MenuItem,
+    ListItemText,
     Typography,
     TableContainer,
     TablePagination,
 } from '@mui/material';
 // components
 import Label from '~/components/label/Label';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
 // import Iconify from '~/components/iconify/Iconify';
 import Scrollbar from '~/components/scrollbar/Scrollbar';
 
@@ -48,7 +54,6 @@ const TABLE_HEAD = [
     { id: 'createdAt', label: 'Ngày tạo', alignRight: false },
     // { id: 'type', label: 'Loại yêu cầu', alignRight: false },
     { id: 'status', label: 'Trạng thái', alignRight: false },
-    { id: '' },
 ];
 
 // ----------------------------------------------------------------------
@@ -81,7 +86,16 @@ function applySortFilter(array, comparator, query) {
     }
     return stabilizedThis.map((el) => el[0]);
 }
-
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+    PaperProps: {
+        style: {
+            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+            width: 250,
+        },
+    },
+};
 // function formatDate(dateString) {
 //     const date = new Date(dateString);
 //     const day = date.getDate();
@@ -119,7 +133,7 @@ const CustomerRequestPage = () => {
     // const [productStatus, setProductStatus] = useState('');
 
     const [selectedProduct, setSelectedProduct] = useState(null);
-
+    const [selectedStatus, setSelectedStatus] = React.useState([]);
     // Hàm để thay đổi data mỗi khi Edit xong api-------------------------------------------------------------
     const updateImportReceiptInList = (updatedImportReceipt) => {
         const importReceiptIndex = importRequestData.findIndex((product) => product.id === updatedImportReceipt.id);
@@ -282,8 +296,23 @@ const CustomerRequestPage = () => {
     const otherItems = importRequestData.filter((importRequest) => importRequest.status !== 'Pending_Approval');
 
     const allItems = [...pendingApprovalItems, ...otherItems];
-    //==============================* filter *==============================
+    const statusArray = allItems.map((item) => item.status);
+    const uniqueStatusArray = Array.from(new Set(statusArray));
 
+    // Chỉ chọn những giá trị mà bạn quan tâm
+    const filteredStatusArray = uniqueStatusArray.filter(status => (
+        status === "Pending_Approval" ||
+        status === "Approved" ||
+        status === "IN_PROGRESS" ||
+        status === "Completed"
+    ));
+    const handleStatusChange = (event) => {
+        setSelectedStatus(event.target.value);
+    };
+    //==============================* filter *==============================
+    const filteredItems = allItems.filter((item) =>
+        selectedStatus.length === 0 ? true : selectedStatus.includes(item.status),
+    );
     return (
         <>
             <Helmet>
@@ -303,7 +332,35 @@ const CustomerRequestPage = () => {
                     Nhập hàng
                 </Button> */}
             </Stack>
+            {/* ===========================================filter=========================================== */}
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+                <FilterAltIcon color="action" />
+                <Typography gutterBottom variant="h6" color="text.secondary" component="div" sx={{ m: 1 }}>
+                    Bộ lọc tìm kiếm
+                </Typography>
+            </div>
+            <FormControl sx={{ m: 1, width: 300, mb: 2 }}>
+                <InputLabel id="demo-multiple-checkbox-label">Trạng thái</InputLabel>
+                <Select
+                    labelId="demo-multiple-checkbox-label"
+                    id="demo-multiple-checkbox"
+                    multiple
+                    value={selectedStatus}
+                    onChange={handleStatusChange}
+                    input={<OutlinedInput label="Trạng thái" />}
+                    renderValue={(selected) => selected.join(', ')}
+                    MenuProps={MenuProps}
+                >
+                    {filteredStatusArray.map((name) => (
+                        <MenuItem key={name} value={name}>
+                            <Checkbox checked={selectedStatus.indexOf(name) > -1} />
+                            <ListItemText primary={name} />
+                        </MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
 
+            {/* ===========================================filter=========================================== */}
             <Card>
                 <ProductsListToolbar
                     numSelected={selected.length}

@@ -31,7 +31,7 @@ import Scrollbar from '~/components/scrollbar/Scrollbar';
 import { useNavigate } from 'react-router-dom';
 //api
 import { UserListHead } from '~/sections/@dashboard/user';
-import { getAllItem } from '~/data/mutation/items/item-mutation';
+import { getAllItem, getAllItemBySale } from '~/data/mutation/items/item-mutation';
 import { getAllWarehouse, getInventoryStaffByWarehouseId } from '~/data/mutation/warehouse/warehouse-mutation';
 import { createRequestCustomer } from '~/data/mutation/customerRequest/CustomerRequest-mutation';
 import { getAllCustomer } from '~/data/mutation/customer/customer-mutation';
@@ -179,14 +179,6 @@ const CreateRequestCustomerPage = () => {
     };
 
     useEffect(() => {
-        getAllItem().then((respone) => {
-            const data = respone.data;
-            if (Array.isArray(data)) {
-                setItemsData(data);
-            } else {
-                console.error('API response is not an array:', data);
-            }
-        });
         getAllCustomer()
             .then((respone) => {
                 const data = respone.data;
@@ -196,7 +188,7 @@ const CreateRequestCustomerPage = () => {
                 console.error('Error fetching users:', error);
             });
     }, []);
-    console.log(customerData);
+
     useEffect(() => {
         const fetchWarehouseList = async () => {
             try {
@@ -211,18 +203,21 @@ const CreateRequestCustomerPage = () => {
     }, []);
 
     useEffect(() => {
-        const fetchInventoryStaff = async () => {
+        const fetchData = async () => {
             try {
-                if (selectedWarehouse) {
-                    const inventoryStaffList = await getInventoryStaffByWarehouseId(selectedWarehouse.id);
-                    setInventoryStaffList(inventoryStaffList.data);
-                }
+                const itemsResponse = await getAllItemBySale(selectedWarehouse.id);
+                setItemsData(itemsResponse.data);
+
+                const inventoryStaffResponse = await getInventoryStaffByWarehouseId(selectedWarehouse.id);
+                setInventoryStaffList(inventoryStaffResponse.data);
             } catch (error) {
-                console.error('Error fetching inventory staff:', error);
+                console.error('Error fetching data:', error);
             }
         };
 
-        fetchInventoryStaff();
+        if (selectedWarehouse) {
+            fetchData();
+        }
     }, [selectedWarehouse, selectedInventoryStaff]);
 
     const handleCreateImportReceipt = async () => {

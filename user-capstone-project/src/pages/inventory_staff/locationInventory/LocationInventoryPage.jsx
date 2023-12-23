@@ -1,6 +1,5 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
-import { sentenceCase } from 'change-case';
 import React, { useEffect, useState } from 'react';
 
 // @mui
@@ -9,10 +8,7 @@ import {
     Table,
     Stack,
     Paper,
-    Avatar,
     Button,
-    Popover,
-    Checkbox,
     TableRow,
     TableBody,
     TableCell,
@@ -41,7 +37,6 @@ import dayjs from 'dayjs';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-    { id: '', label: '', alignRight: false },
     { id: 'shelfNumber', label: 'Số kệ', alignRight: false },
     { id: 'binNumber', label: 'Số ngăn', alignRight: false },
     { id: 'warehouse', label: 'Tên kho', alignRight: false },
@@ -244,7 +239,7 @@ const LocationInventoryPage = () => {
                         numSelected={selected.length}
                         filterName={filterName}
                         onFilterName={handleFilterByName}
-                        // onDataSearch={handleDataSearch}
+                    // onDataSearch={handleDataSearch}
                     />
 
                     <Scrollbar>
@@ -272,14 +267,14 @@ const LocationInventoryPage = () => {
                                                     onClick={() => handleLocationClick(location)}
                                                     style={{ height: 52 }}
                                                 >
-                                                    <TableCell padding="checkbox">
-                                                        {/* <Checkbox
+                                                    {/* <TableCell padding="checkbox">
+                                                        <Checkbox
                                                             onChange={(event) => handleClick(event, brand.name)}
-                                                        /> */}
-                                                    </TableCell>
+                                                        />
+                                                    </TableCell> */}
 
                                                     {/* tên  */}
-                                                    <TableCell component="th" scope="row" padding="none">
+                                                    <TableCell align="left">
                                                         <Stack direction="row" alignItems="center" spacing={2}>
                                                             {/* <Avatar alt={name} src={avatarUrl} /> */}
                                                             <Typography variant="subtitle2" noWrap>
@@ -287,21 +282,21 @@ const LocationInventoryPage = () => {
                                                             </Typography>
                                                         </Stack>
                                                     </TableCell>
-                                                    <TableCell component="th" scope="row" padding="none">
+                                                    <TableCell align="left">
                                                         <Stack direction="row" alignItems="center" spacing={2}>
                                                             <Typography variant="subtitle2" noWrap>
                                                                 {location.binNumber}
                                                             </Typography>
                                                         </Stack>
                                                     </TableCell>
-                                                    <TableCell component="th" scope="row" padding="none">
+                                                    <TableCell align="left">
                                                         <Stack direction="row" alignItems="center" spacing={2}>
                                                             <Typography variant="subtitle2" noWrap>
                                                                 {location.warehouse.name}
                                                             </Typography>
                                                         </Stack>
                                                     </TableCell>
-                                                    <TableCell component="th" scope="row" padding="none">
+                                                    <TableCell align="left">
                                                         <Stack direction="row" alignItems="center" spacing={2}>
                                                             {location.tags.map((tag, index) => (
                                                                 <Typography key={index} variant="subtitle2" noWrap>

@@ -12,6 +12,9 @@ import {
 import { editItemLocations } from '~/data/mutation/items/item-mutation';
 import { getAllLocation } from '~/data/mutation/location/location-mutation';
 
+import AddLocationToWarehouse from './AddLocationToWarehouse';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
+
 const locationStyle = {
     border: '3px solid #ccc',
     borderRadius: '8px',
@@ -46,8 +49,11 @@ const UpdateLocationsForm = ({
     //state chọn muti
     const [selectedLocationsMuti, setSelectedLocationsMuti] = useState([]);
     const [quantityMap, setQuantityMap] = useState({});
-    // Thông báo
 
+    const [isCreateLocationFormOpen, setCreateLocationFormOpen] = useState(false);
+    // Thông báo
+    const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
+    const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
 
     const handleLocationClick = (location) => {
         const isSelected = selectedLocationsMuti.some((selected) => selected.id === location.id);
@@ -153,11 +159,44 @@ const UpdateLocationsForm = ({
             [locationId]: event.target.value,
         }));
     };
+    const handleOpenCreateLocation = () => {
+        setCreateLocationFormOpen(true);
+    };
+
+    const handleCloseCreateLocationDialog = async () => {
+        try {
+            // Cập nhật danh sách vị trí sau khi tạo mới
+            const response = await getAllLocation();
+            const data = response.data;
+            const dataArray = Array.isArray(data) ? data : [data];
+            setToLocation_id(dataArray);
+        } catch (error) {
+            console.error('Error fetching locations:', error);
+        }
+
+        // Đóng popup tạo vị trí
+        setCreateLocationFormOpen(false);
+    };
+
+    const handleSaveLocation = (successMessage) => {
+        handleCloseCreateLocationDialog();
+
+        setSnackbarSuccessMessage(successMessage === 'Create location successfully' ? 'Tạo thêm vị trí thành công!' : 'Thành công');
+        setSnackbarSuccessOpen(true);
+    };
     return (
         <>
             <Dialog open={open} onClose={handleClosePopup} maxWidth="md">
                 <DialogTitle>Hãy Chọn Địa Chỉ Trong Kho</DialogTitle>
-                <DialogContent >
+                <DialogContent>
+                    <Button variant="outlined" color="primary" onClick={handleOpenCreateLocation}>
+                        Thêm Vị Trí
+                    </Button>
+                    <AddLocationToWarehouse
+                        open={isCreateLocationFormOpen}
+                        onClose={handleCloseCreateLocationDialog}
+                        onSave={handleSaveLocation}
+                    />
                     <Grid container spacing={2}>
                         {/* Display a list of locations */}
                         {toLocation_id.map((toLocation) => (
@@ -196,6 +235,15 @@ const UpdateLocationsForm = ({
                     </Button>
                 </DialogContent>
             </Dialog>
+            <SnackbarSuccess
+                open={snackbarSuccessOpen}
+                handleClose={() => {
+                    setSnackbarSuccessOpen(false);
+                    setSnackbarSuccessMessage('');
+                }}
+                message={snackbarSuccessMessage}
+                style={{ bottom: '16px', right: '16px' }}
+            />
         </>
     );
 };

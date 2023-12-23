@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Button, Tab, Tabs, Stack, Grid, TextField, FormControl, Select, MenuItem } from '@mui/material';
+import { Typography, Tab, Tabs, Stack, Grid, TextField } from '@mui/material';
 
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 
 import { editSubCategory, editStatusCategory } from '~/data/mutation/subCategory/subCategory-mutation';
 import SuccessAlerts from '~/components/alert/SuccessAlert';
@@ -19,9 +18,8 @@ const CustomerDetailForm = ({
 }) => {
     const [tab1Data, setTab1Data] = useState({ categories_id: [] });
     const [tab2Data, setTab2Data] = useState({});
-    const [tab3Data, setTab3Data] = useState({});
 
-    const [expandedItem, setExpandedItem] = useState(customerId);
+    // const [expandedItem, setExpandedItem] = useState(customerId);
     const [formHeight, setFormHeight] = useState(0);
     const [selectedTab, setSelectedTab] = useState(0);
 
@@ -31,9 +29,6 @@ const CustomerDetailForm = ({
 
     const [editedCustomer, setEditedCustomer,] = useState(null);
     const [currentStatus, setCurrentStatus] = useState('');
-
-    const [positionedSnackbarOpen, setPositionedSnackbarOpen] = useState(false);
-    const [positionedSnackbarError, setPositionedSnackbarError] = useState(false);
 
     //thông báo
     const [isSuccess, setIsSuccess] = useState(false);
@@ -155,7 +150,6 @@ const CustomerDetailForm = ({
         }
     };
 
-    const handleClear = () => { };
 
     const handleEdit = (field, value) => {
         console.log(`Field: ${field}, Value: ${value}`);
@@ -354,19 +348,7 @@ const CustomerDetailForm = ({
                     </Stack>
                     {isSuccess && <SuccessAlerts message={successMessage} />}
                     {isError && <ErrorAlerts errorMessage={errorMessage} />}
-                    {/* <Stack spacing={4} margin={2}>
-                        <Grid container spacing={1} sx={{ gap: '10px' }}>
-                            <Button variant="contained" color="primary" onClick={updateProduct}>
-                                Cập nhập
-                            </Button>
-                            <Button variant="contained" color="error" onClick={updateProductStatus}>
-                                Thay đổi trạng thái
-                            </Button>
-                            <Button variant="outlined" color="error" onClick={handleClear}>
-                                Hủy bỏ
-                            </Button>
-                        </Grid>
-                    </Stack> */}
+
                 </div>
             )}
 

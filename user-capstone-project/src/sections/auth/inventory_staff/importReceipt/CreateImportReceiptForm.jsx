@@ -76,7 +76,7 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst }) => {
                                     </TableRow>
                                     <TableRow>
                                         <TableCell>Loại phiếu:</TableCell>
-                                        <TableCell>{importReceipst.type}</TableCell>
+                                        <TableCell>{importReceipst.type === 'PHIEU_YEU_CAU_NHAP_KHO' ? 'Phiếu Yêu Cầu Nhập Kho' : 'Phiếu khác'}</TableCell>
                                     </TableRow>
                                 </TableBody>
                             </Table>
@@ -135,10 +135,6 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst }) => {
                                             <TableRow>
                                                 <TableCell>Tổng số lượng:</TableCell>
                                                 <TableCell>{importReceipst.totalQuantity}</TableCell>
-                                            </TableRow>
-                                            <TableRow>
-                                                <TableCell>Tổng tiền:</TableCell>
-                                                <TableCell>{importReceipst.totalPrice} VND</TableCell>
                                             </TableRow>
                                         </TableBody>
                                     </div>

@@ -20,13 +20,19 @@ import {
     TablePagination,
     Dialog,
     DialogTitle,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
+    ListItemText,
+    OutlinedInput,
 } from '@mui/material';
 // components
 import Label from '~/components/label/Label';
 import Iconify from '~/components/iconify/Iconify';
 import Scrollbar from '~/components/scrollbar/Scrollbar';
 import CloseIcon from '@mui/icons-material/Close';
-
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
 // sections
 import { SubCategoryListHead, SubCategoryToolbar } from '~/sections/@dashboard/manager/subCategory';
 // mock
@@ -146,7 +152,7 @@ const CustomerRequestSalePage = () => {
 
     const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
     const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
-
+    const [selectedStatus, setSelectedStatus] = React.useState([]);
     const handleChange = (event) => {
         setPersonName(event.target.value);
         const selectedValues = event.target.value.length > 0 ? event.target.value : null;
@@ -335,7 +341,23 @@ const CustomerRequestSalePage = () => {
     const otherItems = importRequestData.filter((importRequest) => importRequest.status !== 'Pending_Approval');
 
     const allItems = [...pendingApprovalItems, ...otherItems];
+    const statusArray = allItems.map((item) => item.status);
+    const uniqueStatusArray = Array.from(new Set(statusArray));
+
+    // Chỉ chọn những giá trị mà bạn quan tâm
+    const filteredStatusArray = uniqueStatusArray.filter(status => (
+        status === "Pending_Approval" ||
+        status === "Approved" ||
+        status === "IN_PROGRESS" ||
+        status === "Completed"
+    ));
+    const handleStatusChange = (event) => {
+        setSelectedStatus(event.target.value);
+    };
     //==============================* filter *==============================
+    const filteredItems = allItems.filter((item) =>
+        selectedStatus.length === 0 ? true : selectedStatus.includes(item.status),
+    );
 
     return (
         <>
@@ -364,32 +386,33 @@ const CustomerRequestSalePage = () => {
             </Stack>
 
             {/* ===========================================filter=========================================== */}
-            {/* <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
                 <FilterAltIcon color="action" />
                 <Typography gutterBottom variant="h6" color="text.secondary" component="div" sx={{ m: 1 }}>
                     Bộ lọc tìm kiếm
                 </Typography>
-            </div> */}
-            {/* <FormControl sx={{ m: 1, width: 300, mb: 2 }}>
-                <InputLabel id="demo-multiple-checkbox-label">Nhóm hàng</InputLabel>
+            </div>
+            <FormControl sx={{ m: 1, width: 300, mb: 2 }}>
+                <InputLabel id="demo-multiple-checkbox-label">Trạng thái</InputLabel>
                 <Select
                     labelId="demo-multiple-checkbox-label"
                     id="demo-multiple-checkbox"
                     multiple
-                    value={personName}
-                    onChange={handleChange}
-                    input={<OutlinedInput label="Nhóm hàng" />}
+                    value={selectedStatus}
+                    onChange={handleStatusChange}
+                    input={<OutlinedInput label="Trạng thái" />}
                     renderValue={(selected) => selected.join(', ')}
                     MenuProps={MenuProps}
                 >
-                    {filterOptions.map((name) => (
+                    {filteredStatusArray.map((name) => (
                         <MenuItem key={name} value={name}>
-                            <Checkbox checked={personName.indexOf(name) > -1} />
+                            <Checkbox checked={selectedStatus.indexOf(name) > -1} />
                             <ListItemText primary={name} />
                         </MenuItem>
                     ))}
                 </Select>
-            </FormControl> */}
+            </FormControl>
+
             {/* ===========================================filter=========================================== */}
             <Card>
                 <SubCategoryToolbar
@@ -412,7 +435,7 @@ const CustomerRequestSalePage = () => {
                                 onSelectAllClick={handleSelectAllClick}
                             />
                             <TableBody>
-                                {allItems.map((importRequest) => {
+                                {filteredItems.map((importRequest) => {
                                     return (
                                         <React.Fragment key={importRequest.id}>
                                             <TableRow
@@ -473,7 +496,7 @@ const CustomerRequestSalePage = () => {
                                                                 ? 'Đã xác nhận'
                                                                 : importRequest.status === 'IN_PROGRESS'
                                                                     ? 'Đang tiến hành'
-                                                                    : importRequest.status === 'Complete'
+                                                                    : importRequest.status === 'Completed'
                                                                         ? 'Hoàn thành'
                                                                         : 'Ngừng hoạt động'}
                                                     </Label>

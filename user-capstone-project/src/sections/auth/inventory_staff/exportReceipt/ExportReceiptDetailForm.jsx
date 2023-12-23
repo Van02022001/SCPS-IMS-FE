@@ -386,7 +386,7 @@ const ExportReceiptDetailForm = ({
 
             {currentTab === 0 && (
                 <div>
-                    <div>
+                    {/* <div>
                         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                             <Button variant="contained" color="primary" onClick={handleOpenForm}>
                                 Tạo phiếu xuất kho
@@ -408,7 +408,7 @@ const ExportReceiptDetailForm = ({
                                 importReceipst={importReceipst}
                             />
                         </Dialog>
-                    </div>
+                    </div> */}
                     <Stack spacing={4} margin={2}>
                         <Grid container spacing={2}>
                             <Grid item xs={6}>
@@ -602,7 +602,7 @@ const ExportReceiptDetailForm = ({
                                 Cập nhật
                             </Button> */}
 
-                            <div>
+                            {/* <div>
                                 <Button variant="contained" color="primary" onClick={updateExportReceiptConfirm}>
                                     Xác nhận
                                 </Button>
@@ -619,7 +619,7 @@ const ExportReceiptDetailForm = ({
                                     style={{ bottom: '16px', right: '16px' }}
                                 />
 
-                            </div>
+                            </div> */}
                             {/* <div>
                                 <Button variant="contained" color="warning" onClick={updateReceiptStartImport}>
                                     Tiến hành nhập kho

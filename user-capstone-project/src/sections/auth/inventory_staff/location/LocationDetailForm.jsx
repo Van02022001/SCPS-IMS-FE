@@ -7,20 +7,11 @@ import {
     Stack,
     Grid,
     TextField,
-    FormControl,
     Select,
     MenuItem,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogContentText,
-    DialogActions,
     IconButton,
 } from '@mui/material';
-import { deleteOrigins, editOrigins } from '~/data/mutation/origins/origins-mutation';
-import { deleteBrands, editBrands } from '~/data/mutation/brand/brands-mutation';
-import SuccessAlerts from '~/components/alert/SuccessAlert';
-import ErrorAlerts from '~/components/alert/ErrorAlert';
+
 import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
 import { editLocations } from '~/data/mutation/location/location-mutation';
 import { getAllLocation_tag } from '~/data/mutation/location_tag/location_tag-mutaion';

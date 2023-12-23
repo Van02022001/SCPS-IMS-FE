@@ -118,22 +118,6 @@ const AddUnitForm = ({ open, onClose, onSave }) => {
                     style={{ bottom: '16px', right: '16px' }}
                 />
             </div>
-            {/* Notification */}
-            {/* <Snackbar
-                open={showNotification || errorMessage.length > 0}
-                autoHideDuration={6000}
-                onClose={closeNotification}
-            >
-                {errorMessage ? (
-                    <Alert onClose={closeNotification} severity="error">
-                        {errorMessage}
-                    </Alert>
-                ) : (
-                    <Alert onClose={closeNotification} severity="success">
-                        Đơn vị đã được tạo thành công.
-                    </Alert>
-                )}
-            </Snackbar> */}
         </Dialog>
     );
 };

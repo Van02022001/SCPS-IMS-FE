@@ -7,9 +7,6 @@ import {
     Stack,
     Grid,
     TextField,
-    FormControl,
-    Select,
-    MenuItem,
     CardContent,
     Card,
     TableContainer,
@@ -29,12 +26,8 @@ import Snackbar from '@mui/material/Snackbar';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 // api
-import { editStatusCategory } from '~/data/mutation/subCategory/subCategory-mutation';
-import { editSubCategorysMeta } from '~/data/mutation/subCategoryMeta/subCategoryMeta-mutation';
 import { editImportReceipt, editImportReceiptConfirm, editReceiptStartImport } from '~/data/mutation/importRequestReceipt/ImportRequestReceipt-mutation';
 
-import SuccessAlerts from '~/components/alert/SuccessAlert';
-import ErrorAlerts from '~/components/alert/ErrorAlert';
 import CreateImportReceiptForm from './CreateImportReceiptForm';
 import { getAllImportReceipt } from '~/data/mutation/importReceipt/ImportReceipt-mutation';
 
@@ -563,7 +556,6 @@ const ImportReceiptDetailForm = ({
                                                         <TableCell>{items.itemName}</TableCell>
                                                         <TableCell>{items.quantity}</TableCell>
                                                         <TableCell>{items.unitName}</TableCell>
-                                                        <TableCell>{/* Thêm thành tiền nếu có */}</TableCell>
                                                     </TableRow>
                                                 );
                                             })}

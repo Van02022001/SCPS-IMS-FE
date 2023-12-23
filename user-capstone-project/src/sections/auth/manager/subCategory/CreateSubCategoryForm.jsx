@@ -234,21 +234,21 @@ const CreateSubCategoryForm = (props) => {
             setUnitMeaError("Vui lòng chọn đơn vị đo lường");
             return;
         }
-        const parsedUnitId = parseInt(tab1Data.brand_id) || 0;
-        const parsedSupplierId = parseInt(tab1Data.supplier_id) || 0;
-        const parsedOriginId = parseInt(tab1Data.origin_id) || 0;
+        const parsedCategoryId = parseInt(tab1Data.categories_id) || 0;
+        const parsedUnitId = parseInt(tab1Data.unit_id) || 0;
+        const parsedUnitMeaId = parseInt(tab1Data.unit_mea_id) || 0;
         const productParams = {
             name,
             description,
             // minStockLevel,
             // maxStockLevel,
-            categories_id: tab1Data.categories_id,
-            unit_id: tab1Data.unit_id,
+            categories_id: parsedCategoryId,
+            unit_id: parsedUnitId,
             length,
             width,
             height,
             diameter,
-            unit_mea_id: tab1Data.unit_mea_id,
+            unit_mea_id: parsedUnitMeaId,
         };
         try {
             const response = await createSubCategory(productParams);

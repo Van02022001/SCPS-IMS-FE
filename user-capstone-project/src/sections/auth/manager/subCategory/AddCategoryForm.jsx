@@ -5,8 +5,7 @@ import { createCategories } from '~/data/mutation/categories/categories-mutation
 
 import Snackbar from '@mui/material/Snackbar';
 import CloseIcon from '@mui/icons-material/Close';
-import SuccessAlerts from '~/components/alert/SuccessAlert';
-import ErrorAlerts from '~/components/alert/ErrorAlert';
+
 import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
 import SnackbarError from '~/components/alert/SnackbarError';
 

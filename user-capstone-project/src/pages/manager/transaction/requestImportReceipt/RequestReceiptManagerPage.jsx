@@ -341,8 +341,15 @@ const RequestReceiptManagerPage = () => {
     console.log(allItems);
 
     const statusArray = allItems.map((item) => item.status);
+    const uniqueStatusArray = Array.from(new Set(statusArray));
 
-    console.log(statusArray);
+    // Chỉ chọn những giá trị mà bạn quan tâm
+    const filteredStatusArray = uniqueStatusArray.filter(status => (
+        status === "Pending_Approval" ||
+        status === "Approved" ||
+        status === "IN_PROGRESS" ||
+        status === "Completed"
+    ));
     //==============================* filter *==============================
     const filteredItems = allItems.filter((item) =>
         selectedStatus.length === 0 ? true : selectedStatus.includes(item.status),
@@ -396,7 +403,7 @@ const RequestReceiptManagerPage = () => {
                     renderValue={(selected) => selected.join(', ')}
                     MenuProps={MenuProps}
                 >
-                    {statusArray.map((name) => (
+                    {filteredStatusArray.map((name) => (
                         <MenuItem key={name} value={name}>
                             <Checkbox checked={selectedStatus.indexOf(name) > -1} />
                             <ListItemText primary={name} />
@@ -499,12 +506,12 @@ const RequestReceiptManagerPage = () => {
                                                         {importRequest.status === 'Pending_Approval'
                                                             ? 'Chờ phê duyệt'
                                                             : importRequest.status === 'Approved'
-                                                            ? 'Đã xác nhận'
-                                                            : importRequest.status === 'IN_PROGRESS'
-                                                            ? 'Đang tiến hành'
-                                                            : importRequest.status === 'Complete'
-                                                            ? 'Hoàn thành'
-                                                            : 'Ngừng hoạt động'}
+                                                                ? 'Đã xác nhận'
+                                                                : importRequest.status === 'IN_PROGRESS'
+                                                                    ? 'Đang tiến hành'
+                                                                    : importRequest.status === 'Completed'
+                                                                        ? 'Hoàn thành'
+                                                                        : 'Ngừng hoạt động'}
                                                     </Label>
                                                 </TableCell>
                                             </TableRow>
