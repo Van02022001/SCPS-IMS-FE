@@ -44,11 +44,11 @@ import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-    { id: 'code', label: 'Mã người bán', alignRight: false },
+    { id: 'code', label: 'Mã nhà cung cấp', alignRight: false },
     { id: 'name', label: 'Tên', alignRight: false },
     { id: 'phone', label: 'Số điện thoại', alignRight: false },
     { id: 'email', label: 'Email', alignRight: false },
-    { id: 'taxCode', label: 'taxCode', alignRight: false },
+    { id: 'taxCode', label: 'Mã số thuế', alignRight: false },
     { id: 'address', label: 'Địa chỉ', alignRight: false },
 ];
 
@@ -219,24 +219,24 @@ const SupplierPage = () => {
     return (
         <>
             <Helmet>
-                <title> Quản lý người bán | Minimal UI </title>
+                <title> Quản lý nhà cung cấp | Minimal UI </title>
             </Helmet>
 
             <Container>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                     <Typography variant="h4" gutterBottom>
-                        Quản lý người bán
+                        Quản lý nhà cung cấp
                     </Typography>
                     <Button
                         variant="contained"
                         startIcon={<Iconify icon="eva:plus-fill" />}
                         onClick={() => setOpenOderForm(true)}
                     >
-                        Thêm người bán
+                        Thêm nhà cung cấp
                     </Button>
                     <Dialog fullWidth maxWidth="sm" open={openOderForm}>
                         <DialogTitle>
-                            Tạo người bán{' '}
+                            Tạo nhà cung cấp{' '}
                             <IconButton style={{ float: 'right' }} onClick={handleCloseOdersForm}>
                                 <CloseIcon color="primary" />
                             </IconButton>{' '}

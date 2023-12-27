@@ -239,11 +239,11 @@ const SupplierDetailForm = ({ suppliers, suppliersId, onClose, isOpen, mode, upd
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
-                                    <Typography variant="body1">Mã người bán:</Typography>
+                                    <Typography variant="body1">Mã nhà cung cấp:</Typography>
                                     <TextField
                                         size="small"
                                         variant="outlined"
-                                        label="Mã người bán"
+                                        label="Mã nhà cung cấp"
                                         sx={{ width: '70%' }}
                                         value={supplier ? supplier.code : ''}
                                         onChange={(e) => handleEdit('code', e.target.value)}
@@ -261,7 +261,7 @@ const SupplierDetailForm = ({ suppliers, suppliersId, onClose, isOpen, mode, upd
                                     <TextField
                                         size="small"
                                         variant="outlined"
-                                        label="Tên người bán"
+                                        label="Tên nhà cung cấp"
                                         sx={{ width: '70%' }}
                                         value={editedSupplier ? editedSupplier.name : ''}
                                         onChange={(e) => handleEdit('name', e.target.value)}

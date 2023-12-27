@@ -247,7 +247,7 @@ const LocationDetailForm = ({ locations, locationsId, onClose, isOpen, mode }) =
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
                                     <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
-                                        Ống:{' '}
+                                        Nhãn:{' '}
                                     </Typography>
                                     <Grid xs={8.5}>
                                         <Select

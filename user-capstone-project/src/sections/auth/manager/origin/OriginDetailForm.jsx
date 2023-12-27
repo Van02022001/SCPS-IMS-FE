@@ -191,11 +191,11 @@ const OriginDetailForm = ({ origins, originsId, onClose, isOpen, mode }) => {
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
-                                    <Typography variant="body1">Tên thương hiệu:</Typography>
+                                    <Typography variant="body1">Tên nguồn gốc:</Typography>
                                     <TextField
                                         size="small"
                                         variant="outlined"
-                                        label="Tên thương hiệu"
+                                        label="Tên nguồn gốc"
                                         sx={{ width: '70%' }}
                                         value={editedOrigin ? editedOrigin.name : ''}
                                         onChange={(e) => handleEdit('name', capitalizeFirstLetter(e.target.value))}

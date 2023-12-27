@@ -100,6 +100,8 @@ const SubCategoryDetailForm = ({
             setErrorMessage('Mô tả quá dài');
         } else if (message === 'Sub category name was existed') {
             setErrorMessage('Tên đã tồn tại !');
+        } else if (message === 'SubCategory must have at least one category') {
+            setErrorMessage('Vui lòng chọn ít nhất 1 nhóm hàng !');
         }
     };
 
