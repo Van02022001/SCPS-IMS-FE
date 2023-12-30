@@ -449,11 +449,11 @@ const SubCategoryDetailForm = ({
                                 >
                                     <Typography variant="body1">Ngày tạo:</Typography>
                                     <TextField
-                                        disabled
+                                        InputProps={{ readOnly: true }}
                                         size="small"
                                         variant="outlined"
                                         label="Ngày tạo"
-                                        sx={{ width: '70%' }}
+                                        sx={{ width: '70%', pointerEvents: 'none' }}
                                         value={subCategorys.createdAt}
                                     />
                                 </Grid>
@@ -468,11 +468,11 @@ const SubCategoryDetailForm = ({
                                 >
                                     <Typography variant="body1">Ngày cập nhập:</Typography>
                                     <TextField
-                                        disabled
+                                        InputProps={{ readOnly: true }}
                                         size="small"
                                         variant="outlined"
                                         label="Ngày cập nhập"
-                                        sx={{ width: '70%' }}
+                                        sx={{ width: '70%', pointerEvents: 'none' }}
                                         value={subCategorys.updatedAt}
                                     />
                                 </Grid>

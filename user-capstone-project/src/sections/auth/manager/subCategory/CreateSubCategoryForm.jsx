@@ -141,27 +141,27 @@ const CreateSubCategoryForm = (props) => {
     const handleTab1DataChange = (event) => {
         const { name, value } = event.target;
 
-        if (name === "categories_id") {
+        if (name === 'categories_id') {
             setCategoriesError(null);
-        } else if (name === "unit_id") {
+        } else if (name === 'unit_id') {
             setUnitError(null);
-        } else if (name === "unit_mea_id") {
+        } else if (name === 'unit_mea_id') {
             setUnitMeaError(null);
         }
 
-        if (name === "categories_id") {
+        if (name === 'categories_id') {
             setCategoriesError(null);
             setTab1Data((prevData) => ({
                 ...prevData,
                 [name]: value,
             }));
-        } else if (name === "unit_id") {
+        } else if (name === 'unit_id') {
             setUnitError(null);
             setTab1Data((prevData) => ({
                 ...prevData,
                 [name]: [value],
             }));
-        } else if (name === "unit_mea_id") {
+        } else if (name === 'unit_mea_id') {
             setUnitMeaError(null);
             setTab1Data((prevData) => ({
                 ...prevData,
@@ -195,7 +195,9 @@ const CreateSubCategoryForm = (props) => {
     const handleSaveCategory = (successMessage) => {
         handleCloseAddCategoryDialog();
 
-        setSnackbarSuccessMessage(successMessage === 'Create category successfully' ? 'Tạo nhóm hàng thành công!' : 'Thành công');
+        setSnackbarSuccessMessage(
+            successMessage === 'Create category successfully' ? 'Tạo nhóm hàng thành công!' : 'Thành công',
+        );
         setSnackbarSuccessOpen(true);
     };
     // const handleOpenAddOriginForm = () => {
@@ -216,25 +218,24 @@ const CreateSubCategoryForm = (props) => {
     const handleSaveUnit = (successMessage) => {
         handleCloseAddUnitForm();
 
-        setSnackbarSuccessMessage(successMessage === 'Create unit successfully' ? 'Tạo đơn vị thành công!' : 'Thành công');
+        setSnackbarSuccessMessage(
+            successMessage === 'Create unit successfully' ? 'Tạo đơn vị thành công!' : 'Thành công',
+        );
         setSnackbarSuccessOpen(true);
     };
-
-
 
     // hàm create category-----------------------------------------
     const handleCreateProduct = async () => {
         if (!tab1Data.categories_id || !tab1Data.categories_id.length) {
-            setCategoriesError("Vui lòng chọn ít nhất một nhóm hàng");
+            setCategoriesError('Vui lòng chọn ít nhất một nhóm hàng');
             return;
         } else if (!tab1Data.unit_id || !tab1Data.unit_id.length) {
-            setUnitError("Vui lòng chọn đơn vị");
+            setUnitError('Vui lòng chọn đơn vị');
             return;
         } else if (!tab1Data.unit_mea_id || !tab1Data.unit_mea_id.length) {
-            setUnitMeaError("Vui lòng chọn đơn vị đo lường");
+            setUnitMeaError('Vui lòng chọn đơn vị đo lường');
             return;
         }
-        const parsedCategoryId = parseInt(tab1Data.categories_id) || 0;
         const parsedUnitId = parseInt(tab1Data.unit_id) || 0;
         const parsedUnitMeaId = parseInt(tab1Data.unit_mea_id) || 0;
         const productParams = {
@@ -242,7 +243,7 @@ const CreateSubCategoryForm = (props) => {
             description,
             // minStockLevel,
             // maxStockLevel,
-            categories_id: parsedCategoryId,
+            categories_id: tab1Data.categories_id,
             unit_id: parsedUnitId,
             length,
             width,
@@ -259,7 +260,7 @@ const CreateSubCategoryForm = (props) => {
         } catch (error) {
             console.error('Error creating product:', error.response);
 
-            const errorMessage = error.response?.data?.data?.[0] || error.response?.data?.message;
+            const errorMessage = error.response?.data?.message || error.response?.data?.data?.[0];
 
             handleErrorMessage(errorMessage);
         }
@@ -280,9 +281,9 @@ const CreateSubCategoryForm = (props) => {
 
     const validateName = (value) => {
         if (!value.trim()) {
-            return "Tên hàng hóa không được để trống"
+            return 'Tên hàng hóa không được để trống';
         } else if (!/^\p{Lu}/u.test(value)) {
-            return "Chữ cái đầu phải in hoa.";
+            return 'Chữ cái đầu phải in hoa.';
         }
 
         return null;
@@ -290,7 +291,7 @@ const CreateSubCategoryForm = (props) => {
 
     const validateDescription = (value) => {
         if (!value.trim()) {
-            return "Mô tả hàng hóa không được để trống.";
+            return 'Mô tả hàng hóa không được để trống.';
         }
         return null;
     };
@@ -451,8 +452,7 @@ const CreateSubCategoryForm = (props) => {
 
                                         <FormControl size="small" variant="outlined" sx={{ width: '100%' }}>
                                             <Grid
-                                                container
-                                                ={1}
+                                                container={1}
                                                 direction="row"
                                                 justifyContent="space-between"
                                                 alignItems="center"

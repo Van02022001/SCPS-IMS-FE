@@ -209,23 +209,23 @@ const LocationInventoryPage = () => {
     return (
         <>
             <Helmet>
-                <title> Quản lý địa chỉ | Minimal UI </title>
+                <title> Quản lý vị trí | Minimal UI </title>
             </Helmet>
 
             <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                 <Typography variant="h4" gutterBottom>
-                    Quản lý địa chỉ
+                    Quản lý vị trí
                 </Typography>
                 <Button
                     variant="contained"
                     startIcon={<Iconify icon="eva:plus-fill" />}
                     onClick={() => setOpenOderForm(true)}
                 >
-                    Thêm địa chỉ
+                    Thêm vị trí
                 </Button>
                 <Dialog fullWidth maxWidth="sm" open={openOderForm}>
                     <DialogTitle>
-                        Tạo địa chỉ{' '}
+                        Tạo vị trí{' '}
                         <IconButton style={{ float: 'right' }} onClick={handleCloseOdersForm}>
                             <CloseIcon color="primary" />
                         </IconButton>{' '}

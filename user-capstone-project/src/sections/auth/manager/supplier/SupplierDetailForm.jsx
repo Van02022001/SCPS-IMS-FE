@@ -203,7 +203,7 @@ const SupplierDetailForm = ({ suppliers, suppliersId, onClose, isOpen, mode, upd
             const response = await editStatusSuppliers(suppliersId, newStatus);
 
             if (response.status === '200 OK') {
-                handleSuccessMessage(response.message)
+                handleSuccessMessage(response.message);
             }
 
             // Sử dụng hàm để cập nhật trạng thái trong danh sách categories trong CategoryPage
@@ -241,10 +241,11 @@ const SupplierDetailForm = ({ suppliers, suppliersId, onClose, isOpen, mode, upd
                                 >
                                     <Typography variant="body1">Mã nhà cung cấp:</Typography>
                                     <TextField
+                                        InputProps={{ readOnly: true }}
                                         size="small"
                                         variant="outlined"
                                         label="Mã nhà cung cấp"
-                                        sx={{ width: '70%' }}
+                                        sx={{ width: '70%', pointerEvents: 'none' }}
                                         value={supplier ? supplier.code : ''}
                                         onChange={(e) => handleEdit('code', e.target.value)}
                                     />
@@ -349,10 +350,11 @@ const SupplierDetailForm = ({ suppliers, suppliersId, onClose, isOpen, mode, upd
                                 >
                                     <Typography variant="body1">Ngày tạo:</Typography>
                                     <TextField
+                                        InputProps={{ readOnly: true }}
                                         size="small"
                                         variant="outlined"
                                         label="Ngày tạo"
-                                        sx={{ width: '70%' }}
+                                        sx={{ width: '70%', pointerEvents: 'none' }}
                                         value={supplier.createdAt}
                                     />
                                 </Grid>
@@ -366,10 +368,11 @@ const SupplierDetailForm = ({ suppliers, suppliersId, onClose, isOpen, mode, upd
                                 >
                                     <Typography variant="body1">Ngày cập nhật:</Typography>
                                     <TextField
+                                        InputProps={{ readOnly: true }}
                                         size="small"
                                         variant="outlined"
                                         label="Ngày cập nhật"
-                                        sx={{ width: '70%' }}
+                                        sx={{ width: '70%', pointerEvents: 'none' }}
                                         value={supplier.updatedAt}
                                     />
                                 </Grid>

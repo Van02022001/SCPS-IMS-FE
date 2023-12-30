@@ -26,12 +26,14 @@ import Snackbar from '@mui/material/Snackbar';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 // api
-import { editImportReceipt, editImportReceiptConfirm, editReceiptStartImport } from '~/data/mutation/importRequestReceipt/ImportRequestReceipt-mutation';
+import {
+    editImportReceipt,
+    editImportReceiptConfirm,
+    editReceiptStartImport,
+} from '~/data/mutation/importRequestReceipt/ImportRequestReceipt-mutation';
 
 import CreateImportReceiptForm from './CreateImportReceiptForm';
 import { getAllImportReceipt } from '~/data/mutation/importReceipt/ImportReceipt-mutation';
-
-
 
 const ImportReceiptDetailForm = ({
     importReceipt,
@@ -50,7 +52,7 @@ const ImportReceiptDetailForm = ({
     // const [expandedItem, setExpandedItem] = useState(subCategoryId);
     const [formHeight, setFormHeight] = useState(0);
     const [currentTab, setCurrentTab] = useState(0);
-    //props 
+    //props
     const [isOpenImportForm, setIsOpenImportForm] = useState(false);
     const [importReceipstData, setImportReceipstData] = useState(null);
 
@@ -81,9 +83,9 @@ const ImportReceiptDetailForm = ({
         setOpen(true);
         // Đặt logic hiển thị nội dung thông báo từ API ở đây
         if (message === 'Update SubCategory status successfully.') {
-            setMessage('Cập nhập trạng thái danh mục thành công')
+            setMessage('Cập nhập trạng thái danh mục thành công');
         } else if (message === 'Update SubCategory successfully.') {
-            setMessage('Cập nhập danh mục thành công')
+            setMessage('Cập nhập danh mục thành công');
             console.error('Error message:', errorMessage);
         }
     };
@@ -94,13 +96,11 @@ const ImportReceiptDetailForm = ({
         }
 
         setOpen(false);
-
     };
 
     const action = (
         <React.Fragment>
-            <Button color="secondary" size="small" onClick={handleClose}>
-            </Button>
+            <Button color="secondary" size="small" onClick={handleClose}></Button>
             <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
                 <CloseIcon fontSize="lage" />
             </IconButton>
@@ -120,7 +120,6 @@ const ImportReceiptDetailForm = ({
         setCurrentTab(newValue);
     };
 
-
     useEffect(() => {
         if (isOpen) {
             setFormHeight(1000);
@@ -134,7 +133,7 @@ const ImportReceiptDetailForm = ({
             setImportRecieptParams({
                 warehouseId: 0,
                 inventoryStaffId: 0,
-                description: "string",
+                description: 'string',
                 details: [
                     {
                         id: 0,
@@ -142,15 +141,14 @@ const ImportReceiptDetailForm = ({
                         quantity: 0,
                         unitPrice: 0,
                         unitId: 0,
-                        description: "",
-                    }
-                ]
+                        description: '',
+                    },
+                ],
             });
         } else {
             const importReceipst = importReceipt.find((o) => o.id === importReceiptId);
             console.log(importReceipst);
             if (importReceipst) {
-
                 const importRecieptParams = {
                     // warehouseId: 0,
                     // inventoryStaffId: 0,
@@ -173,7 +171,6 @@ const ImportReceiptDetailForm = ({
             }
         }
     }, [importReceiptId, importReceipt, mode]);
-
 
     // useEffect(() => {
 
@@ -220,7 +217,6 @@ const ImportReceiptDetailForm = ({
             }
             updateImportReceiptInList(response.data);
             console.log('Product updated:', response);
-
         } catch (error) {
             console.error('An error occurred while updating the product:', error);
             setIsError(true);
@@ -311,14 +307,13 @@ const ImportReceiptDetailForm = ({
 
             console.log(validImportReceipst);
         } else {
-            console.error("Không tìm thấy dữ liệu hợp lệ cho importReceiptId: ", importReceiptId);
+            console.error('Không tìm thấy dữ liệu hợp lệ cho importReceiptId: ', importReceiptId);
         }
     };
     const handleCloseForm = () => {
         setIsOpenImportForm(false);
     };
     //==========================================================================================================
-
 
     // const handleEdit = (field, value) => {
     //     console.log(`Field: ${field}, Value: ${value}`);
@@ -384,7 +379,8 @@ const ImportReceiptDetailForm = ({
                             </Button>
                         </div>
                         <Dialog maxWidth="lg" fullWidth open={isOpenImportForm}>
-                            <DialogTitle style={{ textAlign: 'center' }}>Phiếu Nhập Kho
+                            <DialogTitle style={{ textAlign: 'center' }}>
+                                Phiếu Nhập Kho
                                 <IconButton style={{ float: 'right' }} onClick={handleCloseForm}>
                                     <CloseIcon color="primary" />
                                 </IconButton>{' '}
@@ -413,12 +409,12 @@ const ImportReceiptDetailForm = ({
                                 >
                                     <Typography variant="body1">Mã phiếu:</Typography>
                                     <TextField
+                                        InputProps={{ readOnly: true }}
                                         size="small"
                                         variant="outlined"
                                         label="Tên sản phẩm"
                                         sx={{ width: '70%' }}
                                         value={importReceipst.code}
-
                                     />
                                 </Grid>
 
@@ -432,6 +428,7 @@ const ImportReceiptDetailForm = ({
                                 >
                                     <Typography variant="body1">Mô tả:</Typography>
                                     <TextField
+                                        InputProps={{ readOnly: true }}
                                         id="outlined-multiline-static"
                                         multiline
                                         rows={4}
@@ -442,8 +439,6 @@ const ImportReceiptDetailForm = ({
                                         value={importReceipst.description}
                                     />
                                 </Grid>
-
-
                             </Grid>
 
                             {/* 5 field bên phải*/}
@@ -459,20 +454,22 @@ const ImportReceiptDetailForm = ({
                                     >
                                         <Typography variant="body1">Trạng thái:</Typography>
                                         <TextField
+                                            InputProps={{ readOnly: true }}
                                             size="small"
                                             variant="outlined"
                                             label="Trạng thái"
-                                            sx={{ width: '70%' }}
-
-                                            value={currentStatus === 'Pending_Approval'
-                                                ? 'Chờ phê duyệt'
-                                                : currentStatus === 'Approved'
+                                            sx={{ width: '70%', pointerEvents: 'none' }}
+                                            value={
+                                                currentStatus === 'Pending_Approval'
+                                                    ? 'Chờ phê duyệt'
+                                                    : currentStatus === 'Approved'
                                                     ? 'Đã xác nhận'
                                                     : currentStatus === 'IN_PROGRESS'
-                                                        ? 'Đang tiến hành'
-                                                        : currentStatus === 'Completed'
-                                                            ? 'Hoàn thành'
-                                                            : 'Ngừng hoạt động'}
+                                                    ? 'Đang tiến hành'
+                                                    : currentStatus === 'Completed'
+                                                    ? 'Hoàn thành'
+                                                    : 'Ngừng hoạt động'
+                                            }
                                         />
                                     </Grid>
                                     <Grid
@@ -488,10 +485,11 @@ const ImportReceiptDetailForm = ({
                                         </Typography>
                                         <Grid xs={8.5}>
                                             <TextField
+                                                InputProps={{ readOnly: true }}
                                                 size="small"
                                                 labelId="group-label"
                                                 id="group-select"
-                                                sx={{ width: '100%', fontSize: '14px' }}
+                                                sx={{ width: '98.5%', fontSize: '14px', marginLeft: 1 }}
                                                 value={importReceipst.createdBy}
                                             />
                                             {/* {categories_id.map((category) => (
@@ -499,7 +497,6 @@ const ImportReceiptDetailForm = ({
                                                         {category.name}
                                                     </MenuItem>
                                                 ))} */}
-
                                         </Grid>
                                     </Grid>
 
@@ -513,7 +510,7 @@ const ImportReceiptDetailForm = ({
                                     >
                                         <Typography variant="body1">Ngày tạo:</Typography>
                                         <TextField
-                                            disabled
+                                            InputProps={{ readOnly: true }}
                                             size="small"
                                             variant="outlined"
                                             label="Ngày tạo"
@@ -525,7 +522,6 @@ const ImportReceiptDetailForm = ({
                             </Grid>
                         </Grid>
                     </Stack>
-
 
                     <div>
                         <Card sx={{ marginTop: 5 }}>
@@ -543,12 +539,10 @@ const ImportReceiptDetailForm = ({
                                                     fontFamily: 'bold',
                                                     padding: '10px 0 0 20px',
                                                 }}
-
                                             >
                                                 <TableCell>Tên sản phẩm</TableCell>
                                                 <TableCell>Số lượng</TableCell>
                                                 <TableCell>Đơn vị</TableCell>
-
                                             </TableRow>
                                             {importReceipst.details.map((items) => {
                                                 return (
@@ -564,7 +558,7 @@ const ImportReceiptDetailForm = ({
                                     <TableBody style={{ marginTop: 30 }}>
                                         <Typography variant="h6">Thông tin phiếu</Typography>
                                         <TableRow>
-                                            <TableCell >Tổng số lượng:</TableCell>
+                                            <TableCell>Tổng số lượng:</TableCell>
                                             <TableCell>{importReceipst.totalQuantity}</TableCell>
                                         </TableRow>
                                     </TableBody>
@@ -602,7 +596,6 @@ const ImportReceiptDetailForm = ({
                                     action={action}
                                     style={{ bottom: '16px', right: '16px' }}
                                 />
-
                             </div>
                             <div>
                                 <Button variant="contained" color="warning" onClick={updateReceiptStartImport}>

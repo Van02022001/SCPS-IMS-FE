@@ -226,7 +226,7 @@ const inventoryNavConfig = [
                 icon: <Payments />,
             },
             {
-                title: 'Quản lý địa chỉ',
+                title: 'Quản lý vị trí',
                 path: '/inventory-staff/locationsInventory',
                 icon: <PlaceIcon />,
             },
