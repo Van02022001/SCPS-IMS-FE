@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
-import { sentenceCase } from 'change-case';
-import { useState } from 'react';
+
+import React, { useEffect, useState } from 'react';
 // @mui
 import {
     Card,
@@ -16,17 +16,10 @@ import {
     MenuItem,
     TableBody,
     TableCell,
-    Container,
     Typography,
     IconButton,
     TableContainer,
     TablePagination,
-    Dialog,
-    DialogTitle,
-    Menu,
-    Grid,
-    TextField,
-    FormControl,
 } from '@mui/material';
 // components
 import Label from '~/components/label/Label';
@@ -40,31 +33,17 @@ import { ProductsListHead } from '../../../sections/@dashboard/products';
 import PRODUCTSLIST from '../../../_mock/products';
 import CategoryForm from '~/sections/auth/manager/subCategory/CreateSubCategoryForm';
 import ProductsPriceToolbar from '~/sections/@dashboard/products/productsPrice/ProductsPriceToolbar';
+import { getAllPriceAudit } from '~/data/mutation/price/price_mutation';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-    { id: 'image', label: '', alignRight: false },
-    { id: 'id', label: 'Mã hàng', alignRight: false },
+    // { id: 'image', label: '', alignRight: false },
     { id: 'name', label: 'Tên sản phẩm', alignRight: false },
-    { id: 'price', label: 'Giá vốn', alignRight: false },
-    { id: 'price', label: 'Giá nhập cuối', alignRight: false },
-    { id: 'price', label: 'Giá chung', alignRight: false },
-    { id: '' },
-];
-const filterPrice = [
-    'Biểu đồ',
-    'Báo cáo',
-
-];
-const filterOptions = [
-    'Xuất nhập tồn',
-    'Giá trị kho',
-    'Xuất nhập tồn chi tiết',
-];
-const filterSale = [
-    'Giá bán',
-    '--Giá so sánh--',
+    { id: 'changedBy', label: 'Người tạo', alignRight: false },
+    { id: 'oldPrice', label: 'Giá cũ', alignRight: false },
+    { id: 'newPrice', label: 'Giá mới', alignRight: false },
+    { id: 'changeDate', label: 'Ngày cập nhập', alignRight: false },
 ];
 
 // ----------------------------------------------------------------------
@@ -114,56 +93,11 @@ const ProductsPricePage = () => {
     const [filterName, setFilterName] = useState('');
 
     const [rowsPerPage, setRowsPerPage] = useState(5);
+
+    const [priceAudit, setPriceAudit] = useState([]);
+    const [selectedPriceId, setSelectedPriceId] = useState([]);
     //filter---------------------------------------------------------------------------
-    const [anchorElPrice, setAnchorElPrice] = useState(null);
-    const [anchorElOptions, setAnchorElOptions] = useState(null);
-    const [anchorElSale, setAnchorElSale] = useState(null);
-    const [selectedFilterPrice, setSelectedFilterPrice] = useState(null);
-    const [selectedFilterOptions, setSelectedFilterOptions] = useState(null);
-    const [selectedFilterSale, setSelectedFilterSale] = useState(null);
-    const [openCreatePricePopup, setOpenCreatePricePopup] = useState(false);
-
-    const [visibleColumns, setVisibleColumns] = useState(TABLE_HEAD.map((col) => col.id));
-
-    const handleCloseCreatePricePopup = () => {
-        setOpenCreatePricePopup(false);
-    };
-    const handleFilterPriceClick = (event) => {
-        setAnchorElPrice(event.currentTarget);
-    };
-
-    const handleFilterOptionsClick = (event) => {
-        setAnchorElOptions(event.currentTarget);
-    };
-
-    const handleFilterSaleClick = (event) => {
-        setAnchorElSale(event.currentTarget);
-    };
-
-    //Handle filter
-    const handleMenuPriceClick = (filter) => {
-        setSelectedFilterPrice(filter);
-        setAnchorElPrice(null);
-    };
-
-    const handleMenuOptionsClick = (filter) => {
-        setSelectedFilterOptions(filter);
-        setAnchorElOptions(null);
-    };
-
-    const handleMenuSaleClick = (filter) => {
-        setSelectedFilterSale(filter);
-        setAnchorElSale(null);
-    };
-    const handleClose = () => {
-        setAnchorElPrice(null);
-        setAnchorElOptions(null);
-        setAnchorElSale(null);
-    };
     //----------------------------------------------------------------
-    const handleCreatePrice = () => {
-        setOpenCreatePricePopup(true);
-    };
     const handleOpenMenu = (event) => {
         setOpen(event.currentTarget);
     };
@@ -216,9 +150,29 @@ const ProductsPricePage = () => {
         setFilterName(event.target.value);
     };
 
-    const handleCloseOdersForm = () => {
-        setOpenOderForm(false);
+    const handlePriceClick = (price) => {
+        console.log(price);
+        if (selectedPriceId === price.id) {
+            setSelectedPriceId(null);
+        } else {
+            setSelectedPriceId(price.id);
+        }
     };
+
+    useEffect(() => {
+        getAllPriceAudit()
+            .then((respone) => {
+                const data = respone;
+                if (Array.isArray(data)) {
+                    setPriceAudit(data);
+                } else {
+                    console.error('API response is not an array:', data);
+                }
+            })
+            .catch((error) => {
+                console.error('Error fetching:', error);
+            });
+    }, []);
 
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - PRODUCTSLIST.length) : 0;
 
@@ -238,9 +192,7 @@ const ProductsPricePage = () => {
                     <Typography variant="h4" gutterBottom>
                         Bảng giá chung
                     </Typography>
-
-
-                    <Button
+                    {/* <Button
                         variant="contained"
                         startIcon={<Iconify icon="eva:plus-fill" />}
                         onClick={() => setOpenOderForm(true)}
@@ -255,85 +207,8 @@ const ProductsPricePage = () => {
                             </IconButton>{' '}
                         </DialogTitle>
                         <CategoryForm />
-                    </Dialog>
+                    </Dialog> */}
                 </Stack>
-                <Grid container>
-                    <Grid container item xs={2}>
-                        <FormControl
-                            variant="outlined"
-                            style={{
-                                marginBottom: 20,
-                                height: 100,
-                                width: 200,
-                                backgroundColor: 'white',
-                                borderRadius: '10px',
-                                boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)'
-                            }}
-                        >
-                            {selectedFilterPrice || (
-                                <Typography style={{ marginBottom: 10, marginLeft: 10 }}>
-                                    <span style={{ color: '#2065D1', fontWeight: 'bold' }}>Bảng giá</span>
-                                    <Button startIcon={<Iconify icon="eva:plus-fill" style={{ marginLeft: 10 }} />} onClick={handleCreatePrice} style={{ marginLeft: 50 }}></Button>
-                                </Typography>
-                            )}
-                            <TextField
-                                type="text"
-                                id="standard-basic"
-                                label="Chọn bảng giá..."
-                                variant="standard"
-                                style={{ width: '80%', marginLeft: 10 }}
-                            />
-                        </FormControl>
-                        {openCreatePricePopup && (
-                            <Dialog open={openCreatePricePopup} onClose={handleCloseCreatePricePopup}>
-                                <DialogTitle>
-                                    Tạo Bảng Giá{' '}
-                                    <IconButton style={{ float: 'right' }} onClick={handleCloseCreatePricePopup}>
-                                        <CloseIcon color="primary" />
-                                    </IconButton>{' '}
-                                </DialogTitle>
-
-                            </Dialog>
-                        )}
-                    </Grid>
-
-
-                    <Grid item xs={2}>
-                        <Button variant="outlined" onClick={handleFilterOptionsClick}>
-                            {selectedFilterOptions || 'Nhóm hàng'}
-                        </Button>
-
-                        <Menu
-                            anchorEl={anchorElOptions}
-                            open={Boolean(anchorElOptions)}
-                            onClose={handleClose}
-                        >
-                            {filterOptions.map((filter, index) => (
-                                <MenuItem key={index} onClick={() => handleMenuOptionsClick(filter)}>
-                                    {filter}
-                                </MenuItem>
-                            ))}
-                        </Menu>
-                    </Grid>
-                    <Grid item xs={2}>
-                        <Button variant="outlined" onClick={handleFilterSaleClick}>
-                            {selectedFilterSale || 'Thời gian'}
-                        </Button>
-
-                        <Menu
-                            anchorEl={anchorElSale}
-                            open={Boolean(anchorElSale)}
-                            onClose={handleClose}
-                        >
-                            {filterSale.map((filter, index) => (
-                                <MenuItem key={index} onClick={() => handleMenuSaleClick(filter)}>
-                                    {filter}
-                                </MenuItem>
-                            ))}
-                        </Menu>
-                    </Grid>
-
-                </Grid>
                 <Card>
                     <ProductsPriceToolbar
                         numSelected={selected.length}
@@ -348,81 +223,45 @@ const ProductsPricePage = () => {
                                     order={order}
                                     orderBy={orderBy}
                                     headLabel={TABLE_HEAD}
-                                    rowCount={PRODUCTSLIST.length}
+                                    rowCount={priceAudit.length}
                                     numSelected={selected.length}
                                     onRequestSort={handleRequestSort}
                                     onSelectAllClick={handleSelectAllClick}
                                 />
                                 <TableBody>
-                                    {filteredUsers
-                                        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                        .map((row) => {
-                                            const { id, image, name, role, status, company, avatarUrl, isVerified } = row;
-                                            const selectedUser = selected.indexOf(name) !== -1;
-
-                                            return (
+                                    {priceAudit.map((price) => {
+                                        return (
+                                            <React.Fragment key={price.id}>
                                                 <TableRow
                                                     hover
-                                                    key={id}
+                                                    key={price.id}
                                                     tabIndex={-1}
                                                     role="checkbox"
-                                                    selected={selectedUser}
+                                                    selected={selectedPriceId === price.id}
+                                                    onClick={() => handlePriceClick(price)}
                                                 >
-                                                    <TableCell padding="checkbox">
+                                                    {/* <TableCell padding="checkbox">
                                                         <Checkbox
                                                             checked={selectedUser}
                                                             onChange={(event) => handleClick(event, name)}
                                                         />
-                                                    </TableCell>
-
-                                                    <TableCell component="th" scope="row" padding="none">
-                                                        <Stack direction="row" alignItems="center" spacing={2}>
-                                                            <Avatar alt={name} src={avatarUrl} />
-                                                        </Stack>
-                                                    </TableCell>
-
-                                                    <TableCell component="th" scope="row" padding="none">
-                                                        <Stack direction="row" alignItems="center" spacing={2}>
-                                                            {/* <Avatar alt={name} src={avatarUrl} /> */}
-                                                            <Typography variant="subtitle2" noWrap>
-                                                                {name}
-                                                            </Typography>
-                                                        </Stack>
-                                                    </TableCell>
-
-                                                    <TableCell component="th" scope="row" padding="none">
-                                                        <Stack direction="row" alignItems="center" spacing={2}>
-                                                            {/* <Avatar alt={name} src={avatarUrl} /> */}
-                                                            <Typography variant="subtitle2" noWrap>
-                                                                {name}
-                                                            </Typography>
-                                                        </Stack>
-                                                    </TableCell>
-
-                                                    <TableCell align="left">{company}</TableCell>
-
-                                                    <TableCell align="left">{role}</TableCell>
-
-                                                    <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell>
+                                                    </TableCell> */}
 
                                                     <TableCell align="left">
-                                                        <Label color={(status === 'banned' && 'error') || 'success'}>
-                                                            {sentenceCase(status)}
-                                                        </Label>
+                                                        <Stack direction="row" alignItems="center" spacing={2}>
+                                                            <Typography variant="subtitle2" noWrap>
+                                                                {price.itemName}
+                                                            </Typography>
+                                                        </Stack>
                                                     </TableCell>
-
-                                                    <TableCell align="right">
-                                                        <IconButton
-                                                            size="large"
-                                                            color="inherit"
-                                                            onClick={handleOpenMenu}
-                                                        >
-                                                            <Iconify icon={'eva:more-vertical-fill'} />
-                                                        </IconButton>
-                                                    </TableCell>
+                                                    <TableCell align="left">{price.changedBy}</TableCell>
+                                                    <TableCell align="left">{price.oldPrice}</TableCell>
+                                                    <TableCell align="left">{price.newPrice}</TableCell>
+                                                    <TableCell align="left">{price.changeDate}</TableCell>
                                                 </TableRow>
-                                            );
-                                        })}
+                                            </React.Fragment>
+                                        );
+                                    })}
                                     {emptyRows > 0 && (
                                         <TableRow style={{ height: 53 * emptyRows }}>
                                             <TableCell colSpan={6} />
@@ -466,37 +305,10 @@ const ProductsPricePage = () => {
                         onPageChange={handleChangePage}
                         onRowsPerPageChange={handleChangeRowsPerPage}
                     />
-                </Card>
+                </Card >
                 {/* </Container> */}
 
-                <Popover
-                    open={Boolean(open)}
-                    anchorEl={open}
-                    onClose={handleCloseMenu}
-                    anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-                    transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                    PaperProps={{
-                        sx: {
-                            p: 1,
-                            width: 140,
-                            '& .MuiMenuItem-root': {
-                                px: 1,
-                                typography: 'body2',
-                                borderRadius: 0.75,
-                            },
-                        },
-                    }}
-                >
-                    <MenuItem>
-                        <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-                        Edit
-                    </MenuItem>
 
-                    <MenuItem sx={{ color: 'error.main' }}>
-                        <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
-                        Delete
-                    </MenuItem>
-                </Popover>
             </div >
         </>
     );

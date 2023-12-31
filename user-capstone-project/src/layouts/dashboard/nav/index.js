@@ -3,18 +3,15 @@ import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 // @mui
 import { styled, alpha } from '@mui/material/styles';
-import { Box, Link, Button, Drawer, Typography, Avatar, Stack } from '@mui/material';
+import { Box, Link, Drawer, Typography, Avatar } from '@mui/material';
 import SvgColor from '../../../components/svg-color';
 import {
     ShoppingCart,
     Person,
-    Assignment,
     Payments,
     CategoryOutlined,
     LocalOfferOutlined,
     ClassOutlined,
-    CalendarToday,
-    MonetizationOnOutlined,
     Inventory2Outlined,
     PriceChangeOutlined,
     DomainVerification,
@@ -57,8 +54,8 @@ Nav.propTypes = {
 const icon = (name) => <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />;
 
 function getUserRole() {
-    const userRole = localStorage.getItem('role'); // Lấy vai trò từ Local Storage hoặc nguồn dữ liệu khác
-    return userRole || 'DEFAULT_ROLE'; // Gán một vai trò mặc định nếu không tìm thấy
+    const userRole = localStorage.getItem('role');
+    return userRole || 'DEFAULT_ROLE';
 }
 // Cấu hình navbar cho vai trò MANAGER
 const managerNavConfig = [
@@ -330,6 +327,18 @@ export default function Nav({ openNav, onCloseNav }) {
         setIsReportMenuOpen(!isReportMenuOpen);
     };
 
+    const getRoleLabel = (role) => {
+        switch (role) {
+            case 'SALE_STAFF':
+                return 'Nhân viên bán hàng';
+            case 'INVENTORY_STAFF':
+                return 'Nhân viên quản kho';
+            case 'MANAGER':
+                return 'Quản lý';
+            default:
+                return 'Không xác định';
+        }
+    };
     console.log(userRole);
 
     const role = localStorage.getItem('role');
@@ -339,7 +348,6 @@ export default function Nav({ openNav, onCloseNav }) {
         if (openNav) {
             onCloseNav();
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [pathname]);
 
     const renderContent = (
@@ -363,7 +371,7 @@ export default function Nav({ openNav, onCloseNav }) {
                                 {userName}
                             </Typography>
                             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                {userRole}
+                                {getRoleLabel(userRole)}
                             </Typography>
                         </Box>
                     </StyledAccount>

@@ -57,7 +57,6 @@ const TABLE_HEAD = [
     { id: 'createdAt', label: 'Ngày tạo', alignRight: false },
     // { id: 'type', label: 'Loại yêu cầu', alignRight: false },
     { id: 'status', label: 'Trạng thái', alignRight: false },
-    { id: '' },
 ];
 
 // ----------------------------------------------------------------------

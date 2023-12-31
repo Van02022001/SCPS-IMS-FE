@@ -1,10 +1,11 @@
 import PropTypes from 'prop-types';
 // @mui
 import { styled, alpha } from '@mui/material/styles';
-import { Toolbar, Tooltip, IconButton, Typography, OutlinedInput, InputAdornment, MenuItem, Checkbox, Menu } from '@mui/material';
+import { Toolbar, Typography, OutlinedInput, InputAdornment} from '@mui/material';
 // component
-import Iconify from '../../../components/iconify';
-import { useState } from 'react';
+import Iconify from '../../../../components/iconify';
+import { useEffect, useState } from 'react';
+import { getCategoriesSearch } from '~/data/mutation/categories/categories-mutation';
 
 // ----------------------------------------------------------------------
 
@@ -33,27 +34,34 @@ const StyledSearch = styled(OutlinedInput)(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-ProductsListToolbar.propTypes = {
+CustomerSaleToolbar.propTypes = {
   numSelected: PropTypes.number,
   filterName: PropTypes.string,
   onFilterName: PropTypes.func,
 };
 
-export default function ProductsListToolbar({ numSelected, filterName, onFilterName }) {
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [selectedFilters, setSelectedFilters] = useState({ filter1: false, filter2: false, filter3: false, filter4: false, filter5: false,  filter6: false });
+export default function CustomerSaleToolbar({ numSelected, onFilterName, onDataSearch }) {
+  const [filterName, setFilterName] = useState('');
 
-  const handleFilterClick = (event) => {
-    setAnchorEl(event.currentTarget);
+
+  const handleSearch = async (keyword) => {
+    try {
+      const result = await getCategoriesSearch(keyword);
+      console.log('Search result:', result);
+      // Gọi hàm callback để truyền dữ liệu về trang chính
+      onDataSearch(result.data);
+    } catch (error) {
+      console.error('Error searching subcategories:', error);
+    }
   };
 
-  const handleFilterClose = () => {
-    setAnchorEl(null);
-  };
+  useEffect(() => {
+    if (filterName) {
+      handleSearch(filterName);
+    }
+  }, [filterName]);
 
-  const handleFilterSelect = (filter) => {
-    setSelectedFilters({ ...selectedFilters, [filter]: !selectedFilters[filter] });
-  };
+
     return (
     <StyledRoot
       sx={{
@@ -71,7 +79,7 @@ export default function ProductsListToolbar({ numSelected, filterName, onFilterN
         <>
           <StyledSearch
             value={filterName}
-            onChange={onFilterName}
+            onChange={(e) => setFilterName(e.target.value)}
             placeholder="Tìm kiếm..."
             startAdornment={
               <InputAdornment position="start">

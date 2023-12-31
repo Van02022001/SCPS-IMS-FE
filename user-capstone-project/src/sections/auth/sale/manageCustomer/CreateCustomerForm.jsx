@@ -10,9 +10,9 @@ import {
     Select,
     MenuItem,
     IconButton,
+    FormHelperText,
 } from '@mui/material';
-import SuccessAlerts from '../../../../components/alert/SuccessAlert';
-import ErrorAlerts from '../../../../components/alert/ErrorAlert';
+
 import capitalizeFirstLetter from '../../../../components/validation/capitalizeFirstLetter';
 // api
 import { createCustomer } from '~/data/mutation/customer/customer-mutation';
@@ -20,17 +20,23 @@ import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 import SnackbarError from '~/components/alert/SnackbarError';
 import CloseIcon from '@mui/icons-material/Close';
 
-const CreateCustomerForm = ({ onClose, onSave }) => {
-    const [code, setCode] = useState('');
+const CreateCustomerForm = (props) => {
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
     const [taxCode, setTaxCode] = useState('');
     const [address, setAddress] = useState('');
-    const [type, setType] = useState('');
+    const [selectedType, setSelectedType] = useState('');
     const [description, setDescription] = useState('');
 
     //thông báo
+    const [nameError, setNameError] = useState('');
+    const [phoneError, setPhoneError] = useState('');
+    const [emailError, setEmailError] = useState('');
+    const [taxCodeError, setTaxCodeError] = useState('');
+    const [addressError, setAddressError] = useState('');
+    const [typeError, setTypeError] = useState('');
+    const [descriptionError, setDescriptionError] = useState('');
     //========================== Hàm notification của trang ==================================
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
@@ -84,44 +90,136 @@ const CreateCustomerForm = ({ onClose, onSave }) => {
     };
     const validateName = (value) => {
         if (!value.trim()) {
-            return "Tên hàng hóa không được để trống"
+            return "Tên Khách hàng không được để trống"
         } else if (!/^\p{Lu}/u.test(value)) {
             return "Chữ cái đầu phải in hoa.";
         }
+        return null;
+    };
 
+    const validatePhone = (value) => {
+        const phoneDigits = value;
+
+        if (!value.trim()) {
+            return "Số điện thoại không được để trống";
+        } else if (value[0] !== '0') {
+            return "Số điện thoại phải bắt đầu bằng số 0.";
+        } else if (phoneDigits.length !== 10) {
+            return "Số điện thoại phải có đúng 10 số.";
+        }
+        return null;
+    };
+
+    const validateEmail = (value) => {
+        if (!value.trim()) {
+            return "Email không được để trống.";
+        } else if (!/^[a-zA-Z0-9._-]+@gmail\.com$/.test(value)) {
+            return "Email phải có định dạng @gmail.com";
+        }
+        return null;
+    };
+
+    const validateTaxCode = (value) => {
+        if (!value.trim()) {
+            return "Mã thuế không được để trống"
+        } else if (!/^\p{Lu}/u.test(value)) {
+            return "Chữ cái đầu phải in hoa.";
+        }
+        return null;
+    };
+
+    const validateAdress = (value) => {
+        if (!value.trim()) {
+            return "Địa chỉ không được để trống.";
+        } else if (!/^\p{Lu}/u.test(value)) {
+            return "Chữ cái đầu phải in hoa.";
+        }
         return null;
     };
 
     const validateDescription = (value) => {
         if (!value.trim()) {
-            return "Mô tả hàng hóa không được để trống.";
+            return "Mô tả không được để trống.";
+        } else if (!/^\p{Lu}/u.test(value)) {
+            return "Chữ cái đầu phải in hoa.";
         }
         return null;
     };
 
+    const handleNameChange = (e) => {
+        const newName = capitalizeFirstLetter(e.target.value);
+        setName(newName);
+
+        setNameError(validateName(newName));
+    };
+
+    const handlePhoneChange = (e) => {
+        const newPhone = e.target.value.replace(/\D/g, '');
+        setPhone(newPhone);
+        setPhoneError(validatePhone(newPhone));
+    };
+
+    const handleEmailChange = (e) => {
+        const newEmail = e.target.value.toLowerCase().replace(/[^a-z0-9.@]/g, '');
+        setEmail(newEmail);
+        setEmailError(validateEmail(newEmail));
+    };
+    const handleTaxCodeChange = (e) => {
+        const newTaxCode = capitalizeFirstLetter(e.target.value);
+        setTaxCode(newTaxCode);
+
+        setTaxCodeError(validateTaxCode(newTaxCode));
+    };
+
+    const handleAddressChange = (e) => {
+        const newAddress = capitalizeFirstLetter(e.target.value);
+        setAddress(newAddress);
+
+        setAddressError(validateAdress(newAddress));
+    };
+
+    const handleTypeChange = (e) => {
+        setSelectedType(e.target.value);
+        setTypeError('');
+    };
+    const handleDescriptionChange = (e) => {
+        const newDescription = capitalizeFirstLetter(e.target.value);
+        setDescription(newDescription);
+
+        setDescriptionError(validateDescription(newDescription));
+    };
     //============================================================
 
     const handleSubmit = async () => {
+        if (!selectedType) {
+            setTypeError('Vui lòng chọn loại khách hàng');
+            return;
+        }
         try {
             const customerParams = {
-                code,
                 name,
                 phone,
                 email,
                 taxCode,
                 address,
-                type,
+                type: selectedType,
                 description,
             };
 
             const response = await createCustomer(customerParams);
             console.log('Customer created:', response);
-            if (response.status === '200 OK') {
+            if (response.status === '201 CREATED') {
+                props.onClose(response.data, response.message);
                 handleSuccessMessage(response.message);
+
                 handleCloseSnackbar();
+
             }
         } catch (error) {
-            console.error('Error creating user:', error);
+            console.log(error);
+            if (error.response?.status === 400) {
+                setErrorMessage('Vui lòng nhập thông tin để tạo!')
+            }
             handleErrorMessage(error.response?.data?.message);
         }
     };
@@ -142,35 +240,17 @@ const CreateCustomerForm = ({ onClose, onSave }) => {
                                         sx={{ marginBottom: 4, gap: 5 }}
                                     >
                                         <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
-                                            Mã:{' '}
-                                        </Typography>
-                                        <TextField
-                                            size="small"
-                                            variant="outlined"
-                                            label="Mã"
-                                            sx={{ width: '70%' }}
-                                            onChange={(e) => setCode(capitalizeFirstLetter(e.target.value))}
-                                            value={code}
-                                        />
-                                    </Grid>
-
-                                    <Grid
-                                        container
-                                        spacing={1}
-                                        direction="row"
-                                        justifyContent="space-between"
-                                        alignItems="center"
-                                        sx={{ marginBottom: 4, gap: 5 }}
-                                    >
-                                        <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
                                             Tên khách hàng:{' '}
                                         </Typography>
+
                                         <TextField
+                                            helperText={nameError}
+                                            error={Boolean(nameError)}
                                             size="small"
                                             variant="outlined"
                                             label="Tên khách hàng"
                                             sx={{ width: '70%' }}
-                                            onChange={(e) => setName(capitalizeFirstLetter(e.target.value))}
+                                            onChange={handleNameChange}
                                             value={name}
                                         />
                                     </Grid>
@@ -187,10 +267,12 @@ const CreateCustomerForm = ({ onClose, onSave }) => {
                                             Số điện thoại:{' '}
                                         </Typography>
                                         <TextField
+                                            helperText={phoneError}
+                                            error={Boolean(phoneError)}
                                             size="small"
                                             variant="outlined"
                                             label="Số điện thoại"
-                                            onChange={(e) => setPhone(e.target.value)}
+                                            onChange={handlePhoneChange}
                                             sx={{ width: '70%' }}
                                             value={phone}
                                         />
@@ -208,11 +290,14 @@ const CreateCustomerForm = ({ onClose, onSave }) => {
                                             Email:{' '}
                                         </Typography>
                                         <TextField
+                                            helperText={emailError}
+                                            error={Boolean(emailError)}
                                             size="small"
                                             variant="outlined"
                                             label="Email"
-                                            onChange={(e) => setEmail(e.target.value)}
+                                            onChange={handleEmailChange}
                                             sx={{ width: '70%' }}
+                                            value={email}
                                         />
                                     </Grid>
 
@@ -228,11 +313,14 @@ const CreateCustomerForm = ({ onClose, onSave }) => {
                                             Mã thuế:{' '}
                                         </Typography>
                                         <TextField
+                                            helperText={taxCodeError}
+                                            error={Boolean(taxCodeError)}
                                             size="small"
                                             variant="outlined"
                                             label="Mã thuế"
-                                            onChange={(e) => setTaxCode(capitalizeFirstLetter(e.target.value))}
+                                            onChange={handleTaxCodeChange}
                                             sx={{ width: '70%' }}
+                                            value={taxCode}
                                         />
                                     </Grid>
 
@@ -248,11 +336,14 @@ const CreateCustomerForm = ({ onClose, onSave }) => {
                                             Địa chỉ:{' '}
                                         </Typography>
                                         <TextField
+                                            helperText={addressError}
+                                            error={Boolean(addressError)}
                                             size="small"
                                             variant="outlined"
                                             label="Địa chỉ"
-                                            onChange={(e) => setAddress(e.target.value)}
+                                            onChange={handleAddressChange}
                                             sx={{ width: '70%' }}
+                                            value={address}
                                         />
                                     </Grid>
 
@@ -268,19 +359,26 @@ const CreateCustomerForm = ({ onClose, onSave }) => {
                                             <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
                                                 Loại khách hàng:{' '}
                                             </Typography>
-
-                                            <Select
-                                                size="small"
-                                                labelId="group-label"
-                                                id="group-select"
-                                                sx={{ width: '70%', fontSize: '14px' }}
-                                                onChange={(e) => setType(e.target.value)}
-                                            >
-                                                <MenuItem value="INDIVIDUAL">Cá nhân</MenuItem>
-                                                <MenuItem value="COMPANY">Công ty</MenuItem>
-                                            </Select>
+                                            <Grid xs={8.5}>
+                                                <Select
+                                                    size="small"
+                                                    labelId="group-label"
+                                                    id="group-select"
+                                                    sx={{ width: '98%', fontSize: '14px' }}
+                                                    onChange={handleTypeChange}
+                                                    value={selectedType}
+                                                    error={Boolean(typeError)}
+                                                >
+                                                    <MenuItem value="INDIVIDUAL">Cá nhân</MenuItem>
+                                                    <MenuItem value="COMPANY">Công ty</MenuItem>
+                                                </Select>
+                                                <FormHelperText error={Boolean(typeError)}>
+                                                    {typeError}
+                                                </FormHelperText>
+                                            </Grid>
                                         </Grid>
                                     </FormControl>
+
 
                                     <Grid
                                         container
@@ -294,10 +392,13 @@ const CreateCustomerForm = ({ onClose, onSave }) => {
                                             Mô tả:{' '}
                                         </Typography>
                                         <TextField
+                                            helperText={descriptionError}
+                                            error={Boolean(descriptionError)}
                                             size="small"
                                             variant="outlined"
                                             label="Mô tả"
-                                            onChange={(e) => setDescription(e.target.value)}
+                                            onChange={handleDescriptionChange}
+                                            value={description}
                                             sx={{ width: '70%' }}
                                         />
                                     </Grid>

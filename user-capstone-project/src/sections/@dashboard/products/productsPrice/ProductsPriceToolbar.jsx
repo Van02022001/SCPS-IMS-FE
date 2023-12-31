@@ -80,13 +80,13 @@ export default function ProductsPriceToolbar({ numSelected, filterName, onFilter
             }
           />
 
-          <Tooltip title="Filter list">
+          {/* <Tooltip title="Filter list">
             <IconButton onClick={handleFilterClick}>
               <Iconify icon="ic:round-filter-list" />
             </IconButton>
-          </Tooltip>
+          </Tooltip> */}
 
-          <Menu
+          {/* <Menu
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}
             onClose={handleFilterClose}
@@ -133,7 +133,7 @@ export default function ProductsPriceToolbar({ numSelected, filterName, onFilter
               />
               Giá chung
             </MenuItem>
-          </Menu>
+          </Menu> */}
         </>
       )}
     </StyledRoot>

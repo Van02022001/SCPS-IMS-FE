@@ -7,9 +7,6 @@ import {
     Stack,
     Grid,
     TextField,
-    FormControl,
-    Select,
-    MenuItem,
     CardContent,
     Card,
     TableContainer,
@@ -17,8 +14,8 @@ import {
     TableBody,
     TableRow,
     TableCell,
-    Dialog,
     DialogTitle,
+    Dialog,
 } from '@mui/material';
 // icons
 // import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
@@ -29,16 +26,14 @@ import Snackbar from '@mui/material/Snackbar';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 // api
-import { editStatusCategory } from '~/data/mutation/subCategory/subCategory-mutation';
-import { editSubCategorysMeta } from '~/data/mutation/subCategoryMeta/subCategoryMeta-mutation';
 import { editImportReceipt, editImportReceiptConfirm, editReceiptStartImport } from '~/data/mutation/importRequestReceipt/ImportRequestReceipt-mutation';
 
 import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
 
 import { getAllImportReceipt } from '~/data/mutation/importReceipt/ImportReceipt-mutation';
-import CreateExportReceiptForm from './CreateExportReceiptForm';
 import { editExportRequestReceipt } from '~/data/mutation/customerRequest/CustomerRequest-mutation';
+import CreateExportReceiptForm from './CreateExportReceiptForm';
 
 
 
@@ -386,7 +381,7 @@ const ExportReceiptDetailForm = ({
 
             {currentTab === 0 && (
                 <div>
-                    {/* <div>
+                    <div>
                         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                             <Button variant="contained" color="primary" onClick={handleOpenForm}>
                                 Tạo phiếu xuất kho
@@ -408,7 +403,7 @@ const ExportReceiptDetailForm = ({
                                 importReceipst={importReceipst}
                             />
                         </Dialog>
-                    </div> */}
+                    </div>
                     <Stack spacing={4} margin={2}>
                         <Grid container spacing={2}>
                             <Grid item xs={6}>
@@ -475,13 +470,11 @@ const ExportReceiptDetailForm = ({
 
                                             value={currentStatus === 'Pending_Approval'
                                                 ? 'Chờ phê duyệt'
-                                                : currentStatus === 'Approved'
-                                                    ? 'Đã xác nhận'
-                                                    : currentStatus === 'IN_PROGRESS'
-                                                        ? 'Đang tiến hành'
-                                                        : currentStatus === 'Completed'
-                                                            ? 'Hoàn thành'
-                                                            : 'Ngừng hoạt động'}
+                                                : currentStatus === 'IN_PROGRESS'
+                                                    ? 'Đang tiến hành'
+                                                    : currentStatus === 'Completed'
+                                                        ? 'Hoàn thành'
+                                                        : 'Ngừng hoạt động'}
                                         />
                                     </Grid>
                                     <Grid
@@ -579,10 +572,6 @@ const ExportReceiptDetailForm = ({
                                             <TableCell >Tổng số lượng:</TableCell>
                                             <TableCell>{importReceipst.totalQuantity}</TableCell>
                                         </TableRow>
-                                        <TableRow>
-                                            <TableCell >Tổng tiền:</TableCell>
-                                            <TableCell>{importReceipst.totalPrice} VND</TableCell>
-                                        </TableRow>
                                     </TableBody>
                                 </TableContainer>
                             </CardContent>
@@ -602,7 +591,7 @@ const ExportReceiptDetailForm = ({
                                 Cập nhật
                             </Button> */}
 
-                            {/* <div>
+                            <div>
                                 <Button variant="contained" color="primary" onClick={updateExportReceiptConfirm}>
                                     Xác nhận
                                 </Button>
@@ -619,7 +608,7 @@ const ExportReceiptDetailForm = ({
                                     style={{ bottom: '16px', right: '16px' }}
                                 />
 
-                            </div> */}
+                            </div>
                             {/* <div>
                                 <Button variant="contained" color="warning" onClick={updateReceiptStartImport}>
                                     Tiến hành nhập kho

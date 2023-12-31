@@ -613,14 +613,14 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
-                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>Giá mua:</Typography>
+                                    <Typography variant="body1">Giá mua:</Typography>
                                     <TextField
                                         InputProps={{ readOnly: true }}
                                         size="small"
                                         variant="outlined"
-                                        label="Đã bán"
+                                        label="Giá mua"
                                         sx={{ width: '70%', marginRight: 5, pointerEvents: 'none' }}
-                                        value={item.purchasePrice.price}
+                                        value={item.purchasePrice ? item.purchasePrice.price : ''}
                                     />
                                 </Grid>
                                 <Grid
@@ -631,14 +631,14 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
-                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>Giá bán:</Typography>
+                                    <Typography variant="body1">Giá bán:</Typography>
                                     <TextField
                                         InputProps={{ readOnly: true }}
                                         size="small"
                                         variant="outlined"
-                                        label="Hàng trả lại"
+                                        label="Giá bán"
                                         sx={{ width: '70%', marginRight: 5, pointerEvents: 'none' }}
-                                        value={item.pricing.price}
+                                        value={item.pricing ? item.pricing.price : ''}
                                     />
                                 </Grid>
                                 <Grid
@@ -782,21 +782,23 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                                 {itemMovementsData.slice(startIndex, endIndex).map((items) => {
                                                     return (
                                                         <TableRow key={items.id}>
-                                                            <TableCell>{items.toLocation.warehouse.name}</TableCell>
+                                                            <TableCell>
+                                                                {items.toLocation && items.toLocation.warehouse ? items.toLocation.warehouse.name : 'Không có'}
+                                                            </TableCell>
                                                             <TableCell>{items.quantity}</TableCell>
                                                             <TableCell>
                                                                 {items.fromLocation !== null ? (
                                                                     <div>
-                                                                        {items.fromLocation.binNumber} -{' '}
-                                                                        {items.fromLocation.shelfNumber}
+                                                                        {items.fromLocation.binNumber} - {items.fromLocation.shelfNumber}
                                                                     </div>
                                                                 ) : (
-                                                                    'Chưa có'
+                                                                    'Không có'
                                                                 )}
                                                             </TableCell>
                                                             <TableCell>
-                                                                {items.toLocation.binNumber} -{' '}
-                                                                {items.toLocation.shelfNumber}
+                                                                {items.toLocation && items.toLocation.binNumber && items.toLocation.shelfNumber
+                                                                    ? `${items.toLocation.binNumber} - ${items.toLocation.shelfNumber}`
+                                                                    : 'Không có'}
                                                             </TableCell>
                                                             <TableCell>{items.notes}</TableCell>
                                                             <TableCell>{items.movedAt}</TableCell>

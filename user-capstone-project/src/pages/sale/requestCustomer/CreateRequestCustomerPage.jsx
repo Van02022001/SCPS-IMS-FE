@@ -73,9 +73,10 @@ const CreateRequestCustomerPage = () => {
     const [selectedTab, setSelectedTab] = useState(0);
 
     const TABLE_HEAD = [
+        { id: 'image' },
         { id: 'name', label: 'Tên sản phẩm', alignRight: false },
         { id: 'quality', label: 'Số lượng', alignRight: false },
-        { id: '' },
+        { id: 'button' },
     ];
 
     const handleNavigate = () => {
@@ -262,7 +263,7 @@ const CreateRequestCustomerPage = () => {
                                                     // order={order}
                                                     // orderBy={orderBy}
                                                     headLabel={TABLE_HEAD}
-                                                    rowCount={USERLIST.length}
+                                                    rowCount={selectedItems.length}
                                                     numSelected={selected.length}
                                                     onRequestSort={handleRequestSort}
                                                     onSelectAllClick={handleSelectAllClick}
@@ -277,26 +278,28 @@ const CreateRequestCustomerPage = () => {
                                                             key={`${selectedItem.id}-${index}`}
                                                             sx={{ display: 'flex', alignItems: 'center' }}
                                                         >
-                                                            {/* <img
-                                                    src={selectedItem.avatar}
-                                                    alt={selectedItem.name}
-                                                    width="48"
-                                                    height="48"
-                                                /> */}
+                                                            <ListItemText sx={{ flexBasis: '2%' }}>
+                                                                <img
+                                                                    src={selectedItem.avatar}
+                                                                    alt={selectedItem.name}
+                                                                    width="48"
+                                                                    height="48"
+                                                                />
+                                                            </ListItemText>
                                                             {/* <ListItemText
                                                                 // primary={selectedItem.id}
                                                                 onChange={(e) => setItemId(e.target.value)}
                                                             /> */}
-                                                            <ListItemText sx={{ flexBasis: '44%' }}>
+                                                            <ListItemText sx={{ flexBasis: '34%' }}>
                                                                 <Typography variant="body1">
                                                                     {selectedItem.subCategory.name}
                                                                 </Typography>
                                                             </ListItemText>
-                                                            <ListItemText sx={{ flexBasis: '34%' }}>
+                                                            <ListItemText sx={{ flexBasis: '28%' }}>
                                                                 <TextField
                                                                     type="number"
                                                                     label="Số lượng"
-                                                                    sx={{ width: '50%' }}
+                                                                    sx={{ width: '28%' }}
                                                                     value={selectedItem.quantity}
                                                                     onChange={(e) =>
                                                                         handleQuantityChange(
@@ -332,10 +335,8 @@ const CreateRequestCustomerPage = () => {
                                         }}
                                     >
                                         <Typography variant="h6">Thông tin đơn hàng</Typography>
-                                        <Typography variant="body1">Tên khách hàng:</Typography>
-                                        <Typography variant="body1">Địa chỉ:</Typography>
-                                        <Typography variant="h5">Tổng tiền </Typography>
-                                        <Typography variant="body1">{calculateTotalPrice()} VND</Typography>
+                                        <Typography variant="body1">Tên khách hàng: {selectedCustomerId ? selectedCustomerId.name : 'Chưa có khách hàng'}</Typography>
+                                        <Typography variant="body1">Địa chỉ: {selectedCustomerId ? selectedCustomerId.address : 'Chưa có khách hàng'}</Typography>
                                     </FormControl>
                                 </Paper>
                             </Grid>
@@ -392,16 +393,6 @@ const CreateRequestCustomerPage = () => {
                                             </FormControl>
                                         </Grid>
                                         <Grid item xs={4}>
-                                            {/* <FormControl size="small" variant="outlined" sx={{ width: '100%' }}>
-                                                <Select
-                                                    value={selectedPrice}
-                                                    onChange={handlePriceChange}
-                                                >
-                                                    <MenuItem value="all">Tất cả bảng giá</MenuItem>
-                                                </Select>
-                                            </FormControl> */}
-                                            {/* Toolbar */}
-
                                             <FormControl size="small" variant="outlined" sx={{ width: '100%' }}>
                                                 <InputLabel id="warehouse-label">Chọn kho hàng...</InputLabel>
                                                 <Select
@@ -475,21 +466,28 @@ const CreateRequestCustomerPage = () => {
                                                         Chọn kho hàng trước khi thêm sản phẩm.
                                                     </Typography>
                                                 )}
+                                                {/* Nút chuyển trang 1/2 (nếu cần) và nút thanh toán */}
+
                                             </List>
-                                            {/* Nút chuyển trang 1/2 (nếu cần) và nút thanh toán */}
-                                            <div style={{ position: 'absolute', bottom: 50, right: 35 }}>
-                                                <Button>Trang</Button>
-                                                <Button
-                                                    color="primary"
-                                                    variant="contained"
-                                                    onClick={handleCreateImportReceipt}
-                                                >
-                                                    Lưu
-                                                </Button>
-                                            </div>
                                         </DialogContent>
                                     </div>
+
+                                    <div sx={{
+                                        position: 'absolute',
+                                        bottom: 10,
+                                        right: 40,
+                                    }}>
+                                        <Button>Trang</Button>
+                                        <Button
+                                            color="primary"
+                                            variant="contained"
+                                            onClick={handleCreateImportReceipt}
+                                        >
+                                            Lưu
+                                        </Button>
+                                    </div>
                                 </Paper>
+
                             </Grid>
                         </Grid>
                     </Stack>

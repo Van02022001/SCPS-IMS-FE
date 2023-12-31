@@ -4,11 +4,9 @@ import {
     IconButton,
     Stack,
     TextField,
-
 } from '@mui/material';
 import React, { useState } from 'react';
-import ErrorAlerts from '~/components/alert/ErrorAlert';
-import SuccessAlerts from '~/components/alert/SuccessAlert';
+
 import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
 // api
 import { createBrands } from '~/data/mutation/brand/brands-mutation';
@@ -69,6 +67,7 @@ const BrandForm = (props) => {
         setOpen(false);
         setOpen1(false);
     };
+
     const validateName = (value) => {
         if (!value.trim()) {
             return "Tên hàng hóa không được để trống"

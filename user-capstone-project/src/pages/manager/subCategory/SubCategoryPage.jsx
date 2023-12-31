@@ -372,7 +372,7 @@ const SubCategoryPage = () => {
     return (
         <>
             <Helmet>
-                <title> Quản lý danh mục | Minimal UI </title>
+                <title> Quản lý danh mục</title>
             </Helmet>
 
             {/* <Container> */}

@@ -646,6 +646,7 @@ const ItemsManagerPage = () => {
                     page={page}
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
+                    labelRowsPerPage="Số lượng sản phẩm mỗi trang:"
                 />
             </Card>
             <SnackbarSuccess

@@ -441,7 +441,7 @@ const CustomerRequestPage = () => {
                                                                 ? 'Đã xác nhận'
                                                                 : importReceipt.status === 'IN_PROGRESS'
                                                                     ? 'Đang tiến hành'
-                                                                    : importReceipt.status === 'Complete'
+                                                                    : importReceipt.status === 'Completed'
                                                                         ? 'Hoàn thành'
                                                                         : 'Ngừng hoạt động'}
                                                     </Label>

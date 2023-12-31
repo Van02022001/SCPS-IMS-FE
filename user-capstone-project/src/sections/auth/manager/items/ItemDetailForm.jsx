@@ -16,13 +16,7 @@ import {
     Table,
     Select,
     MenuItem,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogContentText,
-    DialogActions,
     FormControl,
-    Snackbar,
     TablePagination,
 } from '@mui/material';
 
@@ -35,7 +29,7 @@ import { getAllBrands } from '~/data/mutation/brand/brands-mutation';
 import { getAllOrigins } from '~/data/mutation/origins/origins-mutation';
 import { getAllSuppliers } from '~/data/mutation/supplier/suppliers-mutation';
 //icons
-import AddIcon from '@mui/icons-material/Add';
+
 import CustomDialog from '~/components/alert/ConfirmDialog';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
@@ -323,6 +317,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
             <Tabs value={selectedTab} onChange={(event, newValue) => setSelectedTab(newValue)}>
                 <Tab label="Thông tin" />
                 <Tab label="Lịch sử giá mua" />
+                <Tab label="Lịch sử giá bán" />
             </Tabs>
 
             {selectedTab === 0 && (
@@ -343,7 +338,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                         size="small"
                                         variant="outlined"
                                         label="Mã sản phẩm"
-                                        sx={{ width: '65%', marginRight: 5, pointerEvents: 'none'}}
+                                        sx={{ width: '65%', marginRight: 5, pointerEvents: 'none' }}
                                         value={item.code}
                                         InputProps={{ readOnly: true }}
                                     />
@@ -507,11 +502,11 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                             value={
                                                 item.locations
                                                     ? item.locations
-                                                          .map(
-                                                              (location) =>
-                                                                  `${location.binNumber} - ${location.shelfNumber} - ${location.warehouse.name}`,
-                                                          )
-                                                          .join(',\n')
+                                                        .map(
+                                                            (location) =>
+                                                                `${location.binNumber} - ${location.shelfNumber} - ${location.warehouse.name}`,
+                                                        )
+                                                        .join(',\n')
                                                     : ''
                                             }
                                         />
@@ -639,9 +634,9 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                         InputProps={{ readOnly: true }}
                                         size="small"
                                         variant="outlined"
-                                        label="Đã bán"
+                                        label="Giá mua"
                                         sx={{ width: '70%', marginRight: 5, pointerEvents: 'none' }}
-                                        value={item.purchasePrice.price}
+                                        value={item.purchasePrice ? item.purchasePrice.price : ''}
                                     />
                                 </Grid>
                                 <Grid
@@ -657,9 +652,9 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                         InputProps={{ readOnly: true }}
                                         size="small"
                                         variant="outlined"
-                                        label="Hàng trả lại"
+                                        label="Giá bán"
                                         sx={{ width: '70%', marginRight: 5, pointerEvents: 'none' }}
-                                        value={item.pricing.price}
+                                        value={item.pricing ? item.pricing.price : ''}
                                     />
                                 </Grid>
                                 <Grid
@@ -815,26 +810,84 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                     page={page}
                                     onPageChange={handleChangePage}
                                     onRowsPerPageChange={handleChangeRowsPerPage}
+                                    labelRowsPerPage="Số lượng giá mua mỗi trang:"
                                 />
                             </Card>
                         </div>
                     </Stack>
-                    <SnackbarSuccess
-                        open={open}
-                        handleClose={handleClose}
-                        message={successMessage}
-                        action={action}
-                        style={{ bottom: '16px', right: '16px' }}
-                    />
-                    <SnackbarError
-                        open={open1}
-                        handleClose={handleClose}
-                        message={errorMessage}
-                        action={action}
-                        style={{ bottom: '16px', right: '16px' }}
-                    />
                 </div>
             )}
+            {selectedTab === 2 && (
+                <div style={{ marginLeft: 50 }}>
+                    <Stack spacing={4} margin={2}>
+                        <div>
+                            <Typography variant="h4">Bảng Giá Bán</Typography>
+                            <Card>
+                                <CardContent>
+                                    <TableContainer>
+                                        <Table>
+                                            <TableBody>
+                                                <TableRow
+                                                    variant="subtitle1"
+                                                    sx={{
+                                                        fontSize: '20px',
+                                                        backgroundColor: '#f0f1f3',
+                                                        height: 50,
+                                                        textAlign: 'start',
+                                                        fontFamily: 'bold',
+                                                        padding: '10px 0 0 20px',
+                                                    }}
+                                                >
+                                                    <TableCell>Tên sản phẩm</TableCell>
+                                                    <TableCell>Người thay đổi</TableCell>
+                                                    <TableCell>Ngày thay đổi</TableCell>
+                                                    <TableCell>Giá cũ</TableCell>
+                                                    <TableCell>Giá mới</TableCell>
+                                                </TableRow>
+                                                {itemPriceData.slice(startIndex, endIndex).map((items) => {
+                                                    return (
+                                                        <TableRow key={items.id}>
+                                                            <TableCell>{items.itemName}</TableCell>
+                                                            <TableCell>{items.changedBy}</TableCell>
+                                                            <TableCell>{items.changeDate}</TableCell>
+                                                            <TableCell>{items.oldPrice}</TableCell>
+                                                            <TableCell>{items.newPrice}</TableCell>
+                                                        </TableRow>
+                                                    );
+                                                })}
+                                            </TableBody>
+                                        </Table>
+                                    </TableContainer>
+                                </CardContent>
+                                <TablePagination
+                                    rowsPerPageOptions={[5, 10, 25]}
+                                    component="div"
+                                    count={itemPriceData.length}
+                                    rowsPerPage={rowsPerPage}
+                                    page={page}
+                                    onPageChange={handleChangePage}
+                                    onRowsPerPageChange={handleChangeRowsPerPage}
+                                    labelRowsPerPage="Số lượng giá bán mỗi trang:"
+                                />
+                            </Card>
+                        </div>
+                    </Stack>
+                </div>
+            )}
+            <SnackbarSuccess
+                open={open}
+                handleClose={handleClose}
+                message={successMessage}
+                action={action}
+                style={{ bottom: '16px', right: '16px' }}
+            />
+            <SnackbarError
+                open={open1}
+                handleClose={handleClose}
+                message={errorMessage}
+                action={action}
+                style={{ bottom: '16px', right: '16px' }}
+            />
         </div>
     );
 };

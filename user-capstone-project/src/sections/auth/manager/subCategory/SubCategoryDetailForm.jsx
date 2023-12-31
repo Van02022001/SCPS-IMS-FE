@@ -30,8 +30,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { editSubCategory, editStatusCategory } from '~/data/mutation/subCategory/subCategory-mutation';
 import { getAllCategories } from '~/data/mutation/categories/categories-mutation';
 import { getAllUnit, getAllUnitMeasurement } from '~/data/mutation/unit/unit-mutation';
-import SuccessAlerts from '~/components/alert/SuccessAlert';
-import ErrorAlerts from '~/components/alert/ErrorAlert';
+
 import AddSubCategoryMetaForm from './AddSubCategoryMetaForm';
 import { editSubCategorysMeta, getAllSubCategoryMeta } from '~/data/mutation/subCategoryMeta/subCategoryMeta-mutation';
 import { getItemsBySubCategory } from '~/data/mutation/items/item-mutation';
