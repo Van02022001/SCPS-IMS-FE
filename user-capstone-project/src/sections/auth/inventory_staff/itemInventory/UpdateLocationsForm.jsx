@@ -1,19 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import {
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    TextField,
-    Button,
-    Typography,
-    Grid,
-} from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, TextField, Button, Typography, Grid, IconButton } from '@mui/material';
 
 import { editItemLocations } from '~/data/mutation/items/item-mutation';
-import { getAllLocation } from '~/data/mutation/location/location-mutation';
-
+import { getAllLocation, getLocationsByEmptyItem } from '~/data/mutation/location/location-mutation';
+import CloseIcon from '@mui/icons-material/Close';
 import AddLocationToWarehouse from './AddLocationToWarehouse';
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
+import SnackbarError from '~/components/alert/SnackbarError';
 
 const locationStyle = {
     border: '3px solid #ccc',
@@ -39,6 +32,8 @@ const UpdateLocationsForm = ({
     detailId,
     onUpdate, // Pass onUpdate function from AddLocationsForm
     selectedLocations,
+    itembylocation,
+    onSave,
 }) => {
     const [quantity, setQuantity] = useState('');
     const [selectedLocation, setSelectedLocation] = useState(null);
@@ -54,6 +49,40 @@ const UpdateLocationsForm = ({
     // Thông báo
     const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
     const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
+    //========================== Hàm notification của trang ==================================
+    const [open1, setOpen1] = React.useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+
+    const handleErrorMessage = (message) => {
+        setOpen1(true);
+        if (message === 'Invalid request') {
+            setErrorMessage('Yêu cầu không hợp lệ !');
+        } else if (message === 'Quantity is invalid, has not same with quantity of item import') {
+            setErrorMessage('Số lượng sản phẩm không đúng với số lượng sản phẩm nhập kho !');
+        } else if (message === 'ReceiptDetail was imported in location') {
+            setErrorMessage('Số lượng của phiếu này đã được thêm vào địa chỉ !');
+        }
+    };
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpen1(false);
+        setErrorMessage('');
+    };
+
+    const action = (
+        <React.Fragment>
+            <Button color="secondary" size="small" onClick={handleClose}></Button>
+            <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
+                <CloseIcon fontSize="lage" />
+            </IconButton>
+        </React.Fragment>
+    );
+
+    //========================== Hàm notification của trang ==================================
 
     const handleLocationClick = (location) => {
         const isSelected = selectedLocationsMuti.some((selected) => selected.id === location.id);
@@ -81,12 +110,11 @@ const UpdateLocationsForm = ({
             initialQuantities[item.id] = item.quantity - (quantityMap[item.id] || 0);
         });
 
+        console.log(initialQuantities);
+
         setQuantityMap(initialQuantities);
 
-        const remainingQuantity = Object.values(initialQuantities).reduce(
-            (acc, remaining) => acc + remaining,
-            0
-        );
+        const remainingQuantity = Object.values(initialQuantities).reduce((acc, remaining) => acc + remaining, 0);
 
         setShowLocationSelection(remainingQuantity > 0);
     };
@@ -104,18 +132,22 @@ const UpdateLocationsForm = ({
                 locations: locationsToUpdate,
             });
 
-            onUpdate && onUpdate({
-                detailId: detailId,
-                quantity: Object.values(quantityMap).reduce((acc, quantity) => acc + quantity, 0),
-                locations: locationsToUpdate,
-            });
+            if (response.status === '200 OK') {
+                onSave && onSave(response.message);
+                // Đóng form
+                onClose && onClose();
+            }
+
+            onUpdate &&
+                onUpdate({
+                    detailId: detailId,
+                    quantity: Object.values(quantityMap).reduce((acc, quantity) => acc + quantity, 0),
+                    locations: locationsToUpdate,
+                });
 
             console.log('locationsToUpdate', locationsToUpdate);
 
-            const remainingQuantity = Object.values(locationQuantities).reduce(
-                (acc, remaining) => acc + remaining,
-                0
-            );
+            const remainingQuantity = Object.values(locationQuantities).reduce((acc, remaining) => acc + remaining, 0);
 
             if (remainingQuantity === 0) {
                 handleClosePopup();
@@ -124,10 +156,9 @@ const UpdateLocationsForm = ({
             }
         } catch (error) {
             console.error('Error updating item locations:', error);
-
+            handleErrorMessage(error.response.data.message);
         }
     };
-
 
     useEffect(() => {
         if (Object.keys(selectedLocations).length > 0) {
@@ -138,7 +169,7 @@ const UpdateLocationsForm = ({
 
     useEffect(() => {
         if (open) {
-            getAllLocation()
+            getLocationsByEmptyItem(itembylocation)
                 .then((response) => {
                     const data = response.data;
                     const dataArray = Array.isArray(data) ? data : [data];
@@ -148,7 +179,7 @@ const UpdateLocationsForm = ({
 
             handleOpenPopup();
         }
-    }, [open]);
+    }, [open, itembylocation]);
 
     const handleQuantityChange = (locationId, event) => {
         // Stop event propagation to prevent hiding the input
@@ -166,7 +197,7 @@ const UpdateLocationsForm = ({
     const handleCloseCreateLocationDialog = async () => {
         try {
             // Cập nhật danh sách vị trí sau khi tạo mới
-            const response = await getAllLocation();
+            const response = await getLocationsByEmptyItem(itembylocation);
             const data = response.data;
             const dataArray = Array.isArray(data) ? data : [data];
             setToLocation_id(dataArray);
@@ -181,15 +212,28 @@ const UpdateLocationsForm = ({
     const handleSaveLocation = (successMessage) => {
         handleCloseCreateLocationDialog();
 
-        setSnackbarSuccessMessage(successMessage === 'Create location successfully' ? 'Tạo thêm vị trí thành công!' : 'Thành công');
+        setSnackbarSuccessMessage(
+            successMessage === 'Create location successfully' ? 'Tạo thêm vị trí thành công!' : 'Thành công',
+        );
         setSnackbarSuccessOpen(true);
     };
+
     return (
         <>
-            <Dialog open={open} onClose={handleClosePopup} maxWidth="md">
-                <DialogTitle>Hãy Chọn Địa Chỉ Trong Kho</DialogTitle>
-                <DialogContent>
-                    <Button variant="outlined" color="primary" onClick={handleOpenCreateLocation}>
+            <Dialog open={open} maxWidth="xl">
+                <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    Hãy Chọn Địa Chỉ Trong Kho
+                    <IconButton edge="start" color="inherit" onClick={handleClosePopup} aria-label="close">
+                        <CloseIcon />
+                    </IconButton>
+                </DialogTitle>
+                <DialogContent style={{ width: '1000px', height: '500px' }}>
+                    <Button
+                        variant="outlined"
+                        color="primary"
+                        onClick={handleOpenCreateLocation}
+                        sx={{ marginBottom: '20px' }}
+                    >
                         Thêm Vị Trí
                     </Button>
                     <AddLocationToWarehouse
@@ -204,7 +248,9 @@ const UpdateLocationsForm = ({
                                 <div
                                     style={{
                                         ...locationStyle,
-                                        ...(selectedLocationsMuti.some((selected) => selected.id === toLocation.id) ? selectedLocationStyle : {}),
+                                        ...(selectedLocationsMuti.some((selected) => selected.id === toLocation.id)
+                                            ? selectedLocationStyle
+                                            : {}),
                                         ...(toLocation.item_quantity > 0 ? occupiedLocationStyle : {}),
                                     }}
                                     onClick={() => handleLocationClick(toLocation)}
@@ -230,20 +276,36 @@ const UpdateLocationsForm = ({
                             </Grid>
                         ))}
                     </Grid>
-                    <Button variant="contained" color="primary" onClick={updateLocations} style={{ marginTop: 20 }}>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={updateLocations}
+                        style={{
+                            position: 'absolute',
+                            bottom: 16,
+                            right: 40,
+                        }}
+                    >
                         Lưu
                     </Button>
+                    <SnackbarError
+                        open={open1}
+                        handleClose={handleClose}
+                        message={errorMessage}
+                        action={action}
+                        style={{ bottom: '16px', right: '16px' }}
+                    />
+                    <SnackbarSuccess
+                        open={snackbarSuccessOpen}
+                        handleClose={() => {
+                            setSnackbarSuccessOpen(false);
+                            setSnackbarSuccessMessage('');
+                        }}
+                        message={snackbarSuccessMessage}
+                        style={{ bottom: '16px', right: '16px' }}
+                    />
                 </DialogContent>
             </Dialog>
-            <SnackbarSuccess
-                open={snackbarSuccessOpen}
-                handleClose={() => {
-                    setSnackbarSuccessOpen(false);
-                    setSnackbarSuccessMessage('');
-                }}
-                message={snackbarSuccessMessage}
-                style={{ bottom: '16px', right: '16px' }}
-            />
         </>
     );
 };

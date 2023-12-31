@@ -11,14 +11,52 @@ import {
     Button,
     Grid,
     Typography,
+    IconButton,
 } from '@mui/material';
 import { createImportReceipt } from '~/data/mutation/importReceipt/ImportReceipt-mutation';
 import AddLocationsForm from '../itemInventory/AddLocationsForm';
+import CloseIcon from '@mui/icons-material/Close';
+import SnackbarError from '~/components/alert/SnackbarError';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 
-const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst }) => {
+const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose }) => {
     const [quantities, setQuantities] = useState({});
     const [openAddCategoryDialog, setOpenAddCategoryDialog] = useState(false);
     const [dataReceiptDetail, setDataReceiptDetail] = useState({});
+    //========================== Hàm notification của trang ==================================
+    const [open1, setOpen1] = React.useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+    const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
+    const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
+
+    const handleErrorMessage = (message) => {
+        setOpen1(true);
+        if (message === 'Invalid request') {
+            setErrorMessage('Yêu cầu không hợp lệ !');
+        } else if (message === 'Receipt is not in the approved state for processing') {
+            setErrorMessage('Phiếu không ở trạng thái được phê duyệt để xử lý !');
+        }
+    };
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpen1(false);
+        setErrorMessage('');
+    };
+
+    const action = (
+        <React.Fragment>
+            <Button color="secondary" size="small" onClick={handleClose}></Button>
+            <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
+                <CloseIcon fontSize="lage" />
+            </IconButton>
+        </React.Fragment>
+    );
+
+    //========================== Hàm notification của trang ==================================
 
     const handleQuantityChange = (itemId, value) => {
         setQuantities((prev) => ({ ...prev, [itemId]: value }));
@@ -42,13 +80,29 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst }) => {
             if (response.status === '201 CREATED') {
                 setDataReceiptDetail(response.data);
                 handleOpenAddCategoryDialog();
+                onClose && onClose();
             }
         } catch (error) {
             // Handle error
             console.error('Error creating import receipt:', error);
+            handleErrorMessage(error.response.data.message);
         }
     };
     console.log(dataReceiptDetail);
+
+    const handleSaveLocation = (successMessage) => {
+        setSnackbarSuccessMessage(
+            successMessage === 'Cập nhật vị trí các sản phẩm thành công.'
+                ? 'Cập nhật vị trí các sản phẩm thành công.'
+                : 'Thành công',
+        );
+        setSnackbarSuccessOpen(true);
+    };
+
+    const handleClosePopup = () => {
+        setOpenAddCategoryDialog(false);
+        onCloseForm(); // Close the main popup
+      };
 
     return (
         <>
@@ -76,7 +130,11 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst }) => {
                                     </TableRow>
                                     <TableRow>
                                         <TableCell>Loại phiếu:</TableCell>
-                                        <TableCell>{importReceipst.type === 'PHIEU_YEU_CAU_NHAP_KHO' ? 'Phiếu Yêu Cầu Nhập Kho' : 'Phiếu khác'}</TableCell>
+                                        <TableCell>
+                                            {importReceipst.type === 'PHIEU_YEU_CAU_NHAP_KHO'
+                                                ? 'Phiếu Yêu Cầu Nhập Kho'
+                                                : 'Phiếu khác'}
+                                        </TableCell>
                                     </TableRow>
                                 </TableBody>
                             </Table>
@@ -151,6 +209,26 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst }) => {
                                 dataReceiptDetail={dataReceiptDetail}
                                 updateDataReceiptDetail={(newData) => setDataReceiptDetail(newData)} // Pass the update function
                                 details={dataReceiptDetail.details}
+                                onSave={(message) => {
+                                    handleSaveLocation(message);
+                                    handleClosePopup();
+                                  }}
+                            />
+                            <SnackbarError
+                                open={open1}
+                                handleClose={handleClose}
+                                message={errorMessage}
+                                action={action}
+                                style={{ bottom: '16px', right: '16px' }}
+                            />
+                            <SnackbarSuccess
+                                open={snackbarSuccessOpen}
+                                handleClose={() => {
+                                    setSnackbarSuccessOpen(false);
+                                    setSnackbarSuccessMessage('');
+                                }}
+                                message={snackbarSuccessMessage}
+                                style={{ bottom: '16px', right: '16px' }}
                             />
                         </Grid>
                     </Card>

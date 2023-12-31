@@ -15,8 +15,9 @@ import { getExaminationItem } from '~/data/mutation/items/item-mutation';
 import { getAllLocation, getLocationDetails } from '~/data/mutation/location/location-mutation';
 import InventorySelection from './InventorySelection';
 import UpdateLocationsForm from './UpdateLocationsForm';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 
-const AddLocationsForm = ({ open, onClose, dataReceiptDetail, updateDataReceiptDetail, onUpdate }) => {
+const AddLocationsForm = ({ open, onClose, dataReceiptDetail, updateDataReceiptDetail, onUpdate, onSave }) => {
     const [quantity, setQuantity] = useState('');
     const [toLocation_id, setToLocation_id] = useState([]);
     const [selectedLocationId, setSelectedLocationId] = useState('');
@@ -33,6 +34,9 @@ const AddLocationsForm = ({ open, onClose, dataReceiptDetail, updateDataReceiptD
     const [selectedDetailId, setSelectedDetailId] = useState(null);
 
     // Thông báo
+    const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
+    const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
+
     const handleUpdateLocations = ({ detailId, locations }) => {
         console.log('Updating flag for detailId:', detailId);
 
@@ -42,7 +46,7 @@ const AddLocationsForm = ({ open, onClose, dataReceiptDetail, updateDataReceiptD
             if (existingIndex !== -1) {
                 // If detailId already exists, update the locations
                 return prevSelectedLocations.map((loc, index) =>
-                    index === existingIndex ? { ...loc, locations } : loc
+                    index === existingIndex ? { ...loc, locations } : loc,
                 );
             } else {
                 // If detailId doesn't exist, add a new entry
@@ -128,6 +132,11 @@ const AddLocationsForm = ({ open, onClose, dataReceiptDetail, updateDataReceiptD
         try {
             const response = await getExaminationItem(dataReceiptDetail.id);
             console.log('API Response:', response);
+            if (response.status === '200 OK') {
+                onSave && onSave(response.message);
+                // Đóng form
+                onClose && onClose();
+            }
         } catch (error) {
             console.error('Error calling getExaminationItem API:', error);
         }
@@ -142,6 +151,13 @@ const AddLocationsForm = ({ open, onClose, dataReceiptDetail, updateDataReceiptD
             })
             .catch((error) => console.error('Error fetching locations:', error));
     }, []);
+
+    const handleSaveLocation = (successMessage) => {
+        setSnackbarSuccessMessage(
+            successMessage === 'Update item locations successfully' ? 'Cập nhật vị trí thành công!' : 'Thành công',
+        );
+        setSnackbarSuccessOpen(true);
+    };
 
     return (
         <>
@@ -177,28 +193,34 @@ const AddLocationsForm = ({ open, onClose, dataReceiptDetail, updateDataReceiptD
 
                                             <TableCell>
                                                 {/* Log values to check */}
-                                                {console.log('Button Condition:', !locationQuantities[detail.id] < detail.quantity && !selectedLocationsFlag[detail.id])}
-
-                                                {!locationQuantities[detail.id] > 0 && !selectedLocationsFlag[detail.id] && (
-                                                    <Button
-                                                        variant="contained"
-                                                        color="primary"
-                                                        onClick={() => handleOpenAddCategoryDialog(detail.id)}
-                                                        disabled={selectedLocationsFlag[detail.id]}
-                                                    >
-                                                        Chọn vị trí
-                                                    </Button>
+                                                {console.log(
+                                                    'Button Condition:',
+                                                    !locationQuantities[detail.id] < detail.quantity &&
+                                                        !selectedLocationsFlag[detail.id],
                                                 )}
+
+                                                {!locationQuantities[detail.id] > 0 &&
+                                                    !selectedLocationsFlag[detail.id] && (
+                                                        <Button
+                                                            variant="contained"
+                                                            color="primary"
+                                                            onClick={() => handleOpenAddCategoryDialog(detail.id)}
+                                                            disabled={selectedLocationsFlag[detail.id]}
+                                                        >
+                                                            Chọn vị trí
+                                                        </Button>
+                                                    )}
                                             </TableCell>
                                             <UpdateLocationsForm
-                                                open={openAddCategoryDialog}  // Use the correct state variable here
+                                                open={openAddCategoryDialog} // Use the correct state variable here
                                                 onClose={handleCloseAddCategoryDialog}
                                                 dataReceiptDetail={dataReceiptDetail}
-                                                details={dataReceiptDetail.details}
+                                                itembylocation={dataReceiptDetail.details.map((item) => item.id)}
                                                 detailId={selectedDetailId}
-                                                onUpdate={handleUpdateLocations}  // Pass the handleUpdateLocations function here
+                                                onUpdate={handleUpdateLocations} // Pass the handleUpdateLocations function here
                                                 selectedLocations={selectedLocations[selectedDetailId] || []}
                                                 toLocationData={toLocation_id}
+                                                onSave={handleSaveLocation}
                                             />
                                         </TableRow>
                                     ))}
@@ -210,12 +232,19 @@ const AddLocationsForm = ({ open, onClose, dataReceiptDetail, updateDataReceiptD
                     <Button variant="contained" color="primary" onClick={handleConfirm}>
                         Lưu
                     </Button>
+                    <SnackbarSuccess
+                        open={snackbarSuccessOpen}
+                        handleClose={() => {
+                            setSnackbarSuccessOpen(false);
+                            setSnackbarSuccessMessage('');
+                        }}
+                        message={snackbarSuccessMessage}
+                        style={{ bottom: '16px', right: '16px' }}
+                    />
                 </div>
             </Dialog>
         </>
     );
 };
-
-
 
 export default AddLocationsForm;

@@ -34,6 +34,7 @@ import {
 
 import CreateImportReceiptForm from './CreateImportReceiptForm';
 import { getAllImportReceipt } from '~/data/mutation/importReceipt/ImportReceipt-mutation';
+import SnackbarError from '~/components/alert/SnackbarError';
 
 const ImportReceiptDetailForm = ({
     importReceipt,
@@ -72,21 +73,17 @@ const ImportReceiptDetailForm = ({
         details: [],
     });
 
-    //thông báo
-    const [isSuccess, setIsSuccess] = useState(false);
-    const [isError, setIsError] = useState(false);
-    const [message, setMessage] = useState('');
-    const [successMessage, setSuccessMessage] = useState('');
+    //========================== Hàm notification của trang ==================================
+    const [open1, setOpen1] = React.useState(false);
     const [errorMessage, setErrorMessage] = useState('');
 
-    const handleMessage = (message) => {
-        setOpen(true);
-        // Đặt logic hiển thị nội dung thông báo từ API ở đây
-        if (message === 'Update SubCategory status successfully.') {
-            setMessage('Cập nhập trạng thái danh mục thành công');
-        } else if (message === 'Update SubCategory successfully.') {
-            setMessage('Cập nhập danh mục thành công');
-            console.error('Error message:', errorMessage);
+    const handleErrorMessage = (message) => {
+        setOpen1(true);
+        setErrorMessage(message);
+        if (message === 'Invalid request') {
+            setErrorMessage('Yêu cầu không hợp lệ !');
+        } else if (message === 'Receipt is not in the approved state for processing') {
+            setErrorMessage('Phiếu không ở trạng thái được phê duyệt để xử lý !');
         }
     };
 
@@ -95,7 +92,8 @@ const ImportReceiptDetailForm = ({
             return;
         }
 
-        setOpen(false);
+        setOpen1(false);
+        setErrorMessage('');
     };
 
     const action = (
@@ -106,6 +104,8 @@ const ImportReceiptDetailForm = ({
             </IconButton>
         </React.Fragment>
     );
+
+    //========================== Hàm notification của trang ==================================
 
     const handleTab1DataChange = (event) => {
         // Cập nhật dữ liệu cho tab 1 tại đây
@@ -210,64 +210,28 @@ const ImportReceiptDetailForm = ({
             const response = await editImportReceipt(importReceiptId, editedImportReceipt);
 
             if (response.status === '200 OK') {
-                setIsSuccess(true);
-                setIsError(false);
-                setSuccessMessage(response.message);
-                handleMessage(response.message);
             }
             updateImportReceiptInList(response.data);
             console.log('Product updated:', response);
         } catch (error) {
             console.error('An error occurred while updating the product:', error);
-            setIsError(true);
-            setIsSuccess(false);
-            if (error.response?.data?.message === 'Invalid request') {
-                setErrorMessage('Yêu cầu không hợp lệ');
-            }
-            if (error.response?.data?.error === '404 NOT_FOUND') {
-                setErrorMessage('Mô tả quá dài');
-            }
         }
     };
 
     const updateImportReceiptConfirm = async () => {
         try {
-            let newStatus = currentStatus === 'Pending_Approval' ? 'Inactive' : 'Approved';
+            if (currentStatus !== 'Pending_Approval') {
+                const errorMessage = 'Không thể được xác nhận. Nó không ở trạng thái Đang chờ phê duyệt.';
+                handleErrorMessage(errorMessage);
+                return;
+            }
+
+            const newStatus = 'Approved'; // Set the desired status
 
             const response = await editImportReceiptConfirm(importReceiptId, newStatus);
 
             if (response.status === '200 OK') {
-                setIsSuccess(true);
-                setIsError(false);
-                setSuccessMessage(response.message);
-                handleMessage(response.message);
-            }
-
-            updateImportReceiptConfirmInList(importReceiptId, newStatus);
-            setCurrentStatus(newStatus);
-
-            console.log('Product status updated:', response);
-        } catch (error) {
-            // console.error('Error updating category status:', error);
-            // setIsError(true);
-            // setIsSuccess(false);
-            // setErrorMessage(error.response.data.message);
-            // if (error.response) {
-            //     console.log('Error response:', error.response);
-            // }
-        }
-    };
-    const updateReceiptStartImport = async () => {
-        try {
-            let newStatus = currentStatus === 'Approved' ? 'Inactive' : 'Completed';
-
-            const response = await editReceiptStartImport(importReceiptId, newStatus);
-
-            if (response.status === '200 OK') {
-                setIsSuccess(true);
-                setIsError(false);
-                setSuccessMessage(response.message);
-                handleMessage(response.message);
+                // Handle success if needed
             }
 
             updateImportReceiptConfirmInList(importReceiptId, newStatus);
@@ -276,12 +240,31 @@ const ImportReceiptDetailForm = ({
             console.log('Product status updated:', response);
         } catch (error) {
             console.error('Error updating category status:', error);
-            setIsError(true);
-            setIsSuccess(false);
-            setErrorMessage(error.response.data.message);
-            if (error.response) {
-                console.log('Error response:', error.response);
+            handleErrorMessage(error.response?.data?.message || 'An error occurred.');
+        }
+    };
+
+    const updateReceiptStartImport = async () => {
+        try {
+            if (currentStatus !== 'Approved') {
+                const errorMessage = 'Không thể Tiến hành nhập kho. Nó không ở trạng thái Đã xác nhận.';
+                handleErrorMessage(errorMessage);
+                return;
             }
+
+            const newStatus = 'IN_PROGRESS';
+
+            const response = await editReceiptStartImport(importReceiptId, newStatus);
+
+            if (response.status === '200 OK') {
+            }
+
+            updateImportReceiptConfirmInList(importReceiptId, newStatus);
+            setCurrentStatus(newStatus);
+
+            console.log('Product status updated:', response);
+        } catch (error) {
+            console.error('Error updating category status:', error);
         }
     };
     const handleOpenForm = () => {
@@ -584,36 +567,19 @@ const ImportReceiptDetailForm = ({
                                 <Button variant="contained" color="primary" onClick={updateImportReceiptConfirm}>
                                     Xác nhận
                                 </Button>
-                                <Snackbar
-                                    open={open}
-                                    autoHideDuration={6000}
-                                    onClose={handleClose}
-                                    anchorOrigin={{
-                                        vertical: 'bottom',
-                                        horizontal: 'right',
-                                    }}
-                                    message={message}
-                                    action={action}
-                                    style={{ bottom: '16px', right: '16px' }}
-                                />
                             </div>
                             <div>
                                 <Button variant="contained" color="warning" onClick={updateReceiptStartImport}>
                                     Tiến hành nhập kho
                                 </Button>
-                                <Snackbar
-                                    open={open}
-                                    autoHideDuration={6000}
-                                    onClose={handleClose}
-                                    anchorOrigin={{
-                                        vertical: 'bottom',
-                                        horizontal: 'right',
-                                    }}
-                                    message={message}
-                                    action={action}
-                                    style={{ bottom: '16px', right: '16px' }}
-                                />
                             </div>
+                            <SnackbarError
+                                open={open1}
+                                handleClose={handleClose}
+                                message={errorMessage}
+                                action={action}
+                                style={{ bottom: '16px', right: '16px' }}
+                            />
                             {/* <Button variant="outlined" color="error" onClick={handleClear}>
                                 Hủy bỏ
                             </Button> */}

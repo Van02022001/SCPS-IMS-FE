@@ -24,3 +24,8 @@ export const getAllLocationByItem = async (itemId) => {
     const response = await axiosInstance.get(`/locations/locations-by-item/${itemId}`);
     return response.data;
 }
+
+export const getLocationsByEmptyItem = async (itemId) => {
+    const response = await axiosInstance.get(`/locations/locations-by-empty-item/${itemId}`);
+    return response.data;
+}
