@@ -61,6 +61,8 @@ const UpdateLocationsForm = ({
             setErrorMessage('Số lượng sản phẩm không đúng với số lượng sản phẩm nhập kho !');
         } else if (message === 'ReceiptDetail was imported in location') {
             setErrorMessage('Số lượng của phiếu này đã được thêm vào địa chỉ !');
+        } else if (message === 'The location already has the others item') {
+            setErrorMessage('Vị trí đã có sản phẩm khác !');
         }
     };
 
@@ -185,11 +187,19 @@ const UpdateLocationsForm = ({
         // Stop event propagation to prevent hiding the input
         event.stopPropagation();
 
-        setQuantityMap((prevQuantityMap) => ({
-            ...prevQuantityMap,
-            [locationId]: event.target.value,
-        }));
+        const inputValue = event.target.value;
+
+        // Validate if the input is a positive integer between 1 and 1000
+        const isValidInput = /^(?:[1-9]\d{0,2}|1000)$/.test(inputValue);
+
+        if (isValidInput || inputValue === '') {
+            setQuantityMap((prevQuantityMap) => ({
+                ...prevQuantityMap,
+                [locationId]: inputValue,
+            }));
+        }
     };
+
     const handleOpenCreateLocation = () => {
         setCreateLocationFormOpen(true);
     };
@@ -209,13 +219,15 @@ const UpdateLocationsForm = ({
         setCreateLocationFormOpen(false);
     };
 
-    const handleSaveLocation = (successMessage) => {
+    const handleSaveLocation = (successMessage, newData) => {
         handleCloseCreateLocationDialog();
 
         setSnackbarSuccessMessage(
             successMessage === 'Create location successfully' ? 'Tạo thêm vị trí thành công!' : 'Thành công',
         );
         setSnackbarSuccessOpen(true);
+
+        setToLocation_id((prevTags) => [...prevTags, newData]);
     };
 
     return (

@@ -78,7 +78,7 @@ const AddLocationToWarehouse = ({ open, onClose, onSave }) => {
             const response = await createLocations(locationParams);
             console.log('Create location response:', response);
             if (response.status === '200 OK') {
-                onSave && onSave(response.message);
+                onSave && onSave(response.message, response.data);
                 // Đóng form
                 onClose && onClose();
             }

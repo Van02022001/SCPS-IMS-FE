@@ -90,9 +90,9 @@ const CreateCustomerForm = (props) => {
     };
     const validateName = (value) => {
         if (!value.trim()) {
-            return "Tên Khách hàng không được để trống"
+            return 'Tên Khách hàng không được để trống';
         } else if (!/^\p{Lu}/u.test(value)) {
-            return "Chữ cái đầu phải in hoa.";
+            return 'Chữ cái đầu phải in hoa.';
         }
         return null;
     };
@@ -101,47 +101,47 @@ const CreateCustomerForm = (props) => {
         const phoneDigits = value;
 
         if (!value.trim()) {
-            return "Số điện thoại không được để trống";
+            return 'Số điện thoại không được để trống';
         } else if (value[0] !== '0') {
-            return "Số điện thoại phải bắt đầu bằng số 0.";
+            return 'Số điện thoại phải bắt đầu bằng số 0.';
         } else if (phoneDigits.length !== 10) {
-            return "Số điện thoại phải có đúng 10 số.";
+            return 'Số điện thoại phải có đúng 10 số.';
         }
         return null;
     };
 
     const validateEmail = (value) => {
         if (!value.trim()) {
-            return "Email không được để trống.";
+            return 'Email không được để trống.';
         } else if (!/^[a-zA-Z0-9._-]+@gmail\.com$/.test(value)) {
-            return "Email phải có định dạng @gmail.com";
+            return 'Email phải có định dạng @gmail.com';
         }
         return null;
     };
 
     const validateTaxCode = (value) => {
         if (!value.trim()) {
-            return "Mã thuế không được để trống"
+            return 'Mã thuế không được để trống';
         } else if (!/^\p{Lu}/u.test(value)) {
-            return "Chữ cái đầu phải in hoa.";
+            return 'Chữ cái đầu phải in hoa.';
         }
         return null;
     };
 
     const validateAdress = (value) => {
         if (!value.trim()) {
-            return "Địa chỉ không được để trống.";
+            return 'Địa chỉ không được để trống.';
         } else if (!/^\p{Lu}/u.test(value)) {
-            return "Chữ cái đầu phải in hoa.";
+            return 'Chữ cái đầu phải in hoa.';
         }
         return null;
     };
 
     const validateDescription = (value) => {
         if (!value.trim()) {
-            return "Mô tả không được để trống.";
+            return 'Mô tả không được để trống.';
         } else if (!/^\p{Lu}/u.test(value)) {
-            return "Chữ cái đầu phải in hoa.";
+            return 'Chữ cái đầu phải in hoa.';
         }
         return null;
     };
@@ -213,12 +213,11 @@ const CreateCustomerForm = (props) => {
                 handleSuccessMessage(response.message);
 
                 handleCloseSnackbar();
-
             }
         } catch (error) {
             console.log(error);
             if (error.response?.status === 400) {
-                setErrorMessage('Vui lòng nhập thông tin để tạo!')
+                setErrorMessage('Vui lòng nhập thông tin để tạo!');
             }
             handleErrorMessage(error.response?.data?.message);
         }
@@ -372,13 +371,10 @@ const CreateCustomerForm = (props) => {
                                                     <MenuItem value="INDIVIDUAL">Cá nhân</MenuItem>
                                                     <MenuItem value="COMPANY">Công ty</MenuItem>
                                                 </Select>
-                                                <FormHelperText error={Boolean(typeError)}>
-                                                    {typeError}
-                                                </FormHelperText>
+                                                <FormHelperText error={Boolean(typeError)}>{typeError}</FormHelperText>
                                             </Grid>
                                         </Grid>
                                     </FormControl>
-
 
                                     <Grid
                                         container
@@ -397,6 +393,8 @@ const CreateCustomerForm = (props) => {
                                             size="small"
                                             variant="outlined"
                                             label="Mô tả"
+                                            multiline
+                                            rows={4}
                                             onChange={handleDescriptionChange}
                                             value={description}
                                             sx={{ width: '70%' }}

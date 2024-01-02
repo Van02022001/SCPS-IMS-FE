@@ -35,6 +35,7 @@ import {
 import CreateImportReceiptForm from './CreateImportReceiptForm';
 import { getAllImportReceipt } from '~/data/mutation/importReceipt/ImportReceipt-mutation';
 import SnackbarError from '~/components/alert/SnackbarError';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 
 const ImportReceiptDetailForm = ({
     importReceipt,
@@ -45,8 +46,6 @@ const ImportReceiptDetailForm = ({
     isOpen,
     mode,
 }) => {
-    const [open, setOpen] = React.useState(false);
-
     const [tab1Data, setTab1Data] = useState({ categories_id: [] });
     const [tab2Data, setTab2Data] = useState({});
 
@@ -74,8 +73,19 @@ const ImportReceiptDetailForm = ({
     });
 
     //========================== Hàm notification của trang ==================================
+    const [open, setOpen] = React.useState(false);
     const [open1, setOpen1] = React.useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+
+    const handleSuccessMessage = (message) => {
+        setOpen(true);
+        if (message === 'Import request receipt confirmed successfully') {
+            setSuccessMessage('Thành công');
+        } else if (message === 'Import process started successfully') {
+            setSuccessMessage('Thành công');
+        }
+    };
 
     const handleErrorMessage = (message) => {
         setOpen1(true);
@@ -91,8 +101,9 @@ const ImportReceiptDetailForm = ({
         if (reason === 'clickaway') {
             return;
         }
-
+        setOpen(false);
         setOpen1(false);
+        setSuccessMessage('');
         setErrorMessage('');
     };
 
@@ -221,7 +232,7 @@ const ImportReceiptDetailForm = ({
     const updateImportReceiptConfirm = async () => {
         try {
             if (currentStatus !== 'Pending_Approval') {
-                const errorMessage = 'Không thể được xác nhận. Nó không ở trạng thái Đang chờ phê duyệt.';
+                const errorMessage = 'Không thể xác nhận. Phiếu này không ở trạng thái Chờ phê duyệt !';
                 handleErrorMessage(errorMessage);
                 return;
             }
@@ -232,6 +243,7 @@ const ImportReceiptDetailForm = ({
 
             if (response.status === '200 OK') {
                 // Handle success if needed
+                handleSuccessMessage(response.message);
             }
 
             updateImportReceiptConfirmInList(importReceiptId, newStatus);
@@ -247,7 +259,7 @@ const ImportReceiptDetailForm = ({
     const updateReceiptStartImport = async () => {
         try {
             if (currentStatus !== 'Approved') {
-                const errorMessage = 'Không thể Tiến hành nhập kho. Nó không ở trạng thái Đã xác nhận.';
+                const errorMessage = 'Không thể Tiến hành nhập kho. Phiếu này không ở trạng thái Đã xác nhận !';
                 handleErrorMessage(errorMessage);
                 return;
             }
@@ -257,6 +269,7 @@ const ImportReceiptDetailForm = ({
             const response = await editReceiptStartImport(importReceiptId, newStatus);
 
             if (response.status === '200 OK') {
+                handleSuccessMessage(response.message);
             }
 
             updateImportReceiptConfirmInList(importReceiptId, newStatus);
@@ -291,6 +304,8 @@ const ImportReceiptDetailForm = ({
             console.log(validImportReceipst);
         } else {
             console.error('Không tìm thấy dữ liệu hợp lệ cho importReceiptId: ', importReceiptId);
+            const errorMessage = 'Tiến hành nhập kho để tạo phiếu !';
+            handleErrorMessage(errorMessage);
         }
     };
     const handleCloseForm = () => {
@@ -573,6 +588,13 @@ const ImportReceiptDetailForm = ({
                                     Tiến hành nhập kho
                                 </Button>
                             </div>
+                            <SnackbarSuccess
+                                open={open}
+                                handleClose={handleClose}
+                                message={successMessage}
+                                action={action}
+                                style={{ bottom: '16px', right: '16px' }}
+                            />
                             <SnackbarError
                                 open={open1}
                                 handleClose={handleClose}

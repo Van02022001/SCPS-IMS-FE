@@ -97,7 +97,6 @@ const ItemsDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mod
         </React.Fragment>
     );
 
-
     //========================== Hàm notification của trang ==================================
 
     useEffect(() => {
@@ -267,7 +266,12 @@ const ItemsDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mod
                 zIndex: 999,
             }}
         >
-            <Tabs value={selectedTab} onChange={(event, newValue) => setSelectedTab(newValue)} indicatorColor="primary" textColor="primary">
+            <Tabs
+                value={selectedTab}
+                onChange={(event, newValue) => setSelectedTab(newValue)}
+                indicatorColor="primary"
+                textColor="primary"
+            >
                 <Tab label="Thông tin" />
                 <Tab label="Lịch sử giá mua" />
             </Tabs>
@@ -287,11 +291,11 @@ const ItemsDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mod
                                 >
                                     <Typography variant="body1">Mã sản phẩm:</Typography>
                                     <TextField
-                                        disabled
+                                        InputProps={{ readOnly: true }}
                                         size="small"
                                         variant="outlined"
                                         label="Mã sản phẩm"
-                                        sx={{ width: '65%', marginRight: 5 }}
+                                        sx={{ width: '65%', marginRight: 5, pointerEvents: 'none' }}
                                         value={item.code}
                                     />
                                 </Grid>
@@ -306,11 +310,12 @@ const ItemsDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mod
                                     <Typography variant="body1">Danh mục sản phẩm:</Typography>
                                     <Grid xs={8.5}>
                                         <Select
+                                            InputProps={{ readOnly: true }}
                                             size="small"
                                             labelId="group-label"
                                             id="group-select"
                                             label="Danh mục"
-                                            sx={{ width: '91%', fontSize: '14px' }}
+                                            sx={{ width: '92%', fontSize: '16px', pointerEvents: 'none', marginLeft: 0.2 }}
                                             value={editedItem.sub_category_id ? editedItem.sub_category_id : ''}
                                             onChange={(e) => handleEdit('sub_category_id', e.target.value)}
                                             name="sub_category_id"
@@ -335,11 +340,12 @@ const ItemsDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mod
                                     <Typography variant="body1">Thương hiệu:</Typography>
                                     <Grid xs={8.5}>
                                         <Select
+                                            InputProps={{ readOnly: true }}
                                             size="small"
                                             labelId="group-label"
                                             id="group-select"
                                             label="Chi nhánh"
-                                            sx={{ width: '91%', fontSize: '14px' }}
+                                            sx={{ width: '92%', fontSize: '16px', pointerEvents: 'none', marginLeft: 0.2 }}
                                             value={editedItem.brand_id ? editedItem.brand_id : ''}
                                             onChange={(e) => handleEdit('brand_id', e.target.value)}
                                             name="brand_id"
@@ -353,7 +359,7 @@ const ItemsDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mod
                                     </Grid>
                                 </Grid>
 
-                                <Grid
+                                {/* <Grid
                                     container
                                     spacing={1}
                                     direction="row"
@@ -368,7 +374,7 @@ const ItemsDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mod
                                             labelId="group-label"
                                             id="group-select"
                                             label="Nhà cung cấp"
-                                            sx={{ width: '91%', fontSize: '14px' }}
+                                            sx={{ width: '91%', fontSize: '16px' }}
                                             value={editedItem.supplier_id ? editedItem.supplier_id : ''}
                                             onChange={(e) => handleEdit('supplier_id', e.target.value)}
                                             name="supplier_id"
@@ -380,7 +386,7 @@ const ItemsDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mod
                                             ))}
                                         </Select>
                                     </Grid>
-                                </Grid>
+                                </Grid> */}
 
                                 <Grid
                                     container
@@ -392,11 +398,11 @@ const ItemsDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mod
                                 >
                                     <Typography variant="body1">Người tạo:</Typography>
                                     <TextField
-                                        disabled
+                                        InputProps={{ readOnly: true }}
                                         size="small"
                                         variant="outlined"
                                         label="Người tạo"
-                                        sx={{ width: '65%', marginRight: 5 }}
+                                        sx={{ width: '65%', marginRight: 5, pointerEvents: 'none' }}
                                         value={
                                             item.createdBy.firstName +
                                             ' ' +
@@ -417,11 +423,12 @@ const ItemsDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mod
                                     <Typography variant="body1">Nguồn gốc:</Typography>
                                     <Grid xs={8.5}>
                                         <Select
+                                            InputProps={{ readOnly: true }}
                                             size="small"
                                             labelId="group-label"
                                             id="group-select"
                                             label="Nguồn gốc"
-                                            sx={{ width: '91%', fontSize: '14px' }}
+                                            sx={{ width: '92%', fontSize: '16px', pointerEvents: 'none', marginLeft: 0.2 }}
                                             value={editedItem.origin_id ? editedItem.origin_id : ''}
                                             onChange={(e) => handleEdit('origin_id', e.target.value)}
                                             name="origin_id"
@@ -448,7 +455,8 @@ const ItemsDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mod
                                             size="small"
                                             variant="outlined"
                                             label="Vị trí"
-                                            disabled
+                                            InputProps={{ readOnly: true }}
+                                            
                                             multiline
                                             sx={{ width: '91%', marginRight: 1 }}
                                             value={
@@ -474,11 +482,11 @@ const ItemsDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mod
                                 >
                                     <Typography variant="body1">Ngày tạo:</Typography>
                                     <TextField
-                                        disabled
+                                        InputProps={{ readOnly: true }}
                                         size="small"
                                         variant="outlined"
                                         label="Ngày tạo"
-                                        sx={{ width: '65%', marginRight: 5 }}
+                                        sx={{ width: '65%', marginRight: 5, pointerEvents: 'none' }}
                                         value={item.createdAt}
                                     />
                                 </Grid>
@@ -495,11 +503,11 @@ const ItemsDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mod
                                 >
                                     <Typography variant="body1">Trạng thái:</Typography>
                                     <TextField
-                                        disabled
+                                        InputProps={{ readOnly: true }}
                                         size="small"
                                         variant="outlined"
                                         label="Trạng thái"
-                                        sx={{ width: '70%', marginRight: 5 }}
+                                        sx={{ width: '70%', marginRight: 5, pointerEvents: 'none' }}
                                         value={item.status === 'Active' ? 'Đang hoạt động' : 'Ngừng hoạt động'}
                                     />
                                 </Grid>
@@ -513,11 +521,11 @@ const ItemsDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mod
                                 >
                                     <Typography variant="body1">Số lượng:</Typography>
                                     <TextField
-                                        disabled
+                                        InputProps={{ readOnly: true }}
                                         size="small"
                                         variant="outlined"
                                         label="Số lượng"
-                                        sx={{ width: '70%', marginRight: 5 }}
+                                        sx={{ width: '70%', marginRight: 5, pointerEvents: 'none' }}
                                         value={item.quantity}
                                     />
                                 </Grid>
@@ -529,17 +537,17 @@ const ItemsDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mod
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
-                                    <Typography variant="body1">Hàng có sẵn:</Typography>
+                                    <Typography variant="body1">Giá mua:</Typography>
                                     <TextField
-                                        disabled
+                                        InputProps={{ readOnly: true }}
                                         size="small"
                                         variant="outlined"
-                                        label="Hàng có sẵn"
-                                        sx={{ width: '70%', marginRight: 5 }}
-                                        value={item.available}
+                                        label="Giá mua"
+                                        sx={{ width: '70%', marginRight: 5, pointerEvents: 'none' }}
+                                        value={item.purchasePrice ? item.purchasePrice.price : ''}
                                     />
                                 </Grid>
-                                {/* <Grid
+                                <Grid
                                     container
                                     spacing={1}
                                     direction="row"
@@ -547,51 +555,17 @@ const ItemsDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mod
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
-                                    <Typography variant="body1">Giá bán :</Typography>
+                                    <Typography variant="body1">Giá bán:</Typography>
                                     <TextField
+                                        InputProps={{ readOnly: true }}
                                         size="small"
                                         variant="outlined"
                                         label="Giá bán"
-                                        sx={{ width: '70%', marginRight: 5 }}
-                                        value={item.pricing !== null ? item.pricing.price : 'Chưa có'}
-                                    />
-                                </Grid> */}
-                                {/* <Grid
-                                    container
-                                    spacing={1}
-                                    direction="row"
-                                    justifyContent="space-between"
-                                    alignItems="center"
-                                    sx={{ marginBottom: 4, gap: 5 }}
-                                >
-                                    <Typography variant="body1">Giá nhập:</Typography>
-                                    <TextField
-                                        size="small"
-                                        variant="outlined"
-                                        label="Giá nhập"
-                                        sx={{ width: '70%', marginRight: 5 }}
-                                        value={item.purchasePrice !== null ? item.purchasePrice.price : 'Chưa có'}
-                                    />
-                                </Grid> */}
-                                <Grid
-                                    container
-                                    spacing={1}
-                                    direction="row"
-                                    justifyContent="space-between"
-                                    alignItems="center"
-                                    sx={{ marginBottom: 4, gap: 5 }}
-                                >
-                                    <Typography variant="body1">Đã bán:</Typography>
-                                    <TextField
-                                        disabled
-                                        size="small"
-                                        variant="outlined"
-                                        label="Đã bán"
-                                        sx={{ width: '70%', marginRight: 5 }}
-                                        value={item.sold}
+                                        sx={{ width: '70%', marginRight: 5, pointerEvents: 'none' }}
+                                        value={item.pricing ? item.pricing.price : ''}
                                     />
                                 </Grid>
-                                <Grid
+                                {/* <Grid
                                     container
                                     spacing={1}
                                     direction="row"
@@ -601,14 +575,14 @@ const ItemsDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mod
                                 >
                                     <Typography variant="body1">Hàng trả lại:</Typography>
                                     <TextField
-                                        disabled
+                                        InputProps={{ readOnly: true }}
                                         size="small"
                                         variant="outlined"
                                         label="Hàng trả lại"
-                                        sx={{ width: '70%', marginRight: 5 }}
+                                        sx={{ width: '70%', marginRight: 5, pointerEvents: 'none' }}
                                         value={item.defective}
                                     />
-                                </Grid>
+                                </Grid> */}
                                 <Grid
                                     container
                                     spacing={1}
@@ -619,11 +593,11 @@ const ItemsDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mod
                                 >
                                     <Typography variant="body1">Ngày cập nhật:</Typography>
                                     <TextField
-                                        disabled
+                                        InputProps={{ readOnly: true }}
                                         size="small"
                                         variant="outlined"
                                         label="Ngày cập nhật"
-                                        sx={{ width: '70%', marginRight: 5 }}
+                                        sx={{ width: '70%', marginRight: 5, pointerEvents: 'none' }}
                                         value={item.updatedAt}
                                     />
                                 </Grid>
@@ -635,15 +609,16 @@ const ItemsDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mod
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 2 }}
                                 >
-                                    <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
+                                    <Typography variant="subtitle1" sx={{ fontSize: '16px' }}>
                                         Định mức tồn:{' '}
                                     </Typography>
-                                    <div style={{ display: 'flex', marginRight: 50, gap: 25 }}>
+                                    <div style={{ display: 'flex', marginRight: 50, gap: 38 }}>
                                         <FormControl sx={{ m: 0.2 }} variant="standard">
                                             <TextField
+                                                InputProps={{ readOnly: true }}
                                                 id="demo-customized-textbox"
                                                 label="Ít nhất"
-                                                sx={{ width: '106%' }}
+                                                sx={{ width: '106%', pointerEvents: 'none' }}
                                                 value={editedItem.minStockLevel}
                                                 onChange={(e) => handleEdit('minStockLevel', e.target.value)}
                                                 name="minStockLevel"
@@ -651,9 +626,10 @@ const ItemsDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mod
                                         </FormControl>
                                         <FormControl sx={{ m: 0.2 }} variant="standard">
                                             <TextField
+                                                InputProps={{ readOnly: true }}
                                                 id="demo-customized-textbox"
                                                 label="Nhiều nhất"
-                                                sx={{ width: '106%' }}
+                                                sx={{ width: '106%', pointerEvents: 'none' }}
                                                 value={editedItem.maxStockLevel}
                                                 onChange={(e) => handleEdit('maxStockLevel', e.target.value)}
                                                 name="maxStockLevel"
@@ -664,7 +640,6 @@ const ItemsDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mod
                             </Grid>
                         </Grid>
                     </Stack>
-
                 </div>
             )}
             {selectedTab === 1 && (

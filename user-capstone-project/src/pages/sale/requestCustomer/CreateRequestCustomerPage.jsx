@@ -335,8 +335,14 @@ const CreateRequestCustomerPage = () => {
                                         }}
                                     >
                                         <Typography variant="h6">Thông tin đơn hàng</Typography>
-                                        <Typography variant="body1">Tên khách hàng: {selectedCustomerId ? selectedCustomerId.name : 'Chưa có khách hàng'}</Typography>
-                                        <Typography variant="body1">Địa chỉ: {selectedCustomerId ? selectedCustomerId.address : 'Chưa có khách hàng'}</Typography>
+                                        <Typography variant="body1">
+                                            Tên khách hàng:{' '}
+                                            {selectedCustomerId ? selectedCustomerId.name : 'Chưa có khách hàng'}
+                                        </Typography>
+                                        <Typography variant="body1">
+                                            Địa chỉ:{' '}
+                                            {selectedCustomerId ? selectedCustomerId.address : 'Chưa có khách hàng'}
+                                        </Typography>
                                     </FormControl>
                                 </Paper>
                             </Grid>
@@ -467,27 +473,23 @@ const CreateRequestCustomerPage = () => {
                                                     </Typography>
                                                 )}
                                                 {/* Nút chuyển trang 1/2 (nếu cần) và nút thanh toán */}
-
                                             </List>
                                         </DialogContent>
                                     </div>
 
-                                    <div sx={{
-                                        position: 'absolute',
-                                        bottom: 10,
-                                        right: 40,
-                                    }}>
+                                    <div
+                                        style={{
+                                            position: 'absolute',
+                                            bottom: 50, 
+                                            right: 34,
+                                        }}
+                                    >
                                         <Button>Trang</Button>
-                                        <Button
-                                            color="primary"
-                                            variant="contained"
-                                            onClick={handleCreateImportReceipt}
-                                        >
+                                        <Button color="primary" variant="contained" onClick={handleCreateImportReceipt}>
                                             Lưu
                                         </Button>
                                     </div>
                                 </Paper>
-
                             </Grid>
                         </Grid>
                     </Stack>

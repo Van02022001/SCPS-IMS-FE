@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Typography, Tab, Tabs, Stack, Grid, TextField, Button } from '@mui/material';
 
-
 import { editStatusCustomer } from '~/data/mutation/customer/customer-mutation';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
@@ -10,21 +9,13 @@ import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 import SnackbarError from '~/components/alert/SnackbarError';
 import CustomDialog from '~/components/alert/ConfirmDialog';
 
-
-const CustomerDetailForm = ({
-    customer,
-    customerId,
-    updateCustomerStatusInList,
-    onClose,
-    isOpen,
-    mode,
-}) => {
+const CustomerDetailForm = ({ customer, customerId, updateCustomerStatusInList, onClose, isOpen, mode }) => {
     // const [tab1Data, setTab1Data] = useState({ categories_id: [] });
     // const [tab2Data, setTab2Data] = useState({});
     const [formHeight, setFormHeight] = useState(0);
     const [selectedTab, setSelectedTab] = useState(0);
 
-    const [editedCustomer, setEditedCustomer,] = useState(null);
+    const [editedCustomer, setEditedCustomer] = useState(null);
     const [currentStatus, setCurrentStatus] = useState('');
 
     //thông báo
@@ -121,7 +112,6 @@ const CustomerDetailForm = ({
             const customers = customer.find((o) => o.customerId === customerId);
             console.log(customers);
             if (customers) {
-
                 const editedCustomer = {
                     name: customers.name,
                     phone: customers.phone,
@@ -138,7 +128,6 @@ const CustomerDetailForm = ({
             }
         }
     }, [customerId, customer, mode]);
-
 
     const customers = customer.find((o) => o.id === customerId);
 
@@ -171,7 +160,6 @@ const CustomerDetailForm = ({
         }
     };
 
-
     const handleEdit = (field, value) => {
         console.log(`Field: ${field}, Value: ${value}`);
         if (field === 'categories_id') {
@@ -194,8 +182,6 @@ const CustomerDetailForm = ({
         }
     };
 
-
-
     return (
         <div
             id="customerDetailForm"
@@ -205,7 +191,12 @@ const CustomerDetailForm = ({
                 zIndex: 999,
             }}
         >
-            <Tabs value={selectedTab} onChange={(event, newValue) => setSelectedTab(newValue)} indicatorColor="primary" textColor="primary">
+            <Tabs
+                value={selectedTab}
+                onChange={(event, newValue) => setSelectedTab(newValue)}
+                indicatorColor="primary"
+                textColor="primary"
+            >
                 <Tab label="Thông tin" />
             </Tabs>
 
@@ -214,7 +205,6 @@ const CustomerDetailForm = ({
                     <Stack spacing={4} margin={2}>
                         <Grid container spacing={2}>
                             <Grid item xs={6}>
-
                                 <Grid
                                     container
                                     spacing={1}
@@ -228,7 +218,8 @@ const CustomerDetailForm = ({
                                         size="small"
                                         variant="outlined"
                                         label="Tên sản phẩm"
-                                        sx={{ width: '65%', marginRight: 5 }}
+                                        sx={{ width: '65%', marginRight: 5, pointerEvents: 'none' }}
+                                        InputProps={{ readOnly: true }}
                                         value={editedCustomer ? editedCustomer.name : ''}
                                         onChange={(e) => handleEdit('name', e.target.value)}
                                     />
@@ -243,11 +234,11 @@ const CustomerDetailForm = ({
                                 >
                                     <Typography variant="body1">Số điện thoại:</Typography>
                                     <TextField
-
                                         size="small"
                                         variant="outlined"
                                         label="Số điện thoại"
-                                        sx={{ width: '65%', marginRight: 5 }}
+                                        sx={{ width: '65%', marginRight: 5, pointerEvents: 'none' }}
+                                        InputProps={{ readOnly: true }}
                                         value={editedCustomer ? editedCustomer.phone : ''}
                                     />
                                 </Grid>
@@ -265,7 +256,8 @@ const CustomerDetailForm = ({
                                         size="small"
                                         variant="outlined"
                                         label="Email"
-                                        sx={{ width: '65%', marginRight: 5 }}
+                                        sx={{ width: '65%', marginRight: 5, pointerEvents: 'none' }}
+                                        InputProps={{ readOnly: true }}
                                         value={editedCustomer ? editedCustomer.email : ''}
                                     />
                                 </Grid>
@@ -282,8 +274,17 @@ const CustomerDetailForm = ({
                                         size="small"
                                         variant="outlined"
                                         label="Hình thức"
-                                        sx={{ width: '65%', marginRight: 5 }}
-                                        value={editedCustomer ? ((editedCustomer.type === "INDIVIDUAL") ? 'Cá nhân' : (editedCustomer.type === "COMPANY") ? 'Công ty' : 'Không có') : ''}
+                                        sx={{ width: '65%', marginRight: 5, pointerEvents: 'none' }}
+                                        InputProps={{ readOnly: true }}
+                                        value={
+                                            editedCustomer
+                                                ? editedCustomer.type === 'INDIVIDUAL'
+                                                    ? 'Cá nhân'
+                                                    : editedCustomer.type === 'COMPANY'
+                                                    ? 'Công ty'
+                                                    : 'Không có'
+                                                : ''
+                                        }
                                     />
                                 </Grid>
                             </Grid>
@@ -303,7 +304,8 @@ const CustomerDetailForm = ({
                                         size="small"
                                         variant="outlined"
                                         label="Trạng thái"
-                                        sx={{ width: '70%', marginRight: 5 }}
+                                        sx={{ width: '70%', marginRight: 5, pointerEvents: 'none' }}
+                                        InputProps={{ readOnly: true }}
                                         value={currentStatus === 'Active' ? 'Đang hoạt động' : 'Ngưng hoạt động'}
                                     />
                                 </Grid>
@@ -321,7 +323,8 @@ const CustomerDetailForm = ({
                                         size="small"
                                         variant="outlined"
                                         label="Mã thuế"
-                                        sx={{ width: '70%', marginRight: 5 }}
+                                        sx={{ width: '70%', marginRight: 5, pointerEvents: 'none' }}
+                                        InputProps={{ readOnly: true }}
                                         value={editedCustomer ? editedCustomer.taxCode : ''}
                                     />
                                 </Grid>
@@ -339,7 +342,8 @@ const CustomerDetailForm = ({
                                         size="small"
                                         variant="outlined"
                                         label="Địa chỉ"
-                                        sx={{ width: '70%', marginRight: 5 }}
+                                        sx={{ width: '70%', marginRight: 5, pointerEvents: 'none' }}
+                                        InputProps={{ readOnly: true }}
                                         value={editedCustomer ? editedCustomer.address : ''}
                                     />
                                 </Grid>
@@ -360,7 +364,8 @@ const CustomerDetailForm = ({
                                         size="small"
                                         variant="outlined"
                                         label="Mô tả"
-                                        sx={{ width: '70%', marginRight: 5 }}
+                                        sx={{ width: '70%', marginRight: 5, pointerEvents: 'none' }}
+                                        InputProps={{ readOnly: true }}
                                         value={editedCustomer ? editedCustomer.description : ''}
                                         onChange={(e) => handleEdit('description', e.target.value)}
                                     />
@@ -398,10 +403,8 @@ const CustomerDetailForm = ({
                             />
                         </Grid>
                     </Stack>
-
                 </div>
             )}
-
         </div>
     );
 };

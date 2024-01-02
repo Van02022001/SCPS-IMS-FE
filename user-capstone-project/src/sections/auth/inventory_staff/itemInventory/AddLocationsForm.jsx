@@ -9,13 +9,15 @@ import {
     TableRow,
     TableCell,
     CardContent,
+    IconButton,
 } from '@mui/material';
-
+import CloseIcon from '@mui/icons-material/Close';
 import { getExaminationItem } from '~/data/mutation/items/item-mutation';
 import { getAllLocation, getLocationDetails } from '~/data/mutation/location/location-mutation';
 import InventorySelection from './InventorySelection';
 import UpdateLocationsForm from './UpdateLocationsForm';
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
+import SnackbarError from '~/components/alert/SnackbarError';
 
 const AddLocationsForm = ({ open, onClose, dataReceiptDetail, updateDataReceiptDetail, onUpdate, onSave }) => {
     const [quantity, setQuantity] = useState('');
@@ -36,6 +38,40 @@ const AddLocationsForm = ({ open, onClose, dataReceiptDetail, updateDataReceiptD
     // Thông báo
     const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
     const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
+    //========================== Hàm notification của trang ==================================
+    const [open1, setOpen1] = React.useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+
+    const handleErrorMessage = (message) => {
+        setOpen1(true);
+        if (message === 'Invalid request') {
+            setErrorMessage('Yêu cầu không hợp lệ !');
+        } else if (message === 'Các sản phẩm chưa được cập nhật hết vị trí.') {
+            setErrorMessage('Các sản phẩm chưa được cập nhật hết vị trí !');
+        } else if (message === 'ReceiptDetail was imported in location') {
+            setErrorMessage('Số lượng của phiếu này đã được thêm vào địa chỉ !');
+        }
+    };
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpen1(false);
+        setErrorMessage('');
+    };
+
+    const action = (
+        <React.Fragment>
+            <Button color="secondary" size="small" onClick={handleClose}></Button>
+            <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
+                <CloseIcon fontSize="lage" />
+            </IconButton>
+        </React.Fragment>
+    );
+
+    //========================== Hàm notification của trang ==================================
 
     const handleUpdateLocations = ({ detailId, locations }) => {
         console.log('Updating flag for detailId:', detailId);
@@ -83,8 +119,9 @@ const AddLocationsForm = ({ open, onClose, dataReceiptDetail, updateDataReceiptD
     // };
 
     const handleClosePopup = () => {
-        setShowLocationSelection(false);
-        onClose();
+        const message = 'Lưu để xác nhận và đóng';
+        setOpen1(true);
+        setErrorMessage(message);
     };
 
     // const handleUpdate = ({ detailId, quantity, locations }) => {
@@ -139,6 +176,7 @@ const AddLocationsForm = ({ open, onClose, dataReceiptDetail, updateDataReceiptD
             }
         } catch (error) {
             console.error('Error calling getExaminationItem API:', error);
+            handleErrorMessage(error.response.data.message);
         }
     };
 
@@ -161,8 +199,13 @@ const AddLocationsForm = ({ open, onClose, dataReceiptDetail, updateDataReceiptD
 
     return (
         <>
-            <Dialog open={open} onClose={handleClosePopup}>
-                <DialogTitle>Hãy Chọn Địa Chỉ Trong Kho</DialogTitle>
+            <Dialog open={open}>
+                <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    Hãy Chọn Địa Chỉ Trong Kho
+                    <IconButton edge="start" color="inherit" onClick={handleClosePopup} aria-label="close">
+                        <CloseIcon />
+                    </IconButton>
+                </DialogTitle>
                 <DialogContent>
                     <CardContent>
                         <Table>
@@ -239,6 +282,13 @@ const AddLocationsForm = ({ open, onClose, dataReceiptDetail, updateDataReceiptD
                             setSnackbarSuccessMessage('');
                         }}
                         message={snackbarSuccessMessage}
+                        style={{ bottom: '16px', right: '16px' }}
+                    />
+                    <SnackbarError
+                        open={open1}
+                        handleClose={handleClose}
+                        message={errorMessage}
+                        action={action}
                         style={{ bottom: '16px', right: '16px' }}
                     />
                 </div>
