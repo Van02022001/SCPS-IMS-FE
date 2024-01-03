@@ -47,6 +47,8 @@ import ExportReceiptPage from './pages/inventory_staff/transaction/exportReceipt
 import ExportRequestReceiptManagerPage from './pages/manager/transaction/requestExportReceipt/ExportRequestReceiptManagerPage';
 import ExportReceiptManagerPage from './pages/manager/transaction/exportReceipt/ExportReceiptManagerPage';
 import CreateTransferForm from './sections/auth/inventory_staff/warehouseInventory/CreateTransferForm';
+import InventoryCheckPage from './pages/inventory_staff/inventoryCheck/InventoryCheckPage';
+import CreateInventoryCheck from './pages/inventory_staff/inventoryCheck/CreateInventoryCheck';
 
 // ----------------------------------------------------------------------
 
@@ -133,8 +135,8 @@ const Router = () => {
                 { path: 'requests-export-receipt', element: <CustomerRequestPage/> },
                 { path: 'export-receipt', element: <ExportReceiptPage /> },
                 { path: 'bads-receipt', element: <BadsReceiptPage /> },
-
-
+                { path: 'inventory-check-item', element: <InventoryCheckPage/> },
+                { path: 'create-inventory-check', element: <CreateInventoryCheck/> },
             ],
         },
         {

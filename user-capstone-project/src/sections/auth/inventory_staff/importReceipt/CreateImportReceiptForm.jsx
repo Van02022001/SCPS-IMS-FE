@@ -24,7 +24,7 @@ import { getAllLocation } from '~/data/mutation/location/location-mutation';
 const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose }) => {
     const [quantities, setQuantities] = useState({});
     const [openAddCategoryDialog, setOpenAddCategoryDialog] = useState(false);
-    const [dataReceiptDetail, setDataReceiptDetail] = useState({});
+    const [dataReceiptDetail, setDataReceiptDetail] = useState(null);
     const [locationQuantities, setLocationQuantities] = useState({});
     const [selectedLocationsFlag, setSelectedLocationsFlag] = useState({});
     const [selectedDetailId, setSelectedDetailId] = useState(null);
@@ -33,7 +33,7 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose 
 
     const getDetailIds = () => {
         return dataReceiptDetail.details.map((detail) => detail.id);
-      };
+    };
 
     //========================== Hàm notification của trang ==================================
     const [open1, setOpen1] = React.useState(false);
@@ -204,14 +204,47 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose 
                                     >
                                         <TableCell>Tên sản phẩm</TableCell>
                                         <TableCell>Số lượng yêu cầu</TableCell>
-
                                         <TableCell>Đơn vị</TableCell>
                                         <TableCell>Số lượng thực tế</TableCell>
                                         <TableCell></TableCell>
                                     </TableRow>
-                                    {importReceipst.details &&
+                                    {dataReceiptDetail !== null ? (
+                                        dataReceiptDetail.details.map((detail) => (
+                                            <TableRow key={detail.id}>
+
+                                                <TableCell>{detail.itemName}</TableCell>
+                                                {detail.discrepancyLogs.map((quantity) => (
+                                                    < TableCell >
+                                                        {quantity.requiredQuantity}
+                                                    </TableCell>
+                                                ))}
+                                                <TableCell>{detail.unitName}</TableCell>
+                                                {detail.discrepancyLogs.map((quantity) => (
+                                                    < TableCell >
+                                                        {quantity.actualQuantity}
+                                                    </TableCell>
+                                                ))}
+                                                <TableCell>
+                                                    {!locationQuantities[detail.id] > 0 &&
+                                                        !selectedLocationsFlag[detail.id] && (
+                                                            <Button
+                                                                variant="contained"
+                                                                color="primary"
+                                                                onClick={() =>
+                                                                    handleOpenAddCategoryDialog(detail.id)
+                                                                }
+                                                                disabled={selectedLocationsFlag[detail.id]}
+                                                            >
+                                                                Chọn vị trí
+                                                            </Button>
+                                                        )}
+                                                </TableCell>
+                                            </TableRow>
+                                        ))
+                                    ) : (
                                         importReceipst.details.map((items) => (
                                             <TableRow key={items.id}>
+                                                {console.log(quantities[items.id])}
                                                 <TableCell>{items.itemName}</TableCell>
                                                 <TableCell>{items.quantity}</TableCell>
                                                 <TableCell>{items.unitName}</TableCell>
@@ -220,37 +253,15 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose 
                                                         style={{ width: '50%' }}
                                                         type="number"
                                                         value={quantities[items.id] || ''}
-                                                        onChange={(e) => handleQuantityChange(items.id, e.target.value)}
+                                                        onChange={(e) =>
+                                                            handleQuantityChange(items.id, e.target.value)
+                                                        }
                                                         label="Số lượng nhập thực tế"
                                                     />
                                                 </TableCell>
-                                                {dataReceiptDetail.details &&
-                                                    dataReceiptDetail.details.map((detail) => (
-                                                        <TableCell>
-                                                            {/* Log values to check */}
-                                                            {console.log(
-                                                                'Button Condition:',
-                                                                !locationQuantities[items.id] < items.quantity &&
-                                                                    !selectedLocationsFlag[items.id],
-                                                            )}
-
-                                                            {!locationQuantities[items.id] > 0 &&
-                                                                !selectedLocationsFlag[items.id] && (
-                                                                    <Button
-                                                                        variant="contained"
-                                                                        color="primary"
-                                                                        onClick={() =>
-                                                                            handleOpenAddCategoryDialog(detail.id)
-                                                                        }
-                                                                        disabled={selectedLocationsFlag[items.id]}
-                                                                    >
-                                                                        Chọn vị trí
-                                                                    </Button>
-                                                                )}
-                                                        </TableCell>
-                                                    ))}
                                             </TableRow>
-                                        ))}
+                                        ))
+                                    )}
                                     <div
                                         style={{
                                             display: 'flex',
@@ -314,7 +325,7 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose 
                         </Grid>
                     </Card>
                 </DialogContent>
-            </div>
+            </div >
         </>
     );
 };

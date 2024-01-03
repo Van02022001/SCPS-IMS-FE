@@ -278,6 +278,11 @@ const inventoryNavConfig = [
             },
         ],
     },
+    {
+        title: 'Kiểm kho',
+        icon: <ShoppingCart />,
+        path: '/inventory-staff/inventory-check-item',
+    },
     // { 
     //     title: 'login',
     //     path: '/login',
