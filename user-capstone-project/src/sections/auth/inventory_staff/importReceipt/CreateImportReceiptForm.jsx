@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     DialogContent,
     Table,
@@ -18,11 +18,23 @@ import AddLocationsForm from '../itemInventory/AddLocationsForm';
 import CloseIcon from '@mui/icons-material/Close';
 import SnackbarError from '~/components/alert/SnackbarError';
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
+import UpdateLocationsForm from '../itemInventory/UpdateLocationsForm';
+import { getAllLocation } from '~/data/mutation/location/location-mutation';
 
 const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose }) => {
     const [quantities, setQuantities] = useState({});
     const [openAddCategoryDialog, setOpenAddCategoryDialog] = useState(false);
     const [dataReceiptDetail, setDataReceiptDetail] = useState({});
+    const [locationQuantities, setLocationQuantities] = useState({});
+    const [selectedLocationsFlag, setSelectedLocationsFlag] = useState({});
+    const [selectedDetailId, setSelectedDetailId] = useState(null);
+    const [selectedLocations, setSelectedLocations] = useState([]);
+    const [toLocation_id, setToLocation_id] = useState([]);
+
+    const getDetailIds = () => {
+        return dataReceiptDetail.details.map((detail) => detail.id);
+      };
+
     //========================== Hàm notification của trang ==================================
     const [open1, setOpen1] = React.useState(false);
     const [errorMessage, setErrorMessage] = useState('');
@@ -62,13 +74,29 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose 
         setQuantities((prev) => ({ ...prev, [itemId]: value }));
     };
 
-    const handleOpenAddCategoryDialog = () => {
+    const handleOpenAddCategoryDialog = (detailId) => {
+        setSelectedDetailId(detailId);
         setOpenAddCategoryDialog(true);
     };
 
     const handleCloseAddCategoryDialog = () => {
         setOpenAddCategoryDialog(false);
     };
+
+    useEffect(() => {
+        console.log('Selected Locations Flag Updated:', selectedLocationsFlag);
+        console.log('Location Quantities Updated:', locationQuantities);
+    }, [selectedLocationsFlag, locationQuantities]);
+
+    useEffect(() => {
+        getAllLocation()
+            .then((response) => {
+                const data = response.data;
+                const dataArray = Array.isArray(data) ? data : [data];
+                setToLocation_id(dataArray);
+            })
+            .catch((error) => console.error('Error fetching locations:', error));
+    }, []);
 
     const handleSendToManager = async () => {
         try {
@@ -79,7 +107,7 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose 
 
             if (response.status === '201 CREATED') {
                 setDataReceiptDetail(response.data);
-                handleOpenAddCategoryDialog();
+                // handleOpenAddCategoryDialog();
                 onClose && onClose();
             }
         } catch (error) {
@@ -102,7 +130,25 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose 
     const handleClosePopup = () => {
         setOpenAddCategoryDialog(false);
         onCloseForm(); // Close the main popup
-      };
+    };
+
+    const handleUpdateLocations = ({ detailId, locations }) => {
+        console.log('Updating flag for detailId:', detailId);
+
+        setSelectedLocations((prevSelectedLocations) => {
+            const existingIndex = prevSelectedLocations.findIndex((loc) => loc.detailId === detailId);
+
+            if (existingIndex !== -1) {
+                // If detailId already exists, update the locations
+                return prevSelectedLocations.map((loc, index) =>
+                    index === existingIndex ? { ...loc, locations } : loc,
+                );
+            } else {
+                // If detailId doesn't exist, add a new entry
+                return [...prevSelectedLocations, { detailId, locations }];
+            }
+        });
+    };
 
     return (
         <>
@@ -158,29 +204,53 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose 
                                     >
                                         <TableCell>Tên sản phẩm</TableCell>
                                         <TableCell>Số lượng yêu cầu</TableCell>
-                                        <TableCell>Giá mua</TableCell>
-                                        <TableCell>Tổng tiền</TableCell>
+
                                         <TableCell>Đơn vị</TableCell>
-                                        <TableCell>Só lượng thực tế</TableCell>
+                                        <TableCell>Số lượng thực tế</TableCell>
+                                        <TableCell></TableCell>
                                     </TableRow>
-                                    {importReceipst.details.map((items) => (
-                                        <TableRow key={items.id}>
-                                            <TableCell>{items.itemName}</TableCell>
-                                            <TableCell>{items.quantity}</TableCell>
-                                            <TableCell>{items.price}</TableCell>
-                                            <TableCell>{items.totalPrice}</TableCell>
-                                            <TableCell>{items.unitName}</TableCell>
-                                            <TableCell>
-                                                <TextField
-                                                    style={{ width: '50%' }}
-                                                    type="number"
-                                                    value={quantities[items.id] || ''}
-                                                    onChange={(e) => handleQuantityChange(items.id, e.target.value)}
-                                                    label="Số lượng nhập thực tế"
-                                                />
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
+                                    {importReceipst.details &&
+                                        importReceipst.details.map((items) => (
+                                            <TableRow key={items.id}>
+                                                <TableCell>{items.itemName}</TableCell>
+                                                <TableCell>{items.quantity}</TableCell>
+                                                <TableCell>{items.unitName}</TableCell>
+                                                <TableCell>
+                                                    <TextField
+                                                        style={{ width: '50%' }}
+                                                        type="number"
+                                                        value={quantities[items.id] || ''}
+                                                        onChange={(e) => handleQuantityChange(items.id, e.target.value)}
+                                                        label="Số lượng nhập thực tế"
+                                                    />
+                                                </TableCell>
+                                                {dataReceiptDetail.details &&
+                                                    dataReceiptDetail.details.map((detail) => (
+                                                        <TableCell>
+                                                            {/* Log values to check */}
+                                                            {console.log(
+                                                                'Button Condition:',
+                                                                !locationQuantities[items.id] < items.quantity &&
+                                                                    !selectedLocationsFlag[items.id],
+                                                            )}
+
+                                                            {!locationQuantities[items.id] > 0 &&
+                                                                !selectedLocationsFlag[items.id] && (
+                                                                    <Button
+                                                                        variant="contained"
+                                                                        color="primary"
+                                                                        onClick={() =>
+                                                                            handleOpenAddCategoryDialog(detail.id)
+                                                                        }
+                                                                        disabled={selectedLocationsFlag[items.id]}
+                                                                    >
+                                                                        Chọn vị trí
+                                                                    </Button>
+                                                                )}
+                                                        </TableCell>
+                                                    ))}
+                                            </TableRow>
+                                        ))}
                                     <div
                                         style={{
                                             display: 'flex',
@@ -203,7 +273,18 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose 
                             <Button variant="contained" color="primary" onClick={handleSendToManager}>
                                 Gửi Phiếu
                             </Button>
-                            <AddLocationsForm
+                            <UpdateLocationsForm
+                                open={openAddCategoryDialog} // Use the correct state variable here
+                                onClose={handleCloseAddCategoryDialog}
+                                dataReceiptDetail={dataReceiptDetail}
+                                itembylocation={selectedDetailId}
+                                detailId={selectedDetailId}
+                                onUpdate={handleUpdateLocations} // Pass the handleUpdateLocations function here
+                                selectedLocations={selectedLocations[selectedDetailId] || []}
+                                toLocationData={toLocation_id}
+                                onSave={handleSaveLocation}
+                            />
+                            {/* <AddLocationsForm
                                 open={openAddCategoryDialog}
                                 onClose={handleCloseAddCategoryDialog}
                                 dataReceiptDetail={dataReceiptDetail}
@@ -212,8 +293,8 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose 
                                 onSave={(message) => {
                                     handleSaveLocation(message);
                                     handleClosePopup();
-                                  }}
-                            />
+                                }}
+                            /> */}
                             <SnackbarError
                                 open={open1}
                                 handleClose={handleClose}

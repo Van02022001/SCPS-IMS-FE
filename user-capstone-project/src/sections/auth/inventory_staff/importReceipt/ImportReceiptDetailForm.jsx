@@ -231,11 +231,11 @@ const ImportReceiptDetailForm = ({
 
     const updateImportReceiptConfirm = async () => {
         try {
-            if (currentStatus !== 'Pending_Approval') {
-                const errorMessage = 'Không thể xác nhận. Phiếu này không ở trạng thái Chờ phê duyệt !';
-                handleErrorMessage(errorMessage);
-                return;
-            }
+            // if (currentStatus !== 'Pending_Approval') {
+            //     const errorMessage = 'Không thể xác nhận. Phiếu này không ở trạng thái Chờ phê duyệt !';
+            //     handleErrorMessage(errorMessage);
+            //     return;
+            // }
 
             const newStatus = 'Approved'; // Set the desired status
 
@@ -258,11 +258,11 @@ const ImportReceiptDetailForm = ({
 
     const updateReceiptStartImport = async () => {
         try {
-            if (currentStatus !== 'Approved') {
-                const errorMessage = 'Không thể Tiến hành nhập kho. Phiếu này không ở trạng thái Đã xác nhận !';
-                handleErrorMessage(errorMessage);
-                return;
-            }
+            // if (currentStatus !== 'Approved') {
+            //     const errorMessage = 'Không thể Tiến hành nhập kho. Phiếu này không ở trạng thái Đã xác nhận !';
+            //     handleErrorMessage(errorMessage);
+            //     return;
+            // }
 
             const newStatus = 'IN_PROGRESS';
 
@@ -371,11 +371,13 @@ const ImportReceiptDetailForm = ({
             {currentTab === 0 && (
                 <div>
                     <div>
-                        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                            <Button variant="contained" color="primary" onClick={handleOpenForm}>
-                                Tạo phiếu nhập kho
-                            </Button>
-                        </div>
+                        {currentStatus === 'IN_PROGRESS' && (
+                            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                <Button variant="contained" color="primary" onClick={handleOpenForm}>
+                                    Tạo phiếu nhập kho
+                                </Button>
+                            </div>
+                        )}
                         <Dialog maxWidth="lg" fullWidth open={isOpenImportForm}>
                             <DialogTitle style={{ textAlign: 'center' }}>
                                 Phiếu Nhập Kho
@@ -578,16 +580,21 @@ const ImportReceiptDetailForm = ({
                                 Cập nhật
                             </Button> */}
 
-                            <div>
-                                <Button variant="contained" color="primary" onClick={updateImportReceiptConfirm}>
-                                    Xác nhận
-                                </Button>
-                            </div>
-                            <div>
-                                <Button variant="contained" color="warning" onClick={updateReceiptStartImport}>
-                                    Tiến hành nhập kho
-                                </Button>
-                            </div>
+                            {currentStatus === 'Pending_Approval' && (
+                                <div>
+                                    <Button variant="contained" color="primary" onClick={updateImportReceiptConfirm}>
+                                        Xác nhận
+                                    </Button>
+                                </div>
+                            )}
+
+                            {currentStatus === 'Approved' && (
+                                <div>
+                                    <Button variant="contained" color="warning" onClick={updateReceiptStartImport}>
+                                        Tiến hành nhập kho
+                                    </Button>
+                                </div>
+                            )}
                             <SnackbarSuccess
                                 open={open}
                                 handleClose={handleClose}

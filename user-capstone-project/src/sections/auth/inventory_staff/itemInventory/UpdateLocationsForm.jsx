@@ -46,6 +46,8 @@ const UpdateLocationsForm = ({
     const [quantityMap, setQuantityMap] = useState({});
 
     const [isCreateLocationFormOpen, setCreateLocationFormOpen] = useState(false);
+    const [itemLocations, setItemLocations] = useState({});
+    const [itemQuantities, setItemQuantities] = useState({});
     // Thông báo
     const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
     const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
@@ -102,14 +104,20 @@ const UpdateLocationsForm = ({
     };
 
     const handleClosePopup = () => {
+        setItemLocations({});
+        setItemQuantities({});
         setShowLocationSelection(false);
         onClose();
     };
 
     const handleOpenPopup = () => {
         const initialQuantities = {};
+
+        console.log(dataReceiptDetail);
+
         dataReceiptDetail.details.forEach((item) => {
-            initialQuantities[item.id] = item.quantity - (quantityMap[item.id] || 0);
+            initialQuantities[item.id] = item.discrepancyLogs?.[0]?.actualQuantity || item.quantity;
+            // Use item.discrepancyLogs[0]?.actualQuantity if it exists, otherwise fallback to item.quantity
         });
 
         console.log(initialQuantities);
@@ -170,6 +178,24 @@ const UpdateLocationsForm = ({
     }, [selectedLocations]);
 
     useEffect(() => {
+        // Reset state when component mounts or when itembylocation changes
+        setQuantity('');
+        setSelectedLocation(null);
+        setToLocation_id([]);
+        setShowLocationSelection(false);
+        setLocationQuantities({});
+        setSelectedLocationsMuti([]);
+        setQuantityMap({});
+        setCreateLocationFormOpen(false);
+        setItemLocations({});
+        setItemQuantities({});
+        setSnackbarSuccessOpen(false);
+        setSnackbarSuccessMessage('');
+        setOpen1(false);
+        setErrorMessage('');
+    }, [itembylocation]);
+
+    useEffect(() => {
         if (open) {
             getLocationsByEmptyItem(itembylocation)
                 .then((response) => {
@@ -228,6 +254,21 @@ const UpdateLocationsForm = ({
         setSnackbarSuccessOpen(true);
 
         setToLocation_id((prevTags) => [...prevTags, newData]);
+    };
+
+    const updateItemLocations = (itemId, locations) => {
+        setItemLocations((prevLocations) => ({
+            ...prevLocations,
+            [itemId]: locations,
+        }));
+    };
+
+    // Example function to update quantities for an item
+    const updateItemQuantities = (itemId, quantities) => {
+        setItemQuantities((prevQuantities) => ({
+            ...prevQuantities,
+            [itemId]: quantities,
+        }));
     };
 
     return (

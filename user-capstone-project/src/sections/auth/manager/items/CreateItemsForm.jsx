@@ -35,6 +35,12 @@ import { getAllSuppliers } from '~/data/mutation/supplier/suppliers-mutation';
 // import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 import SnackbarError from '~/components/alert/SnackbarError';
+//datepicker
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import dayjs from 'dayjs';
 
 const CreateItemsForm = (props) => {
     const [open, setOpen] = React.useState(false);
@@ -54,11 +60,15 @@ const CreateItemsForm = (props) => {
     const [brand_id, setBrands_id] = useState([]);
     const [supplier_id, setSuppliers_id] = useState([]);
     const [origin_id, setOrigins_id] = useState([]);
+    const [price, setPrice] = useState([]);
+    const [purchasePrice, setPurchasePrice] = useState([]);
 
     const [subcategoryError, setSubcategoryError] = useState(null);
     const [brandError, setBrandError] = useState(null);
     const [supplierError, setSupplierError] = useState(null);
     const [originError, setOriginError] = useState(null);
+    const [selectedDate, setSelectedDate] = useState(dayjs().startOf('day'));
+
     //thông báo
     const [message, setMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
@@ -68,35 +78,35 @@ const CreateItemsForm = (props) => {
 
     const handleTab1DataChange = (event) => {
         const { name, value } = event.target;
-        if (name === "sub_category_id") {
+        if (name === 'sub_category_id') {
             setSubcategoryError(null);
-        } else if (name === "brand_id") {
+        } else if (name === 'brand_id') {
             setBrandError(null);
-        } else if (name === "supplier_id") {
+        } else if (name === 'supplier_id') {
             setSupplierError(null);
-        } else if (name === "origin_id") {
+        } else if (name === 'origin_id') {
             setOriginError(null);
         }
 
-        if (name === "sub_category_id") {
+        if (name === 'sub_category_id') {
             setSubcategoryError(null);
             setTab1Data((prevData) => ({
                 ...prevData,
                 [name]: [value],
             }));
-        } else if (name === "brand_id") {
+        } else if (name === 'brand_id') {
             setBrandError(null);
             setTab1Data((prevData) => ({
                 ...prevData,
                 [name]: [value],
             }));
-        } else if (name === "supplier_id") {
+        } else if (name === 'supplier_id') {
             setSupplierError(null);
             setTab1Data((prevData) => ({
                 ...prevData,
                 [name]: [value],
             }));
-        } else if (name === "origin_id") {
+        } else if (name === 'origin_id') {
             setOriginError(null);
             setTab1Data((prevData) => ({
                 ...prevData,
@@ -206,16 +216,16 @@ const CreateItemsForm = (props) => {
     // hàm create category-----------------------------------------
     const handleCreateItem = async () => {
         if (!tab1Data.sub_category_id || !tab1Data.sub_category_id.length) {
-            setSubcategoryError("Vui lòng chọn danh mục sản phẩm");
+            setSubcategoryError('Vui lòng chọn danh mục sản phẩm');
             return;
         } else if (!tab1Data.brand_id || !tab1Data.brand_id.length) {
-            setBrandError("Vui lòng chọn thương hiệu");
+            setBrandError('Vui lòng chọn thương hiệu');
             return;
         } else if (!tab1Data.supplier_id || !tab1Data.supplier_id.length) {
-            setSupplierError("Vui lòng chọn nhà cung cấp");
+            setSupplierError('Vui lòng chọn nhà cung cấp');
             return;
         } else if (!tab1Data.origin_id || !tab1Data.origin_id.length) {
-            setOriginError('Vui lòng chọn nguồn góc')
+            setOriginError('Vui lòng chọn nguồn góc');
             return;
         }
 
@@ -225,12 +235,17 @@ const CreateItemsForm = (props) => {
         const parsedBrandId = parseInt(tab1Data.brand_id) || 0;
         const parsedSupplierId = parseInt(tab1Data.supplier_id) || 0;
         const parsedOriginId = parseInt(tab1Data.origin_id) || 0;
+        const parsedPrice = parseInt(price) || 0;
+        const parsedPurchasePrice = parseInt(purchasePrice) || 0;
 
         // Validate minStockLevel
         // if (parsedMinStockLevel < 5) {
         //     setErrorMessage('Số lượng tồn kho tối thiểu phải nhập ít nhất là 5');
         //     return;
         // }
+
+        const endOfDayDate = selectedDate.endOf('day');
+        const formattedStartDate = endOfDayDate.toISOString();
 
         const itemParams = {
             minStockLevel: parsedMinStockLevel,
@@ -239,10 +254,13 @@ const CreateItemsForm = (props) => {
             brand_id: parsedBrandId,
             supplier_id: parsedSupplierId,
             origin_id: parsedOriginId,
+            startDate: formattedStartDate,
+            price: parsedPrice,
+            purchasePrice: parsedPurchasePrice,
         };
         try {
             const response = await createItem(itemParams);
-            if (response.status === "200 OK") {
+            if (response.status === '200 OK') {
                 setSubcategoryError(null);
                 setBrandError(null);
                 setSupplierError(null);
@@ -252,7 +270,7 @@ const CreateItemsForm = (props) => {
             }
         } catch (error) {
             console.error('Error creating product:', error.response.status);
-            if (error.response?.data?.message === "Min stock cannot be greater than max stock") {
+            if (error.response?.data?.message === 'Min stock cannot be greater than max stock') {
                 setErrorMessage('Số lượng tồn kho tối thiểu không thể lớn hơn lượng hàng tồn kho tối đa');
             }
         }
@@ -293,6 +311,11 @@ const CreateItemsForm = (props) => {
             })
             .catch((error) => console.error('Error fetching brands:', error));
     }, [openAddOriginForm, openAddBrandForm, openAddSuplierForm]);
+
+    useEffect(() => {
+        // If you want to do something when the selected date changes, add your logic here
+        console.log('Selected date changed:', selectedDate);
+    }, [selectedDate]);
 
     return (
         <>
@@ -502,7 +525,6 @@ const CreateItemsForm = (props) => {
                                                     <TextField
                                                         id="demo-customized-textbox"
                                                         label="Ít nhất"
-                                                        helperText="Ít nhất phải 5"
                                                         value={minStockLevel}
                                                         onChange={(e) => setMinStockLevel(e.target.value)}
                                                     />
@@ -516,6 +538,60 @@ const CreateItemsForm = (props) => {
                                                     />
                                                 </FormControl>
                                             </div>
+                                        </Grid>
+                                        <Grid
+                                            container
+                                            spacing={1}
+                                            direction="row"
+                                            justifyContent="space-between"
+                                            alignItems="center"
+                                            sx={{ marginBottom: 4, gap: 2 }}
+                                        >
+                                            <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
+                                                Giá tiền:{' '}
+                                            </Typography>
+                                            <div style={{ display: 'flex' }}>
+                                                <FormControl sx={{ m: 0.2 }} variant="standard">
+                                                    <TextField
+                                                        id="demo-customized-textbox"
+                                                        label="Giá nhập"
+                                                        value={purchasePrice}
+                                                        onChange={(e) => setPurchasePrice(e.target.value)}
+                                                    />
+                                                </FormControl>
+                                                <FormControl sx={{ m: 0.2 }} variant="standard">
+                                                    <TextField
+                                                        id="demo-customized-textbox"
+                                                        label="Giá bán"
+                                                        value={price}
+                                                        onChange={(e) => setPrice(e.target.value)}
+                                                    />
+                                                </FormControl>
+                                            </div>
+                                        </Grid>
+                                        <Grid
+                                            container
+                                            spacing={1}
+                                            direction="row"
+                                            justifyContent="space-between"
+                                            alignItems="center"
+                                            sx={{ marginBottom: 4, gap: 2 }}
+                                        >
+                                            <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
+                                                Ngày bắt đầu:{' '}
+                                            </Typography>
+                                            <Grid xs={8.5}>
+                                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                    <DemoContainer components={['DatePicker']}>
+                                                        <DemoItem>
+                                                            <DatePicker
+                                                                value={selectedDate}
+                                                                onChange={(newDate) => setSelectedDate(newDate)}
+                                                            />
+                                                        </DemoItem>
+                                                    </DemoContainer>
+                                                </LocalizationProvider>
+                                            </Grid>
                                         </Grid>
                                     </Grid>
                                 </Grid>

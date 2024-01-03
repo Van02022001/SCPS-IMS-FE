@@ -258,7 +258,7 @@ const AddLocationsForm = ({ open, onClose, dataReceiptDetail, updateDataReceiptD
                                                 open={openAddCategoryDialog} // Use the correct state variable here
                                                 onClose={handleCloseAddCategoryDialog}
                                                 dataReceiptDetail={dataReceiptDetail}
-                                                itembylocation={dataReceiptDetail.details.map((item) => item.id)}
+                                                itembylocation={selectedDetailId}
                                                 detailId={selectedDetailId}
                                                 onUpdate={handleUpdateLocations} // Pass the handleUpdateLocations function here
                                                 selectedLocations={selectedLocations[selectedDetailId] || []}
