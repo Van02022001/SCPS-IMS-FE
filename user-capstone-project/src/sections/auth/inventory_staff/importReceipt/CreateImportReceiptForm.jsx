@@ -31,6 +31,8 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose 
     const [selectedLocations, setSelectedLocations] = useState([]);
     const [toLocation_id, setToLocation_id] = useState([]);
 
+
+    const [isSent, setIsSent] = useState(false);
     const getDetailIds = () => {
         return dataReceiptDetail.details.map((detail) => detail.id);
     };
@@ -108,7 +110,9 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose 
             if (response.status === '201 CREATED') {
                 setDataReceiptDetail(response.data);
                 // handleOpenAddCategoryDialog();
+                setIsSent(true);
                 onClose && onClose();
+
             }
         } catch (error) {
             // Handle error
@@ -116,6 +120,15 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose 
             handleErrorMessage(error.response.data.message);
         }
     };
+    const handleSave = async () => {
+        // Gọi API hoặc thực hiện các công việc cần thiết khi lưu lại
+        try {
+            // Lưu lại thành công
+        } catch (error) {
+            // Xử lý lỗi khi lưu lại nếu cần
+        }
+    };
+
     console.log(dataReceiptDetail);
 
     const handleSaveLocation = (successMessage) => {
@@ -213,17 +226,17 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose 
                                             <TableRow key={detail.id}>
 
                                                 <TableCell>{detail.itemName}</TableCell>
-                                                {detail.discrepancyLogs.map((quantity) => (
-                                                    < TableCell >
-                                                        {quantity.requiredQuantity}
-                                                    </TableCell>
-                                                ))}
+
+                                                < TableCell >
+                                                    {detail.quantity}
+                                                </TableCell>
+
                                                 <TableCell>{detail.unitName}</TableCell>
-                                                {detail.discrepancyLogs.map((quantity) => (
-                                                    < TableCell >
-                                                        {quantity.actualQuantity}
-                                                    </TableCell>
-                                                ))}
+
+                                                < TableCell >
+                                                    {detail.quantity}
+                                                </TableCell>
+
                                                 <TableCell>
                                                     {!locationQuantities[detail.id] > 0 &&
                                                         !selectedLocationsFlag[detail.id] && (
@@ -281,16 +294,22 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose 
                             </Table>
                         </CardContent>
                         <Grid container justifyContent="flex-end" style={{ marginTop: 10 }}>
-                            <Button variant="contained" color="primary" onClick={handleSendToManager}>
-                                Gửi Phiếu
-                            </Button>
+                            {isSent ? (
+                                <Button variant="contained" color="secondary" onClick={handleSave}>
+                                    Lưu lại
+                                </Button>
+                            ) : (
+                                <Button variant="contained" color="primary" onClick={handleSendToManager}>
+                                    Gửi Phiếu
+                                </Button>
+                            )}
                             <UpdateLocationsForm
-                                open={openAddCategoryDialog} // Use the correct state variable here
+                                open={openAddCategoryDialog}
                                 onClose={handleCloseAddCategoryDialog}
                                 dataReceiptDetail={dataReceiptDetail}
                                 itembylocation={selectedDetailId}
                                 detailId={selectedDetailId}
-                                onUpdate={handleUpdateLocations} // Pass the handleUpdateLocations function here
+                                onUpdate={handleUpdateLocations}
                                 selectedLocations={selectedLocations[selectedDetailId] || []}
                                 toLocationData={toLocation_id}
                                 onSave={handleSaveLocation}

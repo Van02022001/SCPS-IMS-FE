@@ -8,29 +8,54 @@ import {
     DialogContent,
     List,
     ListItem,
-    ListItemText,
     TableHead,
-    DialogActions,
-    Button,
 } from '@mui/material';
-import { getItemByWarehouse } from '~/data/mutation/items/item-mutation';
-import { createInventoryCheck } from '~/data/mutation/inventoryCheck/InventoryCheck-mutation';
 
-const CreateInventoryCheckDetail = ({ inventoryCheckData, inventoryCheckId, onClose, isOpen, mode, }) => {
+const CreateInventoryCheckDetail = ({ inventoryCheckData, inventoryCheckId, onClose, isOpen, mode, onUpdateQuantities, onUpdateQuantitiesFromDetail }) => {
     const [formHeight, setFormHeight] = useState(0);
-    const [itemsCheckData, setItemsCheckData] = useState([]);
-    const [updatedQuantities, setUpdatedQuantities] = useState({});
+    // const [itemsCheckData, setItemsCheckData] = useState([]);
+    const [updatedQuantities, setUpdatedQuantities] = useState([]);
+    const [updatedQuantitiesFromDetail, setUpdatedQuantitiesFromDetail] = useState([]);
+
     const [locationInfo, setLocationInfo] = useState({});
 
     const [editedItem, setEditedItem] = useState({});
+    const [selectedItemCheckDetailId, setSelectedItemCheckDetailId] = useState(null);
+
 
     const handleQuantityChange = (locationId, event) => {
-        const value = event.target.value;
-        setUpdatedQuantities((prevQuantities) => ({
-            ...prevQuantities,
-            [locationId]: value,
-        }));
+        const value = parseInt(event.target.value, 10);
+
+        setUpdatedQuantitiesFromDetail((prevQuantities) => {
+            // Kiểm tra xem locationId đã tồn tại trong mảng chưa
+            const existingItemIndex = prevQuantities.findIndex((item) => item.locationId === locationId);
+
+            if (value === 0) {
+                // Nếu giá trị là 0, loại bỏ phần tử từ mảng nếu đã tồn tại
+                if (existingItemIndex !== -1) {
+                    const updatedQuantities = [...prevQuantities];
+                    updatedQuantities.splice(existingItemIndex, 1);
+                    return updatedQuantities;
+                }
+            } else {
+                // Nếu locationId đã tồn tại, cập nhật giá trị
+                if (existingItemIndex !== -1) {
+                    const updatedQuantities = [...prevQuantities];
+                    updatedQuantities[existingItemIndex] = { locationId, quantity: value };
+                    return updatedQuantities;
+                } else {
+                    // Nếu locationId chưa tồn tại, thêm phần tử mới vào mảng
+                    return [...prevQuantities, { locationId, quantity: value }];
+                }
+            }
+        });
     };
+
+    useEffect(() => {
+        console.log(updatedQuantitiesFromDetail, "Bên detail nè");
+        onUpdateQuantitiesFromDetail(updatedQuantitiesFromDetail);
+    }, [updatedQuantitiesFromDetail]);
+
     useEffect(() => {
         if (isOpen) {
             setFormHeight(1000);
@@ -92,8 +117,6 @@ const CreateInventoryCheckDetail = ({ inventoryCheckData, inventoryCheckId, onCl
             }
         }
     }, [inventoryCheckData, inventoryCheckId, mode]);
-    console.log(editedItem, "editedItem");
-
 
 
     return (
@@ -113,13 +136,13 @@ const CreateInventoryCheckDetail = ({ inventoryCheckData, inventoryCheckId, onCl
                                 <TableBody>
                                     {itemDetail?.locationQuantities?.map((locationQuantity) => (
                                         <TableRow key={locationQuantity.locationId}>
-                                            <TableCell>{`Kệ: ${locationInfo[locationQuantity.locationId]?.shelfNumber}, Ngăn: ${locationInfo[locationQuantity.locationId]?.binNumber}`}</TableCell>
+                                            <TableCell>{`${locationInfo[locationQuantity.locationId]?.shelfNumber}, ${locationInfo[locationQuantity.locationId]?.binNumber}`}</TableCell>
                                             <TableCell>{locationQuantity.quantity}</TableCell>
                                             <TableCell>
                                                 <TextField
                                                     label="Số lượng thực tế"
                                                     type="number"
-                                                    value={updatedQuantities[locationQuantity.locationId] || ''}
+                                                    value={updatedQuantitiesFromDetail.find(item => item.locationId === locationQuantity.locationId)?.quantity || 0}
                                                     onChange={(event) => handleQuantityChange(locationQuantity.locationId, event)}
                                                 />
                                             </TableCell>
