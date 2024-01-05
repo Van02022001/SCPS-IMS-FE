@@ -158,9 +158,6 @@ const ItemsInventoryPage = () => {
     const [subCategoryData, setSubCategoryData] = useState([]);
     const filterSubCategories = subCategoryData.map((subcate) => subcate.name);
     // fiter Suppliers //
-    const [suppliersData, setSupplierData] = useState([]);
-    const filterSuppliers = suppliersData.map((supplier) => supplier.name);
-    // fiter Suppliers //
     const [originData, setOriginData] = useState([]);
     const filterOrigins = originData.map((origin) => origin.name);
     // fiter createdAt //
@@ -325,18 +322,6 @@ const ItemsInventoryPage = () => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
                     setSubCategoryData(data);
-                } else {
-                    console.error('API response is not an array:', data);
-                }
-            })
-            .catch((error) => {
-                console.error('Error fetching users:', error);
-            });
-        getAllSuppliers()
-            .then((respone) => {
-                const data = respone.data;
-                if (Array.isArray(data)) {
-                    setSupplierData(data);
                 } else {
                     console.error('API response is not an array:', data);
                 }

@@ -34,11 +34,12 @@ const UpdateLocationsForm = ({
     selectedLocations,
     itembylocation,
     onSave,
+    itemId,
+    selectedDetailQuantity,
 }) => {
     const [quantity, setQuantity] = useState('');
     const [selectedLocation, setSelectedLocation] = useState(null);
     const [toLocation_id, setToLocation_id] = useState([]);
-
     const [showLocationSelection, setShowLocationSelection] = useState(false);
     const [locationQuantities, setLocationQuantities] = useState({});
     //state chọn muti
@@ -48,6 +49,7 @@ const UpdateLocationsForm = ({
     const [isCreateLocationFormOpen, setCreateLocationFormOpen] = useState(false);
     const [itemLocations, setItemLocations] = useState({});
     const [itemQuantities, setItemQuantities] = useState({});
+    
     // Thông báo
     const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
     const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
@@ -124,6 +126,8 @@ const UpdateLocationsForm = ({
 
         setQuantityMap(initialQuantities);
 
+        console.log(quantityMap);
+
         const remainingQuantity = Object.values(initialQuantities).reduce((acc, remaining) => acc + remaining, 0);
 
         setShowLocationSelection(remainingQuantity > 0);
@@ -193,11 +197,11 @@ const UpdateLocationsForm = ({
         setSnackbarSuccessMessage('');
         setOpen1(false);
         setErrorMessage('');
-    }, [itembylocation]);
+    }, [itemId]);
 
     useEffect(() => {
         if (open) {
-            getLocationsByEmptyItem(itembylocation)
+            getLocationsByEmptyItem(itemId)
                 .then((response) => {
                     const data = response.data;
                     const dataArray = Array.isArray(data) ? data : [data];
@@ -207,7 +211,7 @@ const UpdateLocationsForm = ({
 
             handleOpenPopup();
         }
-    }, [open, itembylocation]);
+    }, [open, itemId]);
 
     const handleQuantityChange = (locationId, event) => {
         // Stop event propagation to prevent hiding the input
@@ -233,7 +237,7 @@ const UpdateLocationsForm = ({
     const handleCloseCreateLocationDialog = async () => {
         try {
             // Cập nhật danh sách vị trí sau khi tạo mới
-            const response = await getLocationsByEmptyItem(itembylocation);
+            const response = await getLocationsByEmptyItem(itemId);
             const data = response.data;
             const dataArray = Array.isArray(data) ? data : [data];
             setToLocation_id(dataArray);
@@ -271,6 +275,7 @@ const UpdateLocationsForm = ({
         }));
     };
 
+
     return (
         <>
             <Dialog open={open} maxWidth="xl">
@@ -294,6 +299,7 @@ const UpdateLocationsForm = ({
                         onClose={handleCloseCreateLocationDialog}
                         onSave={handleSaveLocation}
                     />
+                    <Typography variant="body1" mb={2}>Số lượng thực tế: {selectedDetailQuantity}</Typography>
                     <Grid container spacing={2}>
                         {/* Display a list of locations */}
                         {toLocation_id.map((toLocation) => (

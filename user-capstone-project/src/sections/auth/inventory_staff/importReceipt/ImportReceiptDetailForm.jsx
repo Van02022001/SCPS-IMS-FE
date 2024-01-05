@@ -60,6 +60,7 @@ const ImportReceiptDetailForm = ({
     const [editSubCategoryMeta, setEditSubCategoryMeta] = useState(null);
     const [currentStatus, setCurrentStatus] = useState('');
     const [importReceiptData, setImportReceiptData] = useState([]);
+    const [openAddCategoryDialog, setOpenAddCategoryDialog] = useState(false);
     // const [positionedSnackbarOpen, setPositionedSnackbarOpen] = useState(false);
     // const [positionedSnackbarError, setPositionedSnackbarError] = useState(false);
     // form
@@ -77,6 +78,8 @@ const ImportReceiptDetailForm = ({
     const [open1, setOpen1] = React.useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
+    const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
 
     const handleSuccessMessage = (message) => {
         setOpen(true);
@@ -243,7 +246,7 @@ const ImportReceiptDetailForm = ({
 
             if (response.status === '200 OK') {
                 // Handle success if needed
-                handleSuccessMessage(response.message);
+                handleSuccessMessage('Import request receipt confirmed successfully');
             }
 
             updateImportReceiptConfirmInList(importReceiptId, newStatus);
@@ -308,6 +311,22 @@ const ImportReceiptDetailForm = ({
             handleErrorMessage(errorMessage);
         }
     };
+
+    const handleSaveLocation = (successMessage, newStatus) => {
+        setSnackbarSuccessMessage(
+            successMessage === 'Cập nhật vị trí các sản phẩm thành công.'
+                ? 'Cập nhật vị trí các sản phẩm thành công.'
+                : 'Thành công',
+        );
+        setSnackbarSuccessOpen(true);
+        setCurrentStatus(newStatus);
+        console.log(newStatus);
+    };
+
+    const handleCloseAddCategoryDialog = () => {
+        setIsOpenImportForm(false);
+    };
+
     const handleCloseForm = () => {
         setIsOpenImportForm(false);
     };
@@ -388,11 +407,9 @@ const ImportReceiptDetailForm = ({
 
                             <CreateImportReceiptForm
                                 isOpen={isOpenImportForm}
-                                onCloseForm={() => {
-                                    setIsOpenImportForm(false);
-                                    handleDataReload();
-                                }}
+                                onClose={handleCloseAddCategoryDialog}
                                 importReceipst={importReceipst}
+                                onSave={handleSaveLocation}
                             />
                         </Dialog>
                     </div>
@@ -600,6 +617,15 @@ const ImportReceiptDetailForm = ({
                                 handleClose={handleClose}
                                 message={successMessage}
                                 action={action}
+                                style={{ bottom: '16px', right: '16px' }}
+                            />
+                            <SnackbarSuccess
+                                open={snackbarSuccessOpen}
+                                handleClose={() => {
+                                    setSnackbarSuccessOpen(false);
+                                    setSnackbarSuccessMessage('');
+                                }}
+                                message={snackbarSuccessMessage}
                                 style={{ bottom: '16px', right: '16px' }}
                             />
                             <SnackbarError

@@ -34,7 +34,6 @@ import { ProductsListHead, ProductsListToolbar } from '~/sections/@dashboard/pro
 import PRODUCTSLIST from '../../../../_mock/products';
 // api
 import { getAllCustomerRequestOfWarehouse } from '~/data/mutation/customerRequest/CustomerRequest-mutation';
-import ImportReaceiptDetailForm from '~/sections/auth/inventory_staff/importReceipt/ImportReceiptDetailForm';
 
 // import GoodsReceiptPage from '../GoodsReceiptPage';
 import { useNavigate } from 'react-router-dom';

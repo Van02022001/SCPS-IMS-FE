@@ -46,6 +46,7 @@ import ImportRequestReceiptDetailManagerForm from '~/sections/auth/manager/trans
 import { getAllCustomerRequest } from '~/data/mutation/customerRequest/CustomerRequest-mutation';
 import CreateRequestCustomerPage from './CreateRequestCustomerPage';
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
+import dayjs from 'dayjs';
 
 
 // ----------------------------------------------------------------------
@@ -308,7 +309,12 @@ const CustomerRequestSalePage = () => {
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
-                    setImportRequestData(data);
+                    const sortedData = data.sort((a, b) => {
+                        return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(
+                            dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
+                        );
+                    });
+                    setImportRequestData(sortedData);
                 } else {
                     console.error('API response is not an array:', data);
                 }

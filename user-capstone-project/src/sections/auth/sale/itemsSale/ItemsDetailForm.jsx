@@ -315,7 +315,12 @@ const ItemsDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mod
                                             labelId="group-label"
                                             id="group-select"
                                             label="Danh mục"
-                                            sx={{ width: '92%', fontSize: '16px', pointerEvents: 'none', marginLeft: 0.2 }}
+                                            sx={{
+                                                width: '92%',
+                                                fontSize: '16px',
+                                                pointerEvents: 'none',
+                                                marginLeft: 0.2,
+                                            }}
                                             value={editedItem.sub_category_id ? editedItem.sub_category_id : ''}
                                             onChange={(e) => handleEdit('sub_category_id', e.target.value)}
                                             name="sub_category_id"
@@ -345,7 +350,12 @@ const ItemsDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mod
                                             labelId="group-label"
                                             id="group-select"
                                             label="Chi nhánh"
-                                            sx={{ width: '92%', fontSize: '16px', pointerEvents: 'none', marginLeft: 0.2 }}
+                                            sx={{
+                                                width: '92%',
+                                                fontSize: '16px',
+                                                pointerEvents: 'none',
+                                                marginLeft: 0.2,
+                                            }}
                                             value={editedItem.brand_id ? editedItem.brand_id : ''}
                                             onChange={(e) => handleEdit('brand_id', e.target.value)}
                                             name="brand_id"
@@ -428,7 +438,12 @@ const ItemsDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mod
                                             labelId="group-label"
                                             id="group-select"
                                             label="Nguồn gốc"
-                                            sx={{ width: '92%', fontSize: '16px', pointerEvents: 'none', marginLeft: 0.2 }}
+                                            sx={{
+                                                width: '92%',
+                                                fontSize: '16px',
+                                                pointerEvents: 'none',
+                                                marginLeft: 0.2,
+                                            }}
                                             value={editedItem.origin_id ? editedItem.origin_id : ''}
                                             onChange={(e) => handleEdit('origin_id', e.target.value)}
                                             name="origin_id"
@@ -441,37 +456,46 @@ const ItemsDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mod
                                         </Select>
                                     </Grid>
                                 </Grid>
-                                {/* <Grid
+                                <Grid
                                     container
                                     spacing={1}
                                     direction="row"
                                     justifyContent="space-between"
                                     alignItems="center"
-                                    sx={{ marginBottom: 4, gap: 5 }}
+                                    sx={{ marginBottom: 4, gap: 5, marginLeft: 0.1}}
                                 >
                                     <Typography variant="body1">Vị trí :</Typography>
-                                    <div style={{ display: 'flex', width: '71%', alignItems: 'center' }}>
+                                    <div style={{ display: 'flex', width: '72%', alignItems: 'center' }}>
                                         <TextField
                                             size="small"
                                             variant="outlined"
                                             label="Vị trí"
                                             InputProps={{ readOnly: true }}
-                                            
                                             multiline
                                             sx={{ width: '91%', marginRight: 1 }}
                                             value={
                                                 item.locations
+                                                    ? [
+                                                          ...new Set(
+                                                              item.locations.map((location) => location.warehouse.name),
+                                                          ),
+                                                      ].join(', ')
+                                                    : ''
+                                            }
+                                            title={
+                                                item.locations
                                                     ? item.locations
-                                                        .map(
-                                                            (location) =>
-                                                                `${location.binNumber} - ${location.shelfNumber} - ${location.warehouse.name}`,
-                                                        )
-                                                        .join(',\n')
+                                                          .map(
+                                                              (location) =>
+                                                                  `${location.binNumber} - ${location.shelfNumber} - Số lượng: ${location.item_quantity} (${location.warehouse.name})`,
+                                                          )
+                                                          .join('\n')
                                                     : ''
                                             }
                                         />
                                     </div>
-                                </Grid> */}
+                                </Grid>
+
                                 <Grid
                                     container
                                     spacing={1}

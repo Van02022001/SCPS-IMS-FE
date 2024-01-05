@@ -1,18 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import {
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    TextField,
-    Button,
-    Typography,
-    Grid,
-} from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, TextField, Button, Typography, Grid, IconButton } from '@mui/material';
 
 import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
 import { editItemLocationsExport } from '~/data/mutation/items/item-mutation';
 import { getAllLocationByItem } from '~/data/mutation/location/location-mutation';
+import SnackbarError from '~/components/alert/SnackbarError';
+import CloseIcon from '@mui/icons-material/Close';
+
 const locationStyle = {
     border: '3px solid #ccc',
     borderRadius: '8px',
@@ -26,7 +21,6 @@ const selectedLocationStyle = {
     borderColor: 'green',
 };
 
-
 const UpdateLocationToExportForm = ({
     open,
     onClose,
@@ -35,6 +29,9 @@ const UpdateLocationToExportForm = ({
     details,
     onUpdate, // Pass onUpdate function from AddLocationsForm
     selectedLocations,
+    selectedDetailQuantity,
+    onSave,
+    itemId,
 }) => {
     const [quantity, setQuantity] = useState('');
     const [toLocation_id, setToLocation_id] = useState([]);
@@ -45,13 +42,50 @@ const UpdateLocationToExportForm = ({
     //state theo dõi vị trĩ
     const [selectedLocationsMuti, setSelectedLocationsMuti] = useState([]);
     const [quantityMap, setQuantityMap] = useState({});
-    // Thông báo
-    const [isSuccess, setIsSuccess] = useState(false);
-    const [isError, setIsError] = useState(false);
-    const [successMessage, setSuccessMessage] = useState('');
+    const [itemLocations, setItemLocations] = useState({});
+    const [itemQuantities, setItemQuantities] = useState({});
+    //========================== Hàm notification của trang ==================================
+    const [open1, setOpen1] = React.useState(false);
     const [errorMessage, setErrorMessage] = useState('');
 
+    const handleErrorMessage = (message) => {
+        setOpen1(true);
+        if (message === 'Invalid request') {
+            setErrorMessage('Yêu cầu không hợp lệ !');
+        } else if (message === 'Số lượng sản phẩm không giống với số lượng sản phẩm xuất.') {
+            setErrorMessage('Số lượng sản phẩm không giống với số lượng sản phẩm xuất !');
+        } else if (message === 'ReceiptDetail was imported in location') {
+            setErrorMessage('Số lượng của phiếu này đã được thêm vào địa chỉ !');
+        } else if (message === 'Vị trí đã tồn tại sản phẩm khác.') {
+            setErrorMessage('Vị trí đã tồn tại sản phẩm khác. !');
+        }
+    };
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpen1(false);
+        setErrorMessage('');
+    };
+
+    const action = (
+        <React.Fragment>
+            <Button color="secondary" size="small" onClick={handleClose}></Button>
+            <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
+                <CloseIcon fontSize="lage" />
+            </IconButton>
+        </React.Fragment>
+    );
+
+    //========================== Hàm notification của trang ==================================
+
     const handleClosePopup = () => {
+        setQuantityMap({});
+        setSelectedLocationsMuti([]);
+        setItemLocations({});
+        setItemQuantities({});
         setShowLocationSelection(false);
         onClose();
     };
@@ -78,10 +112,7 @@ const UpdateLocationToExportForm = ({
 
         setLocationQuantities(initialQuantities);
 
-        const remainingQuantity = Object.values(initialQuantities).reduce(
-            (acc, remaining) => acc + remaining,
-            0
-        );
+        const remainingQuantity = Object.values(initialQuantities).reduce((acc, remaining) => acc + remaining, 0);
 
         setShowLocationSelection(remainingQuantity > 0);
     };
@@ -104,9 +135,20 @@ const UpdateLocationToExportForm = ({
             }));
 
             const response = await editItemLocationsExport({
-                receipt_detail_id: receiptDetailId,
+                receipt_detail_id: detailId,
                 locations: locationsArray,
             });
+
+            if (response.status === '200 OK') {
+                onSave && onSave(response.message);
+                // Đóng form
+                setQuantityMap({});
+                setSelectedLocationsMuti([]);
+                setItemLocations({});
+                setItemQuantities({});
+                setShowLocationSelection(false);
+                onClose && onClose();
+            }
 
             onUpdate({
                 detailId: detailId,
@@ -115,15 +157,9 @@ const UpdateLocationToExportForm = ({
             });
 
             console.log('selectedLocations:', selectedLocationsMuti);
-            setIsSuccess(true);
-            setIsError(false);
-            setSuccessMessage('Update successful!');
 
             // Close the popup only if there are no remaining quantities
-            const remainingQuantity = Object.values(locationQuantities).reduce(
-                (acc, remaining) => acc + remaining,
-                0
-            );
+            const remainingQuantity = Object.values(locationQuantities).reduce((acc, remaining) => acc + remaining, 0);
 
             if (remainingQuantity === 0) {
                 handleClosePopup();
@@ -133,9 +169,7 @@ const UpdateLocationToExportForm = ({
             }
         } catch (error) {
             console.error('Error updating item locations:', error);
-            setIsError(true);
-            setIsSuccess(false);
-            setErrorMessage('Error updating item locations. Please try again.');
+            handleErrorMessage(error.response.data.message);
         }
     };
     useEffect(() => {
@@ -147,43 +181,53 @@ const UpdateLocationToExportForm = ({
     useEffect(() => {
         if (open) {
             setReceiptDetailId(dataReceiptDetail.details[0].id);
-            if (details && details.length > 0) {
-                details.forEach((detail) => {
-                    getAllLocationByItem(detail.itemId)
-                        .then((response) => {
-                            const data = response.data;
-                            console.log(data); // In ra dữ liệu từ API
-                            const dataArray = Array.isArray(data) ? data : [data];
-                            setToLocation_id(dataArray);
-                        })
-                        .catch((error) => console.error('Error fetching locations:', error));
-                });
-            }
+            getAllLocationByItem(itemId)
+                .then((response) => {
+                    const data = response.data;
+                    console.log(data); // In ra dữ liệu từ API
+                    const dataArray = Array.isArray(data) ? data : [data];
+                    setToLocation_id(dataArray);
+                })
+                .catch((error) => console.error('Error fetching locations:', error));
+
             handleOpenPopup();
         }
     }, [open, details]);
 
     console.log(toLocation_id.locations);
+    console.log(detailId);
     return (
         <>
-            <Dialog open={open} onClose={handleClosePopup} maxWidth="md">
-                <DialogTitle>Hãy Chọn Địa Chỉ Lấy Sản Phẩm Trong Kho</DialogTitle>
-                <DialogContent>
+            <Dialog open={open} maxWidth="xl">
+                <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    Hãy Chọn Địa Chỉ Lấy Sản Phẩm Trong Kho
+                    <IconButton edge="start" color="inherit" onClick={handleClosePopup} aria-label="close">
+                        <CloseIcon />
+                    </IconButton>
+                </DialogTitle>
+                <Typography variant="body1" mb={2} ml={3}>
+                    Số lượng thực tế: {selectedDetailQuantity}
+                </Typography>
+                <DialogContent style={{ width: '1000px', height: '500px' }}>
                     <Grid container spacing={2}>
-                        {toLocation_id.map((locationData) => (
+                        {toLocation_id.map((locationData) =>
                             locationData.locations.map((location) => (
                                 <Grid item key={location.id} xs={6} md={4} lg={3}>
                                     <div
                                         key={location.id}
                                         style={{
                                             ...locationStyle,
-                                            ...(selectedLocationsMuti.some((selected) => selected.id === location.id) ? selectedLocationStyle : {}),
+                                            ...(selectedLocationsMuti.some((selected) => selected.id === location.id)
+                                                ? selectedLocationStyle
+                                                : {}),
                                         }}
                                         onClick={() => handleLocationClick(location)}
                                     >
                                         <Typography variant="body1">
-                                            {`${location.shelfNumber} - ${location.binNumber} - `}
-                                            {`Số lượng: ${location.item_quantity} `}
+                                            {`${location.shelfNumber} - ${location.binNumber} `}
+                                            <Typography variant="body1">
+                                                {`Số lượng: ${location.item_quantity} `}
+                                            </Typography>
                                             <Grid
                                                 direction="row"
                                                 justifyContent="space-between"
@@ -204,12 +248,28 @@ const UpdateLocationToExportForm = ({
                                         </Typography>
                                     </div>
                                 </Grid>
-                            ))
-                        ))}
+                            )),
+                        )}
                     </Grid>
-                    <Button variant="contained" color="primary" onClick={updateLocations} style={{ marginTop: 20 }}>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={updateLocations}
+                        style={{
+                            position: 'absolute',
+                            bottom: 16,
+                            right: 40,
+                        }}
+                    >
                         Lưu
                     </Button>
+                    <SnackbarError
+                        open={open1}
+                        handleClose={handleClose}
+                        message={errorMessage}
+                        action={action}
+                        style={{ bottom: '16px', right: '16px' }}
+                    />
                 </DialogContent>
             </Dialog>
         </>
