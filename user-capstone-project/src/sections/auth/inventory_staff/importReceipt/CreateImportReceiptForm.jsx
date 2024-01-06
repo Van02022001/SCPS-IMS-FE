@@ -20,8 +20,10 @@ import SnackbarError from '~/components/alert/SnackbarError';
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 import UpdateLocationsForm from '../itemInventory/UpdateLocationsForm';
 import { getAllLocation } from '~/data/mutation/location/location-mutation';
+import { getExaminationItem } from '~/data/mutation/items/item-mutation';
+import { useNavigate } from 'react-router-dom';
 
-const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose }) => {
+const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose, onSave }) => {
     const [quantities, setQuantities] = useState({});
     const [openAddCategoryDialog, setOpenAddCategoryDialog] = useState(false);
     const [dataReceiptDetail, setDataReceiptDetail] = useState(null);
@@ -30,7 +32,7 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose 
     const [selectedDetailId, setSelectedDetailId] = useState(null);
     const [selectedLocations, setSelectedLocations] = useState([]);
     const [toLocation_id, setToLocation_id] = useState([]);
-
+    const [selectedDetailQuantity, setSelectedDetailQuantity] = useState(null);
 
     const [isSent, setIsSent] = useState(false);
     const getDetailIds = () => {
@@ -38,10 +40,22 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose 
     };
 
     //========================== Hàm notification của trang ==================================
+    const [open, setOpen] = React.useState(false);
     const [open1, setOpen1] = React.useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
     const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
+    const navigate = useNavigate();
+
+    const handleSuccessMessage = (message) => {
+        setOpen(true);
+        if (message === 'Export receipt created successfully') {
+            setSuccessMessage('Thành công');
+        } else if (message === 'Cập nhật vị trí các sản phẩm thành công.') {
+            setSuccessMessage('Cập nhật vị trí các sản phẩm thành công.');
+        }
+    };
 
     const handleErrorMessage = (message) => {
         setOpen1(true);
@@ -49,6 +63,8 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose 
             setErrorMessage('Yêu cầu không hợp lệ !');
         } else if (message === 'Receipt is not in the approved state for processing') {
             setErrorMessage('Phiếu không ở trạng thái được phê duyệt để xử lý !');
+        } else if (message === 'Các sản phẩm chưa được cập nhật hết vị trí.') {
+            setErrorMessage('Các sản phẩm chưa được cập nhật hết vị trí !');
         }
     };
 
@@ -58,7 +74,9 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose 
         }
 
         setOpen1(false);
+        setOpen(false);
         setErrorMessage('');
+        setSuccessMessage('');
     };
 
     const action = (
@@ -78,6 +96,8 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose 
 
     const handleOpenAddCategoryDialog = (detailId) => {
         setSelectedDetailId(detailId);
+        const selectedDetail = dataReceiptDetail.details.find((detail) => detail.id === detailId);
+        setSelectedDetailQuantity(selectedDetail ? selectedDetail.quantity : null);
         setOpenAddCategoryDialog(true);
     };
 
@@ -111,8 +131,6 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose 
                 setDataReceiptDetail(response.data);
                 // handleOpenAddCategoryDialog();
                 setIsSent(true);
-                onClose && onClose();
-
             }
         } catch (error) {
             // Handle error
@@ -120,12 +138,27 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose 
             handleErrorMessage(error.response.data.message);
         }
     };
-    const handleSave = async () => {
-        // Gọi API hoặc thực hiện các công việc cần thiết khi lưu lại
+
+    const handleConfirm = async () => {
+        const paramReceipt = {
+            receipt_id: dataReceiptDetail.id,
+        };
+
         try {
-            // Lưu lại thành công
+            const response = await getExaminationItem(dataReceiptDetail.id);
+            console.log('API Response:', response);
+            if (response.status === '200 OK') {
+                onSave && onSave(response.message, 'Completed');
+                // Đóng form
+                onClose && onClose();
+                navigate('/inventory-staff/requests-import-receipt', {
+                    state: { successMessage: response.message },
+                });
+                handleSuccessMessage(response.message);
+            }
         } catch (error) {
-            // Xử lý lỗi khi lưu lại nếu cần
+            console.error('Error calling getExaminationItem API:', error);
+            handleErrorMessage(error.response.data.message);
         }
     };
 
@@ -221,60 +254,54 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose 
                                         <TableCell>Số lượng thực tế</TableCell>
                                         <TableCell></TableCell>
                                     </TableRow>
-                                    {dataReceiptDetail !== null ? (
-                                        dataReceiptDetail.details.map((detail) => (
-                                            <TableRow key={detail.id}>
+                                    {dataReceiptDetail !== null
+                                        ? dataReceiptDetail.details.map((detail) => (
+                                              <TableRow key={detail.id}>
+                                                  <TableCell>{detail.itemName}</TableCell>
 
-                                                <TableCell>{detail.itemName}</TableCell>
+                                                  <TableCell>{detail.quantity}</TableCell>
 
-                                                < TableCell >
-                                                    {detail.quantity}
-                                                </TableCell>
+                                                  <TableCell>{detail.unitName}</TableCell>
 
-                                                <TableCell>{detail.unitName}</TableCell>
+                                                  <TableCell>{detail.quantity}</TableCell>
 
-                                                < TableCell >
-                                                    {detail.quantity}
-                                                </TableCell>
-
-                                                <TableCell>
-                                                    {!locationQuantities[detail.id] > 0 &&
-                                                        !selectedLocationsFlag[detail.id] && (
-                                                            <Button
-                                                                variant="contained"
-                                                                color="primary"
-                                                                onClick={() =>
-                                                                    handleOpenAddCategoryDialog(detail.id)
-                                                                }
-                                                                disabled={selectedLocationsFlag[detail.id]}
-                                                            >
-                                                                Chọn vị trí
-                                                            </Button>
-                                                        )}
-                                                </TableCell>
-                                            </TableRow>
-                                        ))
-                                    ) : (
-                                        importReceipst.details.map((items) => (
-                                            <TableRow key={items.id}>
-                                                {console.log(quantities[items.id])}
-                                                <TableCell>{items.itemName}</TableCell>
-                                                <TableCell>{items.quantity}</TableCell>
-                                                <TableCell>{items.unitName}</TableCell>
-                                                <TableCell>
-                                                    <TextField
-                                                        style={{ width: '50%' }}
-                                                        type="number"
-                                                        value={quantities[items.id] || ''}
-                                                        onChange={(e) =>
-                                                            handleQuantityChange(items.id, e.target.value)
-                                                        }
-                                                        label="Số lượng nhập thực tế"
-                                                    />
-                                                </TableCell>
-                                            </TableRow>
-                                        ))
-                                    )}
+                                                  <TableCell>
+                                                      {!locationQuantities[detail.id] > 0 &&
+                                                          !selectedLocationsFlag[detail.id] &&
+                                                          selectedLocations.find(
+                                                              (loc) => loc.detailId === detail.id,
+                                                          ) === undefined && (
+                                                              <Button
+                                                                  variant="contained"
+                                                                  color="primary"
+                                                                  onClick={() => handleOpenAddCategoryDialog(detail.id)}
+                                                                  disabled={selectedLocationsFlag[detail.id]}
+                                                              >
+                                                                  Chọn vị trí
+                                                              </Button>
+                                                          )}
+                                                  </TableCell>
+                                              </TableRow>
+                                          ))
+                                        : importReceipst.details.map((items) => (
+                                              <TableRow key={items.id}>
+                                                  {console.log(quantities[items.id])}
+                                                  <TableCell>{items.itemName}</TableCell>
+                                                  <TableCell>{items.quantity}</TableCell>
+                                                  <TableCell>{items.unitName}</TableCell>
+                                                  <TableCell>
+                                                      <TextField
+                                                          style={{ width: '50%' }}
+                                                          type="number"
+                                                          value={quantities[items.id] || ''}
+                                                          onChange={(e) =>
+                                                              handleQuantityChange(items.id, e.target.value)
+                                                          }
+                                                          label="Số lượng nhập thực tế"
+                                                      />
+                                                  </TableCell>
+                                              </TableRow>
+                                          ))}
                                     <div
                                         style={{
                                             display: 'flex',
@@ -295,7 +322,7 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose 
                         </CardContent>
                         <Grid container justifyContent="flex-end" style={{ marginTop: 10 }}>
                             {isSent ? (
-                                <Button variant="contained" color="secondary" onClick={handleSave}>
+                                <Button variant="contained" color="secondary" onClick={handleConfirm}>
                                     Lưu lại
                                 </Button>
                             ) : (
@@ -313,6 +340,13 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose 
                                 selectedLocations={selectedLocations[selectedDetailId] || []}
                                 toLocationData={toLocation_id}
                                 onSave={handleSaveLocation}
+                                itemId={
+                                    dataReceiptDetail?.details && selectedDetailId
+                                        ? dataReceiptDetail.details.find((detail) => detail.id === selectedDetailId)
+                                              ?.itemId
+                                        : null
+                                }
+                                selectedDetailQuantity={selectedDetailQuantity}
                             />
                             {/* <AddLocationsForm
                                 open={openAddCategoryDialog}
@@ -325,6 +359,13 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose 
                                     handleClosePopup();
                                 }}
                             /> */}
+                            <SnackbarSuccess
+                                open={open}
+                                handleClose={handleClose}
+                                message={successMessage}
+                                action={action}
+                                style={{ bottom: '16px', right: '16px' }}
+                            />
                             <SnackbarError
                                 open={open1}
                                 handleClose={handleClose}
@@ -344,7 +385,7 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose 
                         </Grid>
                     </Card>
                 </DialogContent>
-            </div >
+            </div>
         </>
     );
 };

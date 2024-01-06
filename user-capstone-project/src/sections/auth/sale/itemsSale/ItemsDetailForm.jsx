@@ -257,6 +257,14 @@ const ItemsDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mod
         setOpenAddCategoryDialog(false);
     };
 
+    const calculateTotalQuantity = (warehouseName) => {
+        const totalQuantity = item.locations
+            .filter((location) => location.warehouse.name === warehouseName)
+            .reduce((sum, location) => sum + location.item_quantity, 0);
+
+        return totalQuantity;
+    };
+
     return (
         <div
             id="itemDetailForm"
@@ -462,7 +470,7 @@ const ItemsDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mod
                                     direction="row"
                                     justifyContent="space-between"
                                     alignItems="center"
-                                    sx={{ marginBottom: 4, gap: 5, marginLeft: 0.1}}
+                                    sx={{ marginBottom: 4, gap: 5, marginLeft: 0.1 }}
                                 >
                                     <Typography variant="body1">Vị trí :</Typography>
                                     <div style={{ display: 'flex', width: '72%', alignItems: 'center' }}>
@@ -477,19 +485,28 @@ const ItemsDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mod
                                                 item.locations
                                                     ? [
                                                           ...new Set(
-                                                              item.locations.map((location) => location.warehouse.name),
+                                                              item.locations.map(
+                                                                  (location) =>
+                                                                      `${
+                                                                          location.warehouse.name
+                                                                      } - Số lượng: ${calculateTotalQuantity(
+                                                                          location.warehouse.name,
+                                                                      )}`,
+                                                              ),
                                                           ),
-                                                      ].join(', ')
+                                                      ].join('\n')
                                                     : ''
                                             }
                                             title={
                                                 item.locations
-                                                    ? item.locations
-                                                          .map(
-                                                              (location) =>
-                                                                  `${location.binNumber} - ${location.shelfNumber} - Số lượng: ${location.item_quantity} (${location.warehouse.name})`,
-                                                          )
-                                                          .join('\n')
+                                                    ? [
+                                                          ...new Set(
+                                                              item.locations.map(
+                                                                  (location) =>
+                                                                      `${location.warehouse.address} - ${location.warehouse.name}`,
+                                                              ),
+                                                          ),
+                                                      ].join('\n')
                                                     : ''
                                             }
                                         />

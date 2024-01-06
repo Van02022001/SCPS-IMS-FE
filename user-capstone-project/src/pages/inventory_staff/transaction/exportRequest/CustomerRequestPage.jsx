@@ -41,9 +41,6 @@ import ExportReceiptDetailForm from '~/sections/auth/inventory_staff/exportRecei
 import dayjs from 'dayjs';
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 
-
-
-
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -303,7 +300,9 @@ const CustomerRequestPage = () => {
         }
     }, [successMessage]);
     //==============================* filter *==============================
-    const pendingApprovalItems = importRequestData.filter((importRequest) => importRequest.status === 'Pending_Approval');
+    const pendingApprovalItems = importRequestData.filter(
+        (importRequest) => importRequest.status === 'Pending_Approval',
+    );
 
     const otherItems = importRequestData.filter((importRequest) => importRequest.status !== 'Pending_Approval');
 
@@ -312,12 +311,13 @@ const CustomerRequestPage = () => {
     const uniqueStatusArray = Array.from(new Set(statusArray));
 
     // Chỉ chọn những giá trị mà bạn quan tâm
-    const filteredStatusArray = uniqueStatusArray.filter(status => (
-        status === "Pending_Approval" ||
-        status === "Approved" ||
-        status === "IN_PROGRESS" ||
-        status === "Completed"
-    ));
+    const filteredStatusArray = uniqueStatusArray.filter(
+        (status) =>
+            status === 'Pending_Approval' ||
+            status === 'Approved' ||
+            status === 'IN_PROGRESS' ||
+            status === 'Completed',
+    );
     const handleStatusChange = (event) => {
         setSelectedStatus(event.target.value);
     };
@@ -439,7 +439,8 @@ const CustomerRequestPage = () => {
                                                 <TableCell align="left">
                                                     <Label
                                                         color={
-                                                            (importReceipt.status === 'Pending_Approval' && 'warning') ||
+                                                            (importReceipt.status === 'Pending_Approval' &&
+                                                                'warning') ||
                                                             (importReceipt.status === 'Approved' && 'success') ||
                                                             (importReceipt.status === ' IN_PROGRESS' && 'warning') ||
                                                             (importReceipt.status === 'Complete' && 'primary') ||
@@ -450,12 +451,14 @@ const CustomerRequestPage = () => {
                                                         {importReceipt.status === 'Pending_Approval'
                                                             ? 'Chờ phê duyệt'
                                                             : importReceipt.status === 'Approved'
-                                                                ? 'Đã xác nhận'
-                                                                : importReceipt.status === 'IN_PROGRESS'
-                                                                    ? 'Đang tiến hành'
-                                                                    : importReceipt.status === 'Completed'
-                                                                        ? 'Hoàn thành'
-                                                                        : 'Ngừng hoạt động'}
+                                                            ? 'Đã xác nhận'
+                                                            : importReceipt.status === 'IN_PROGRESS'
+                                                            ? 'Đang tiến hành'
+                                                            : importReceipt.status === 'NOT_COMPLETED'
+                                                            ? 'Chưa hoàn thành'
+                                                            : importReceipt.status === 'Completed'
+                                                            ? 'Hoàn thành'
+                                                            : 'Ngừng hoạt động'}
                                                     </Label>
                                                 </TableCell>
                                             </TableRow>
@@ -468,7 +471,9 @@ const CustomerRequestPage = () => {
                                                             // productStatus={productStatus}
                                                             importReceiptId={selectedImportReceiptId}
                                                             updateImportReceiptInList={updateImportReceiptInList}
-                                                            updateImportReceiptConfirmInList={updateImportReceiptConfirmInList}
+                                                            updateImportReceiptConfirmInList={
+                                                                updateImportReceiptConfirmInList
+                                                            }
                                                             onClose={handleCloseProductDetails}
                                                         />
                                                     </TableCell>
