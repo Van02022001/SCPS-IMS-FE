@@ -16,18 +16,21 @@ import {
     TableHead,
     TableBody,
 } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
-import Iconify from '~/components/iconify/Iconify';
-import Scrollbar from '~/components/scrollbar/Scrollbar';
-import CloseIcon from '@mui/icons-material/Close';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import EditIcon from '@mui/icons-material/Edit';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
+//api
 import { getItemByWarehouse } from '~/data/mutation/items/item-mutation';
 import { InventoryReportListHead, InventoryReportToolbar } from '~/sections/@dashboard/manager/inventoryReport';
-import CreateInventoryCheckDetail from '~/sections/auth/inventory_staff/inventoryCheck/CreateInventoryCheckDetail';
+
 import { createInventoryCheck } from '~/data/mutation/inventoryCheck/InventoryCheck-mutation';
+import SnackbarError from '~/components/alert/SnackbarError';
+import Scrollbar from '~/components/scrollbar/Scrollbar';
 
 const TABLE_HEAD = [
-    // { id: 'id', label: 'Mã hàng', alignRight: false },
     { id: 'itemName', label: 'Mã sản phẩm', alignRight: false },
     { id: 'quantity', label: 'Số lượng hiện tại', alignRight: false },
     { id: 'actualQuantity', label: 'Số lượng thực tế', alignRight: false },
@@ -37,7 +40,7 @@ const TABLE_HEAD = [
 const CreateInventoryCheck = ({
     selectedItemCheckId,
     inventoryCheckData,
-    open,
+
     onClose,
 }) => {
     const [filterName, setFilterName] = useState('');
@@ -57,19 +60,54 @@ const CreateInventoryCheck = ({
         totalActualQuantity: 0,
         totalLocations: 0,
     });
-    //State sử lý quanity bên details
+    //Thông bao
+    const [open, setOpen] = React.useState(false);
+    const [open1, setOpen1] = React.useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+    //State sử lý quanity bên detail
+    const navigate = useNavigate();
+    const handleSuccessMessage = (message) => {
+        setOpen(true);
+        if (message === 'Import request receipt created successfully') {
+            setSuccessMessage('Tạo phiếu thành công');
+        } else if (message === 'Update sub category successfully.') {
+            setSuccessMessage('Cập nhập danh mục thành công');
+        }
+    };
+
+    const handleErrorMessage = (message) => {
+        setOpen1(true);
+        if (message === 'Inventory Staff not found!') {
+            setErrorMessage('Không tìm thấy nhân viên !');
+        } else if (message === 'Invalid request') {
+            setErrorMessage('Yêu cầu không hợp lệ');
+        } else if (message === '404 NOT_FOUND') {
+            setErrorMessage('Mô tả quá dài');
+        } else if (message === 'Warehouse not found!') {
+            setErrorMessage('Hãy chọn kho và nhân viên !');
+        }
+    };
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpen(false);
+        setOpen1(false);
+        setSuccessMessage('');
+        setErrorMessage('');
+    };
+    const action = (
+        <React.Fragment>
+            <Button color="secondary" size="small" onClick={handleClose}></Button>
+            <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
+                <CloseIcon fontSize="lage" />
+            </IconButton>
+        </React.Fragment>
+    );
 
     const handleItemClickDetail = (item) => {
         setSelectedItemCheckDetailId(item.id === selectedItemCheckDetailId ? null : item.id);
-    };
-
-    const handleItemClick = (item) => {
-        console.log(item);
-        if (selectedItemCheckId === item.id) {
-            setSelectedItemCheckDetailId(null);
-        } else {
-            setSelectedItemCheckDetailId(item.id);
-        }
     };
 
     const handleDescriptionChange = (event) => {
@@ -136,10 +174,15 @@ const CreateInventoryCheck = ({
 
             const response = await createInventoryCheck(checkInventoryParams);
 
-            // Handle the response as needed
-
+            if (response.status === '201 CREATED') {
+                handleSuccessMessage(response.message);
+                // Chuyển hướng và truyền thông báo
+                navigate('/inventory-staff/inventory-check-item', {
+                    state: { successMessage: response.message },
+                });
+            }
         } catch (error) {
-            console.error('Error updating quantities:', error);
+            handleErrorMessage(error.response?.data?.message);
         }
     };
 
@@ -209,7 +252,7 @@ const CreateInventoryCheck = ({
                                         selected={selectedItemCheckDetailId === item.id}
                                         onClick={() => handleItemClickDetail(item)}
                                     >
-                                        <TableCell align="left">{item.code}</TableCell>
+                                        <TableCell align="left">{item.subCategory.name}</TableCell>
                                         <TableCell align="left">{item.quantity}</TableCell>
                                         <TableCell>
                                             <TextField
@@ -221,7 +264,7 @@ const CreateInventoryCheck = ({
                                         </TableCell>
                                         <TableCell>
                                             <TextField
-                                                label="Mô tả sản phẩm"
+                                                label="Ghi chú"
                                                 fullWidth
                                                 multiline
                                                 rows={2}
@@ -233,7 +276,7 @@ const CreateInventoryCheck = ({
 
                                     {selectedItemCheckDetailId === item.id && (
                                         <TableRow>
-                                            <TableCell colSpan={3}>
+                                            <TableCell colSpan={12} style={{ marginLeft: '20px' }}>
                                                 <TableHead>
                                                     <TableRow>
                                                         <TableCell>Vị trí</TableCell>
@@ -244,9 +287,9 @@ const CreateInventoryCheck = ({
                                                 <TableBody>
                                                     {item.locations.map((location) => (
                                                         <TableRow key={location.id}>
-                                                            <TableCell>{`${location.shelfNumber} - ${location.binNumber}`}</TableCell>
-                                                            <TableCell>{location.item_quantity}</TableCell>
-                                                            <TableCell>
+                                                            <TableCell sx={{ width: '40%' }}>{`${location.shelfNumber} - ${location.binNumber}`}</TableCell>
+                                                            <TableCell sx={{ width: '30%' }}>{location.item_quantity}</TableCell>
+                                                            <TableCell sx={{ width: '30%' }}>
                                                                 <TextField
                                                                     label="Số lượng"
                                                                     type="number"
@@ -257,9 +300,9 @@ const CreateInventoryCheck = ({
                                                         </TableRow>
                                                     ))}
                                                     <TableRow>
-                                                        <TableCell colSpan={1}>Tổng số vị trí: {totalQuantities.totalLocations}</TableCell>
-                                                        <TableCell>Tổng số lượng hiện tại: {totalQuantities.totalActualQuantity}</TableCell>
-                                                        <TableCell>Tổng số lượng thực tế: {totalQuantities.totalQuantity}</TableCell>
+                                                        <TableCell colSpan={1} sx={{ fontWeight: "bold" }}>Tổng số vị trí: {totalQuantities.totalLocations}</TableCell>
+                                                        <TableCell sx={{ fontWeight: "bold" }}>Tổng số lượng hiện tại: {totalQuantities.totalActualQuantity}</TableCell>
+                                                        <TableCell sx={{ fontWeight: "bold" }}>Tổng số lượng thực tế: {totalQuantities.totalQuantity}</TableCell>
                                                     </TableRow>
                                                 </TableBody>
                                             </TableCell>
@@ -277,6 +320,13 @@ const CreateInventoryCheck = ({
                     </Button>
                 </DialogActions>
             </Card>
+            <SnackbarError
+                open={open1}
+                handleClose={handleClose}
+                message={errorMessage}
+                action={action}
+                style={{ bottom: '16px', right: '16px' }}
+            />
         </>
     );
 };

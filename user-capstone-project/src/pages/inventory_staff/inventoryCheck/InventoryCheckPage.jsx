@@ -34,20 +34,23 @@ import PRODUCTSLIST from '../../../_mock/products';
 // import ImportReaceiptDetailForm from '~/sections/auth/inventory_staff/importReceipt/ImportReceiptDetailForm';
 // import EditCategoryForm from '~/sections/auth/manager/categories/EditCategoryForm';
 // import GoodsReceiptPage from '../GoodsReceiptPage';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import dayjs from 'dayjs';
-import { getItemByWarehouse } from '~/data/mutation/items/item-mutation';
-import InventoryCheckDetail from '~/sections/auth/inventory_staff/inventoryCheck/InventoryCheckDetail';
 import { getAllInventoryCheck } from '~/data/mutation/inventoryCheck/InventoryCheck-mutation';
 import CreateInventoryCheck from './CreateInventoryCheck';
+import InventoryCheckDetail from '~/sections/auth/inventory_staff/inventoryCheck/InventoryCheckDetail';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
     // { id: 'id', label: 'Mã hàng', alignRight: false },
     { id: 'itemName', label: 'Tên hàng', alignRight: false },
-    { id: '' },
+    { id: 'itemName', label: 'Mô tả', alignRight: false },
+    { id: 'itemName', label: 'Người tạo', alignRight: false },
+    { id: 'itemName', label: 'Ngày tạo', alignRight: false },
+    { id: 'itemName', label: 'Trạng thái', alignRight: false },
 ];
 
 // ----------------------------------------------------------------------
@@ -113,12 +116,20 @@ const InventoryCheckPage = () => {
     // State data và xử lý data
     const [inventoryCheckData, setInventoryCheckData] = useState([]);
 
+    const [selectedOrder, setSelectedOrder] = useState(null);
 
     const startIndex = page * rowsPerPage;
     const endIndex = startIndex + rowsPerPage;
 
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [inventoryCheckDetailOpen, setInventoryCheckDetailOpen] = useState(false);
+
+    const location = useLocation();
+    const { state } = location;
+    const successMessage = state?.successMessage;
+    const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
+    const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
+
 
     const handleProductClick = (product) => {
         setSelectedProduct(product);
@@ -182,6 +193,9 @@ const InventoryCheckPage = () => {
     const handleCloseOdersForm = () => {
         setOpenOderForm(false);
     };
+    const handleCloseOrderDetails = () => {
+        setSelectedOrder(null);
+    };
     //==============================* filter *==============================
 
     //==============================* filter *==============================
@@ -210,7 +224,22 @@ const InventoryCheckPage = () => {
                 console.error('Error fetching users:', error);
             });
     }, []);
-    console.log(inventoryCheckData);
+    const mapSuccessMessageToVietnamese = (englishMessage) => {
+        switch (englishMessage) {
+            case 'Inventory check receipt created successfully':
+                return 'Tạo phiếu kiểm kho thành công';
+            // Thêm các trường hợp khác nếu cần
+            default:
+                return englishMessage;
+        }
+    };
+    useEffect(() => {
+        if (successMessage) {
+            const vietnameseMessage = mapSuccessMessageToVietnamese(successMessage);
+            setSnackbarSuccessOpen(true);
+            setSnackbarSuccessMessage(vietnameseMessage);
+        }
+    }, [successMessage]);
     return (
         <>
             <Helmet>
@@ -272,12 +301,42 @@ const InventoryCheckPage = () => {
                                                 onClick={() => handleItemClick(item)}
                                             >
                                                 <TableCell align="left">{item.code}</TableCell>
+                                                <TableCell align="left">{item.description}</TableCell>
+                                                <TableCell align="left">{item.createdBy}</TableCell>
+                                                <TableCell align="left">{item.updatedAt}</TableCell>
+                                                <TableCell align="left">
+                                                    <Label
+                                                        color={
+                                                            (item.status === 'Pending_Approval' &&
+                                                                'warning') ||
+                                                            (item.status === 'Approved' && 'success') ||
+                                                            (item.status === ' IN_PROGRESS' && 'warning') ||
+                                                            (item.status === 'Complete' && 'primary') ||
+                                                            (item.status === 'Inactive' && 'error') ||
+                                                            'default'
+                                                        }
+                                                    >
+                                                        {item.status === 'Pending_Approval'
+                                                            ? 'Chờ phê duyệt'
+                                                            : item.status === 'Approved'
+                                                                ? 'Đã xác nhận'
+                                                                : item.status === 'IN_PROGRESS'
+                                                                    ? 'Đang tiến hành'
+                                                                    : item.status === 'Completed'
+                                                                        ? 'Hoàn thành'
+                                                                        : 'Ngừng hoạt động'}
+                                                    </Label>
+                                                </TableCell>
                                             </TableRow>
 
                                             {selectedItemCheckId === item.id && (
                                                 <TableRow>
                                                     <TableCell colSpan={8}>
-
+                                                        <InventoryCheckDetail
+                                                            inventoryCheckData={inventoryCheckData}
+                                                            inventoryCheckId={selectedItemCheckId}
+                                                            onClose={handleCloseOrderDetails}
+                                                        />
                                                     </TableCell>
                                                 </TableRow>
                                             )}
@@ -328,6 +387,12 @@ const InventoryCheckPage = () => {
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </Card>
+            <SnackbarSuccess
+                open={snackbarSuccessOpen}
+                handleClose={() => setSnackbarSuccessOpen(false)}
+                message={snackbarSuccessMessage}
+                style={{ bottom: '16px', right: '16px' }}
+            />
         </>
     );
 };

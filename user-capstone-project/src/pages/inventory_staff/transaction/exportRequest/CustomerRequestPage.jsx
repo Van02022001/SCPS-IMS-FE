@@ -36,9 +36,10 @@ import PRODUCTSLIST from '../../../../_mock/products';
 import { getAllCustomerRequestOfWarehouse } from '~/data/mutation/customerRequest/CustomerRequest-mutation';
 
 // import GoodsReceiptPage from '../GoodsReceiptPage';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import ExportReceiptDetailForm from '~/sections/auth/inventory_staff/exportReceipt/ExportReceiptDetailForm';
 import dayjs from 'dayjs';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 
 
 
@@ -133,6 +134,11 @@ const CustomerRequestPage = () => {
 
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [selectedStatus, setSelectedStatus] = React.useState([]);
+    const location = useLocation();
+    const { state } = location;
+    const successMessage = state?.successMessage;
+    const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
+    const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
     // Hàm để thay đổi data mỗi khi Edit xong api-------------------------------------------------------------
     const updateImportReceiptInList = (updatedImportReceipt) => {
         const importReceiptIndex = importRequestData.findIndex((product) => product.id === updatedImportReceipt.id);
@@ -286,9 +292,16 @@ const CustomerRequestPage = () => {
             .catch((error) => {
                 console.error('Error fetching users:', error);
             });
-    }, []);
+    }, [successMessage]);
     console.log(importRequestData);
 
+    useEffect(() => {
+        if (successMessage) {
+
+            setSnackbarSuccessOpen(true);
+            setSnackbarSuccessMessage(successMessage);
+        }
+    }, [successMessage]);
     //==============================* filter *==============================
     const pendingApprovalItems = importRequestData.filter((importRequest) => importRequest.status === 'Pending_Approval');
 
@@ -510,7 +523,12 @@ const CustomerRequestPage = () => {
             </Card>
             {/* </Container> */}
 
-
+            <SnackbarSuccess
+                open={snackbarSuccessOpen}
+                handleClose={() => setSnackbarSuccessOpen(false)}
+                message={snackbarSuccessMessage}
+                style={{ bottom: '16px', right: '16px' }}
+            />
         </>
     );
 };
