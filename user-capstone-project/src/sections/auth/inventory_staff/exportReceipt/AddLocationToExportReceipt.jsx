@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
 import {
-    Dialog,
     DialogTitle,
     DialogContent,
     Button,
@@ -134,106 +133,81 @@ const AddLocationToExportReceipt = ({ open, onClose, dataReceiptDetail, details,
 
     return (
         <>
-            <Dialog open={open} onClose={handleClosePopup}>
-                <DialogTitle>Hãy Chọn Địa Chỉ Lấy sản phẩm</DialogTitle>
-                <DialogContent>
-                    <CardContent>
-                        <Table>
-                            <TableBody>
-                                {details &&
-                                    details.map((detail) => (
-                                        <TableRow key={detail.id}>
-                                            <TableCell>{detail.itemName}</TableCell>
-                                            <TableCell>{detail.quantity}</TableCell>
-                                            <TableCell>
-                                                {selectedLocations[detail.id] && selectedLocations[detail.id].length > 0 ? (
-                                                    <div>
-                                                        {/* Hiển thị một số lượng cố định ban đầu */}
-                                                        {selectedLocations[detail.id].slice(0, showAllLocations ? undefined : maxLocationsToShow).map((location) => (
-                                                            <div key={location.id}>
-                                                                {`${location.shelfNumber}-${location.binNumber}-${location.warehouse.name}`}
 
-                                                                {` - Số lượng: ${location.item_quantity}`}
-                                                            </div>
-                                                        ))}
-                                                        {/* Nếu có nhiều hơn số lượng cố định, thêm nút để xem thêm */}
-                                                        {selectedLocations[detail.id].length > maxLocationsToShow && (
-                                                            <button onClick={() => setShowAllLocations(!showAllLocations)}>
-                                                                {showAllLocations ? 'Thu gọn' : 'Xem thêm'}
-                                                            </button>
-                                                        )}
-                                                    </div>
-                                                ) : (
-                                                    <div>Vị trí chưa có!</div>
-                                                )}
-                                            </TableCell>
+            <DialogTitle>Hãy Chọn Địa Chỉ Lấy sản phẩm</DialogTitle>
+            <DialogContent>
+                <CardContent>
+                    <Table>
+                        <TableBody>
+                            {details &&
+                                details.map((detail) => (
+                                    <TableRow key={detail.id}>
+                                        <TableCell>{detail.itemName}</TableCell>
+                                        <TableCell>{detail.quantity}</TableCell>
+                                        <TableCell>
+                                            {selectedLocations[detail.id] && selectedLocations[detail.id].length > 0 ? (
+                                                <div>
+                                                    {/* Hiển thị một số lượng cố định ban đầu */}
+                                                    {selectedLocations[detail.id].slice(0, showAllLocations ? undefined : maxLocationsToShow).map((location) => (
+                                                        <div key={location.id}>
+                                                            {`${location.shelfNumber}-${location.binNumber}-${location.warehouse.name}`}
 
-                                            <TableCell>
-                                                {/* Log values to check */}
-                                                {console.log('Button Condition:', !locationQuantities[detail.id] < detail.quantity && !selectedLocationsFlag[detail.id])}
-                                                {!locationQuantities[detail.id] < detail.quantity && !selectedLocationsFlag[detail.id] && (
-                                                    <Button
-                                                        variant="contained"
-                                                        color="primary"
-                                                        onClick={() => handleOpenAddCategoryDialog(detail.id)}
-                                                        disabled={selectedLocationsFlag[detail.id]}
-                                                    >
-                                                        Chọn vị trí
-                                                    </Button>
-                                                )}
+                                                            {` - Số lượng: ${location.item_quantity}`}
+                                                        </div>
+                                                    ))}
+                                                    {/* Nếu có nhiều hơn số lượng cố định, thêm nút để xem thêm */}
+                                                    {selectedLocations[detail.id].length > maxLocationsToShow && (
+                                                        <button onClick={() => setShowAllLocations(!showAllLocations)}>
+                                                            {showAllLocations ? 'Thu gọn' : 'Xem thêm'}
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            ) : (
+                                                <div>Vị trí chưa có!</div>
+                                            )}
+                                        </TableCell>
 
-                                            </TableCell>
-                                            <UpdateLocationToExportForm
-                                                open={openAddCategoryDialog}  // Use the correct state variable here
-                                                onClose={handleCloseAddCategoryDialog}
-                                                dataReceiptDetail={dataReceiptDetail}
-                                                details={details}
-                                                detailId={selectedDetailId}
+                                        <TableCell>
+                                            {/* Log values to check */}
+                                            {console.log('Button Condition:', !locationQuantities[detail.id] < detail.quantity && !selectedLocationsFlag[detail.id])}
+                                            {!locationQuantities[detail.id] < detail.quantity && !selectedLocationsFlag[detail.id] && (
+                                                <Button
+                                                    variant="contained"
+                                                    color="primary"
+                                                    onClick={() => handleOpenAddCategoryDialog(detail.id)}
+                                                    disabled={selectedLocationsFlag[detail.id]}
+                                                >
+                                                    Chọn vị trí
+                                                </Button>
+                                            )}
 
-                                                onUpdate={handleUpdateLocations}  // Pass the handleUpdateLocations function here
-                                                selectedLocations={selectedLocations}
-                                                toLocationData={toLocation_id}
-                                            />
-                                        </TableRow>
-                                    ))}
-                            </TableBody>
-                        </Table>
-                    </CardContent>
-                </DialogContent>
-                <div style={{ padding: '16px' }}>
-                    <Button variant="contained" color="primary" onClick={handleConfirm}>
-                        Lưu
-                    </Button>
-                </div>
-            </Dialog>
+                                        </TableCell>
+                                        <UpdateLocationToExportForm
+                                            open={openAddCategoryDialog}  // Use the correct state variable here
+                                            onClose={handleCloseAddCategoryDialog}
+                                            dataReceiptDetail={dataReceiptDetail}
+                                            details={details}
+                                            detailId={selectedDetailId}
+
+                                            onUpdate={handleUpdateLocations}  // Pass the handleUpdateLocations function here
+                                            selectedLocations={selectedLocations}
+                                            toLocationData={toLocation_id}
+                                        />
+                                    </TableRow>
+                                ))}
+                        </TableBody>
+                    </Table>
+                </CardContent>
+            </DialogContent>
+            <div style={{ padding: '16px' }}>
+                <Button variant="contained" color="primary" onClick={handleConfirm}>
+                    Lưu
+                </Button>
+            </div>
+
         </>
     );
 };
 
 
 export default AddLocationToExportReceipt;
-{/* <TableCell>
-                                                <FormControl >
-                                                    <InputLabel id={`location-select-label-${detail.id}`}>Vị trí xuất kho</InputLabel>
-                                                    <Select
-                                                        labelId={`location-select-label-${detail.id}`}
-                                                        id={`location-select-${detail.id}`}
-                                                        value={selectedLocations[detail.id]?.id || ''}
-                                                        onChange={(e) => handleLocationChange(detail.id, e.target.value)}
-                                                    >
-                                                        {Array.isArray(selectedLocations[detail.id]) && selectedLocations[detail.id].map((location) => (
-                                                            <MenuItem key={location.id} value={location.id}>
-                                                                {`${location.shelfNumber}-${location.binNumber}-${location.warehouse.name}`}
-                                                            </MenuItem>
-                                                        ))}
-                                                    </Select>
-                                                </FormControl>
-                                            </TableCell>
-                                            <TableCell>
-                                                <TextField
-                                                    type="number"
-                                                    value={quantity[detail.id] || ''}
-                                                    onChange={(e) => handleQuantityChange(detail.id, e.target.value)}
-                                                    label="Số lượng lấy ra"
-                                                />
-                                            </TableCell> */}

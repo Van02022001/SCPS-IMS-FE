@@ -12,22 +12,20 @@ import {
     IconButton,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { getExaminationItem } from '~/data/mutation/items/item-mutation';
+import { getExaminationItem, getUpdatedLocationDetails } from '~/data/mutation/items/item-mutation';
 import { getAllLocation, getLocationDetails } from '~/data/mutation/location/location-mutation';
-import UpdateLocationsForm from './UpdateLocationsForm';
+
+
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 import SnackbarError from '~/components/alert/SnackbarError';
+import UpdateLocationsImportForm from './UpdateLocationsImportForm';
 
-const AddLocationsForm = ({ open, onClose, importReceipst, onUpdate, onSave }) => {
+const AddLocationsImportForm = ({ open, onClose, importReceipst, onUpdate, onSave }) => {
     const [quantity, setQuantity] = useState('');
     const [toLocation_id, setToLocation_id] = useState([]);
-    const [selectedLocationId, setSelectedLocationId] = useState('');
-    const [showLocationSelection, setShowLocationSelection] = useState(false);
     const [locationQuantities, setLocationQuantities] = useState({});
 
     const [selectedLocationsFlag, setSelectedLocationsFlag] = useState({});
-    const [openUpdateLocationsForm, setOpenUpdateLocationsForm] = useState(false);
-
     // State to manage the selected locations for each detailId
     const [selectedLocations, setSelectedLocations] = useState([]);
 
@@ -130,6 +128,23 @@ const AddLocationsForm = ({ open, onClose, importReceipst, onUpdate, onSave }) =
             handleErrorMessage(error.response.data.message);
         }
     };
+    const checkUpdatedDetails = async (receiptId) => {
+        try {
+            const response = await getUpdatedLocationDetails(receiptId);
+            if (response.status === '200 OK') {
+                const updatedDetailIds = response.data.map((detail) => detail.id);
+                setSelectedLocationsFlag((prevFlag) => {
+                    const newFlag = { ...prevFlag };
+                    importReceipst.details.forEach((detail) => {
+                        newFlag[detail.id] = updatedDetailIds.includes(detail.id);
+                    });
+                    return newFlag;
+                });
+            }
+        } catch (error) {
+            console.error('Error calling getUpdatedDetails API:', error);
+        }
+    };
 
     useEffect(() => {
         getAllLocation()
@@ -140,6 +155,13 @@ const AddLocationsForm = ({ open, onClose, importReceipst, onUpdate, onSave }) =
             })
             .catch((error) => console.error('Error fetching locations:', error));
     }, []);
+
+    useEffect(() => {
+        // Call the function to check updated details when the component mounts
+        if (importReceipst.id) {
+            checkUpdatedDetails(importReceipst.id);
+        }
+    }, [importReceipst.id]);
 
     const handleSaveLocation = (successMessage) => {
         setSnackbarSuccessMessage(
@@ -180,7 +202,9 @@ const AddLocationsForm = ({ open, onClose, importReceipst, onUpdate, onSave }) =
                                                         ))}
                                                     </div>
                                                 ))}
-                                            {selectedLocations.length === 0 && (
+                                            {selectedLocationsFlag[detail.id] ? (
+                                                <div>Vị trí đã được cập nhật.</div>
+                                            ) : (
                                                 <div>Vị trí chưa có hoặc chưa cập nhật!</div>
                                             )}
                                         </TableCell>
@@ -188,20 +212,18 @@ const AddLocationsForm = ({ open, onClose, importReceipst, onUpdate, onSave }) =
                                         <TableCell>
                                             {!locationQuantities[detail.id] > 0 &&
                                                 !selectedLocationsFlag[detail.id] &&
-                                                selectedLocations.find(
-                                                    (loc) => loc.detailId === detail.id,
-                                                ) === undefined && (
+                                                selectedLocations.find((loc) => loc.detailId === detail.id) === undefined && (
                                                     <Button
                                                         variant="contained"
                                                         color="primary"
                                                         onClick={() => handleOpenAddCategoryDialog(detail.id)}
                                                         disabled={selectedLocationsFlag[detail.id]}
                                                     >
-                                                        Chọn vị trí
+                                                        {selectedLocationsFlag[detail.id] ? 'Đã cập nhật' : 'Chọn vị trí'}
                                                     </Button>
                                                 )}
                                         </TableCell>
-                                        <UpdateLocationsForm
+                                        <UpdateLocationsImportForm
                                             open={openAddCategoryDialog}
                                             onClose={handleCloseAddCategoryDialog}
                                             dataReceiptDetail={importReceipst}
@@ -250,4 +272,4 @@ const AddLocationsForm = ({ open, onClose, importReceipst, onUpdate, onSave }) =
     );
 };
 
-export default AddLocationsForm;
+export default AddLocationsImportForm;

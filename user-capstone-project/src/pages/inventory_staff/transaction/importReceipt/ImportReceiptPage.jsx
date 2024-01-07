@@ -26,13 +26,14 @@ import { ImportReceiptInventoryListHead, ImportReceiptInventoryToolbar } from '~
 // mock
 import PRODUCTSLIST from '../../../../_mock/products';
 // api
-import { getAllImportReceipt } from '~/data/mutation/importReceipt/ImportReceipt-mutation';
+import { getAllImportReceipt, getAllImportReceiptByWarehouse } from '~/data/mutation/importReceipt/ImportReceipt-mutation';
 
-import ImportReaceiptDetailForm from '~/sections/auth/inventory_staff/importReceipt/ImportReceiptDetailForm';
+import ImportReaceiptDetailForm from '~/sections/auth/inventory_staff/importRequestReceipt/ImportRequestReceiptDetailForm';
 // import EditCategoryForm from '~/sections/auth/manager/categories/EditCategoryForm';
 // import GoodsReceiptPage from '../GoodsReceiptPage';
 import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
+import ImportReceiptInventoryDetailForm from '~/sections/auth/inventory_staff/importReceipt/ImportReceiptInventoryDetailForm';
 
 
 // ----------------------------------------------------------------------
@@ -248,7 +249,7 @@ const ImportReceiptPage = () => {
     const isNotFound = !filteredUsers.length && !!filterName;
 
     useEffect(() => {
-        getAllImportReceipt()
+        getAllImportReceiptByWarehouse()
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
@@ -365,8 +366,8 @@ const ImportReceiptPage = () => {
                                                             ? 'Chờ phê duyệt'
                                                             : importReceipt.status === 'Approved'
                                                                 ? 'Đã xác nhận'
-                                                                : importReceipt.status === 'IN_PROGRESS'
-                                                                    ? 'Đang tiến hành'
+                                                                : importReceipt.status === 'NOT_COMPLETED'
+                                                                    ? 'Chưa hoàn thành'
                                                                     : importReceipt.status === 'Completed'
                                                                         ? 'Hoàn thành'
                                                                         : 'Ngừng hoạt động'}
@@ -377,7 +378,7 @@ const ImportReceiptPage = () => {
                                             {selectedImportReceiptId === importReceipt.id && (
                                                 <TableRow>
                                                     <TableCell colSpan={8}>
-                                                        <ImportReaceiptDetailForm
+                                                        <ImportReceiptInventoryDetailForm
                                                             importReceipt={importReceiptData}
                                                             // productStatus={productStatus}
                                                             importReceiptId={selectedImportReceiptId}

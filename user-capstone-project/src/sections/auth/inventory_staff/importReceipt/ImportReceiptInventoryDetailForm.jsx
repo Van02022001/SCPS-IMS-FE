@@ -32,12 +32,10 @@ import {
     editReceiptStartImport,
 } from '~/data/mutation/importRequestReceipt/ImportRequestReceipt-mutation';
 
-import CreateImportReceiptForm from './CreateImportReceiptForm';
-import { getAllImportReceipt } from '~/data/mutation/importReceipt/ImportReceipt-mutation';
-import SnackbarError from '~/components/alert/SnackbarError';
-import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
+import AddLocationsImportForm from './AddLocationsImportForm';
+// import CreateImportReceiptForm from './CreateImportReceiptForm';
 
-const ImportReceiptDetailForm = ({
+const ImportReceiptInventoryDetailForm = ({
     importReceipt,
     importReceiptId,
     updateImportReceiptInList,
@@ -46,6 +44,8 @@ const ImportReceiptDetailForm = ({
     isOpen,
     mode,
 }) => {
+    const [open, setOpen] = React.useState(false);
+
     const [tab1Data, setTab1Data] = useState({ categories_id: [] });
     const [tab2Data, setTab2Data] = useState({});
 
@@ -59,8 +59,7 @@ const ImportReceiptDetailForm = ({
     const [editedImportReceipt, setEditedImportReceipt] = useState(null);
     const [editSubCategoryMeta, setEditSubCategoryMeta] = useState(null);
     const [currentStatus, setCurrentStatus] = useState('');
-    const [importReceiptData, setImportReceiptData] = useState([]);
-    const [openAddCategoryDialog, setOpenAddCategoryDialog] = useState(false);
+
     // const [positionedSnackbarOpen, setPositionedSnackbarOpen] = useState(false);
     // const [positionedSnackbarError, setPositionedSnackbarError] = useState(false);
     // form
@@ -73,30 +72,21 @@ const ImportReceiptDetailForm = ({
         details: [],
     });
 
-    //========================== Hàm notification của trang ==================================
-    const [open, setOpen] = React.useState(false);
-    const [open1, setOpen1] = React.useState(false);
+    //thông báo
+    const [isSuccess, setIsSuccess] = useState(false);
+    const [isError, setIsError] = useState(false);
+    const [message, setMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
-    const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
-    const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
 
-    const handleSuccessMessage = (message) => {
+    const handleMessage = (message) => {
         setOpen(true);
-        if (message === 'Import request receipt confirmed successfully') {
-            setSuccessMessage('Thành công');
-        } else if (message === 'Import process started successfully') {
-            setSuccessMessage('Thành công');
-        }
-    };
-
-    const handleErrorMessage = (message) => {
-        setOpen1(true);
-        setErrorMessage(message);
-        if (message === 'Invalid request') {
-            setErrorMessage('Yêu cầu không hợp lệ !');
-        } else if (message === 'Receipt is not in the approved state for processing') {
-            setErrorMessage('Phiếu không ở trạng thái được phê duyệt để xử lý !');
+        // Đặt logic hiển thị nội dung thông báo từ API ở đây
+        if (message === 'Update SubCategory status successfully.') {
+            setMessage('Cập nhập trạng thái danh mục thành công');
+        } else if (message === 'Update SubCategory successfully.') {
+            setMessage('Cập nhập danh mục thành công');
+            console.error('Error message:', errorMessage);
         }
     };
 
@@ -104,10 +94,8 @@ const ImportReceiptDetailForm = ({
         if (reason === 'clickaway') {
             return;
         }
+
         setOpen(false);
-        setOpen1(false);
-        setSuccessMessage('');
-        setErrorMessage('');
     };
 
     const action = (
@@ -118,8 +106,6 @@ const ImportReceiptDetailForm = ({
             </IconButton>
         </React.Fragment>
     );
-
-    //========================== Hàm notification của trang ==================================
 
     const handleTab1DataChange = (event) => {
         // Cập nhật dữ liệu cho tab 1 tại đây
@@ -224,29 +210,37 @@ const ImportReceiptDetailForm = ({
             const response = await editImportReceipt(importReceiptId, editedImportReceipt);
 
             if (response.status === '200 OK') {
+                setIsSuccess(true);
+                setIsError(false);
+                setSuccessMessage(response.message);
+                handleMessage(response.message);
             }
             updateImportReceiptInList(response.data);
             console.log('Product updated:', response);
         } catch (error) {
             console.error('An error occurred while updating the product:', error);
+            setIsError(true);
+            setIsSuccess(false);
+            if (error.response?.data?.message === 'Invalid request') {
+                setErrorMessage('Yêu cầu không hợp lệ');
+            }
+            if (error.response?.data?.error === '404 NOT_FOUND') {
+                setErrorMessage('Mô tả quá dài');
+            }
         }
     };
 
     const updateImportReceiptConfirm = async () => {
         try {
-            // if (currentStatus !== 'Pending_Approval') {
-            //     const errorMessage = 'Không thể xác nhận. Phiếu này không ở trạng thái Chờ phê duyệt !';
-            //     handleErrorMessage(errorMessage);
-            //     return;
-            // }
-
-            const newStatus = 'Approved'; // Set the desired status
+            let newStatus = currentStatus === 'Pending_Approval' ? 'Inactive' : 'Approved';
 
             const response = await editImportReceiptConfirm(importReceiptId, newStatus);
 
             if (response.status === '200 OK') {
-                // Handle success if needed
-                handleSuccessMessage('Import request receipt confirmed successfully');
+                setIsSuccess(true);
+                setIsError(false);
+                setSuccessMessage(response.message);
+                handleMessage(response.message);
             }
 
             updateImportReceiptConfirmInList(importReceiptId, newStatus);
@@ -254,25 +248,26 @@ const ImportReceiptDetailForm = ({
 
             console.log('Product status updated:', response);
         } catch (error) {
-            console.error('Error updating category status:', error);
-            handleErrorMessage(error.response?.data?.message || 'An error occurred.');
+            // console.error('Error updating category status:', error);
+            // setIsError(true);
+            // setIsSuccess(false);
+            // setErrorMessage(error.response.data.message);
+            // if (error.response) {
+            //     console.log('Error response:', error.response);
+            // }
         }
     };
-
     const updateReceiptStartImport = async () => {
         try {
-            // if (currentStatus !== 'Approved') {
-            //     const errorMessage = 'Không thể Tiến hành nhập kho. Phiếu này không ở trạng thái Đã xác nhận !';
-            //     handleErrorMessage(errorMessage);
-            //     return;
-            // }
-
-            const newStatus = 'IN_PROGRESS';
+            let newStatus = currentStatus === 'Approved' ? 'Inactive' : 'Completed';
 
             const response = await editReceiptStartImport(importReceiptId, newStatus);
 
             if (response.status === '200 OK') {
-                handleSuccessMessage(response.message);
+                setIsSuccess(true);
+                setIsError(false);
+                setSuccessMessage(response.message);
+                handleMessage(response.message);
             }
 
             updateImportReceiptConfirmInList(importReceiptId, newStatus);
@@ -281,12 +276,18 @@ const ImportReceiptDetailForm = ({
             console.log('Product status updated:', response);
         } catch (error) {
             console.error('Error updating category status:', error);
+            setIsError(true);
+            setIsSuccess(false);
+            setErrorMessage(error.response.data.message);
+            if (error.response) {
+                console.log('Error response:', error.response);
+            }
         }
     };
     const handleOpenForm = () => {
         const validImportReceipst = importReceipt.find((o) => o.id === importReceiptId);
 
-        if (validImportReceipst && validImportReceipst.status === 'IN_PROGRESS') {
+        if (validImportReceipst && validImportReceipst.status === 'NOT_COMPLETED') {
             setIsOpenImportForm(true);
 
             setImportReceipstData({
@@ -307,71 +308,13 @@ const ImportReceiptDetailForm = ({
             console.log(validImportReceipst);
         } else {
             console.error('Không tìm thấy dữ liệu hợp lệ cho importReceiptId: ', importReceiptId);
-            const errorMessage = 'Tiến hành nhập kho để tạo phiếu !';
-            handleErrorMessage(errorMessage);
         }
     };
-
-    const handleSaveLocation = (successMessage, newStatus) => {
-        setSnackbarSuccessMessage(
-            successMessage === 'Cập nhật vị trí các sản phẩm thành công.'
-                ? 'Cập nhật vị trí các sản phẩm thành công.'
-                : 'Thành công',
-        );
-        setSnackbarSuccessOpen(true);
-        setCurrentStatus(newStatus);
-        console.log(newStatus);
-    };
-
-    const handleCloseAddCategoryDialog = () => {
-        setIsOpenImportForm(false);
-    };
-
     const handleCloseForm = () => {
         setIsOpenImportForm(false);
     };
     //==========================================================================================================
-
-    // const handleEdit = (field, value) => {
-    //     console.log(`Field: ${field}, Value: ${value}`);
-    //     if (field === 'categories_id') {
-    //         const categoryIds = value.map(Number).filter(Boolean);
-    //         setEditedImportReceipt((prevProduct) => ({
-    //             ...prevProduct,
-    //             [field]: categoryIds,
-    //         }));
-    //     } else if (field === 'unit_id' || field === 'unit_mea_id') {
-    //         const id = parseInt(value);
-    //         setEditedImportReceipt((prevProduct) => ({
-    //             ...prevProduct,
-    //             [field]: id,
-    //         }));
-    //     } else {
-    //         setEditedImportReceipt((prevProduct) => ({
-    //             ...prevProduct,
-    //             [field]: value,
-    //         }));
-    //     }
-    // };
-
-    const handleDelete = () => {
-        // Xử lý xóa
-    };
-    const handleDataReload = () => {
-        getAllImportReceipt()
-            .then((response) => {
-                const data = response.data;
-                if (Array.isArray(data)) {
-                    setImportReceiptData(data);
-                } else {
-                    console.error('API response is not an array:', data);
-                }
-            })
-            .catch((error) => {
-                console.error('Error fetching import receipts:', error);
-            });
-    };
-
+    console.log(importReceipst, "Find itemid");
     return editedImportReceipt ? (
         <div
             id="productDetailForm"
@@ -383,34 +326,23 @@ const ImportReceiptDetailForm = ({
         >
             <Tabs value={currentTab} onChange={handleChangeTab} indicatorColor="primary" textColor="primary">
                 <Tab label="Thông tin" />
-                {/* <Tab label="Thông tin thêm" /> */}
-                {/* <Tab label="Tồn kho" /> */}
             </Tabs>
 
             {currentTab === 0 && (
                 <div>
                     <div>
-                        {currentStatus === 'IN_PROGRESS' && (
+                        {currentStatus === 'NOT_COMPLETED' && (
                             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                                 <Button variant="contained" color="primary" onClick={handleOpenForm}>
-                                    Tạo phiếu nhập kho
+                                    Thực hiện cập nhập vị trí
                                 </Button>
                             </div>
                         )}
                         <Dialog maxWidth="lg" fullWidth open={isOpenImportForm}>
-                            <DialogTitle style={{ textAlign: 'center' }}>
-                                Phiếu Nhập Kho
-                                <IconButton style={{ float: 'right' }} onClick={handleCloseForm}>
-                                    <CloseIcon color="primary" />
-                                </IconButton>{' '}
-                            </DialogTitle>
+                            <AddLocationsImportForm importReceipst={
+                                importReceipst
+                            } />
 
-                            <CreateImportReceiptForm
-                                isOpen={isOpenImportForm}
-                                onClose={handleCloseAddCategoryDialog}
-                                importReceipst={importReceipst}
-                                onSave={handleSaveLocation}
-                            />
                         </Dialog>
                     </div>
                     <Stack spacing={4} margin={2}>
@@ -426,11 +358,11 @@ const ImportReceiptDetailForm = ({
                                 >
                                     <Typography variant="body1">Mã phiếu:</Typography>
                                     <TextField
-                                        InputProps={{ readOnly: true }}
                                         size="small"
+                                        InputProps={{ readOnly: true }}
                                         variant="outlined"
                                         label="Tên sản phẩm"
-                                        sx={{ width: '70%' }}
+                                        sx={{ width: '70%', pointerEvents: 'none' }}
                                         value={importReceipst.code}
                                     />
                                 </Grid>
@@ -445,14 +377,14 @@ const ImportReceiptDetailForm = ({
                                 >
                                     <Typography variant="body1">Mô tả:</Typography>
                                     <TextField
-                                        InputProps={{ readOnly: true }}
                                         id="outlined-multiline-static"
+                                        InputProps={{ readOnly: true }}
                                         multiline
                                         rows={4}
                                         size="small"
                                         variant="outlined"
                                         label="Mô tả"
-                                        sx={{ width: '70%' }}
+                                        sx={{ width: '70%', pointerEvents: 'none' }}
                                         value={importReceipst.description}
                                     />
                                 </Grid>
@@ -471,8 +403,8 @@ const ImportReceiptDetailForm = ({
                                     >
                                         <Typography variant="body1">Trạng thái:</Typography>
                                         <TextField
-                                            InputProps={{ readOnly: true }}
                                             size="small"
+                                            InputProps={{ readOnly: true }}
                                             variant="outlined"
                                             label="Trạng thái"
                                             sx={{ width: '70%', pointerEvents: 'none' }}
@@ -480,12 +412,12 @@ const ImportReceiptDetailForm = ({
                                                 currentStatus === 'Pending_Approval'
                                                     ? 'Chờ phê duyệt'
                                                     : currentStatus === 'Approved'
-                                                    ? 'Đã xác nhận'
-                                                    : currentStatus === 'IN_PROGRESS'
-                                                    ? 'Đang tiến hành'
-                                                    : currentStatus === 'Completed'
-                                                    ? 'Hoàn thành'
-                                                    : 'Ngừng hoạt động'
+                                                        ? 'Đã xác nhận'
+                                                        : currentStatus === 'NOT_COMPLETED'
+                                                            ? 'Chưa hoàn thành'
+                                                            : currentStatus === 'Completed'
+                                                                ? 'Hoàn thành'
+                                                                : 'Ngừng hoạt động'
                                             }
                                         />
                                     </Grid>
@@ -502,18 +434,13 @@ const ImportReceiptDetailForm = ({
                                         </Typography>
                                         <Grid xs={8.5}>
                                             <TextField
-                                                InputProps={{ readOnly: true }}
                                                 size="small"
+                                                InputProps={{ readOnly: true }}
                                                 labelId="group-label"
                                                 id="group-select"
-                                                sx={{ width: '98.5%', fontSize: '14px', marginLeft: 1 }}
+                                                sx={{ width: '100%', fontSize: '14px', pointerEvents: 'none' }}
                                                 value={importReceipst.createdBy}
                                             />
-                                            {/* {categories_id.map((category) => (
-                                                    <MenuItem key={category.id} value={category.id}>
-                                                        {category.name}
-                                                    </MenuItem>
-                                                ))} */}
                                         </Grid>
                                     </Grid>
 
@@ -527,11 +454,11 @@ const ImportReceiptDetailForm = ({
                                     >
                                         <Typography variant="body1">Ngày tạo:</Typography>
                                         <TextField
-                                            InputProps={{ readOnly: true }}
+                                            disabled
                                             size="small"
                                             variant="outlined"
                                             label="Ngày tạo"
-                                            sx={{ width: '70%' }}
+                                            sx={{ width: '70%', pointerEvents: 'none' }}
                                             value={importReceipst.createdAt}
                                         />
                                     </Grid>
@@ -559,6 +486,8 @@ const ImportReceiptDetailForm = ({
                                             >
                                                 <TableCell>Tên sản phẩm</TableCell>
                                                 <TableCell>Số lượng</TableCell>
+                                                <TableCell>Giá sản phẩm</TableCell>
+                                                <TableCell>Tổng</TableCell>
                                                 <TableCell>Đơn vị</TableCell>
                                             </TableRow>
                                             {importReceipst.details.map((items) => {
@@ -566,26 +495,32 @@ const ImportReceiptDetailForm = ({
                                                     <TableRow key={items.id}>
                                                         <TableCell>{items.itemName}</TableCell>
                                                         <TableCell>{items.quantity}</TableCell>
+                                                        <TableCell>{items.price}</TableCell>
+                                                        <TableCell>{items.totalPrice}</TableCell>
                                                         <TableCell>{items.unitName}</TableCell>
+                                                        <TableCell>{/* Thêm thành tiền nếu có */}</TableCell>
                                                     </TableRow>
                                                 );
                                             })}
                                         </TableBody>
                                     </Table>
                                     <TableBody style={{ marginTop: 30 }}>
-                                        <Typography variant="h6">Thông tin phiếu</Typography>
+                                        <Typography mt={2} variant="h6">
+                                            Thông tin phiếu
+                                        </Typography>
                                         <TableRow>
                                             <TableCell>Tổng số lượng:</TableCell>
                                             <TableCell>{importReceipst.totalQuantity}</TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell>Tổng tiền:</TableCell>
+                                            <TableCell>{importReceipst.totalPrice} VND</TableCell>
                                         </TableRow>
                                     </TableBody>
                                 </TableContainer>
                             </CardContent>
                         </Card>
                     </div>
-
-                    {/* {isSuccess && <SuccessAlerts message={successMessage} />}
-                    {isError && <ErrorAlerts errorMessage={errorMessage} />} */}
                     <Stack spacing={4} margin={2}>
                         <Grid container spacing={1} sx={{ gap: '10px' }}>
                             {/* <Button
@@ -596,45 +531,16 @@ const ImportReceiptDetailForm = ({
                             >
                                 Cập nhật
                             </Button> */}
-
-                            {currentStatus === 'Pending_Approval' && (
-                                <div>
-                                    <Button variant="contained" color="primary" onClick={updateImportReceiptConfirm}>
-                                        Xác nhận
-                                    </Button>
-                                </div>
-                            )}
-
-                            {currentStatus === 'Approved' && (
-                                <div>
-                                    <Button variant="contained" color="warning" onClick={updateReceiptStartImport}>
-                                        Tiến hành nhập kho
-                                    </Button>
-                                </div>
-                            )}
-                            <SnackbarSuccess
-                                open={open}
-                                handleClose={handleClose}
-                                message={successMessage}
-                                action={action}
-                                style={{ bottom: '16px', right: '16px' }}
-                            />
-                            <SnackbarSuccess
-                                open={snackbarSuccessOpen}
-                                handleClose={() => {
-                                    setSnackbarSuccessOpen(false);
-                                    setSnackbarSuccessMessage('');
-                                }}
-                                message={snackbarSuccessMessage}
-                                style={{ bottom: '16px', right: '16px' }}
-                            />
-                            <SnackbarError
-                                open={open1}
-                                handleClose={handleClose}
-                                message={errorMessage}
-                                action={action}
-                                style={{ bottom: '16px', right: '16px' }}
-                            />
+                            {/* 
+                            <div>
+                                <Button variant="contained" color="primary" onClick={updateImportReceiptConfirm}>
+                                    Xác nhận
+                                </Button>
+                            <div>
+                                <Button variant="contained" color="warning" onClick={updateReceiptStartImport}>
+                                    Tiến hành nhập kho
+                                </Button>
+                            </div> */}
                             {/* <Button variant="outlined" color="error" onClick={handleClear}>
                                 Hủy bỏ
                             </Button> */}
@@ -646,4 +552,4 @@ const ImportReceiptDetailForm = ({
     ) : null;
 };
 
-export default ImportReceiptDetailForm;
+export default ImportReceiptInventoryDetailForm;

@@ -27,7 +27,7 @@ const UpdateLocationToExportForm = ({
     dataReceiptDetail,
     detailId,
     details,
-    onUpdate, // Pass onUpdate function from AddLocationsForm
+    onUpdate,
     selectedLocations,
     selectedDetailQuantity,
     onSave,

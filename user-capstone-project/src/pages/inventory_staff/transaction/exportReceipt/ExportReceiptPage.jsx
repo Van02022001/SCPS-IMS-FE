@@ -29,7 +29,7 @@ import { ProductsListHead, ProductsListToolbar } from '~/sections/@dashboard/pro
 import PRODUCTSLIST from '../../../../_mock/products';
 // api
 
-import ImportReaceiptDetailForm from '~/sections/auth/inventory_staff/importReceipt/ImportReceiptDetailForm';
+import ImportReaceiptDetailForm from '~/sections/auth/inventory_staff/importRequestReceipt/ImportRequestReceiptDetailForm';
 // import EditCategoryForm from '~/sections/auth/manager/categories/EditCategoryForm';
 // import GoodsReceiptPage from '../GoodsReceiptPage';
 import { useNavigate } from 'react-router-dom';
@@ -369,8 +369,8 @@ const ExportReceiptPage = () => {
                                                             ? 'Chờ phê duyệt'
                                                             : importReceipt.status === 'Approved'
                                                                 ? 'Đã xác nhận'
-                                                                : importReceipt.status === 'IN_PROGRESS'
-                                                                    ? 'Đang tiến hành'
+                                                                : importReceipt.status === 'NOT_COMPLETED'
+                                                                    ? 'Chưa hoàn thành'
                                                                     : importReceipt.status === 'Completed'
                                                                         ? 'Hoàn thành'
                                                                         : 'Ngừng hoạt động'}

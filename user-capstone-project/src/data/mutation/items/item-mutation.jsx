@@ -56,6 +56,10 @@ export const getAllItemBySale = async (warehouseId) => {
     const response = await axiosInstance.get(`/items/items-by-warehouse/sale-staff/${warehouseId}`);
     return response.data;
 }
+export const getUpdatedLocationDetails = async (receiptId) => {
+    const response = await axiosInstance.get(`/items/item-locations/receitp-detail/${receiptId}`);
+    return response.data;
+}
 export const getItemsByName = async (itemId) => {
     const response = await axiosInstance.get(`/items/name/${itemId}`);
     return response.data;

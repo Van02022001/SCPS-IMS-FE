@@ -34,11 +34,12 @@ import { ProductsListHead, ProductsListToolbar } from '~/sections/@dashboard/pro
 import PRODUCTSLIST from '../../../../_mock/products';
 // api
 import { getAllImportRequestOfWarehouse } from '~/data/mutation/importRequestReceipt/ImportRequestReceipt-mutation';
-import ImportReaceiptDetailForm from '~/sections/auth/inventory_staff/importReceipt/ImportReceiptDetailForm';
+
 
 // import GoodsReceiptPage from '../GoodsReceiptPage';
 import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
+import ImportRequestReceiptDetailForm from '~/sections/auth/inventory_staff/importRequestReceipt/ImportRequestReceiptDetailForm';
 
 // ----------------------------------------------------------------------
 
@@ -454,7 +455,7 @@ const ViewReceiptPage = () => {
                                             {selectedImportReceiptId === importReceipt.id && (
                                                 <TableRow>
                                                     <TableCell colSpan={8}>
-                                                        <ImportReaceiptDetailForm
+                                                        <ImportRequestReceiptDetailForm
                                                             importReceipt={importRequestData}
                                                             // productStatus={productStatus}
                                                             importReceiptId={selectedImportReceiptId}
