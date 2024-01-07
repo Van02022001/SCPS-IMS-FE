@@ -477,7 +477,7 @@ const CustomerRequestSalePage = () => {
                                                     <Stack direction="row" alignItems="center" spacing={2}>
                                                         {/* <Avatar alt={name} src={avatarUrl} /> */}
                                                         <Typography variant="subtitle2" noWrap>
-                                                            {importRequest.description}
+                                                            {importRequest.note}
                                                         </Typography>
                                                     </Stack>
                                                 </TableCell>

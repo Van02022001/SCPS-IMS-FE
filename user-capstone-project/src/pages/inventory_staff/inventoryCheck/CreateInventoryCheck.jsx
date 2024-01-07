@@ -227,10 +227,10 @@ const CreateInventoryCheck = ({
                 <DialogTitle>Chi tiết kiểm kho</DialogTitle>
                 <TextField
                     label="Mô tả phiếu"
-                    fullWidth
+                    // fullWidth
                     value={description}
                     onChange={handleDescriptionChange}
-                    sx={{ marginBottom: 2 }}
+                    sx={{ marginBottom: 2, marginLeft: 2, width: 400 }}
                 />
                 <Scrollbar>
                     <TableContainer sx={{ minWidth: 800 }}>
@@ -276,7 +276,7 @@ const CreateInventoryCheck = ({
 
                                     {selectedItemCheckDetailId === item.id && (
                                         <TableRow>
-                                            <TableCell colSpan={12} style={{ marginLeft: '20px' }}>
+                                            <TableCell colSpan={12} style={{ marginLeft: '100px' }}>
                                                 <TableHead>
                                                     <TableRow>
                                                         <TableCell>Vị trí</TableCell>
@@ -287,9 +287,9 @@ const CreateInventoryCheck = ({
                                                 <TableBody>
                                                     {item.locations.map((location) => (
                                                         <TableRow key={location.id}>
-                                                            <TableCell sx={{ width: '40%' }}>{`${location.shelfNumber} - ${location.binNumber}`}</TableCell>
-                                                            <TableCell sx={{ width: '30%' }}>{location.item_quantity}</TableCell>
-                                                            <TableCell sx={{ width: '30%' }}>
+                                                            <TableCell sx={{ width: '44%' }}>{`${location.shelfNumber} - ${location.binNumber}`}</TableCell>
+                                                            <TableCell sx={{ width: '40%' }}>{location.item_quantity}</TableCell>
+                                                            <TableCell sx={{ width: '40%' }}>
                                                                 <TextField
                                                                     label="Số lượng"
                                                                     type="number"

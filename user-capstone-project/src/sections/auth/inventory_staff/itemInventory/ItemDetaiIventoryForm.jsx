@@ -263,6 +263,14 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
         setOpenAddItemMovementDialog(false);
     };
 
+    const calculateTotalQuantity = (warehouseName) => {
+        const totalQuantity = item.locations
+            .filter((location) => location.warehouse.name === warehouseName)
+            .reduce((sum, location) => sum + location.item_quantity, 0);
+
+        return totalQuantity;
+    };
+
     console.log(itemMovementsData);
 
     return (
@@ -458,7 +466,7 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                         </Select>
                                     </Grid>
                                 </Grid>
-                                {/* <Grid
+                                <Grid
                                     container
                                     spacing={1}
                                     direction="row"
@@ -475,15 +483,37 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                             InputProps={{ readOnly: true }}
                                             multiline
                                             sx={{ width: '91%', marginRight: 1 }}
-                                            value={item.locations
-                                                .map(
-                                                    (location) =>
-                                                        `${location.binNumber} - ${location.shelfNumber} - ${location.warehouse.name}`,
-                                                )
-                                                .join(',\n')}
+                                            value={
+                                                item.locations
+                                                    ? [
+                                                          ...new Set(
+                                                              item.locations.map(
+                                                                  (location) =>
+                                                                      `${
+                                                                          location.warehouse.name
+                                                                      } - Số lượng: ${calculateTotalQuantity(
+                                                                          location.warehouse.name,
+                                                                      )}`,
+                                                              ),
+                                                          ),
+                                                      ].join('\n')
+                                                    : ''
+                                            }
+                                            title={
+                                                item.locations
+                                                    ? [
+                                                          ...new Set(
+                                                              item.locations.map(
+                                                                  (location) =>
+                                                                      `${location.warehouse.address} - ${location.warehouse.name}`,
+                                                              ),
+                                                          ),
+                                                      ].join('\n')
+                                                    : ''
+                                            }
                                         />
                                     </div>
-                                </Grid> */}
+                                </Grid>
                                 <Grid
                                     container
                                     spacing={1}
@@ -783,20 +813,25 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                                     return (
                                                         <TableRow key={items.id}>
                                                             <TableCell>
-                                                                {items.toLocation && items.toLocation.warehouse ? items.toLocation.warehouse.name : 'Không có'}
+                                                                {items.toLocation && items.toLocation.warehouse
+                                                                    ? items.toLocation.warehouse.name
+                                                                    : 'Không có'}
                                                             </TableCell>
                                                             <TableCell>{items.quantity}</TableCell>
                                                             <TableCell>
                                                                 {items.fromLocation !== null ? (
                                                                     <div>
-                                                                        {items.fromLocation.binNumber} - {items.fromLocation.shelfNumber}
+                                                                        {items.fromLocation.binNumber} -{' '}
+                                                                        {items.fromLocation.shelfNumber}
                                                                     </div>
                                                                 ) : (
                                                                     'Không có'
                                                                 )}
                                                             </TableCell>
                                                             <TableCell>
-                                                                {items.toLocation && items.toLocation.binNumber && items.toLocation.shelfNumber
+                                                                {items.toLocation &&
+                                                                items.toLocation.binNumber &&
+                                                                items.toLocation.shelfNumber
                                                                     ? `${items.toLocation.binNumber} - ${items.toLocation.shelfNumber}`
                                                                     : 'Không có'}
                                                             </TableCell>

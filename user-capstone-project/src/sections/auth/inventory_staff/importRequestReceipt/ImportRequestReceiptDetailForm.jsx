@@ -559,6 +559,8 @@ const ImportRequestReceiptDetailForm = ({
                                             >
                                                 <TableCell>Tên sản phẩm</TableCell>
                                                 <TableCell>Số lượng</TableCell>
+                                                <TableCell>Giá sản phẩm</TableCell>
+                                                <TableCell>Tổng</TableCell>
                                                 <TableCell>Đơn vị</TableCell>
                                             </TableRow>
                                             {importReceipst.details.map((items) => {
@@ -566,6 +568,8 @@ const ImportRequestReceiptDetailForm = ({
                                                     <TableRow key={items.id}>
                                                         <TableCell>{items.itemName}</TableCell>
                                                         <TableCell>{items.quantity}</TableCell>
+                                                        <TableCell>{items.price}</TableCell>
+                                                        <TableCell>{items.totalPrice}</TableCell>
                                                         <TableCell>{items.unitName}</TableCell>
                                                     </TableRow>
                                                 );

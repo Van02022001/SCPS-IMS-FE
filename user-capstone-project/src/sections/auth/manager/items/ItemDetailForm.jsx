@@ -21,7 +21,12 @@ import {
 } from '@mui/material';
 
 // import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import { editItem, editStatusItem, getItemsByPriceHistory } from '~/data/mutation/items/item-mutation';
+import {
+    editItem,
+    editStatusItem,
+    getItemsByPriceHistory,
+    getItemsByPricingHistory,
+} from '~/data/mutation/items/item-mutation';
 import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
 import { getAllSubCategory } from '~/data/mutation/subCategory/subCategory-mutation';
@@ -53,6 +58,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
     const [supplier_id, setSupplier_id] = useState([]);
     const [origin_id, setOrigin_id] = useState([]);
     const [itemPriceData, setItemPriceData] = useState([]);
+    const [itemPricingData, setItemPricingData] = useState([]);
     const [currentStatus, setCurrentStatus] = useState('');
     const [openAddCategoryDialog, setOpenAddCategoryDialog] = useState(false);
 
@@ -214,6 +220,21 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                 }
             })
             .catch((error) => console.error('Error fetching Items:', error));
+        getItemsByPricingHistory(itemId)
+            .then((respone) => {
+                const data = respone.data;
+                if (Array.isArray(data)) {
+                    const sortedData = data.sort((a, b) => {
+                        return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(
+                            dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
+                        );
+                    });
+                    setItemPricingData(sortedData);
+                } else {
+                    console.error('API response is not an array:', data);
+                }
+            })
+            .catch((error) => console.error('Error fetching Items:', error));
     }, []);
 
     const item = items.find((o) => o.id === itemId);
@@ -304,6 +325,14 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
 
     const startIndex = page * rowsPerPage;
     const endIndex = startIndex + rowsPerPage;
+
+    const calculateTotalQuantity = (warehouseName) => {
+        const totalQuantity = item.locations
+            .filter((location) => location.warehouse.name === warehouseName)
+            .reduce((sum, location) => sum + location.item_quantity, 0);
+
+        return totalQuantity;
+    };
 
     return (
         <div
@@ -498,15 +527,33 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                             label="Vị trí"
                                             InputProps={{ readOnly: true }}
                                             multiline
-                                            sx={{ width: '92%', marginRight: 1, pointerEvents: 'none' }}
+                                            sx={{ width: '92%', marginRight: 1 }}
                                             value={
                                                 item.locations
-                                                    ? item.locations
-                                                        .map(
-                                                            (location) =>
-                                                                `${location.binNumber} - ${location.shelfNumber} - ${location.warehouse.name}`,
-                                                        )
-                                                        .join(',\n')
+                                                    ? [
+                                                          ...new Set(
+                                                              item.locations.map(
+                                                                  (location) =>
+                                                                      `${
+                                                                          location.warehouse.name
+                                                                      } - Số lượng: ${calculateTotalQuantity(
+                                                                          location.warehouse.name,
+                                                                      )}`,
+                                                              ),
+                                                          ),
+                                                      ].join('\n')
+                                                    : ''
+                                            }
+                                            title={
+                                                item.locations
+                                                    ? [
+                                                          ...new Set(
+                                                              item.locations.map(
+                                                                  (location) =>
+                                                                      `${location.warehouse.address} - ${location.warehouse.name}`,
+                                                              ),
+                                                          ),
+                                                      ].join('\n')
                                                     : ''
                                             }
                                         />
@@ -844,7 +891,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                                     <TableCell>Giá cũ</TableCell>
                                                     <TableCell>Giá mới</TableCell>
                                                 </TableRow>
-                                                {itemPriceData.slice(startIndex, endIndex).map((items) => {
+                                                {itemPricingData.slice(startIndex, endIndex).map((items) => {
                                                     return (
                                                         <TableRow key={items.id}>
                                                             <TableCell>{items.itemName}</TableCell>

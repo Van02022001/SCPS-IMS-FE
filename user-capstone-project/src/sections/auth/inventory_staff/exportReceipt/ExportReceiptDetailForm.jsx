@@ -545,7 +545,6 @@ const ExportReceiptDetailForm = ({
                                                         <TableCell>{items.quantity}</TableCell>
                                                         <TableCell>{items.totalPrice}</TableCell>
                                                         <TableCell>{items.unitName}</TableCell>
-                                                        <TableCell>{/* Thêm thành tiền nếu có */}</TableCell>
                                                     </TableRow>
                                                 );
                                             })}

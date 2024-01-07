@@ -188,7 +188,10 @@ const UpdateLocationToExportForm = ({
                     const dataArray = Array.isArray(data) ? data : [data];
                     setToLocation_id(dataArray);
                 })
-                .catch((error) => console.error('Error fetching locations:', error));
+                .catch((error) => {
+                    console.error('Error fetching locations:', error);
+                    setToLocation_id([]);
+                });
 
             handleOpenPopup();
         }
@@ -210,45 +213,51 @@ const UpdateLocationToExportForm = ({
                 </Typography>
                 <DialogContent style={{ width: '1000px', height: '500px' }}>
                     <Grid container spacing={2}>
-                        {toLocation_id.map((locationData) =>
-                            locationData.locations.map((location) => (
-                                <Grid item key={location.id} xs={6} md={4} lg={3}>
-                                    <div
-                                        key={location.id}
-                                        style={{
-                                            ...locationStyle,
-                                            ...(selectedLocationsMuti.some((selected) => selected.id === location.id)
-                                                ? selectedLocationStyle
-                                                : {}),
-                                        }}
-                                        onClick={() => handleLocationClick(location)}
-                                    >
-                                        <Typography variant="body1">
-                                            {`${location.shelfNumber} - ${location.binNumber} `}
+                        {toLocation_id.length === 0 ? (
+                            <Typography variant="body1" ml={2}>Không có vị trí trong kho</Typography>
+                        ) : (
+                            toLocation_id.map((locationData) =>
+                                locationData.locations.map((location) => (
+                                    <Grid item key={location.id} xs={6} md={4} lg={3}>
+                                        <div
+                                            key={location.id}
+                                            style={{
+                                                ...locationStyle,
+                                                ...(selectedLocationsMuti.some(
+                                                    (selected) => selected.id === location.id,
+                                                )
+                                                    ? selectedLocationStyle
+                                                    : {}),
+                                            }}
+                                            onClick={() => handleLocationClick(location)}
+                                        >
                                             <Typography variant="body1">
-                                                {`Số lượng: ${location.item_quantity} `}
+                                                {`${location.shelfNumber} - ${location.binNumber} `}
+                                                <Typography variant="body1">
+                                                    {`Số lượng: ${location.item_quantity} `}
+                                                </Typography>
+                                                <Grid
+                                                    direction="row"
+                                                    justifyContent="space-between"
+                                                    alignItems="center"
+                                                    sx={{ marginBottom: 4, gap: 5 }}
+                                                >
+                                                    <TextField
+                                                        size="small"
+                                                        label="Số lượng"
+                                                        variant="outlined"
+                                                        fullWidth
+                                                        margin="normal"
+                                                        value={quantityMap[location.id] || ''}
+                                                        onChange={(event) => handleQuantityChange(location.id, event)}
+                                                        onClick={(event) => event.stopPropagation()}
+                                                    />
+                                                </Grid>
                                             </Typography>
-                                            <Grid
-                                                direction="row"
-                                                justifyContent="space-between"
-                                                alignItems="center"
-                                                sx={{ marginBottom: 4, gap: 5 }}
-                                            >
-                                                <TextField
-                                                    size="small"
-                                                    label="Số lượng"
-                                                    variant="outlined"
-                                                    fullWidth
-                                                    margin="normal"
-                                                    value={quantityMap[location.id] || ''}
-                                                    onChange={(event) => handleQuantityChange(location.id, event)}
-                                                    onClick={(event) => event.stopPropagation()}
-                                                />
-                                            </Grid>
-                                        </Typography>
-                                    </div>
-                                </Grid>
-                            )),
+                                        </div>
+                                    </Grid>
+                                )),
+                            )
                         )}
                     </Grid>
                     <Button

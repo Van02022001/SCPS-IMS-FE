@@ -65,6 +65,8 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose,
             setErrorMessage('Phiếu không ở trạng thái được phê duyệt để xử lý !');
         } else if (message === 'Các sản phẩm chưa được cập nhật hết vị trí.') {
             setErrorMessage('Các sản phẩm chưa được cập nhật hết vị trí !');
+        } else if (message === 'An error occurred while creating the actual import receipt') {
+            setErrorMessage('Vui lòng nhập số lượng thực tế !');
         }
     };
 
@@ -259,7 +261,11 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose,
                                               <TableRow key={detail.id}>
                                                   <TableCell>{detail.itemName}</TableCell>
 
-                                                  <TableCell>{detail.quantity}</TableCell>
+                                                  <TableCell>
+                                                      {detail.discrepancyLogs && detail.discrepancyLogs.length > 0
+                                                          ? detail.discrepancyLogs[0].requiredQuantity
+                                                          : detail.quantity}
+                                                  </TableCell>
 
                                                   <TableCell>{detail.unitName}</TableCell>
 

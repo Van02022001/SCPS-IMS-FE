@@ -173,8 +173,25 @@ const CreateGoodReceipt = () => {
 
     const handleCreateImportReceipt = async () => {
         try {
+            // Create an array of details from selectedItems with necessary properties
+            const details = selectedItems.map((item) => ({
+                itemId: item.itemId,
+                quantity: item.quantity,
+                unitPrice: item.unitPrice,
+                unitId: item.unitId,
+                description: item.description,
+            }));
+
+            // Prepare the request body
+            const requestParams = {
+                warehouseId: selectedWarehouse.id,
+                inventoryStaffId: selectedInventoryStaff,
+                description: descriptionReceipt,
+                details: details,
+            };
+
             // Gọi API và xử lý thành công
-            const response = await createImportRequestReceipt(recieptParams);
+            const response = await createImportRequestReceipt(requestParams);
             if (response.status === '201 CREATED') {
                 handleSuccessMessage(response.message);
                 // Chuyển hướng và truyền thông báo
@@ -468,16 +485,23 @@ const CreateGoodReceipt = () => {
                                                 </ListItemText>
                                                 <ListItemText sx={{ flexBasis: '34%' }}>
                                                     <TextField
-                                                        type="number"
+                                                        type="text"
                                                         label="Số lượng"
                                                         sx={{ width: '40%' }}
                                                         value={selectedItem.quantity}
-                                                        onChange={(e) =>
-                                                            handleQuantityChange(
-                                                                selectedItems.indexOf(selectedItem),
-                                                                e.target.value,
-                                                            )
-                                                        }
+                                                        onChange={(e) => {
+                                                            const inputValue = e.target.value;
+                                                            if (/^\d*$/.test(inputValue)) {
+                                                                handleQuantityChange(
+                                                                    selectedItems.indexOf(selectedItem),
+                                                                    e.target.value,
+                                                                );
+                                                            }
+                                                        }}
+                                                        inputProps={{
+                                                            inputMode: 'numeric',
+                                                            pattern: '[0-9]*',
+                                                        }}
                                                     />
                                                 </ListItemText>
                                                 {/* <ListItemText>
