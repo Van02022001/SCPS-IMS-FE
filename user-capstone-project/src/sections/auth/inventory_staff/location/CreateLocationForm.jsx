@@ -9,8 +9,9 @@ import AddLocationTagForm from '../location_tag/AddLocationTagForm';
 import { getAllLocation_tag } from '~/data/mutation/location_tag/location_tag-mutaion';
 import SnackbarError from '~/components/alert/SnackbarError';
 import CloseIcon from '@mui/icons-material/Close';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 
-const CreateLocationForm = (props) => {
+const CreateLocationForm = (onSave, onClose) => {
     const [shelfNumber, setShelfNumber] = useState('');
     const [binNumber, setBinNumber] = useState('');
     const [tags_id, setTags_id] = useState([]);
@@ -18,10 +19,15 @@ const CreateLocationForm = (props) => {
     const [tab1Data, setTab1Data] = useState({ tags_id: [] });
 
     //thông báo
-    const [errorMessage, setErrorMessage] = useState('');
     //========================== Hàm notification của trang ==================================
     const [open, setOpen] = React.useState(false);
     const [open1, setOpen1] = React.useState(false);
+    const [confirmOpen1, setConfirmOpen1] = useState(false);
+    const [confirmOpen2, setConfirmOpen2] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+    const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
+    const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
 
     const handleErrorMessage = (message) => {
         setOpen1(true);
@@ -29,8 +35,17 @@ const CreateLocationForm = (props) => {
             setErrorMessage('Yêu cầu không hợp lệ !');
         } else if (message === 'Error during item transfer: The given id must not be null') {
             setErrorMessage('Vui lòng chọn và điền đầy đủ thông tin !');
-        } else if (message === 'Error during item transfer: Item inventory not found in source warehouse') {
-            setErrorMessage('Không tìm thấy vật phẩm trong kho này !');
+        } else if (message === 'Location was existed') {
+            setErrorMessage('Vị trí đã tồn tại !');
+        }
+    };
+
+    const handleSuccessMessage = (message) => {
+        setOpen(true);
+        if (message === 'Create location successfully') {
+            setSuccessMessage('Thành công !');
+        } else if (message === 'Update category successfully') {
+            setSuccessMessage('Cập nhập thể loại thành công !');
         }
     };
 
@@ -39,7 +54,6 @@ const CreateLocationForm = (props) => {
             return;
         }
         console.log('Closing Snackbar...');
-        setOpen(false);
         setOpen1(false);
         setErrorMessage('');
     };
@@ -54,7 +68,6 @@ const CreateLocationForm = (props) => {
     );
 
     const handleCloseSnackbar = () => {
-        setOpen(false);
         setOpen1(false);
     };
 
@@ -72,11 +85,10 @@ const CreateLocationForm = (props) => {
         try {
             const response = await createLocations(locationParams);
             console.log('Create location response:', response);
-
-            if (response.status === 200) {
-                props.onClose(response.data);
-            } else {
-                console.error('Unexpected response status:', response.status);
+            if (response.status === '200 OK') {
+                onSave && onSave(response.message);
+                // Đóng form
+                onClose && onClose();
             }
         } catch (error) {
             console.error('Error creating location:', error);
@@ -90,6 +102,17 @@ const CreateLocationForm = (props) => {
 
     const handleCloseAddCategoryDialog = () => {
         setOpenAddCategoryDialog(false);
+    };
+
+    const handleSaveCategory = (successMessage, newData) => {
+        // You can handle any logic here after saving the category
+        handleCloseAddCategoryDialog();
+        setSnackbarSuccessMessage(
+            successMessage === 'Create location tag successfully' ? 'Tạo nhãn thành công!' : 'Thành công',
+        );
+        setSnackbarSuccessOpen(true);
+
+        setTags_id((prevTags) => [...prevTags, newData]);
     };
 
     useEffect(() => {
@@ -154,7 +177,27 @@ const CreateLocationForm = (props) => {
                                 <AddIcon />
                             </Button>
                         </Grid>
-                        <AddLocationTagForm open={openAddCategoryDialog} onClose={handleCloseAddCategoryDialog} />
+                        <AddLocationTagForm
+                            open={openAddCategoryDialog}
+                            onClose={handleCloseAddCategoryDialog}
+                            onSave={handleSaveCategory}
+                        />
+                        <SnackbarSuccess
+                            open={snackbarSuccessOpen}
+                            handleClose={() => {
+                                setSnackbarSuccessOpen(false);
+                                setSnackbarSuccessMessage('');
+                            }}
+                            message={snackbarSuccessMessage}
+                            style={{ bottom: '16px', right: '16px' }}
+                        />
+                        <SnackbarSuccess
+                            open={open}
+                            handleClose={handleClose}
+                            message={successMessage}
+                            action={action}
+                            style={{ bottom: '16px', right: '16px' }}
+                        />
                         <SnackbarError
                             open={open1}
                             handleClose={handleCloseSnackbar}

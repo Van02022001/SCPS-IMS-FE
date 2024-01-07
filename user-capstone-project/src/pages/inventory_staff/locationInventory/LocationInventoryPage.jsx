@@ -33,6 +33,7 @@ import { getAllLocation } from '~/data/mutation/location/location-mutation';
 import CreateLocationForm from '~/sections/auth/inventory_staff/location/CreateLocationForm';
 import LocationDetailForm from '~/sections/auth/inventory_staff/location/LocationDetailForm';
 import dayjs from 'dayjs';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 
 // ----------------------------------------------------------------------
 
@@ -95,6 +96,8 @@ const LocationInventoryPage = () => {
     // Search data
     const [displayedBrandData, setDisplayedBrandData] = useState([]);
     const [locationData, setLocationData] = useState([]);
+    const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
+    const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
     const startIndex = page * rowsPerPage;
     const endIndex = startIndex + rowsPerPage;
 
@@ -119,9 +122,20 @@ const LocationInventoryPage = () => {
     }, []);
     //===========================================================================================
 
-    const handleCreateLocationSuccess = (newLocation) => {
-        setOpenOderForm(false);
+    const handleSaveLocation = (successMessage, newLocation) => {
+        handleCreateLocationClose();
+
         setLocationData((prevLocationData) => [...prevLocationData, newLocation]);
+
+        setSnackbarSuccessMessage(
+            successMessage === 'Create location successfully' ? 'Tạo vị trí thành công!' : 'Thành công',
+        );
+        setSnackbarSuccessOpen(true);
+
+    };
+
+    const handleCreateLocationClose = () => {
+        setOpenOderForm(false);
     };
     //===========================================================================================
 
@@ -194,6 +208,10 @@ const LocationInventoryPage = () => {
         setOpenOderForm(false);
     };
 
+    const handleOpenCreateLocation = () => {
+        setOpenOderForm(true);
+    };
+
     // const handleDataSearch = (searchResult) => {
     //     // Cập nhật state của trang chính với dữ liệu từ tìm kiếm
     //     setBrandData(searchResult);
@@ -219,7 +237,7 @@ const LocationInventoryPage = () => {
                 <Button
                     variant="contained"
                     startIcon={<Iconify icon="eva:plus-fill" />}
-                    onClick={() => setOpenOderForm(true)}
+                    onClick={handleOpenCreateLocation}
                 >
                     Thêm vị trí
                 </Button>
@@ -230,7 +248,10 @@ const LocationInventoryPage = () => {
                             <CloseIcon color="primary" />
                         </IconButton>{' '}
                     </DialogTitle>
-                    <CreateLocationForm onClose={handleCreateLocationSuccess} open={openOderForm} />
+                    <CreateLocationForm
+                        onClose={handleCreateLocationClose}
+                        onSave={handleSaveLocation}
+                    />
                 </Dialog>
             </Stack>
             <Container sx={{ minWidth: 1500 }}>
@@ -239,7 +260,7 @@ const LocationInventoryPage = () => {
                         numSelected={selected.length}
                         filterName={filterName}
                         onFilterName={handleFilterByName}
-                    // onDataSearch={handleDataSearch}
+                        // onDataSearch={handleDataSearch}
                     />
 
                     <Scrollbar>
@@ -362,6 +383,16 @@ const LocationInventoryPage = () => {
                         page={page}
                         onPageChange={handleChangePage}
                         onRowsPerPageChange={handleChangeRowsPerPage}
+                    />
+
+                    <SnackbarSuccess
+                        open={snackbarSuccessOpen}
+                        handleClose={() => {
+                            setSnackbarSuccessOpen(false);
+                            setSnackbarSuccessMessage('');
+                        }}
+                        message={snackbarSuccessMessage}
+                        style={{ bottom: '16px', right: '16px' }}
                     />
                 </Card>
             </Container>
