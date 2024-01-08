@@ -136,6 +136,8 @@ const ViewReceiptPage = () => {
     const [selectedStatus, setSelectedStatus] = React.useState([]);
     const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
     const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
+
+    const [isExportFormOpen, setIsExportFormOpen] = useState(false);
     // Hàm để thay đổi data mỗi khi Edit xong api-------------------------------------------------------------
     const updateImportReceiptInList = (updatedImportReceipt) => {
         const importReceiptIndex = importRequestData.findIndex((product) => product.id === updatedImportReceipt.id);
@@ -184,20 +186,7 @@ const ViewReceiptPage = () => {
         setSelected([]);
     };
 
-    const handleClick = (event, name) => {
-        const selectedIndex = selected.indexOf(name);
-        let newSelected = [];
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, name);
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-        }
-        setSelected(newSelected);
-    };
+
 
     const handleProductClick = (importReceipt) => {
         if (selectedImportReceiptId === importReceipt.id) {
@@ -289,7 +278,8 @@ const ViewReceiptPage = () => {
             .catch((error) => {
                 console.error('Error fetching users:', error);
             });
-    }, []);
+    }, [successMessage, isExportFormOpen]);
+
     console.log(importRequestData);
     useEffect(() => {
         if (successMessage) {
@@ -468,13 +458,13 @@ const ViewReceiptPage = () => {
                                                     <TableCell colSpan={8}>
                                                         <ImportRequestReceiptDetailForm
                                                             importReceipt={importRequestData}
-                                                            // productStatus={productStatus}
                                                             importReceiptId={selectedImportReceiptId}
                                                             updateImportReceiptInList={updateImportReceiptInList}
                                                             updateImportReceiptConfirmInList={
                                                                 updateImportReceiptConfirmInList
                                                             }
                                                             onClose={handleCloseProductDetails}
+                                                            setIsExportFormOpen={setIsExportFormOpen}
                                                         />
                                                     </TableCell>
                                                 </TableRow>

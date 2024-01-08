@@ -45,6 +45,7 @@ const ImportRequestReceiptDetailForm = ({
     onClose,
     isOpen,
     mode,
+    setIsExportFormOpen,
 }) => {
     const [tab1Data, setTab1Data] = useState({ categories_id: [] });
     const [tab2Data, setTab2Data] = useState({});
@@ -327,36 +328,15 @@ const ImportRequestReceiptDetailForm = ({
         setIsOpenImportForm(false);
     };
 
-    const handleCloseForm = () => {
+    const handleCloseForm = (isClosed) => {
         setIsOpenImportForm(false);
+        handleCloseCreateImportRequestForm(isClosed);
     };
     //==========================================================================================================
-
-    // const handleEdit = (field, value) => {
-    //     console.log(`Field: ${field}, Value: ${value}`);
-    //     if (field === 'categories_id') {
-    //         const categoryIds = value.map(Number).filter(Boolean);
-    //         setEditedImportReceipt((prevProduct) => ({
-    //             ...prevProduct,
-    //             [field]: categoryIds,
-    //         }));
-    //     } else if (field === 'unit_id' || field === 'unit_mea_id') {
-    //         const id = parseInt(value);
-    //         setEditedImportReceipt((prevProduct) => ({
-    //             ...prevProduct,
-    //             [field]: id,
-    //         }));
-    //     } else {
-    //         setEditedImportReceipt((prevProduct) => ({
-    //             ...prevProduct,
-    //             [field]: value,
-    //         }));
-    //     }
-    // };
-
-    const handleDelete = () => {
-        // Xử lý xóa
+    const handleCloseCreateImportRequestForm = (isClosed) => {
+        setIsExportFormOpen(isClosed);
     };
+
     const handleDataReload = () => {
         getAllImportReceipt()
             .then((response) => {
@@ -410,6 +390,7 @@ const ImportRequestReceiptDetailForm = ({
                                 onClose={handleCloseAddCategoryDialog}
                                 importReceipst={importReceipst}
                                 onSave={handleSaveLocation}
+                                onCloseForm={handleCloseCreateImportRequestForm}
                             />
                         </Dialog>
                     </div>

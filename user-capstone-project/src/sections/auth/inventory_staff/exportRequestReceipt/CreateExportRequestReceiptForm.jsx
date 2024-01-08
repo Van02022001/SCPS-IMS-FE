@@ -144,6 +144,7 @@ const CreateExportRequestReceiptForm = ({ isOpen, onCloseForm, importReceipst, o
             if (response.status === '201 CREATED') {
                 setDataReceiptDetail(response.data);
                 // handleOpenAddCategoryDialog();
+                onCloseForm(true);
                 setIsSent(true);
                 handleSuccessMessage(response.message);
             }

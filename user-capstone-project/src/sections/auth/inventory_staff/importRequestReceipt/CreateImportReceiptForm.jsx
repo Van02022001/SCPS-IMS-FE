@@ -133,6 +133,7 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose,
                 setDataReceiptDetail(response.data);
                 // handleOpenAddCategoryDialog();
                 setIsSent(true);
+                onCloseForm(true);
             }
         } catch (error) {
             // Handle error
@@ -258,56 +259,56 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose,
                                     </TableRow>
                                     {dataReceiptDetail !== null
                                         ? dataReceiptDetail.details.map((detail) => (
-                                              <TableRow key={detail.id}>
-                                                  <TableCell>{detail.itemName}</TableCell>
+                                            <TableRow key={detail.id}>
+                                                <TableCell>{detail.itemName}</TableCell>
 
-                                                  <TableCell>
-                                                      {detail.discrepancyLogs && detail.discrepancyLogs.length > 0
-                                                          ? detail.discrepancyLogs[0].requiredQuantity
-                                                          : detail.quantity}
-                                                  </TableCell>
+                                                <TableCell>
+                                                    {detail.discrepancyLogs && detail.discrepancyLogs.length > 0
+                                                        ? detail.discrepancyLogs[0].requiredQuantity
+                                                        : detail.quantity}
+                                                </TableCell>
 
-                                                  <TableCell>{detail.unitName}</TableCell>
+                                                <TableCell>{detail.unitName}</TableCell>
 
-                                                  <TableCell>{detail.quantity}</TableCell>
+                                                <TableCell>{detail.quantity}</TableCell>
 
-                                                  <TableCell>
-                                                      {!locationQuantities[detail.id] > 0 &&
-                                                          !selectedLocationsFlag[detail.id] &&
-                                                          selectedLocations.find(
-                                                              (loc) => loc.detailId === detail.id,
-                                                          ) === undefined && (
-                                                              <Button
-                                                                  variant="contained"
-                                                                  color="primary"
-                                                                  onClick={() => handleOpenAddCategoryDialog(detail.id)}
-                                                                  disabled={selectedLocationsFlag[detail.id]}
-                                                              >
-                                                                  Chọn vị trí
-                                                              </Button>
-                                                          )}
-                                                  </TableCell>
-                                              </TableRow>
-                                          ))
+                                                <TableCell>
+                                                    {!locationQuantities[detail.id] > 0 &&
+                                                        !selectedLocationsFlag[detail.id] &&
+                                                        selectedLocations.find(
+                                                            (loc) => loc.detailId === detail.id,
+                                                        ) === undefined && (
+                                                            <Button
+                                                                variant="contained"
+                                                                color="primary"
+                                                                onClick={() => handleOpenAddCategoryDialog(detail.id)}
+                                                                disabled={selectedLocationsFlag[detail.id]}
+                                                            >
+                                                                Chọn vị trí
+                                                            </Button>
+                                                        )}
+                                                </TableCell>
+                                            </TableRow>
+                                        ))
                                         : importReceipst.details.map((items) => (
-                                              <TableRow key={items.id}>
-                                                  {console.log(quantities[items.id])}
-                                                  <TableCell>{items.itemName}</TableCell>
-                                                  <TableCell>{items.quantity}</TableCell>
-                                                  <TableCell>{items.unitName}</TableCell>
-                                                  <TableCell>
-                                                      <TextField
-                                                          style={{ width: '50%' }}
-                                                          type="number"
-                                                          value={quantities[items.id] || ''}
-                                                          onChange={(e) =>
-                                                              handleQuantityChange(items.id, e.target.value)
-                                                          }
-                                                          label="Số lượng nhập thực tế"
-                                                      />
-                                                  </TableCell>
-                                              </TableRow>
-                                          ))}
+                                            <TableRow key={items.id}>
+                                                {console.log(quantities[items.id])}
+                                                <TableCell>{items.itemName}</TableCell>
+                                                <TableCell>{items.quantity}</TableCell>
+                                                <TableCell>{items.unitName}</TableCell>
+                                                <TableCell>
+                                                    <TextField
+                                                        style={{ width: '50%' }}
+                                                        type="number"
+                                                        value={quantities[items.id] || ''}
+                                                        onChange={(e) =>
+                                                            handleQuantityChange(items.id, e.target.value)
+                                                        }
+                                                        label="Số lượng nhập thực tế"
+                                                    />
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
                                     <div
                                         style={{
                                             display: 'flex',
@@ -349,22 +350,12 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose,
                                 itemId={
                                     dataReceiptDetail?.details && selectedDetailId
                                         ? dataReceiptDetail.details.find((detail) => detail.id === selectedDetailId)
-                                              ?.itemId
+                                            ?.itemId
                                         : null
                                 }
                                 selectedDetailQuantity={selectedDetailQuantity}
                             />
-                            {/* <AddLocationsForm
-                                open={openAddCategoryDialog}
-                                onClose={handleCloseAddCategoryDialog}
-                                dataReceiptDetail={dataReceiptDetail}
-                                updateDataReceiptDetail={(newData) => setDataReceiptDetail(newData)} // Pass the update function
-                                details={dataReceiptDetail.details}
-                                onSave={(message) => {
-                                    handleSaveLocation(message);
-                                    handleClosePopup();
-                                }}
-                            /> */}
+
                             <SnackbarSuccess
                                 open={open}
                                 handleClose={handleClose}

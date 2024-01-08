@@ -303,8 +303,9 @@ const ExportRequestReceiptDetailForm = ({
         setIsOpenImportForm(false);
     };
 
-    const handleCloseForm = () => {
+    const handleCloseForm = (isClosed) => {
         setIsOpenImportForm(false);
+        handleCloseCreateExportRequestForm(isClosed);
     };
     //==========================================================================================================
 
