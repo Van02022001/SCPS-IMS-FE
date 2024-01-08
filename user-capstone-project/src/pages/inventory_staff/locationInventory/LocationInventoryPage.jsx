@@ -94,7 +94,6 @@ const LocationInventoryPage = () => {
 
     const [rowsPerPage, setRowsPerPage] = useState(5);
     // Search data
-    const [displayedBrandData, setDisplayedBrandData] = useState([]);
     const [locationData, setLocationData] = useState([]);
     const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
     const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
@@ -122,19 +121,14 @@ const LocationInventoryPage = () => {
     }, []);
     //===========================================================================================
 
-    const handleSaveLocation = (successMessage, newLocation) => {
-        handleCreateLocationClose();
-
+    const handleCreateLocationSuccess = (successMessage, newLocation) => {
+        setOpenOderForm(false);
         setLocationData((prevLocationData) => [...prevLocationData, newLocation]);
 
-        setSnackbarSuccessMessage(
-            successMessage === 'Create location successfully' ? 'Tạo vị trí thành công!' : 'Thành công',
-        );
-        setSnackbarSuccessOpen(true);
-
+        setSnackbarSuccessMessage(successMessage === 'Create location successfully' ? 'Tạo vị trí thành công!' : 'Thành công',);
+        setSnackbarSuccessOpen(true)
     };
-
-    const handleCreateLocationClose = () => {
+    const handleCloseOdersForm = () => {
         setOpenOderForm(false);
     };
     //===========================================================================================
@@ -204,13 +198,7 @@ const LocationInventoryPage = () => {
         setFilterName(event.target.value);
     };
 
-    const handleCloseOdersForm = () => {
-        setOpenOderForm(false);
-    };
 
-    const handleOpenCreateLocation = () => {
-        setOpenOderForm(true);
-    };
 
     // const handleDataSearch = (searchResult) => {
     //     // Cập nhật state của trang chính với dữ liệu từ tìm kiếm
@@ -237,7 +225,7 @@ const LocationInventoryPage = () => {
                 <Button
                     variant="contained"
                     startIcon={<Iconify icon="eva:plus-fill" />}
-                    onClick={handleOpenCreateLocation}
+                    onClick={() => setOpenOderForm(true)}
                 >
                     Thêm vị trí
                 </Button>
@@ -248,19 +236,17 @@ const LocationInventoryPage = () => {
                             <CloseIcon color="primary" />
                         </IconButton>{' '}
                     </DialogTitle>
-                    <CreateLocationForm
-                        onClose={handleCreateLocationClose}
-                        onSave={handleSaveLocation}
-                    />
+                    <CreateLocationForm onClose={handleCreateLocationSuccess} open={openOderForm} />
                 </Dialog>
             </Stack>
+
             <Container sx={{ minWidth: 1500 }}>
                 <Card>
                     <BrandToolbar
                         numSelected={selected.length}
                         filterName={filterName}
                         onFilterName={handleFilterByName}
-                        // onDataSearch={handleDataSearch}
+                    // onDataSearch={handleDataSearch}
                     />
 
                     <Scrollbar>
@@ -389,7 +375,6 @@ const LocationInventoryPage = () => {
                         open={snackbarSuccessOpen}
                         handleClose={() => {
                             setSnackbarSuccessOpen(false);
-                            setSnackbarSuccessMessage('');
                         }}
                         message={snackbarSuccessMessage}
                         style={{ bottom: '16px', right: '16px' }}

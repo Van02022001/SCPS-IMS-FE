@@ -17,10 +17,7 @@ import {
     Dialog,
     DialogTitle,
 } from '@mui/material';
-// icons
-// import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import ClearIcon from '@mui/icons-material/Clear';
-import SaveIcon from '@mui/icons-material/Save';
+
 //notification
 import Snackbar from '@mui/material/Snackbar';
 import IconButton from '@mui/material/IconButton';
@@ -33,6 +30,7 @@ import {
 } from '~/data/mutation/importRequestReceipt/ImportRequestReceipt-mutation';
 
 import AddLocationsImportForm from './AddLocationsImportForm';
+import SnackbarError from '~/components/alert/SnackbarError';
 // import CreateImportReceiptForm from './CreateImportReceiptForm';
 
 const ImportReceiptInventoryDetailForm = ({
@@ -57,13 +55,7 @@ const ImportReceiptInventoryDetailForm = ({
     const [importReceipstData, setImportReceipstData] = useState(null);
 
     const [editedImportReceipt, setEditedImportReceipt] = useState(null);
-    const [editSubCategoryMeta, setEditSubCategoryMeta] = useState(null);
     const [currentStatus, setCurrentStatus] = useState('');
-
-    // const [positionedSnackbarOpen, setPositionedSnackbarOpen] = useState(false);
-    // const [positionedSnackbarError, setPositionedSnackbarError] = useState(false);
-    // form
-    const [openAddSubCategoryMetaForm, setOpenAddSubCategoryMetaForm] = useState(false);
 
     const [importRecieptParams, setImportRecieptParams] = useState({
         warehouseId: null,
@@ -72,9 +64,9 @@ const ImportReceiptInventoryDetailForm = ({
         details: [],
     });
 
-    //thông báo
-    const [isSuccess, setIsSuccess] = useState(false);
-    const [isError, setIsError] = useState(false);
+    // Thông báo
+    const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
+    const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
     const [message, setMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
@@ -210,8 +202,6 @@ const ImportReceiptInventoryDetailForm = ({
             const response = await editImportReceipt(importReceiptId, editedImportReceipt);
 
             if (response.status === '200 OK') {
-                setIsSuccess(true);
-                setIsError(false);
                 setSuccessMessage(response.message);
                 handleMessage(response.message);
             }
@@ -219,8 +209,6 @@ const ImportReceiptInventoryDetailForm = ({
             console.log('Product updated:', response);
         } catch (error) {
             console.error('An error occurred while updating the product:', error);
-            setIsError(true);
-            setIsSuccess(false);
             if (error.response?.data?.message === 'Invalid request') {
                 setErrorMessage('Yêu cầu không hợp lệ');
             }
@@ -237,8 +225,6 @@ const ImportReceiptInventoryDetailForm = ({
             const response = await editImportReceiptConfirm(importReceiptId, newStatus);
 
             if (response.status === '200 OK') {
-                setIsSuccess(true);
-                setIsError(false);
                 setSuccessMessage(response.message);
                 handleMessage(response.message);
             }
@@ -248,13 +234,7 @@ const ImportReceiptInventoryDetailForm = ({
 
             console.log('Product status updated:', response);
         } catch (error) {
-            // console.error('Error updating category status:', error);
-            // setIsError(true);
-            // setIsSuccess(false);
-            // setErrorMessage(error.response.data.message);
-            // if (error.response) {
-            //     console.log('Error response:', error.response);
-            // }
+            //handleErrorMessage(error.response.data.message);
         }
     };
     const updateReceiptStartImport = async () => {
@@ -264,8 +244,6 @@ const ImportReceiptInventoryDetailForm = ({
             const response = await editReceiptStartImport(importReceiptId, newStatus);
 
             if (response.status === '200 OK') {
-                setIsSuccess(true);
-                setIsError(false);
                 setSuccessMessage(response.message);
                 handleMessage(response.message);
             }
@@ -276,8 +254,6 @@ const ImportReceiptInventoryDetailForm = ({
             console.log('Product status updated:', response);
         } catch (error) {
             console.error('Error updating category status:', error);
-            setIsError(true);
-            setIsSuccess(false);
             setErrorMessage(error.response.data.message);
             if (error.response) {
                 console.log('Error response:', error.response);
@@ -313,6 +289,12 @@ const ImportReceiptInventoryDetailForm = ({
     const handleCloseForm = () => {
         setIsOpenImportForm(false);
     };
+    const handleSaveImport = (successMessage) => {
+        // You can handle any logic here after saving the category
+        handleCloseForm();
+        setSnackbarSuccessMessage(successMessage);
+        setSnackbarSuccessOpen(true);
+    };
     //==========================================================================================================
     console.log(importReceipst, "Find itemid");
     return editedImportReceipt ? (
@@ -339,9 +321,11 @@ const ImportReceiptInventoryDetailForm = ({
                             </div>
                         )}
                         <Dialog maxWidth="lg" fullWidth open={isOpenImportForm}>
-                            <AddLocationsImportForm importReceipst={
-                                importReceipst
-                            } />
+                            <AddLocationsImportForm
+                                importReceipst={importReceipst}
+                                onSave={handleSaveImport}
+                                onClose={handleCloseForm}
+                            />
 
                         </Dialog>
                     </div>
@@ -523,31 +507,18 @@ const ImportReceiptInventoryDetailForm = ({
                     </div>
                     <Stack spacing={4} margin={2}>
                         <Grid container spacing={1} sx={{ gap: '10px' }}>
-                            {/* <Button
-                                variant="contained"
-                                color="primary"
-                                startIcon={<SaveIcon />}
-                                onClick={updateImportReceipt}
-                            >
-                                Cập nhật
-                            </Button> */}
-                            {/* 
-                            <div>
-                                <Button variant="contained" color="primary" onClick={updateImportReceiptConfirm}>
-                                    Xác nhận
-                                </Button>
-                            <div>
-                                <Button variant="contained" color="warning" onClick={updateReceiptStartImport}>
-                                    Tiến hành nhập kho
-                                </Button>
-                            </div> */}
-                            {/* <Button variant="outlined" color="error" onClick={handleClear}>
-                                Hủy bỏ
-                            </Button> */}
+
                         </Grid>
                     </Stack>
                 </div>
             )}
+            <SnackbarError
+                open={open}
+                handleClose={handleClose}
+                message={errorMessage}
+                action={action}
+                style={{ bottom: '16px', right: '16px' }}
+            />
         </div>
     ) : null;
 };

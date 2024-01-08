@@ -40,6 +40,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import ExportReceiptDetailForm from '~/sections/auth/inventory_staff/exportReceipt/ExportReceiptDetailForm';
 import dayjs from 'dayjs';
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
+import ExportRequestReceiptDetailForm from '~/sections/auth/inventory_staff/exportRequestReceipt/ExportRequestReceiptDetailForm';
 
 // ----------------------------------------------------------------------
 
@@ -106,7 +107,6 @@ const CustomerRequestPage = () => {
     // State mở các form----------------------------------------------------------------
     const [open, setOpen] = useState(null);
     const [openOderForm, setOpenOderForm] = useState(false);
-    const [openEditForm, setOpenEditForm] = useState(false);
 
     const [selected, setSelected] = useState([]);
     const [selectedImportReceiptId, setSelectedImportReceiptId] = useState([]);
@@ -128,14 +128,14 @@ const CustomerRequestPage = () => {
     // State data và xử lý data
     const [importRequestData, setImportRequestData] = useState([]);
     // const [productStatus, setProductStatus] = useState('');
-
-    const [selectedProduct, setSelectedProduct] = useState(null);
     const [selectedStatus, setSelectedStatus] = React.useState([]);
     const location = useLocation();
     const { state } = location;
     const successMessage = state?.successMessage;
     const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
+
     const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
+    const [isExportFormOpen, setIsExportFormOpen] = useState(false);
     // Hàm để thay đổi data mỗi khi Edit xong api-------------------------------------------------------------
     const updateImportReceiptInList = (updatedImportReceipt) => {
         const importReceiptIndex = importRequestData.findIndex((product) => product.id === updatedImportReceipt.id);
@@ -166,15 +166,6 @@ const CustomerRequestPage = () => {
     };
 
     //----------------------------------------------------------------
-    // const handleOpenMenu = (event, product) => {
-    //     setSelectedProduct(product);
-    //     setOpen(event.currentTarget);
-    // };
-
-    // const handleCloseMenu = () => {
-    //     setOpen(null);
-    // };
-
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
             const newSelecteds = importRequestData.map((n) => n.name);
@@ -182,21 +173,6 @@ const CustomerRequestPage = () => {
             return;
         }
         setSelected([]);
-    };
-
-    const handleClick = (event, name) => {
-        const selectedIndex = selected.indexOf(name);
-        let newSelected = [];
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, name);
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-        }
-        setSelected(newSelected);
     };
 
     const handleProductClick = (importReceipt) => {
@@ -289,8 +265,7 @@ const CustomerRequestPage = () => {
             .catch((error) => {
                 console.error('Error fetching users:', error);
             });
-    }, [successMessage]);
-    console.log(importRequestData);
+    }, [successMessage, isExportFormOpen]);
 
     useEffect(() => {
         if (successMessage) {
@@ -451,14 +426,14 @@ const CustomerRequestPage = () => {
                                                         {importReceipt.status === 'Pending_Approval'
                                                             ? 'Chờ phê duyệt'
                                                             : importReceipt.status === 'Approved'
-                                                            ? 'Đã xác nhận'
-                                                            : importReceipt.status === 'IN_PROGRESS'
-                                                            ? 'Đang tiến hành'
-                                                            : importReceipt.status === 'NOT_COMPLETED'
-                                                            ? 'Chưa hoàn thành'
-                                                            : importReceipt.status === 'Completed'
-                                                            ? 'Hoàn thành'
-                                                            : 'Ngừng hoạt động'}
+                                                                ? 'Đã xác nhận'
+                                                                : importReceipt.status === 'IN_PROGRESS'
+                                                                    ? 'Đang tiến hành'
+                                                                    : importReceipt.status === 'NOT_COMPLETED'
+                                                                        ? 'Chưa hoàn thành'
+                                                                        : importReceipt.status === 'Completed'
+                                                                            ? 'Hoàn thành'
+                                                                            : 'Ngừng hoạt động'}
                                                     </Label>
                                                 </TableCell>
                                             </TableRow>
@@ -466,7 +441,7 @@ const CustomerRequestPage = () => {
                                             {selectedImportReceiptId === importReceipt.id && (
                                                 <TableRow>
                                                     <TableCell colSpan={8}>
-                                                        <ExportReceiptDetailForm
+                                                        <ExportRequestReceiptDetailForm
                                                             importReceipt={importRequestData}
                                                             // productStatus={productStatus}
                                                             importReceiptId={selectedImportReceiptId}
@@ -475,6 +450,7 @@ const CustomerRequestPage = () => {
                                                                 updateImportReceiptConfirmInList
                                                             }
                                                             onClose={handleCloseProductDetails}
+                                                            setIsExportFormOpen={setIsExportFormOpen}
                                                         />
                                                     </TableCell>
                                                 </TableRow>

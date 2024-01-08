@@ -13,17 +13,18 @@ import {
     Typography,
     IconButton,
 } from '@mui/material';
-import AddLocationsForm from '../itemInventory/AddLocationsForm';
+
 import { createExportReceipt } from '~/data/mutation/exportReceipt/ExportReceipt-mutation';
-import AddLocationToExportReceipt from './AddLocationToExportReceipt';
+
 import { getExaminationItem } from '~/data/mutation/items/item-mutation';
 import CloseIcon from '@mui/icons-material/Close';
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 import SnackbarError from '~/components/alert/SnackbarError';
-import UpdateLocationToExportForm from './UpdateLocationToExportForm';
-import { useNavigate } from 'react-router-dom';
 
-const CreateExportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onSave, onClose }) => {
+import { useNavigate } from 'react-router-dom';
+import UpdateLocationToExportForm from '../exportReceipt/UpdateLocationToExportForm';
+
+const CreateExportRequestReceiptForm = ({ isOpen, onCloseForm, importReceipst, onSave, onClose }) => {
     const [quantities, setQuantities] = useState({});
     const [openAddCategoryDialog, setOpenAddCategoryDialog] = useState(false);
     const [dataReceiptDetail, setDataReceiptDetail] = useState({});
@@ -372,4 +373,4 @@ const CreateExportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onSave, 
     );
 };
 
-export default CreateExportReceiptForm;
+export default CreateExportRequestReceiptForm;

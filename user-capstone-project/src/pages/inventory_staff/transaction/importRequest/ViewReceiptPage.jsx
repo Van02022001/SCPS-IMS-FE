@@ -37,7 +37,7 @@ import { getAllImportRequestOfWarehouse } from '~/data/mutation/importRequestRec
 
 
 // import GoodsReceiptPage from '../GoodsReceiptPage';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import ImportRequestReceiptDetailForm from '~/sections/auth/inventory_staff/importRequestReceipt/ImportRequestReceiptDetailForm';
 
@@ -103,6 +103,9 @@ const MenuProps = {
 // }
 
 const ViewReceiptPage = () => {
+    const location = useLocation();
+    const { state } = location;
+    const successMessage = state?.successMessage;
     // State mở các form----------------------------------------------------------------
     const [open, setOpen] = useState(null);
     const [openOderForm, setOpenOderForm] = useState(false);
@@ -131,6 +134,8 @@ const ViewReceiptPage = () => {
 
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [selectedStatus, setSelectedStatus] = React.useState([]);
+    const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
+    const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
     // Hàm để thay đổi data mỗi khi Edit xong api-------------------------------------------------------------
     const updateImportReceiptInList = (updatedImportReceipt) => {
         const importReceiptIndex = importRequestData.findIndex((product) => product.id === updatedImportReceipt.id);
@@ -286,7 +291,13 @@ const ViewReceiptPage = () => {
             });
     }, []);
     console.log(importRequestData);
+    useEffect(() => {
+        if (successMessage) {
 
+            setSnackbarSuccessOpen(true);
+            setSnackbarSuccessMessage(successMessage);
+        }
+    }, [successMessage]);
     //==============================* filter *==============================
     const pendingApprovalItems = importRequestData.filter(
         (importRequest) => importRequest.status === 'Pending_Approval',

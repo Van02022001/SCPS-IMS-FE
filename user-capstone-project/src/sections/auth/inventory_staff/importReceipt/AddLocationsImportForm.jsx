@@ -19,8 +19,10 @@ import { getAllLocation, getLocationDetails } from '~/data/mutation/location/loc
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 import SnackbarError from '~/components/alert/SnackbarError';
 import UpdateLocationsImportForm from './UpdateLocationsImportForm';
+import { useNavigate } from 'react-router-dom';
 
 const AddLocationsImportForm = ({ open, onClose, importReceipst, onUpdate, onSave }) => {
+    const navigate = useNavigate();
     const [quantity, setQuantity] = useState('');
     const [toLocation_id, setToLocation_id] = useState([]);
     const [locationQuantities, setLocationQuantities] = useState({});
@@ -28,10 +30,11 @@ const AddLocationsImportForm = ({ open, onClose, importReceipst, onUpdate, onSav
     const [selectedLocationsFlag, setSelectedLocationsFlag] = useState({});
     // State to manage the selected locations for each detailId
     const [selectedLocations, setSelectedLocations] = useState([]);
-
+    const [checkUpdateLocation, setCheckUpdateLocation] = useState(false);
     const [openAddCategoryDialog, setOpenAddCategoryDialog] = useState(false);
     const [selectedDetailId, setSelectedDetailId] = useState(null);
 
+    const [selectedDetailQuantity, setSelectedDetailQuantity] = useState(null);
     // Thông báo
     const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
     const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
@@ -86,10 +89,13 @@ const AddLocationsImportForm = ({ open, onClose, importReceipst, onUpdate, onSav
                 return [...prevSelectedLocations, { detailId, locations }];
             }
         });
+        setCheckUpdateLocation(true);
     };
 
     const handleOpenAddCategoryDialog = (detailId) => {
         setSelectedDetailId(detailId);
+        const selectedDetail = importReceipst.details.find((detail) => detail.id === detailId);
+        setSelectedDetailQuantity(selectedDetail ? selectedDetail.quantity : null);
         setOpenAddCategoryDialog(true);
     };
 
@@ -191,22 +197,12 @@ const AddLocationsImportForm = ({ open, onClose, importReceipst, onUpdate, onSav
                                         <TableCell>
                                             {console.log('selectedLocations:', selectedLocations)}
 
-                                            {selectedLocations
-                                                .filter((entry) => entry.detailId === detail.id)
-                                                .map((entry) => (
-                                                    <div key={entry.detailId}>
-                                                        {entry.locations.map((location) => (
-                                                            <div key={location.toLocation_id}>
-                                                                {`${location.shelfNumber} - ${location.binNumber} - ${location.quantity} cái`}
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                ))}
-                                            {selectedLocationsFlag[detail.id] ? (
+                                            {selectedLocationsFlag[detail.id] || checkUpdateLocation ? (
                                                 <div>Vị trí đã được cập nhật.</div>
                                             ) : (
                                                 <div>Vị trí chưa có hoặc chưa cập nhật!</div>
                                             )}
+
                                         </TableCell>
 
                                         <TableCell>
@@ -235,10 +231,11 @@ const AddLocationsImportForm = ({ open, onClose, importReceipst, onUpdate, onSav
                                                         ?.itemId
                                                     : null
                                             }
-                                            onUpdate={handleUpdateLocations} // Pass the handleUpdateLocations function here
+                                            onUpdate={handleUpdateLocations}
                                             selectedLocations={selectedLocations[selectedDetailId] || []}
                                             toLocationData={toLocation_id}
                                             onSave={handleSaveLocation}
+                                            selectedDetailQuantity={selectedDetailQuantity}
                                         />
                                     </TableRow>
                                 ))}

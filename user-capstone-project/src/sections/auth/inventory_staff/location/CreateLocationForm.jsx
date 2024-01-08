@@ -11,7 +11,7 @@ import SnackbarError from '~/components/alert/SnackbarError';
 import CloseIcon from '@mui/icons-material/Close';
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 
-const CreateLocationForm = (onSave, onClose) => {
+const CreateLocationForm = (props) => {
     const [shelfNumber, setShelfNumber] = useState('');
     const [binNumber, setBinNumber] = useState('');
     const [tags_id, setTags_id] = useState([]);
@@ -22,12 +22,13 @@ const CreateLocationForm = (onSave, onClose) => {
     //========================== Hàm notification của trang ==================================
     const [open, setOpen] = React.useState(false);
     const [open1, setOpen1] = React.useState(false);
-    const [confirmOpen1, setConfirmOpen1] = useState(false);
-    const [confirmOpen2, setConfirmOpen2] = useState(false);
+
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+
     const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
     const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
+
 
     const handleErrorMessage = (message) => {
         setOpen1(true);
@@ -54,7 +55,9 @@ const CreateLocationForm = (onSave, onClose) => {
             return;
         }
         console.log('Closing Snackbar...');
+        setOpen(false);
         setOpen1(false);
+        setSuccessMessage('');
         setErrorMessage('');
     };
 
@@ -68,6 +71,7 @@ const CreateLocationForm = (onSave, onClose) => {
     );
 
     const handleCloseSnackbar = () => {
+        setOpen(false);
         setOpen1(false);
     };
 
@@ -86,9 +90,9 @@ const CreateLocationForm = (onSave, onClose) => {
             const response = await createLocations(locationParams);
             console.log('Create location response:', response);
             if (response.status === '200 OK') {
-                onSave && onSave(response.message);
-                // Đóng form
-                onClose && onClose();
+                handleSuccessMessage(response.message);
+                handleCloseSnackbar();
+                props.onClose(response.data, response.message);
             }
         } catch (error) {
             console.error('Error creating location:', error);
@@ -182,33 +186,33 @@ const CreateLocationForm = (onSave, onClose) => {
                             onClose={handleCloseAddCategoryDialog}
                             onSave={handleSaveCategory}
                         />
-                        <SnackbarSuccess
-                            open={snackbarSuccessOpen}
-                            handleClose={() => {
-                                setSnackbarSuccessOpen(false);
-                                setSnackbarSuccessMessage('');
-                            }}
-                            message={snackbarSuccessMessage}
-                            style={{ bottom: '16px', right: '16px' }}
-                        />
-                        <SnackbarSuccess
-                            open={open}
-                            handleClose={handleClose}
-                            message={successMessage}
-                            action={action}
-                            style={{ bottom: '16px', right: '16px' }}
-                        />
-                        <SnackbarError
-                            open={open1}
-                            handleClose={handleCloseSnackbar}
-                            message={errorMessage}
-                            action={action}
-                            style={{ bottom: '16px', right: '16px' }}
-                        />
                         <Button color="primary" variant="contained" onClick={handleCreateLocation}>
                             Tạo
                         </Button>
                     </Stack>
+                    <SnackbarSuccess
+                        open={open}
+                        handleClose={handleClose}
+                        message={successMessage}
+                        action={action}
+                        style={{ bottom: '16px', right: '16px' }}
+                    />
+                    <SnackbarError
+                        open={open1}
+                        handleClose={handleCloseSnackbar}
+                        message={errorMessage}
+                        action={action}
+                        style={{ bottom: '16px', right: '16px' }}
+                    />
+                    <SnackbarSuccess
+                        open={snackbarSuccessOpen}
+                        handleClose={() => {
+                            setSnackbarSuccessOpen(false);
+                            setSnackbarSuccessMessage('');
+                        }}
+                        message={snackbarSuccessMessage}
+                        style={{ bottom: '16px', right: '16px' }}
+                    />
                 </DialogContent>
             </div>
         </>

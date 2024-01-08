@@ -38,7 +38,6 @@ const UpdateLocationToExportForm = ({
 
     const [showLocationSelection, setShowLocationSelection] = useState(false);
     const [locationQuantities, setLocationQuantities] = useState({});
-    const [receiptDetailId, setReceiptDetailId] = useState(null);
     //state theo dõi vị trĩ
     const [selectedLocationsMuti, setSelectedLocationsMuti] = useState([]);
     const [quantityMap, setQuantityMap] = useState({});
@@ -47,7 +46,7 @@ const UpdateLocationToExportForm = ({
     //========================== Hàm notification của trang ==================================
     const [open1, setOpen1] = React.useState(false);
     const [errorMessage, setErrorMessage] = useState('');
-
+    console.log(itemId);
     const handleErrorMessage = (message) => {
         setOpen1(true);
         if (message === 'Invalid request') {
@@ -118,9 +117,7 @@ const UpdateLocationToExportForm = ({
     };
 
     const handleQuantityChange = (locationId, event) => {
-        // Stop event propagation to prevent hiding the input
         event.stopPropagation();
-
         setQuantityMap((prevQuantityMap) => ({
             ...prevQuantityMap,
             [locationId]: event.target.value,
@@ -155,16 +152,12 @@ const UpdateLocationToExportForm = ({
                 quantity: Object.values(quantityMap).reduce((acc, quantity) => acc + Number(quantity), 0),
                 locations: selectedLocationsMuti,
             });
-
             console.log('selectedLocations:', selectedLocationsMuti);
-
-            // Close the popup only if there are no remaining quantities
             const remainingQuantity = Object.values(locationQuantities).reduce((acc, remaining) => acc + remaining, 0);
 
             if (remainingQuantity === 0) {
                 handleClosePopup();
             } else {
-                // If there are remaining quantities, update the form and keep it open
                 handleOpenPopup();
             }
         } catch (error) {
@@ -179,26 +172,19 @@ const UpdateLocationToExportForm = ({
     }, [selectedLocations]);
 
     useEffect(() => {
-        if (open) {
-            setReceiptDetailId(dataReceiptDetail.details[0].id);
-            getAllLocationByItem(itemId)
-                .then((response) => {
-                    const data = response.data;
-                    console.log(data); // In ra dữ liệu từ API
-                    const dataArray = Array.isArray(data) ? data : [data];
-                    setToLocation_id(dataArray);
-                })
-                .catch((error) => {
-                    console.error('Error fetching locations:', error);
-                    setToLocation_id([]);
-                });
+        // setReceiptDetailId(dataReceiptDetail.details[0].id);
+        getAllLocationByItem(itemId)
+            .then((response) => {
+                const data = response.data;
+                const dataArray = Array.isArray(data) ? data : [data];
+                setToLocation_id(dataArray);
+            })
+            .catch((error) => {
+                console.error('Error fetching locations:', error);
+                setToLocation_id([]);
+            });
+    }, []);
 
-            handleOpenPopup();
-        }
-    }, [open, details]);
-
-    console.log(toLocation_id.locations);
-    console.log(detailId);
     return (
         <>
             <Dialog open={open} maxWidth="xl">
