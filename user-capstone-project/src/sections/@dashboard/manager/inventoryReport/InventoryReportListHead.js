@@ -35,9 +35,9 @@ export default function InventoryReportListHead({
   onRequestSort,
   onSelectAllClick,
 }) {
-  const createSortHandler = (property) => (event) => {
-    onRequestSort(event, property);
-  };
+  // const createSortHandler = (property) => (event) => {
+  //   onRequestSort(event, property);
+  // };
 
   return (
     <TableHead>
@@ -59,7 +59,7 @@ export default function InventoryReportListHead({
               hideSortIcon
               active={orderBy === headCell.id}
               direction={orderBy === headCell.id ? order : 'asc'}
-              onClick={createSortHandler(headCell.id)}
+              // onClick={createSortHandler(headCell.id)}
             >
               {headCell.label}
               {orderBy === headCell.id ? (

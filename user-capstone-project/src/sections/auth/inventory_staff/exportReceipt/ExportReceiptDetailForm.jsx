@@ -362,7 +362,7 @@ const ExportReceiptDetailForm = ({
                                         variant="outlined"
                                         label="Mô tả"
                                         sx={{ width: '70%' }}
-                                        value={importReceipst.description}
+                                        value={importReceipst.note}
                                     />
                                 </Grid>
                             </Grid>

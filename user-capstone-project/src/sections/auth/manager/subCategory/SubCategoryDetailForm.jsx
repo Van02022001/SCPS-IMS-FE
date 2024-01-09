@@ -239,15 +239,15 @@ const SubCategoryDetailForm = ({
             const data = respone.data;
             setUnit_mea_id(data);
         });
-        // getAllSubCategoryMeta(subCategoryId)
-        //     .then((respone) => {
-        //         const data = respone.data;
-        //         setSubCategoryMeta(data);
-        //     })
-        //     .catch((error) => {
-        //         console.error('Error fetching subcategory meta:', error);
-        //         setSubCategoryMeta(null);
-        //     });
+        getAllSubCategoryMeta(subCategoryId)
+            .then((respone) => {
+                const data = respone.data;
+                setSubCategoryMeta(data);
+            })
+            .catch((error) => {
+                console.error('Error fetching subcategory meta:', error);
+                setSubCategoryMeta(null);
+            });
 
         getItemsBySubCategory(subCategoryId)
             .then((respone) => {
@@ -772,7 +772,7 @@ const SubCategoryDetailForm = ({
                                 defaultValue="Mô tả sơ lược"
                                 sx={{ width: '100%', border: 'none' }}
                                 value={editSubCategoryMeta ? editSubCategoryMeta.key : ''}
-                                onChange={(e) => handleEditSubCategoryMeta('key', e.target.value)}
+                                onChange={(e) => handleEditSubCategoryMeta('key', capitalizeFirstLetter(e.target.value))}
                             />
                         </CardContent>
                     </Card>
@@ -818,9 +818,6 @@ const SubCategoryDetailForm = ({
                                 onClick={updateSubCategoryMeta}
                             >
                                 Cập nhập
-                            </Button>
-                            <Button color="primary" variant="outlined" startIcon={<ClearIcon />}>
-                                Hủy
                             </Button>
                         </Grid>
                     </Stack>

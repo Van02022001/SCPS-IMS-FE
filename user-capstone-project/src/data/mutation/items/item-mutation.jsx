@@ -57,8 +57,12 @@ export const editItemLocationsExport = async (editLocationsExportParams) => {
     const response = await axiosInstance.put(`/items/item-locations/warehouse-export`, editLocationsExportParams);
     return response.data;
 }
+// export const getAllItemBySale = async (warehouseId) => {
+//     const response = await axiosInstance.get(`/items/items-by-warehouse/sale-staff/${warehouseId}`);
+//     return response.data;
+// }
 export const getAllItemBySale = async (warehouseId) => {
-    const response = await axiosInstance.get(`/items/items-by-warehouse/sale-staff/${warehouseId}`);
+    const response = await axiosInstance.get(`/items/warehouse-inventory/${warehouseId}`);
     return response.data;
 }
 export const getUpdatedLocationDetails = async (receiptId) => {

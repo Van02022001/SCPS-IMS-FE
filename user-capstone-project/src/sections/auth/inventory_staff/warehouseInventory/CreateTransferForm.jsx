@@ -78,6 +78,8 @@ const CreateTransferForm = (props) => {
             setErrorMessage('Vui lòng chọn và điền đầy đủ thông tin !');
         } else if (message === 'Error during item transfer: Item inventory not found in source warehouse') {
             setErrorMessage('Không tìm thấy vật phẩm trong kho này !');
+        } else if (message === 'Hãy nhập số lượng') {
+            setErrorMessage('Hãy nhập số lượng !');
         }
     };
 
@@ -157,7 +159,10 @@ const CreateTransferForm = (props) => {
     const handleCreateTransfer = async () => {
         try {
             // Prepare the data based on the selected items
-
+            if (selectedItems.some((item) => !item.quantity || parseInt(item.quantity, 10) <= 0)) {
+                handleErrorMessage('Hãy nhập số lượng');
+                return;
+            }
             // Make the API call
             const response = await createTransfer(recieptParams);
 
@@ -290,8 +295,6 @@ const CreateTransferForm = (props) => {
 
     console.log('selectedWarehouseId:', selectedWarehouseId);
 
-    
-
     return (
         <>
             <Helmet>
@@ -381,12 +384,15 @@ const CreateTransferForm = (props) => {
                                                         label="Số lượng"
                                                         sx={{ width: '80%' }}
                                                         value={selectedItem.quantity}
-                                                        onChange={(e) =>
-                                                            handleQuantityChange(
-                                                                selectedItems.indexOf(selectedItem),
-                                                                e.target.value,
-                                                            )
-                                                        }
+                                                        onChange={(e) => {
+                                                            const inputValue = e.target.value;
+                                                            if (/^\d*$/.test(inputValue)) {
+                                                                handleQuantityChange(
+                                                                    selectedItems.indexOf(selectedItem),
+                                                                    e.target.value,
+                                                                );
+                                                            }
+                                                        }}
                                                     />
                                                 </ListItemText>
                                                 <Button onClick={() => handleRemoveFromCart(index)}>Xóa</Button>
@@ -449,7 +455,6 @@ const CreateTransferForm = (props) => {
                     </Grid>
                 </Grid>
             </Box>
-            
         </>
     );
 };

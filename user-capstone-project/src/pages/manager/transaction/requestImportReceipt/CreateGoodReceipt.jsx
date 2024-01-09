@@ -99,6 +99,8 @@ const CreateGoodReceipt = () => {
             setErrorMessage('Mô tả quá dài');
         } else if (message === 'Warehouse not found!') {
             setErrorMessage('Hãy chọn kho và nhân viên !');
+        } else if (message === 'Hãy nhập số lượng') {
+            setErrorMessage('Hãy nhập số lượng !');
         }
     };
 
@@ -173,6 +175,12 @@ const CreateGoodReceipt = () => {
 
     const handleCreateImportReceipt = async () => {
         try {
+            // Validate if all quantities are provided
+            if (selectedItems.some((item) => !item.quantity || parseInt(item.quantity, 10) <= 0)) {
+                handleErrorMessage('Hãy nhập số lượng');
+                return;
+            }
+
             // Create an array of details from selectedItems with necessary properties
             const details = selectedItems.map((item) => ({
                 itemId: item.itemId,
@@ -491,10 +499,10 @@ const CreateGoodReceipt = () => {
                                                         value={selectedItem.quantity}
                                                         onChange={(e) => {
                                                             const inputValue = e.target.value;
-                                                            if (/^\d*$/.test(inputValue)) {
+                                                            if (/^\d*$/.test(inputValue) && inputValue !== '0') {
                                                                 handleQuantityChange(
                                                                     selectedItems.indexOf(selectedItem),
-                                                                    e.target.value,
+                                                                    inputValue,
                                                                 );
                                                             }
                                                         }}

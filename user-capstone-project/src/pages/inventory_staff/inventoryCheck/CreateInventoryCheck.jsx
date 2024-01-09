@@ -86,6 +86,8 @@ const CreateInventoryCheck = ({
             setErrorMessage('Mô tả quá dài');
         } else if (message === 'Warehouse not found!') {
             setErrorMessage('Hãy chọn kho và nhân viên !');
+        } else if (message === 'An error occurred while creating the inventory check receipt') {
+            setErrorMessage('Hãy nhập số lượng thực tế !');
         }
     };
     const handleClose = (event, reason) => {
@@ -236,8 +238,8 @@ const CreateInventoryCheck = ({
                     <TableContainer sx={{ minWidth: 800 }}>
                         <Table>
                             <InventoryReportListHead
-                                order={order}
-                                orderBy={orderBy}
+                                // order={order}
+                                // orderBy={orderBy}
                                 headLabel={TABLE_HEAD}
                                 rowCount={itemsCheckData.length}
                             // numSelected={selected.length}

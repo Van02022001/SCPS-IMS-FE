@@ -378,12 +378,14 @@ const ImportReceiptManagerPage = () => {
                                                         {importReceipt.status === 'Pending_Approval'
                                                             ? 'Chờ phê duyệt'
                                                             : importReceipt.status === 'Approved'
-                                                                ? 'Đã xác nhận'
-                                                                : importReceipt.status === 'IN_PROGRESS'
-                                                                    ? 'Đang tiến hành'
-                                                                    : importReceipt.status === 'Completed'
-                                                                        ? 'Hoàn thành'
-                                                                        : 'Ngừng hoạt động'}
+                                                            ? 'Đã xác nhận'
+                                                            : importReceipt.status === 'IN_PROGRESS'
+                                                            ? 'Đang tiến hành'
+                                                            : importReceipt.status === 'NOT_COMPLETED'
+                                                            ? 'Chưa hoàn thành'
+                                                            : importReceipt.status === 'Completed'
+                                                            ? 'Hoàn thành'
+                                                            : 'Ngừng hoạt động'}
                                                     </Label>
                                                 </TableCell>
                                             </TableRow>

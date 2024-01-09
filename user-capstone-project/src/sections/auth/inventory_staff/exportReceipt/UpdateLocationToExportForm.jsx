@@ -43,6 +43,7 @@ const UpdateLocationToExportForm = ({
     const [quantityMap, setQuantityMap] = useState({});
     const [itemLocations, setItemLocations] = useState({});
     const [itemQuantities, setItemQuantities] = useState({});
+    const [receiptDetailId, setReceiptDetailId] = useState(null);
     //========================== Hàm notification của trang ==================================
     const [open1, setOpen1] = React.useState(false);
     const [errorMessage, setErrorMessage] = useState('');
@@ -172,18 +173,23 @@ const UpdateLocationToExportForm = ({
     }, [selectedLocations]);
 
     useEffect(() => {
-        // setReceiptDetailId(dataReceiptDetail.details[0].id);
-        getAllLocationByItem(itemId)
-            .then((response) => {
-                const data = response.data;
-                const dataArray = Array.isArray(data) ? data : [data];
-                setToLocation_id(dataArray);
-            })
-            .catch((error) => {
-                console.error('Error fetching locations:', error);
-                setToLocation_id([]);
-            });
-    }, []);
+        if (open) {
+            setReceiptDetailId(dataReceiptDetail.details[0].id);
+            getAllLocationByItem(itemId)
+                .then((response) => {
+                    const data = response.data;
+                    console.log(data); // In ra dữ liệu từ API
+                    const dataArray = Array.isArray(data) ? data : [data];
+                    setToLocation_id(dataArray);
+                })
+                .catch((error) => {
+                    console.error('Error fetching locations:', error);
+                    setToLocation_id([]);
+                });
+
+            handleOpenPopup();
+        }
+    }, [open, details]);
 
     return (
         <>
@@ -200,7 +206,9 @@ const UpdateLocationToExportForm = ({
                 <DialogContent style={{ width: '1000px', height: '500px' }}>
                     <Grid container spacing={2}>
                         {toLocation_id.length === 0 ? (
-                            <Typography variant="body1" ml={2}>Không có vị trí trong kho</Typography>
+                            <Typography variant="body1" ml={2}>
+                                Không có vị trí trong kho
+                            </Typography>
                         ) : (
                             toLocation_id.map((locationData) =>
                                 locationData.locations.map((location) => (

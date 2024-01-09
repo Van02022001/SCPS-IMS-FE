@@ -15,7 +15,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import { getExaminationItem, getUpdatedLocationDetails } from '~/data/mutation/items/item-mutation';
 import { getAllLocation, getLocationDetails } from '~/data/mutation/location/location-mutation';
 
-
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 import SnackbarError from '~/components/alert/SnackbarError';
 import UpdateLocationsImportForm from './UpdateLocationsImportForm';
@@ -104,11 +103,11 @@ const AddLocationsImportForm = ({ open, onClose, importReceipst, onUpdate, onSav
     };
     console.log(importReceipst);
 
-
     const handleClosePopup = () => {
-        const message = 'Lưu để xác nhận và đóng';
-        setOpen1(true);
-        setErrorMessage(message);
+        onClose();
+        // const message = 'Lưu để xác nhận và đóng';
+        // setOpen1(true);
+        // setErrorMessage(message);
     };
 
     useEffect(() => {
@@ -178,7 +177,6 @@ const AddLocationsImportForm = ({ open, onClose, importReceipst, onUpdate, onSav
 
     return (
         <>
-
             <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 Hãy Chọn Địa Chỉ Trong Kho
                 <IconButton edge="start" color="inherit" onClick={handleClosePopup} aria-label="close">
@@ -202,20 +200,22 @@ const AddLocationsImportForm = ({ open, onClose, importReceipst, onUpdate, onSav
                                             ) : (
                                                 <div>Vị trí chưa có hoặc chưa cập nhật!</div>
                                             )}
-
                                         </TableCell>
 
                                         <TableCell>
                                             {!locationQuantities[detail.id] > 0 &&
                                                 !selectedLocationsFlag[detail.id] &&
-                                                selectedLocations.find((loc) => loc.detailId === detail.id) === undefined && (
+                                                selectedLocations.find((loc) => loc.detailId === detail.id) ===
+                                                    undefined && (
                                                     <Button
                                                         variant="contained"
                                                         color="primary"
                                                         onClick={() => handleOpenAddCategoryDialog(detail.id)}
                                                         disabled={selectedLocationsFlag[detail.id]}
                                                     >
-                                                        {selectedLocationsFlag[detail.id] ? 'Đã cập nhật' : 'Chọn vị trí'}
+                                                        {selectedLocationsFlag[detail.id]
+                                                            ? 'Đã cập nhật'
+                                                            : 'Chọn vị trí'}
                                                     </Button>
                                                 )}
                                         </TableCell>
@@ -227,8 +227,9 @@ const AddLocationsImportForm = ({ open, onClose, importReceipst, onUpdate, onSav
                                             detailId={selectedDetailId}
                                             itemId={
                                                 importReceipst?.details && selectedDetailId
-                                                    ? importReceipst.details.find((detail) => detail.id === selectedDetailId)
-                                                        ?.itemId
+                                                    ? importReceipst.details.find(
+                                                          (detail) => detail.id === selectedDetailId,
+                                                      )?.itemId
                                                     : null
                                             }
                                             onUpdate={handleUpdateLocations}
@@ -264,7 +265,6 @@ const AddLocationsImportForm = ({ open, onClose, importReceipst, onUpdate, onSav
                     style={{ bottom: '16px', right: '16px' }}
                 />
             </div>
-
         </>
     );
 };

@@ -246,7 +246,8 @@ const CreateExportRequestReceiptForm = ({ isOpen, onCloseForm, importReceipst, o
                                         <TableCell>Tên sản phẩm</TableCell>
                                         <TableCell>Số lượng yêu cầu</TableCell>
                                         <TableCell>Đơn vị</TableCell>
-                                        <TableCell>Số lượng thực tế</TableCell>
+                                        <TableCell>Giá bán</TableCell>
+                                        <TableCell>Tổng giá</TableCell>
                                         <TableCell></TableCell>
                                     </TableRow>
                                     {dataReceiptDetail.details
@@ -258,7 +259,10 @@ const CreateExportRequestReceiptForm = ({ isOpen, onCloseForm, importReceipst, o
 
                                                 <TableCell>{detail.unitName}</TableCell>
 
-                                                <TableCell>{detail.quantity}</TableCell>
+                                                <TableCell>{detail.price} VNĐ</TableCell>
+
+                                                <TableCell>{detail.totalPrice} VNĐ</TableCell>
+
 
                                                 <TableCell>
                                                     {!locationQuantities[detail.id] > 0 &&
@@ -284,7 +288,7 @@ const CreateExportRequestReceiptForm = ({ isOpen, onCloseForm, importReceipst, o
                                                 <TableCell>{items.itemName}</TableCell>
                                                 <TableCell>{items.quantity}</TableCell>
                                                 <TableCell>{items.unitName}</TableCell>
-                                                <TableCell>
+                                                {/* <TableCell>
                                                     <TextField
                                                         style={{ width: '50%' }}
                                                         type="number"
@@ -294,7 +298,7 @@ const CreateExportRequestReceiptForm = ({ isOpen, onCloseForm, importReceipst, o
                                                         }
                                                         label="Số lượng nhập thực tế"
                                                     />
-                                                </TableCell>
+                                                </TableCell> */}
                                             </TableRow>
                                         ))}
                                     <div

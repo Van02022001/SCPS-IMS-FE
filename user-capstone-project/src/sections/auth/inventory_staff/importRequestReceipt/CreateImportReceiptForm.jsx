@@ -133,7 +133,6 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose,
                 setDataReceiptDetail(response.data);
                 // handleOpenAddCategoryDialog();
                 setIsSent(true);
-                onCloseForm(true);
             }
         } catch (error) {
             // Handle error
@@ -291,24 +290,31 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose,
                                             </TableRow>
                                         ))
                                         : importReceipst.details.map((items) => (
-                                            <TableRow key={items.id}>
-                                                {console.log(quantities[items.id])}
-                                                <TableCell>{items.itemName}</TableCell>
-                                                <TableCell>{items.quantity}</TableCell>
-                                                <TableCell>{items.unitName}</TableCell>
-                                                <TableCell>
-                                                    <TextField
-                                                        style={{ width: '50%' }}
-                                                        type="number"
-                                                        value={quantities[items.id] || ''}
-                                                        onChange={(e) =>
-                                                            handleQuantityChange(items.id, e.target.value)
-                                                        }
-                                                        label="Số lượng nhập thực tế"
-                                                    />
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
+                                              <TableRow key={items.id}>
+                                                  {console.log(quantities[items.id])}
+                                                  <TableCell>{items.itemName}</TableCell>
+                                                  <TableCell>{items.quantity}</TableCell>
+                                                  <TableCell>{items.unitName}</TableCell>
+                                                  <TableCell>
+                                                      <TextField
+                                                          type="text"
+                                                          label="Số lượng nhập thực tế"
+                                                          style={{ width: '50%' }}
+                                                          value={quantities[items.id] || ''}
+                                                          onChange={(e) => {
+                                                              const inputValue = e.target.value;
+                                                              if (/^\d*$/.test(inputValue)) {
+                                                                  handleQuantityChange(items.id, e.target.value);
+                                                              }
+                                                          }}
+                                                          inputProps={{
+                                                            inputMode: 'numeric',
+                                                            pattern: '[0-9]*',
+                                                        }}
+                                                      />
+                                                  </TableCell>
+                                              </TableRow>
+                                          ))}
                                     <div
                                         style={{
                                             display: 'flex',

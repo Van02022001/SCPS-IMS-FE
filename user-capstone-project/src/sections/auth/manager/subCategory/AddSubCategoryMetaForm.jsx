@@ -93,6 +93,8 @@ const AddSubCategoryMetaForm = ({ subCategoryMetaId, open, onClose, onSave }) =>
         }
     };
 
+    console.log(subCategoryMetaId);
+
     return (
         <Dialog open={open} onClose={onClose}>
             <DialogTitle>Thêm thẻ mô tả</DialogTitle>

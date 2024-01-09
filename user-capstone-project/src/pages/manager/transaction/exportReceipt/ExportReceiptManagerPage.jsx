@@ -366,7 +366,8 @@ const ExportReceiptManagerPage = () => {
                                                 <TableCell align="left">
                                                     <Label
                                                         color={
-                                                            (importReceipt.status === 'Pending_Approval' && 'warning') ||
+                                                            (importReceipt.status === 'Pending_Approval' &&
+                                                                'warning') ||
                                                             (importReceipt.status === 'Approved' && 'primary') ||
                                                             (importReceipt.status === ' IN_PROGRESS' && 'warning') ||
                                                             (importReceipt.status === 'Completed' && 'success') ||
@@ -377,12 +378,14 @@ const ExportReceiptManagerPage = () => {
                                                         {importReceipt.status === 'Pending_Approval'
                                                             ? 'Chờ phê duyệt'
                                                             : importReceipt.status === 'Approved'
-                                                                ? 'Đã xác nhận'
-                                                                : importReceipt.status === 'IN_PROGRESS'
-                                                                    ? 'Đang tiến hành'
-                                                                    : importReceipt.status === 'Completed'
-                                                                        ? 'Hoàn thành'
-                                                                        : 'Ngừng hoạt động'}
+                                                            ? 'Đã xác nhận'
+                                                            : importReceipt.status === 'IN_PROGRESS'
+                                                            ? 'Đang tiến hành'
+                                                            : importReceipt.status === 'NOT_COMPLETED'
+                                                            ? 'Chưa hoàn thành'
+                                                            : importReceipt.status === 'Completed'
+                                                            ? 'Hoàn thành'
+                                                            : 'Ngừng hoạt động'}
                                                     </Label>
                                                 </TableCell>
                                             </TableRow>
@@ -395,7 +398,9 @@ const ExportReceiptManagerPage = () => {
                                                             // productStatus={productStatus}
                                                             importReceiptId={selectedImportReceiptId}
                                                             updateImportReceiptInList={updateImportReceiptInList}
-                                                            updateImportReceiptConfirmInList={updateImportReceiptConfirmInList}
+                                                            updateImportReceiptConfirmInList={
+                                                                updateImportReceiptConfirmInList
+                                                            }
                                                             onClose={handleCloseProductDetails}
                                                         />
                                                     </TableCell>
@@ -449,8 +454,6 @@ const ExportReceiptManagerPage = () => {
                 />
             </Card>
             {/* </Container> */}
-
-
         </>
     );
 };

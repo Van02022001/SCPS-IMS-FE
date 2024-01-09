@@ -404,7 +404,7 @@ const CustomerRequestPage = () => {
                                                     <Stack direction="row" alignItems="center" spacing={2}>
                                                         {/* <Avatar alt={name} src={avatarUrl} /> */}
                                                         <Typography variant="subtitle2" noWrap>
-                                                            {importReceipt.description}
+                                                            {importReceipt.note}
                                                         </Typography>
                                                     </Stack>
                                                 </TableCell>

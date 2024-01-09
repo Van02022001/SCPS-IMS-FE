@@ -11,16 +11,24 @@ import {
     MenuItem,
     FormControl,
     InputLabel,
+    IconButton,
 } from '@mui/material';
 
 import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
 import { editItemLocations } from '~/data/mutation/items/item-mutation';
-import { getAllLocation, getAllLocationByItem } from '~/data/mutation/location/location-mutation';
+import {
+    getAllLocation,
+    getAllLocationByItem,
+    getLocationsByEmptyItem,
+} from '~/data/mutation/location/location-mutation';
 import {
     createItemMovements,
     getItemsByMovementsHistory,
 } from '~/data/mutation/items-movement/items-movement-mutation';
+import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
+import CloseIcon from '@mui/icons-material/Close';
+import SnackbarError from '~/components/alert/SnackbarError';
 
 const AddItemsMovementForm = ({ open, onClose, onSave, itemId, itemMovementsData }) => {
     const [quantity, setQuantity] = useState('');
@@ -31,11 +39,44 @@ const AddItemsMovementForm = ({ open, onClose, onSave, itemId, itemMovementsData
     const [selectedLocationId, setSelectedLocationId] = useState('');
     const [selectedFromLocationId, setSelectedFromLocationId] = useState('');
 
-    // Thông báo
-    const [isSuccess, setIsSuccess] = useState(false);
-    const [isError, setIsError] = useState(false);
+    //========================== Hàm notification của trang ==================================
+    const [open1, setOpen1] = React.useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
+    const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
+
+    const handleErrorMessage = (message) => {
+        setOpen1(true);
+        setErrorMessage(message);
+        if (message === 'Invalid request') {
+            setErrorMessage('Yêu cầu không hợp lệ !');
+        } else if (message === 'Receipt is not in the approved state for processing') {
+            setErrorMessage('Phiếu không ở trạng thái được phê duyệt để xử lý !');
+        } else if (message === 'location has already contains others item') {
+            setErrorMessage('vị trí đã chứa mục khác!');
+        }
+    };
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpen1(false);
+        setSuccessMessage('');
+        setErrorMessage('');
+    };
+
+    const action = (
+        <React.Fragment>
+            <Button color="secondary" size="small" onClick={handleClose}></Button>
+            <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
+                <CloseIcon fontSize="lage" />
+            </IconButton>
+        </React.Fragment>
+    );
+
+    //========================== Hàm notification của trang ==================================
 
     const handleClosePopup = () => {
         setPopupOpen(false);
@@ -57,21 +98,13 @@ const AddItemsMovementForm = ({ open, onClose, onSave, itemId, itemMovementsData
             const response = await createItemMovements(itemLocationsParams);
 
             if (response.status === '200 OK') {
-                setIsSuccess(true);
-                setIsError(false);
-                setSuccessMessage(response.message);
             }
 
             // updateItemInList(response.data);
             console.log('Item updated:', response);
         } catch (error) {
             console.error('An error occurred while updating the item:', error);
-            setIsError(true);
-            setIsSuccess(false);
-            setErrorMessage(error.response.data.message);
-            if (error.response) {
-                console.log('Error response:', error.response);
-            }
+            handleErrorMessage(error.response?.data?.message || 'Đã xảy ra lỗi');
         }
     };
 
@@ -100,7 +133,7 @@ const AddItemsMovementForm = ({ open, onClose, onSave, itemId, itemMovementsData
                 })
                 .catch((error) => console.error('Error fetching categories:', error));
         }
-        getAllLocation()
+        getLocationsByEmptyItem(itemId)
             .then((respone) => {
                 const data = respone.data;
                 const dataArray = Array.isArray(data) ? data : [data];
@@ -145,7 +178,7 @@ const AddItemsMovementForm = ({ open, onClose, onSave, itemId, itemMovementsData
                         fullWidth
                         margin="normal"
                         value={notes}
-                        onChange={(e) => setNotes(e.target.value)}
+                        onChange={(e) => setNotes(capitalizeFirstLetter(e.target.value))}
                     />
                 </Grid>
                 <FormControl sx={{ minWidth: 200 }}>
@@ -186,8 +219,13 @@ const AddItemsMovementForm = ({ open, onClose, onSave, itemId, itemMovementsData
                             ))}
                     </Select>
                 </FormControl>
-                {isSuccess && <SuccessAlerts message={successMessage} />}
-                {isError && <ErrorAlerts errorMessage={errorMessage} />}
+                <SnackbarError
+                    open={open1}
+                    handleClose={handleClose}
+                    message={errorMessage}
+                    action={action}
+                    style={{ bottom: '16px', right: '16px' }}
+                />
             </DialogContent>
             <div style={{ padding: '16px' }}>
                 <Button variant="contained" color="primary" onClick={CreateItemMovement}>

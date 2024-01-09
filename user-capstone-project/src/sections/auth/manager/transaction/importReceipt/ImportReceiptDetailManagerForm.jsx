@@ -451,6 +451,8 @@ const ImportReceiptDetailManagerForm = ({
                                                     ? 'Đã xác nhận'
                                                     : currentStatus === 'IN_PROGRESS'
                                                     ? 'Đang tiến hành'
+                                                    : currentStatus === 'NOT_COMPLETED'
+                                                    ? 'Chưa hoàn thành'
                                                     : currentStatus === 'Completed'
                                                     ? 'Hoàn thành'
                                                     : 'Ngừng hoạt động'

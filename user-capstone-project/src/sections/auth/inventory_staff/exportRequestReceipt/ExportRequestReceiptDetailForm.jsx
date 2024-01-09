@@ -37,6 +37,7 @@ import { getAllImportReceipt } from '~/data/mutation/importReceipt/ImportReceipt
 import SnackbarError from '~/components/alert/SnackbarError';
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 import CreateExportRequestReceiptForm from './CreateExportRequestReceiptForm';
+import { editExportRequestReceipt } from '~/data/mutation/customerRequest/CustomerRequest-mutation';
 
 const ExportRequestReceiptDetailForm = ({
     importReceipt,
@@ -216,9 +217,9 @@ const ExportRequestReceiptDetailForm = ({
             //     return;
             // }
 
-            const newStatus = 'Approved';
+            const newStatus = 'IN_PROGRESS';
 
-            const response = await editImportReceiptConfirm(importReceiptId, newStatus);
+            const response = await editExportRequestReceipt(importReceiptId, newStatus);
 
             if (response.status === '200 OK') {
                 // Handle success if needed
@@ -347,13 +348,13 @@ const ExportRequestReceiptDetailForm = ({
                         {currentStatus === 'IN_PROGRESS' && (
                             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                                 <Button variant="contained" color="primary" onClick={handleOpenForm}>
-                                    Tạo phiếu nhập kho
+                                    Tạo phiếu xuất kho
                                 </Button>
                             </div>
                         )}
                         <Dialog maxWidth="lg" fullWidth open={isOpenImportForm}>
                             <DialogTitle style={{ textAlign: 'center' }}>
-                                Phiếu Nhập Kho
+                                Phiếu Xuất Kho
                                 <IconButton style={{ float: 'right' }} onClick={handleCloseForm}>
                                     <CloseIcon color="primary" />
                                 </IconButton>{' '}

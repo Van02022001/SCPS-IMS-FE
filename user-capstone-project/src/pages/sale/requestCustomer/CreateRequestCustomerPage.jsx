@@ -103,6 +103,8 @@ const CreateRequestCustomerPage = () => {
             setErrorMessage('Vui lòng chọn Khách hàng, Kho hàng và Nhân viên !');
         } else if (message === 'Inventory not found') {
             setErrorMessage('Không tìm thấy sản phẩm trong kho!');
+        } else if (message === 'Hãy nhập số lượng') {
+            setErrorMessage('Hãy nhập số lượng !');
         }
     };
 
@@ -130,6 +132,7 @@ const CreateRequestCustomerPage = () => {
     const TABLE_HEAD = [
         { id: 'image' },
         { id: 'name', label: 'Tên sản phẩm', alignRight: false },
+        { id: 'availableQuantity', label: 'Số lượng tồn kho', alignRight: false },
         { id: 'quality', label: 'Số lượng', alignRight: false },
         { id: 'button' },
     ];
@@ -278,6 +281,11 @@ const CreateRequestCustomerPage = () => {
 
     const handleCreateImportReceipt = async () => {
         try {
+
+            if (selectedItems.some((item) => !item.quantity || parseInt(item.quantity, 10) <= 0)) {
+                handleErrorMessage('Hãy nhập số lượng');
+                return;
+            }
             // Use the data from descriptionReceipt and other relevant states
             const requestData = {
                 customerId: selectedCustomerId.customerId,
@@ -352,7 +360,7 @@ const CreateRequestCustomerPage = () => {
                                                             <ListItemText sx={{ flexBasis: '2%' }}>
                                                                 <img
                                                                     src={selectedItem.avatar}
-                                                                    alt={selectedItem.name}
+                                                                    // alt={selectedItem.name}
                                                                     width="48"
                                                                     height="48"
                                                                 />
@@ -361,16 +369,21 @@ const CreateRequestCustomerPage = () => {
                                                                 // primary={selectedItem.id}
                                                                 onChange={(e) => setItemId(e.target.value)}
                                                             /> */}
-                                                            <ListItemText sx={{ flexBasis: '34%' }}>
+                                                            <ListItemText sx={{ flexBasis: '24%' }}>
                                                                 <Typography variant="body1">
-                                                                    {selectedItem.subCategory.name}
+                                                                    {selectedItem.name}
                                                                 </Typography>
                                                             </ListItemText>
-                                                            <ListItemText sx={{ flexBasis: '28%' }}>
+                                                            <ListItemText sx={{ flexBasis: '24%' }}>
+                                                                <Typography variant="body1">
+                                                                    {selectedItem.availableQuantity}
+                                                                </Typography>
+                                                            </ListItemText>
+                                                            <ListItemText sx={{ flexBasis: '12%' }}>
                                                                 <TextField
                                                                     type="text"
                                                                     label="Số lượng"
-                                                                    sx={{ width: '28%' }}
+                                                                    sx={{ width: '60%' }}
                                                                     value={selectedItem.quantity}
                                                                     onChange={(e) => {
                                                                         const inputValue = e.target.value;
@@ -404,7 +417,7 @@ const CreateRequestCustomerPage = () => {
                                             gridTemplateColumns: '1fr auto',
                                             // gap: 1,
                                             // alignItems: 'center',
-                                            maxWidth: 220
+                                            maxWidth: 220,
                                         }}
                                     >
                                         <EditIcon sx={{ mt: 2, mb: 3 }} />
@@ -557,11 +570,9 @@ const CreateRequestCustomerPage = () => {
                                                             }}
                                                             onClick={() => handleAddToCart(items)}
                                                         >
-                                                            <img src={items.avatar} alt={items.name} width="100%" />
+                                                            <img src={items.imageUrl} width="100%" />
                                                             <div style={{ padding: '8px' }}>
-                                                                <Typography variant="body1">
-                                                                    {items.subCategory.name}
-                                                                </Typography>
+                                                                <Typography variant="body1">{items.name}</Typography>
                                                             </div>
                                                         </ListItem>
                                                     ))
