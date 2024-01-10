@@ -1,13 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Button, Tab, Tabs, Stack, Grid, TextField, FormControl, Select, MenuItem } from '@mui/material';
+import {
+    Typography,
+    Button,
+    Tab,
+    Tabs,
+    Stack,
+    Grid,
+    TextField,
+    FormControl,
+    Select,
+    MenuItem,
+    IconButton,
+} from '@mui/material';
 
 import SuccessAlerts from '../../../../components/alert/SuccessAlerts';
-
+import CloseIcon from '@mui/icons-material/Close';
 import { getAllWarehouse } from '../../../../data/mutation/warehouse/warehouse-mutation';
 import { updateUser } from '../../../../data/mutation/user/user-mutation';
 import ErrorAlerts from '~/components/alert/ErrorAlerts';
-
-
+import SnackbarError from '~/components/alert/SnackbarError';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess ';
 
 const UserDetailForm = ({ users, usersId, onClose, isOpen, mode }) => {
     const [formHeight, setFormHeight] = useState(0);
@@ -15,11 +27,65 @@ const UserDetailForm = ({ users, usersId, onClose, isOpen, mode }) => {
     const [currentStatus, setCurrentStatus] = useState('');
     const [editedUser, setEditedUser] = useState(null);
     const [warehouseData, setWarehouseData] = useState([]);
-    //thông báo
-    const [isSuccess, setIsSuccess] = useState(false);
-    const [isError, setIsError] = useState(false);
+    //========================== Hàm notification của trang ==================================
+    const [open, setOpen] = React.useState(false);
+    const [open1, setOpen1] = React.useState(false);
+    const [confirmOpen1, setConfirmOpen1] = useState(false);
+    const [confirmOpen2, setConfirmOpen2] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+
+    const handleSuccessMessage = (message) => {
+        setOpen(true);
+        if (message === 'Thành công !') {
+            setSuccessMessage('Thành công !');
+        }
+    };
+
+    const handleErrorMessage = (message) => {
+        setOpen1(true);
+        if (message === 'Invalid request') {
+            setErrorMessage('Yêu cầu không hợp lệ !');
+        } else if (message === '404 NOT_FOUND') {
+            setErrorMessage('Mô tả quá dài !');
+        } else if (message === 'Đã xảy ra lỗi !') {
+            setErrorMessage('Đã xảy ra lỗi !');
+        }
+    };
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpen(false);
+        setOpen1(false);
+        setSuccessMessage('');
+        setErrorMessage('');
+    };
+
+    const action = (
+        <React.Fragment>
+            <Button color="secondary" size="small" onClick={handleClose}></Button>
+            <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
+                <CloseIcon fontSize="lage" />
+            </IconButton>
+        </React.Fragment>
+    );
+    const handleConfirmClose1 = () => {
+        setConfirmOpen1(false);
+    };
+
+    const handleConfirmUpdate1 = () => {
+        setConfirmOpen1(false);
+        updateUsers();
+    };
+
+    const handleConfirm1 = () => {
+        setConfirmOpen1(true);
+    };
+
+    //========================== Hàm notification của trang ==================================
 
     useEffect(() => {
         if (isOpen) {
@@ -57,14 +123,14 @@ const UserDetailForm = ({ users, usersId, onClose, isOpen, mode }) => {
     useEffect(() => {
         getAllWarehouse()
             .then((respone) => {
-                const data = respone.data
-                setWarehouseData(data)
+                const data = respone.data;
+                setWarehouseData(data);
                 console.log(data);
             })
             .catch((error) => {
-                console.error("Error fetching users:", error);
-            })
-    }, [])
+                console.error('Error fetching users:', error);
+            });
+    }, []);
 
     const user = users.find((o) => o.id === usersId);
 
@@ -75,26 +141,18 @@ const UserDetailForm = ({ users, usersId, onClose, isOpen, mode }) => {
     const updateUsers = async () => {
         try {
             if (editedUser) {
-
                 const response = await updateUser(editedUser);
 
                 // Handle the response as needed
                 console.log('User updated:', response);
                 if (response.status === '200 OK') {
-                    setIsSuccess(true);
-                    setIsError(false);
-                    setSuccessMessage(response.message);
+                    handleSuccessMessage('Thành công !');
                 }
             }
         } catch (error) {
             // Handle errors
             console.error('Error updating supplier:', error);
-            setIsError(true);
-            setIsSuccess(false);
-            setErrorMessage(error.response.data.message);
-            if (error.response) {
-                console.log('Error response:', error.response);
-            }
+            handleErrorMessage('Đã xảy ra lỗi !');
         }
     };
 
@@ -111,7 +169,7 @@ const UserDetailForm = ({ users, usersId, onClose, isOpen, mode }) => {
         if (field === 'permissions') {
             setEditedUser((prevEditedUser) => ({
                 ...prevEditedUser,
-                [field]: field === 'permissions' ? value.split(',').map(permission => permission) : value,
+                [field]: field === 'permissions' ? value.split(',').map((permission) => permission) : value,
             }));
         } else {
             setEditedUser((prevEditedUser) => ({
@@ -181,7 +239,7 @@ const UserDetailForm = ({ users, usersId, onClose, isOpen, mode }) => {
                                             variant="outlined"
                                             label="Họ và tên"
                                             sx={{ width: '70%' }}
-                                            value={user ? (user.lastName + user.middleName + user.firstName) : ''}
+                                            value={user ? user.lastName + user.middleName + user.firstName : ''}
                                         />
                                     </Grid>
                                     <Grid
@@ -199,7 +257,6 @@ const UserDetailForm = ({ users, usersId, onClose, isOpen, mode }) => {
                                             label="Số điện thoại"
                                             sx={{ width: '70%' }}
                                             value={user ? user.phone : ''}
-
                                         />
                                     </Grid>
                                     <Grid
@@ -217,7 +274,7 @@ const UserDetailForm = ({ users, usersId, onClose, isOpen, mode }) => {
                                             label="Email"
                                             sx={{ width: '70%' }}
                                             value={user ? user.email : ''}
-                                        // onChange={(e) => handleEdit('phone', e.target.value)}
+                                            // onChange={(e) => handleEdit('phone', e.target.value)}
                                         />
                                     </Grid>
                                     <Grid
@@ -255,10 +312,10 @@ const UserDetailForm = ({ users, usersId, onClose, isOpen, mode }) => {
                                         <TextField
                                             size="small"
                                             variant="outlined"
-                                            label="taxCode"
+                                            label="Ngày tạo"
                                             sx={{ width: '70%' }}
                                             value={user ? user.role.createdAt : ''}
-                                        // onChange={(e) => handleEdit('taxCode', e.target.value)}
+                                            // onChange={(e) => handleEdit('taxCode', e.target.value)}
                                         />
                                     </Grid>
                                     <Grid
@@ -276,76 +333,98 @@ const UserDetailForm = ({ users, usersId, onClose, isOpen, mode }) => {
                                             label="Địa chỉ"
                                             sx={{ width: '70%' }}
                                             value={user ? user.role.status : ''}
-
                                         />
                                     </Grid>
 
-                                    {user.role.name === 'INVENTORY_STAFF' && (
+                                    {editedUser && (
                                         <>
-                                            <Grid
-                                                container
-                                                spacing={1}
-                                                direction="row"
-                                                justifyContent="space-between"
-                                                alignItems="center"
-                                                sx={{ marginBottom: 4, gap: 5 }}
-                                            >
-                                                <Typography variant="body1">Kho:</Typography>
-                                                <FormControl variant="outlined" size="small" sx={{ width: '70%' }}>
-                                                    <Select
-                                                        value={editedUser ? editedUser.warehouseId : ''}
-                                                        onChange={(e) => handleEdit('warehouseId', e.target.value)}
+                                            {editedUser.roleName === 'INVENTORY_STAFF' && (
+                                                <>
+                                                    <Grid
+                                                        container
+                                                        spacing={1}
+                                                        direction="row"
+                                                        justifyContent="space-between"
+                                                        alignItems="center"
+                                                        sx={{ marginBottom: 4, gap: 5 }}
                                                     >
-                                                        {warehouseData.map((warehouse) => (
-                                                            <MenuItem key={warehouse.id} value={warehouse.id}>
-                                                                {warehouse.name}
-                                                            </MenuItem>
-                                                        ))}
-                                                    </Select>
-                                                </FormControl>
-                                            </Grid>
+                                                        <Typography variant="body1">Kho:</Typography>
+                                                        <FormControl
+                                                            variant="outlined"
+                                                            size="small"
+                                                            sx={{ width: '70%' }}
+                                                        >
+                                                            <Select
+                                                                value={editedUser ? editedUser.warehouseId : ''}
+                                                                onChange={(e) =>
+                                                                    handleEdit('warehouseId', e.target.value)
+                                                                }
+                                                            >
+                                                                {warehouseData.map((warehouse) => (
+                                                                    <MenuItem key={warehouse.id} value={warehouse.id}>
+                                                                        {warehouse.name}
+                                                                    </MenuItem>
+                                                                ))}
+                                                            </Select>
+                                                        </FormControl>
+                                                    </Grid>
 
-                                            {/* Description for Warehouse */}
-                                            <Typography variant="body2" color="textSecondary" sx={{ marginBottom: 2 }}>
-                                                Chọn kho để quản lý kho hàng.
-                                            </Typography>
+                                                    {/* Description for Warehouse */}
+                                                    <Typography
+                                                        variant="body2"
+                                                        color="textSecondary"
+                                                        sx={{ marginBottom: 2 }}
+                                                    >
+                                                        Chọn kho để quản lý kho hàng.
+                                                    </Typography>
 
-                                            {/* Grid for Permissions */}
-                                            <Grid
-                                                container
-                                                spacing={1}
-                                                direction="row"
-                                                justifyContent="space-between"
-                                                alignItems="center"
-                                                sx={{ marginBottom: 4, gap: 5 }}
-                                            >
-                                                <Typography variant="body1">Quyền hạn:</Typography>
-                                                <TextField
-                                                    size="small"
-                                                    variant="outlined"
-                                                    label="Quyền hạn"
-                                                    sx={{ width: '70%' }}
-                                                    value={editedUser ? editedUser.permissions : ''}
-                                                    onChange={(e) => handleEdit('permissions', e.target.value)}
-                                                />
-                                            </Grid>
+                                                    {/* Grid for Permissions */}
+                                                    <Grid
+                                                        container
+                                                        spacing={1}
+                                                        direction="row"
+                                                        justifyContent="space-between"
+                                                        alignItems="center"
+                                                        sx={{ marginBottom: 4, gap: 5 }}
+                                                    >
+                                                        <Typography variant="body1">Quyền hạn:</Typography>
+                                                        <TextField
+                                                            size="small"
+                                                            variant="outlined"
+                                                            label="Quyền hạn"
+                                                            sx={{ width: '70%' }}
+                                                            value={editedUser ? editedUser.permissions : ''}
+                                                            onChange={(e) => handleEdit('permissions', e.target.value)}
+                                                        />
+                                                    </Grid>
+                                                </>
+                                            )}
                                         </>
                                     )}
                                 </Grid>
                             </Grid>
                         </Stack>
-                        {isSuccess && <SuccessAlerts message={successMessage} />}
-                        {isError && <ErrorAlerts errorMessage={errorMessage} />}
+                        <SnackbarSuccess
+                            open={open}
+                            handleClose={handleClose}
+                            message={successMessage}
+                            action={action}
+                            style={{ bottom: '16px', right: '16px' }}
+                        />
+                        <SnackbarError
+                            open={open1}
+                            handleClose={handleClose}
+                            message={errorMessage}
+                            action={action}
+                            style={{ bottom: '16px', right: '16px' }}
+                        />
                         <Stack spacing={4} margin={2}>
                             <Grid container spacing={1} sx={{ gap: '10px' }}>
                                 <Button variant="contained" color="primary" onClick={updateUsers}>
-                                    Cập nhập
+                                    Cập nhật
                                 </Button>
                                 <Button variant="contained" color="error">
                                     Thay đổi trạng thái
-                                </Button>
-                                <Button variant="outlined" color="error" >
-                                    Hủy bỏ
                                 </Button>
                             </Grid>
                         </Stack>

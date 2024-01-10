@@ -42,7 +42,7 @@ const DashboardAppPage = () => {
   return (
     <>
       <Helmet>
-        <title> Dashboard | Minimal UI </title>
+        <title> Dashboard | SCPS-IMS </title>
       </Helmet>
 
       <Container maxWidth="xl">
