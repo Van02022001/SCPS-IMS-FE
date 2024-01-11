@@ -27,19 +27,16 @@ import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import Label from '~/components/label/Label';
 // import Iconify from '~/components/iconify/Iconify';
 import Scrollbar from '~/components/scrollbar/Scrollbar';
-
+import { useLocation, useNavigate } from 'react-router-dom';
 // sections
 import { ProductsListHead, ProductsListToolbar } from '~/sections/@dashboard/products';
 // mock
-import PRODUCTSLIST from '../../../../_mock/products';
+import ImportRequestReceiptDetailForm from '~/sections/auth/inventory_staff/importRequestReceipt/ImportRequestReceiptDetailForm';
 // api
 import { getAllImportRequestOfWarehouse } from '~/data/mutation/importRequestReceipt/ImportRequestReceipt-mutation';
 
-
-// import GoodsReceiptPage from '../GoodsReceiptPage';
-import { useLocation, useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
-import ImportRequestReceiptDetailForm from '~/sections/auth/inventory_staff/importRequestReceipt/ImportRequestReceiptDetailForm';
+
 
 // ----------------------------------------------------------------------
 
@@ -107,9 +104,7 @@ const ViewReceiptPage = () => {
     const { state } = location;
     const successMessage = state?.successMessage;
     // State mở các form----------------------------------------------------------------
-    const [open, setOpen] = useState(null);
     const [openOderForm, setOpenOderForm] = useState(false);
-    const [openEditForm, setOpenEditForm] = useState(false);
 
     const [selected, setSelected] = useState([]);
     const [selectedImportReceiptId, setSelectedImportReceiptId] = useState([]);
@@ -127,17 +122,17 @@ const ViewReceiptPage = () => {
     const navigate = useNavigate();
     const startIndex = page * rowsPerPage;
     const endIndex = startIndex + rowsPerPage;
-
     // State data và xử lý data
     const [importRequestData, setImportRequestData] = useState([]);
     // const [productStatus, setProductStatus] = useState('');
 
-    const [selectedProduct, setSelectedProduct] = useState(null);
     const [selectedStatus, setSelectedStatus] = React.useState([]);
     const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
     const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
 
     const [isExportFormOpen, setIsExportFormOpen] = useState(false);
+
+    const [selectedStatusInVietnamese, setSelectedStatusInVietnamese] = React.useState([]);
     // Hàm để thay đổi data mỗi khi Edit xong api-------------------------------------------------------------
     const updateImportReceiptInList = (updatedImportReceipt) => {
         const importReceiptIndex = importRequestData.findIndex((product) => product.id === updatedImportReceipt.id);
@@ -209,15 +204,15 @@ const ViewReceiptPage = () => {
         setRowsPerPage(parseInt(event.target.value, 10));
     };
     // Các hàm xử lý soft theo name--------------------------------------------------------------------------------------------------------------------------------
-    const handleCheckboxChange = (event, productId) => {
-        if (event.target.checked) {
-            // Nếu người dùng chọn checkbox, thêm sản phẩm vào danh sách đã chọn.
-            setSelectedImportReceiptId([...selectedImportReceiptId, productId]);
-        } else {
-            // Nếu người dùng bỏ chọn checkbox, loại bỏ sản phẩm khỏi danh sách đã chọn.
-            setSelectedImportReceiptId(selectedImportReceiptId.filter((id) => id !== productId));
-        }
-    };
+    // const handleCheckboxChange = (event, productId) => {
+    //     if (event.target.checked) {
+    //         // Nếu người dùng chọn checkbox, thêm sản phẩm vào danh sách đã chọn.
+    //         setSelectedImportReceiptId([...selectedImportReceiptId, productId]);
+    //     } else {
+    //         // Nếu người dùng bỏ chọn checkbox, loại bỏ sản phẩm khỏi danh sách đã chọn.
+    //         setSelectedImportReceiptId(selectedImportReceiptId.filter((id) => id !== productId));
+    //     }
+    // };
     const handleRequestSort = (property) => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
@@ -246,17 +241,9 @@ const ViewReceiptPage = () => {
         setSortedProduct(filteredUsers);
     };
 
-    // const handleCloseEditsForm = () => {
-    //     setOpenEditForm(false);
-    // };
+    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - importRequestData.length) : 0;
 
-    // const handleNavigate = () => {
-    //     navigate("/inventory-staff/goods-receipt");
-    // };
-
-    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - PRODUCTSLIST.length) : 0;
-
-    const filteredUsers = applySortFilter(PRODUCTSLIST, getComparator(order, orderBy), filterName);
+    const filteredUsers = applySortFilter(importRequestData, getComparator(order, orderBy), filterName);
 
     const isNotFound = !filteredUsers.length && !!filterName;
 
@@ -307,8 +294,21 @@ const ViewReceiptPage = () => {
         status === "IN_PROGRESS" ||
         status === "Completed"
     ));
+
+    const translateStatusToVietnamese = (status) => {
+        const vietnameseStatusMap = {
+            "Pending_Approval": 'Chờ phê duyệt',
+            "Approved": 'Đã xác nhận',
+            "IN_PROGRESS": 'Đang tiến hành',
+            "Completed": 'Hoàn thành',
+        };
+
+        return vietnameseStatusMap[status] || status;
+    };
     const handleStatusChange = (event) => {
-        setSelectedStatus(event.target.value);
+        const selectedValue = event.target.value;
+        setSelectedStatus(selectedValue);
+        setSelectedStatusInVietnamese(translateStatusToVietnamese(selectedValue));
     };
     //==============================* filter *==============================
     const filteredItems = allItems.filter((item) =>
@@ -326,13 +326,6 @@ const ViewReceiptPage = () => {
                 <Typography variant="h4" gutterBottom>
                     Yêu cầu nhập kho
                 </Typography>
-                {/* <Button
-                    variant="contained"
-                    startIcon={<Iconify icon="eva:plus-fill" />}
-                    onClick={handleNavigate}
-                >
-                    Nhập hàng
-                </Button> */}
             </Stack>
             {/* ===========================================filter=========================================== */}
             <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -346,17 +339,15 @@ const ViewReceiptPage = () => {
                 <Select
                     labelId="demo-multiple-checkbox-label"
                     id="demo-multiple-checkbox"
-                    multiple
                     value={selectedStatus}
                     onChange={handleStatusChange}
                     input={<OutlinedInput label="Trạng thái" />}
-                    renderValue={(selected) => selected.join(', ')}
                     MenuProps={MenuProps}
                 >
                     {filteredStatusArray.map((name) => (
                         <MenuItem key={name} value={name}>
-                            <Checkbox checked={selectedStatus.indexOf(name) > -1} />
-                            <ListItemText primary={name} />
+                            {/* <Checkbox checked={selectedStatus.indexOf(name) > -1} /> */}
+                            <ListItemText primary={translateStatusToVietnamese(name)} />
                         </MenuItem>
                     ))}
                 </Select>
@@ -394,16 +385,6 @@ const ViewReceiptPage = () => {
                                                 selected={selectedImportReceiptId === importReceipt.id}
                                                 onClick={() => handleProductClick(importReceipt)}
                                             >
-                                                {/* <TableCell padding="checkbox">
-                                                    <Checkbox
-                                                        checked={selectedImportReceiptId === importReceipt.id}
-                                                        onChange={(event) =>
-                                                            handleCheckboxChange(event, importReceipt.id)
-                                                        }
-                                                        // checked={selectedUser}
-                                                        // onChange={(event) => handleClick(event, name)}
-                                                    />
-                                                </TableCell> */}
 
                                                 <TableCell component="th" scope="row" padding="none">
                                                     <Stack direction="row" alignItems="center" spacing={2}>
@@ -434,7 +415,7 @@ const ViewReceiptPage = () => {
                                                             (importReceipt.status === 'Pending_Approval' &&
                                                                 'warning') ||
                                                             (importReceipt.status === 'Approved' && 'success') ||
-                                                            (importReceipt.status === ' IN_PROGRESS' && 'warning') ||
+                                                            (importReceipt.status === 'IN_PROGRESS' && 'warning') ||
                                                             (importReceipt.status === 'Complete' && 'primary') ||
                                                             (importReceipt.status === 'Inactive' && 'error') ||
                                                             'default'
@@ -516,7 +497,6 @@ const ViewReceiptPage = () => {
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </Card>
-            {/* </Container> */}
         </>
     );
 };

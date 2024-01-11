@@ -26,6 +26,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import Snackbar from '@mui/material/Snackbar';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+import BoxComponent from '~/components/box/BoxComponent';
 // api
 import { editSubCategory, editStatusCategory } from '~/data/mutation/subCategory/subCategory-mutation';
 import { getAllCategories } from '~/data/mutation/categories/categories-mutation';
@@ -39,6 +40,7 @@ import CustomDialog from '~/components/alert/ConfirmDialog';
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 import SnackbarError from '~/components/alert/SnackbarError';
 import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
+import { getAllImageSubcategory } from '~/data/mutation/image/image-mutation';
 
 const SubCategoryDetailForm = ({
     subCategory,
@@ -80,6 +82,8 @@ const SubCategoryDetailForm = ({
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
+    const [uploadedImageUrl, setUploadedImageUrl] = useState(null);
+    const [subCategoryImages, setSubCategoryImages] = useState([]);
     const handleSuccessMessage = (message) => {
         setOpen(true);
         if (message === 'Update sub category status successfully.') {
@@ -253,6 +257,13 @@ const SubCategoryDetailForm = ({
             .then((respone) => {
                 const data = respone.data;
                 setItemsDetail(data);
+            })
+
+            .catch((error) => console.error('Error fetching units measurement:', error));
+        getAllImageSubcategory(subCategoryId)
+            .then((respone) => {
+                const data = respone.data;
+                setSubCategoryImages(data);
             })
 
             .catch((error) => console.error('Error fetching units measurement:', error));
@@ -641,6 +652,35 @@ const SubCategoryDetailForm = ({
                                     </Grid>
                                 </div>
                             </Grid>
+                        </Grid>
+                        <Grid container spacing={2} sx={{ gap: '20px' }}>
+                            {/* Hiển thị danh sách ảnh của danh mục */}
+                            {subCategoryImages && subCategoryImages.length > 0 && (
+                                <div>
+                                    <Typography variant="h6" sx={{ marginTop: '20px' }}>Danh sách ảnh của danh mục:</Typography>
+                                    <Grid container spacing={2} sx={{ gap: '20px' }}>
+                                        {subCategoryImages.map((image) => (
+                                            <Grid item key={image.id}>
+                                                <img
+                                                    src={image.url}
+                                                    alt={image.title}
+                                                    style={{ width: '100%', height: '100px', objectFit: 'cover' }}
+                                                />
+                                                <Typography variant="body2">{image.title}</Typography>
+                                            </Grid>
+                                        ))}
+                                    </Grid>
+                                </div>
+                            )}
+                            <BoxComponent
+                                subcategoryId={subCategoryId}
+                                onUploadSuccess={(response) => {
+                                    setUploadedImageUrl(response.data.url);
+                                    console.log('Upload success:', response);
+                                    getAllImageSubcategory(subCategoryId);
+                                }}
+                            />
+
                         </Grid>
                     </Stack>
 

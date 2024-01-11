@@ -14,6 +14,12 @@ import {
     Typography,
     TableContainer,
     TablePagination,
+    FormControl,
+    InputLabel,
+    Select,
+    OutlinedInput,
+    MenuItem,
+    ListItemText,
 } from '@mui/material';
 // components
 import Label from '~/components/label/Label';
@@ -26,8 +32,8 @@ import { ImportReceiptInventoryListHead, ImportReceiptInventoryToolbar } from '~
 // mock
 import PRODUCTSLIST from '../../../../_mock/products';
 // api
-import { getAllImportReceipt, getAllImportReceiptByWarehouse } from '~/data/mutation/importReceipt/ImportReceipt-mutation';
-
+import { getAllImportReceiptByWarehouse } from '~/data/mutation/importReceipt/ImportReceipt-mutation';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import ImportReaceiptDetailForm from '~/sections/auth/inventory_staff/importRequestReceipt/ImportRequestReceiptDetailForm';
 // import EditCategoryForm from '~/sections/auth/manager/categories/EditCategoryForm';
 // import GoodsReceiptPage from '../GoodsReceiptPage';
@@ -46,7 +52,6 @@ const TABLE_HEAD = [
     { id: 'createdAt', label: 'Ngày tạo', alignRight: false },
     // { id: 'type', label: 'Loại yêu cầu', alignRight: false },
     { id: 'status', label: 'Trạng thái', alignRight: false },
-    { id: '' },
 ];
 
 // ----------------------------------------------------------------------
@@ -88,6 +93,16 @@ function applySortFilter(array, comparator, query) {
 
 //     return `${day}/${month}/${year}`;
 // }
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+    PaperProps: {
+        style: {
+            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+            width: 250,
+        },
+    },
+};
 
 const ImportReceiptPage = () => {
     // State mở các form----------------------------------------------------------------
@@ -114,7 +129,8 @@ const ImportReceiptPage = () => {
     const [importReceiptData, setImportReceiptData] = useState([]);
     const [productStatus, setProductStatus] = useState('');
 
-    const [selectedProduct, setSelectedProduct] = useState(null);
+    const [selectedStatus, setSelectedStatus] = React.useState([]);
+    const [selectedStatusInVietnamese, setSelectedStatusInVietnamese] = React.useState([]);
     const startIndex = page * rowsPerPage;
     const endIndex = startIndex + rowsPerPage;
     // Hàm để thay đổi data mỗi khi Edit xong api-------------------------------------------------------------
@@ -144,6 +160,14 @@ const ImportReceiptPage = () => {
         // Close the form
         setOpenOderForm(false);
         setImportReceiptData((prevImportReceiptData) => [...prevImportReceiptData, newImportReceipt]);
+    };
+    const getDescription = (importReceipt) => {
+        const match = importReceipt.description.match(/#(\d+)/);
+        if (match) {
+            const requestId = match[1];
+            return `Nhập thực tế dựa trên Yêu cầu Nhận #${requestId}`;
+        }
+        return importReceipt.description;
     };
 
     //----------------------------------------------------------------
@@ -268,6 +292,43 @@ const ImportReceiptPage = () => {
             });
     }, []);
     console.log(importReceiptData);
+    //==============================* filter *==============================
+    const pendingApprovalItems = importReceiptData.filter(
+        (importRequest) => importRequest.status === 'NOT_COMPLETED',
+    );
+
+    const otherItems = importReceiptData.filter((importRequest) => importRequest.status !== 'NOT_COMPLETED');
+
+    const allItems = [...pendingApprovalItems, ...otherItems];
+    const statusArray = allItems.map((item) => item.status);
+    const uniqueStatusArray = Array.from(new Set(statusArray));
+
+    // Chỉ chọn những giá trị mà bạn quan tâm
+    const filteredStatusArray = uniqueStatusArray.filter(status => (
+        status === "NOT_COMPLETED" ||
+        status === "Completed"
+    ));
+
+    const translateStatusToVietnamese = (status) => {
+        const vietnameseStatusMap = {
+            "NOT_COMPLETED": 'Chưa hoàn thành',
+            "Completed": 'Hoàn thành',
+        };
+
+        return vietnameseStatusMap[status] || status;
+    };
+    const handleStatusChange = (event) => {
+        const selectedValue = event.target.value;
+        setSelectedStatus(selectedValue);
+        setSelectedStatusInVietnamese(translateStatusToVietnamese(selectedValue));
+    };
+
+    //==============================* filter *==============================
+
+    const filteredItems = allItems.filter((item) =>
+        selectedStatus.length === 0 ? true : selectedStatus.includes(item.status),
+    );
+
     return (
         <>
             <Helmet>
@@ -279,15 +340,34 @@ const ImportReceiptPage = () => {
                 <Typography variant="h4" gutterBottom>
                     Phiếu nhập kho
                 </Typography>
-                {/* <Button
-                    variant="contained"
-                    startIcon={<Iconify icon="eva:plus-fill" />}
-                    onClick={handleNavigate}
-                >
-                    Nhập hàng
-                </Button> */}
             </Stack>
+            {/* ===========================================filter=========================================== */}
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+                <FilterAltIcon color="action" />
+                <Typography gutterBottom variant="h6" color="text.secondary" component="div" sx={{ m: 1 }}>
+                    Bộ lọc tìm kiếm
+                </Typography>
+            </div>
+            <FormControl sx={{ m: 1, width: 300, mb: 2 }}>
+                <InputLabel id="demo-multiple-checkbox-label">Trạng thái</InputLabel>
+                <Select
+                    labelId="demo-multiple-checkbox-label"
+                    id="demo-multiple-checkbox"
+                    value={selectedStatus}
+                    onChange={handleStatusChange}
+                    input={<OutlinedInput label="Trạng thái" />}
+                    MenuProps={MenuProps}
+                >
+                    {filteredStatusArray.map((name) => (
+                        <MenuItem key={name} value={name}>
+                            {/* <Checkbox checked={selectedStatus.indexOf(name) > -1} /> */}
+                            <ListItemText primary={translateStatusToVietnamese(name)} />
+                        </MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
 
+            {/* ===========================================filter=========================================== */}
             <Card>
                 <ImportReceiptInventoryToolbar
                     numSelected={selected.length}
@@ -308,7 +388,7 @@ const ImportReceiptPage = () => {
                                 onSelectAllClick={handleSelectAllClick}
                             />
                             <TableBody>
-                                {importReceiptData.slice(startIndex, endIndex).map((importReceipt) => {
+                                {filteredItems.slice(startIndex, endIndex).map((importReceipt) => {
                                     return (
                                         <React.Fragment key={importReceipt.id}>
                                             <TableRow
@@ -344,7 +424,7 @@ const ImportReceiptPage = () => {
                                                     <Stack direction="row" alignItems="center" spacing={2}>
                                                         {/* <Avatar alt={name} src={avatarUrl} /> */}
                                                         <Typography variant="subtitle2" noWrap>
-                                                            {importReceipt.description}
+                                                            {getDescription(importReceipt)}
                                                         </Typography>
                                                     </Stack>
                                                 </TableCell>

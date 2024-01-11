@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import {
     Typography,
     Button,
-    List,
-    ListItem,
     Tab,
     Tabs,
     Stack,
@@ -12,7 +10,6 @@ import {
     CardContent,
     Card,
     TableContainer,
-    TableHead,
     TableRow,
     TableCell,
     TableBody,
@@ -22,22 +19,21 @@ import {
     TablePagination,
 } from '@mui/material';
 
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import { editItem, editStatusItem, getItemsByPriceHistory } from '~/data/mutation/items/item-mutation';
+
+import { getItemsByPriceHistory } from '~/data/mutation/items/item-mutation';
 import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
 import { getAllSubCategory } from '~/data/mutation/subCategory/subCategory-mutation';
 import { getAllBrands } from '~/data/mutation/brand/brands-mutation';
 import { getAllOrigins } from '~/data/mutation/origins/origins-mutation';
 import { getAllSuppliers } from '~/data/mutation/supplier/suppliers-mutation';
-//icons
-import AddIcon from '@mui/icons-material/Add';
+//icon
 import { getItemsByMovementsHistory } from '~/data/mutation/items-movement/items-movement-mutation';
 import AddItemsMovementForm from './AddItemsMovementForm';
 import dayjs from 'dayjs';
 
 const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode, updateItemStatusInList }) => {
-    const [expandedItem, setExpandedItem] = useState(itemId);
+    // const [expandedItem, setExpandedItem] = useState(itemId);
     const [formHeight, setFormHeight] = useState(0);
     const [selectedTab, setSelectedTab] = useState(0);
     const [tab1Data, setTab1Data] = useState({ categories_id: [] });
@@ -49,8 +45,8 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
     const [supplier_id, setSupplier_id] = useState([]);
     const [origin_id, setOrigin_id] = useState([]);
     const [itemPriceData, setItemPriceData] = useState([]);
-    const [currentStatus, setCurrentStatus] = useState('');
-    const [openAddCategoryDialog, setOpenAddCategoryDialog] = useState(false);
+    // const [currentStatus, setCurrentStatus] = useState('');
+    // const [openAddCategoryDialog, setOpenAddCategoryDialog] = useState(false);
 
     const [openAddItemMovementDialog, setOpenAddItemMovementDialog] = useState(false);
 
@@ -170,67 +166,7 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
         return null;
     }
 
-    const handleSave = () => {
-        // Xử lý lưu
-    };
 
-    const updateItemStatus = async () => {
-        try {
-            let newStatus = currentStatus === 'Active' ? 'Inactive' : 'Active';
-
-            const response = await editStatusItem(itemId, newStatus);
-
-            if (response.status === '200 OK') {
-                setIsSuccess(true);
-                setIsError(false);
-                setSuccessMessage(response.message);
-            }
-
-            // Sử dụng hàm để cập nhật trạng thái trong danh sách categories trong CategoryPage
-            updateItemStatusInList(itemId, newStatus);
-            setCurrentStatus(newStatus);
-
-            console.log('Item status updated:', response);
-        } catch (error) {
-            console.error('Error updating category status:', error);
-            setIsError(true);
-            setIsSuccess(false);
-            setErrorMessage(error.response.data.message);
-            if (error.response) {
-                console.log('Error response:', error.response);
-            }
-        }
-    };
-
-    const handleDelete = () => {
-        // Xử lý xóa
-    };
-
-    const updateItems = async () => {
-        if (!editedItem) {
-            return;
-        }
-        try {
-            const response = await editItem(itemId, editedItem);
-
-            if (response.status === '200 OK') {
-                setIsSuccess(true);
-                setIsError(false);
-                setSuccessMessage(response.message);
-            }
-
-            updateItemInList(response.data);
-            console.log('Item updated:', response);
-        } catch (error) {
-            console.error('An error occurred while updating the item:', error);
-            setIsError(true);
-            setIsSuccess(false);
-            setErrorMessage(error.response.data.message);
-            if (error.response) {
-                console.log('Error response:', error.response);
-            }
-        }
-    };
     const handleEdit = (field, value) => {
         console.log(`Field: ${field}, Value: ${value}`);
         if (field === 'sub_category_id') {
@@ -248,13 +184,13 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
     };
 
     // hàm xử lý đóng mở popup form
-    const handleOpenAddCategoryDialog = () => {
-        setOpenAddCategoryDialog(true);
-    };
+    // const handleOpenAddCategoryDialog = () => {
+    //     setOpenAddCategoryDialog(true);
+    // };
 
-    const handleCloseAddCategoryDialog = () => {
-        setOpenAddCategoryDialog(false);
-    };
+    // const handleCloseAddCategoryDialog = () => {
+    //     setOpenAddCategoryDialog(false);
+    // };
 
     const handleOpenAddItemMovementDialog = () => {
         setOpenAddItemMovementDialog(true);
@@ -378,37 +314,6 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                     </Grid>
                                 </Grid>
 
-                                {/* <Grid
-                                    container
-                                    spacing={1}
-                                    direction="row"
-                                    justifyContent="space-between"
-                                    alignItems="center"
-                                    sx={{ marginBottom: 4, gap: 5 }}
-                                >
-                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
-                                        Nhà cung cấp:
-                                    </Typography>
-                                    <Grid xs={8.5}>
-                                        <Select
-                                            size="small"
-                                            labelId="group-label"
-                                            id="group-select"
-                                            label="Nhà cung cấp"
-                                            sx={{ width: '91%', fontSize: '16px' }}
-                                            value={editedItem.supplier_id ? editedItem.supplier_id : ''}
-                                            onChange={(e) => handleEdit('supplier_id', e.target.value)}
-                                            name="supplier_id"
-                                        >
-                                            {supplier_id.map((supplier) => (
-                                                <MenuItem key={supplier.id} value={supplier.id}>
-                                                    {supplier.name}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </Grid>
-                                </Grid> */}
-
                                 <Grid
                                     container
                                     spacing={1}
@@ -474,7 +379,7 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
-                                    <Typography variant="body1">Vị trí :</Typography>
+                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>Vị trí :</Typography>
                                     <div style={{ display: 'flex', width: '71%', alignItems: 'center' }}>
                                         <TextField
                                             size="small"
@@ -486,29 +391,28 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                             value={
                                                 item.locations
                                                     ? [
-                                                          ...new Set(
-                                                              item.locations.map(
-                                                                  (location) =>
-                                                                      `${
-                                                                          location.warehouse.name
-                                                                      } - Số lượng: ${calculateTotalQuantity(
-                                                                          location.warehouse.name,
-                                                                      )}`,
-                                                              ),
-                                                          ),
-                                                      ].join('\n')
+                                                        ...new Set(
+                                                            item.locations.map(
+                                                                (location) =>
+                                                                    `${location.warehouse.name
+                                                                    } - Số lượng: ${calculateTotalQuantity(
+                                                                        location.warehouse.name,
+                                                                    )}`,
+                                                            ),
+                                                        ),
+                                                    ].join('\n')
                                                     : ''
                                             }
                                             title={
                                                 item.locations
                                                     ? [
-                                                          ...new Set(
-                                                              item.locations.map(
-                                                                  (location) =>
-                                                                      `${location.warehouse.address} - ${location.warehouse.name}`,
-                                                              ),
-                                                          ),
-                                                      ].join('\n')
+                                                        ...new Set(
+                                                            item.locations.map(
+                                                                (location) =>
+                                                                    `${location.warehouse.address} - ${location.warehouse.name}`,
+                                                            ),
+                                                        ),
+                                                    ].join('\n')
                                                     : ''
                                             }
                                         />
@@ -597,44 +501,7 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                         value={item.available}
                                     />
                                 </Grid>
-                                {/* <Grid
-                                    container
-                                    spacing={1}
-                                    direction="row"
-                                    justifyContent="space-between"
-                                    alignItems="center"
-                                    sx={{ marginBottom: 4, gap: 5 }}
-                                >
-                                    <Typography variant="body1">Giá bán :</Typography>
-                                    <TextField
-                                            InputProps={{ readOnly: true }}
 
-                                        size="small"
-                                        variant="outlined"
-                                        label="Giá bán"
-                                        sx={{ width: '70%', marginRight: 5 }}
-                                        value={item.pricing !== null ? item.pricing.price : 'Chưa có'}
-                                    />
-                                </Grid> */}
-                                {/* <Grid
-                                    container
-                                    spacing={1}
-                                    direction="row"
-                                    justifyContent="space-between"
-                                    alignItems="center"
-                                    sx={{ marginBottom: 4, gap: 5 }}
-                                >
-                                    <Typography variant="body1">Giá nhập:</Typography>
-                                    <TextField
-                                            InputProps={{ readOnly: true }}
-
-                                        size="small"
-                                        variant="outlined"
-                                        label="Giá nhập"
-                                        sx={{ width: '70%', marginRight: 5 }}
-                                        value={item.purchasePrice !== null ? item.purchasePrice.price : 'Chưa có'}
-                                    />
-                                </Grid> */}
                                 <Grid
                                     container
                                     spacing={1}
@@ -643,7 +510,7 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
-                                    <Typography variant="body1">Giá mua:</Typography>
+                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>Giá mua:</Typography>
                                     <TextField
                                         InputProps={{ readOnly: true }}
                                         size="small"
@@ -661,7 +528,7 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
-                                    <Typography variant="body1">Giá bán:</Typography>
+                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>Giá bán:</Typography>
                                     <TextField
                                         InputProps={{ readOnly: true }}
                                         size="small"
@@ -700,12 +567,6 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                         {isError && <ErrorAlerts errorMessage={errorMessage} />}
                         <Stack spacing={4} margin={2}>
                             <Grid container spacing={1} sx={{ gap: '20px' }}>
-                                {/* <Button variant="contained" color="primary" onClick={updateItems}>
-                                    Cập nhật
-                                </Button>
-                                <Button variant="contained" color="error" onClick={updateItemStatus}>
-                                    Thay đổi trạng thái
-                                </Button> */}
                                 <Button variant="contained" color="warning" onClick={handleOpenAddItemMovementDialog}>
                                     Chuyển sản phẩm trong kho
                                 </Button>
@@ -830,8 +691,8 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                                             </TableCell>
                                                             <TableCell>
                                                                 {items.toLocation &&
-                                                                items.toLocation.binNumber &&
-                                                                items.toLocation.shelfNumber
+                                                                    items.toLocation.binNumber &&
+                                                                    items.toLocation.shelfNumber
                                                                     ? `${items.toLocation.binNumber} - ${items.toLocation.shelfNumber}`
                                                                     : 'Không có'}
                                                             </TableCell>

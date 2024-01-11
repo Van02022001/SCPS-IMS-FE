@@ -25,9 +25,7 @@ import CustomerRequestSalePage from './pages/sale/requestCustomer/CustomerReques
 import SubCategoryInventoryPage from './pages/inventory_staff/subCategory/SubCategoryInventoryPage';
 import ItemsSalePage from './pages/sale/items/ItemsSalePage';
 import CustomerSalePage from './pages/sale/customer/CustomerSalePage';
-import GoodsReceiptPage from './pages/inventory_staff/transaction/GoodsReceiptPage';
 import ViewReceiptPage from './pages/inventory_staff/transaction/importRequest/ViewReceiptPage';
-import BadsReceiptPage from './pages/inventory_staff/transaction/BadsReceiptPage';
 import UnitPage from './pages/manager/unit/UnitPage';
 import OriginPage from './pages/manager/origin/OriginPage';
 import BrandPage from './pages/manager/brand/BrandPage';
@@ -126,15 +124,13 @@ const Router = () => {
                 
                 // { path: 'order-sale', element: <OrderSalePage /> },
                 { path: 'requests-import-receipt', element: <ViewReceiptPage /> },
-
                 { path: 'import-receipt', element: <ImportReceiptPage /> },
 
                 { path: 'inventory-check', element: <InventoryStaffReportPage /> },
 
-                { path: 'goods-receipt', element: <GoodsReceiptPage /> },
                 { path: 'requests-export-receipt', element: <CustomerRequestPage/> },
                 { path: 'export-receipt', element: <ExportReceiptPage /> },
-                { path: 'bads-receipt', element: <BadsReceiptPage /> },
+              
                 { path: 'inventory-check-item', element: <InventoryCheckPage/> },
                 { path: 'create-inventory-check', element: <CreateInventoryCheck/> },
             ],

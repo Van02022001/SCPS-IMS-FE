@@ -50,7 +50,6 @@ const TABLE_HEAD = [
     { id: 'description', label: 'Mô tả', alignRight: false },
     { id: 'createdBy', label: 'Người tạo', alignRight: false },
     { id: 'createdAt', label: 'Ngày tạo', alignRight: false },
-    // { id: 'type', label: 'Loại yêu cầu', alignRight: false },
     { id: 'status', label: 'Trạng thái', alignRight: false },
 ];
 
@@ -136,6 +135,8 @@ const CustomerRequestPage = () => {
 
     const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
     const [isExportFormOpen, setIsExportFormOpen] = useState(false);
+
+    const [selectedStatusInVietnamese, setSelectedStatusInVietnamese] = React.useState([]);
     // Hàm để thay đổi data mỗi khi Edit xong api-------------------------------------------------------------
     const updateImportReceiptInList = (updatedImportReceipt) => {
         const importReceiptIndex = importRequestData.findIndex((product) => product.id === updatedImportReceipt.id);
@@ -286,24 +287,39 @@ const CustomerRequestPage = () => {
     const uniqueStatusArray = Array.from(new Set(statusArray));
 
     // Chỉ chọn những giá trị mà bạn quan tâm
-    const filteredStatusArray = uniqueStatusArray.filter(
-        (status) =>
-            status === 'Pending_Approval' ||
-            status === 'Approved' ||
-            status === 'IN_PROGRESS' ||
-            status === 'Completed',
-    );
-    const handleStatusChange = (event) => {
-        setSelectedStatus(event.target.value);
+    const filteredStatusArray = uniqueStatusArray.filter(status => (
+        status === "Pending_Approval" ||
+        status === "Approved" ||
+        status === "IN_PROGRESS" ||
+        status === "Completed"
+    ));
+
+    const translateStatusToVietnamese = (status) => {
+        const vietnameseStatusMap = {
+            "Pending_Approval": 'Chờ phê duyệt',
+            "Approved": 'Đã xác nhận',
+            "IN_PROGRESS": 'Đang tiến hành',
+            "Completed": 'Hoàn thành',
+        };
+
+        return vietnameseStatusMap[status] || status;
     };
+    const handleStatusChange = (event) => {
+        const selectedValue = event.target.value;
+        setSelectedStatus(selectedValue);
+        setSelectedStatusInVietnamese(translateStatusToVietnamese(selectedValue));
+    };
+
     //==============================* filter *==============================
+
     const filteredItems = allItems.filter((item) =>
         selectedStatus.length === 0 ? true : selectedStatus.includes(item.status),
     );
+
     return (
         <>
             <Helmet>
-                <title> Nhập kho | Minimal UI </title>
+                <title> Yêu cầu xuất kho | Minimal UI </title>
             </Helmet>
 
             {/* <Container> */}
@@ -311,13 +327,6 @@ const CustomerRequestPage = () => {
                 <Typography variant="h4" gutterBottom>
                     Yêu cầu xuất hàng
                 </Typography>
-                {/* <Button
-                    variant="contained"
-                    startIcon={<Iconify icon="eva:plus-fill" />}
-                    onClick={handleNavigate}
-                >
-                    Nhập hàng
-                </Button> */}
             </Stack>
             {/* ===========================================filter=========================================== */}
             <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -331,17 +340,15 @@ const CustomerRequestPage = () => {
                 <Select
                     labelId="demo-multiple-checkbox-label"
                     id="demo-multiple-checkbox"
-                    multiple
                     value={selectedStatus}
                     onChange={handleStatusChange}
                     input={<OutlinedInput label="Trạng thái" />}
-                    renderValue={(selected) => selected.join(', ')}
                     MenuProps={MenuProps}
                 >
                     {filteredStatusArray.map((name) => (
                         <MenuItem key={name} value={name}>
-                            <Checkbox checked={selectedStatus.indexOf(name) > -1} />
-                            <ListItemText primary={name} />
+                            {/* <Checkbox checked={selectedStatus.indexOf(name) > -1} /> */}
+                            <ListItemText primary={translateStatusToVietnamese(name)} />
                         </MenuItem>
                     ))}
                 </Select>
@@ -368,7 +375,7 @@ const CustomerRequestPage = () => {
                                 onSelectAllClick={handleSelectAllClick}
                             />
                             <TableBody>
-                                {allItems.slice(startIndex, endIndex).map((importReceipt) => {
+                                {filteredItems.slice(startIndex, endIndex).map((importReceipt) => {
                                     return (
                                         <React.Fragment key={importReceipt.id}>
                                             <TableRow

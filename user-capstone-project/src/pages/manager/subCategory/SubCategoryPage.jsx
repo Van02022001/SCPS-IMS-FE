@@ -579,7 +579,7 @@ const SubCategoryPage = () => {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={filteredSubcate.length} // Update count to the length of filteredSubcate
+                    count={filteredSubcate.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}

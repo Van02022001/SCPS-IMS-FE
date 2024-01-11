@@ -140,21 +140,21 @@ const CreateInventoryCheck = ({
     };
 
     const handleLocationQuantityChange = (locationId, event) => {
-        const newQuantity = parseInt(event.target.value, 10) || 0;
-        setLocationQuantities((prevQuantities) => {
-            const newQuantities = { ...prevQuantities, [locationId]: newQuantity };
+        const newQuantity = event.target.value; // Allow 0 as well
+        setLocationQuantities((prevQuantities) => ({
+            ...prevQuantities,
+            [locationId]: newQuantity,
+        }));
 
-            // Calculate and update total quantities and total locations
-            const newTotalQuantity = Object.values(newQuantities).reduce((acc, val) => acc + val, 0);
-            const newTotalLocations = Object.keys(newQuantities).length;
-            setTotalQuantities((prevTotal) => ({
-                ...prevTotal,
-                totalQuantity: newTotalQuantity,
-                totalLocations: newTotalLocations,
-            }));
+        // Calculate and update total quantities and total locations
+        const newTotalQuantity = Object.values({ ...locationQuantities, [locationId]: newQuantity }).reduce((acc, val) => acc + parseInt(val, 10) || 0, 0);
+        const newTotalLocations = Object.keys({ ...locationQuantities, [locationId]: newQuantity }).length;
 
-            return newQuantities;
-        });
+        setTotalQuantities((prevTotal) => ({
+            ...prevTotal,
+            totalQuantity: newTotalQuantity,
+            totalLocations: newTotalLocations,
+        }));
     };
 
     const handleUpdateQuantities = async () => {

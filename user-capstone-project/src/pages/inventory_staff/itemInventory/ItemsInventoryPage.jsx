@@ -28,7 +28,7 @@ import {
 } from '@mui/material';
 // components
 import Label from '../../../components/label';
-import Iconify from '../../../components/iconify';
+
 import Scrollbar from '../../../components/scrollbar';
 import CloseIcon from '@mui/icons-material/Close';
 // sections
@@ -39,7 +39,6 @@ import USERLIST from '../../../_mock/user';
 import { getAllItem } from '~/data/mutation/items/item-mutation';
 import { getAllBrands } from '~/data/mutation/brand/brands-mutation';
 import { getAllSubCategory } from '~/data/mutation/subCategory/subCategory-mutation';
-import { getAllSuppliers } from '~/data/mutation/supplier/suppliers-mutation';
 import { getAllOrigins } from '~/data/mutation/origins/origins-mutation';
 
 //icons
@@ -69,7 +68,6 @@ const TABLE_HEAD = [
     { id: 'isVerified', label: 'Nhà cung cấp', alignRight: false },
     { id: 'status', label: 'Nguồn gốc', alignRight: false },
     { id: 'status', label: 'Trạng thái', alignRight: false },
-    { id: '' },
 ];
 // const orderDetailFormStyles = {
 //     maxHeight: 0,
@@ -120,8 +118,6 @@ function applySortFilter(array, comparator, query) {
 }
 
 const ItemsInventoryPage = () => {
-    const [open, setOpen] = useState(null);
-
     const [openOderForm, setOpenOderForm] = useState(false);
 
     const [page, setPage] = useState(0);
@@ -143,7 +139,7 @@ const ItemsInventoryPage = () => {
     const [selectedItemId, setSelectedItemId] = useState([]);
     // State data và xử lý data
     const [itemsData, setItemData] = useState([]);
-    const [itemStatus, setItemStatus] = useState('');
+
     const [sortedItem, setSortedItem] = useState([]);
     //--------------------Filter------------------------
     const [personName, setPersonName] = React.useState([]);
@@ -180,13 +176,6 @@ const ItemsInventoryPage = () => {
         setSelectedOrder(null);
     };
 
-    const handleOpenMenu = (event) => {
-        setOpen(event.currentTarget);
-    };
-
-    const handleCloseMenu = () => {
-        setOpen(null);
-    };
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -203,20 +192,6 @@ const ItemsInventoryPage = () => {
         setSelected([]);
     };
 
-    const handleClick = (event, name) => {
-        const selectedIndex = selected.indexOf(name);
-        let newSelected = [];
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, name);
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-        }
-        setSelected(newSelected);
-    };
     const handleCloseOdersForm = () => {
         setOpenOderForm(false);
     };
@@ -388,13 +363,7 @@ const ItemsInventoryPage = () => {
                 <Typography variant="h4" gutterBottom>
                     Quản lý sản phẩm kho
                 </Typography>
-                {/* <Button
-                    variant="contained"
-                    startIcon={<Iconify icon="eva:plus-fill" />}
-                    onClick={() => setOpenOderForm(true)}
-                >
-                    Thêm sản phẩm
-                </Button> */}
+
                 <Dialog fullWidth maxWidth="md" open={openOderForm}>
                     <DialogTitle>
                         Tạo sản phẩm{' '}
@@ -479,8 +448,8 @@ const ItemsInventoryPage = () => {
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DemoContainer components={['DateRangePicker']}>
                         <DateRangePicker
-                            startText="Check-in"
-                            endText="Check-out"
+                            startText="Ngày tạo"
+                            endText="Ngày kết thúc"
                             value={[startDate, endDate]}
                             onChange={(newValue) => {
                                 setStartDate(newValue[0]);
