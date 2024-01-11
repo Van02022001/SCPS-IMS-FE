@@ -20,3 +20,8 @@ export const getAllImageSubcategory = async (scId) => {
     const response = await axiosInstance.get(`/images/subcategory/${scId}`);
     return response.data;
 }
+
+export const deleteImageSubcategory = async (imageId) => {
+    const response = await axiosInstance.delete(`/images/${imageId}`);
+    return response.data;
+}

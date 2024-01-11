@@ -40,7 +40,7 @@ import CustomDialog from '~/components/alert/ConfirmDialog';
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 import SnackbarError from '~/components/alert/SnackbarError';
 import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
-import { getAllImageSubcategory } from '~/data/mutation/image/image-mutation';
+import { deleteImageSubcategory, getAllImageSubcategory } from '~/data/mutation/image/image-mutation';
 
 const SubCategoryDetailForm = ({
     subCategory,
@@ -90,6 +90,8 @@ const SubCategoryDetailForm = ({
             setSuccessMessage('Cập nhập trạng thái danh mục thành công');
         } else if (message === 'Update sub category successfully.') {
             setSuccessMessage('Cập nhập danh mục thành công');
+        } else if (message === 'Xóa ảnh thành công.') {
+            setSuccessMessage('Xóa ảnh thành công !');
         }
     };
 
@@ -260,6 +262,9 @@ const SubCategoryDetailForm = ({
             })
 
             .catch((error) => console.error('Error fetching units measurement:', error));
+    }, []);
+
+    useEffect(() => {
         getAllImageSubcategory(subCategoryId)
             .then((respone) => {
                 const data = respone.data;
@@ -267,7 +272,7 @@ const SubCategoryDetailForm = ({
             })
 
             .catch((error) => console.error('Error fetching units measurement:', error));
-    }, []);
+    }, [uploadedImageUrl]);
 
     // useEffect(() => {
     //     if (mode === 'create') {
@@ -331,14 +336,14 @@ const SubCategoryDetailForm = ({
             console.log('Product status updated:', response);
         } catch (error) {
             console.error('Error updating category status:', error);
-            handleErrorMessage(error.response.data.message)
+            handleErrorMessage(error.response.data.message);
             if (error.response) {
                 console.log('Error response:', error.response);
             }
         }
     };
 
-    const handleClear = () => { };
+    const handleClear = () => {};
 
     const handleEdit = (field, value) => {
         console.log(`Field: ${field}, Value: ${value}`);
@@ -386,6 +391,20 @@ const SubCategoryDetailForm = ({
             if (error.response) {
                 console.log('Error response:', error.response);
             }
+        }
+    };
+
+    const handleDeleteImage = async (imageId) => {
+        console.log(imageId);
+        try {
+            const response = await deleteImageSubcategory(imageId);
+            if (response.status === '200 OK') {
+                const updatedImages = subCategoryImages.filter((image) => image.id !== imageId);
+                setSubCategoryImages(updatedImages);
+                setSuccessMessage(response.message);
+            }
+        } catch (error) {
+            setErrorMessage(error.response.data.message);
         }
     };
 
@@ -446,7 +465,9 @@ const SubCategoryDetailForm = ({
                                         label="Mô tả"
                                         sx={{ width: '70%' }}
                                         value={editedSubCategory ? editedSubCategory.description : ''}
-                                        onChange={(e) => handleEdit('description', capitalizeFirstLetter(e.target.value))}
+                                        onChange={(e) =>
+                                            handleEdit('description', capitalizeFirstLetter(e.target.value))
+                                        }
                                     />
                                 </Grid>
                                 <Grid
@@ -656,31 +677,56 @@ const SubCategoryDetailForm = ({
                         <Grid container spacing={2} sx={{ gap: '20px' }}>
                             {/* Hiển thị danh sách ảnh của danh mục */}
                             {subCategoryImages && subCategoryImages.length > 0 && (
-                                <div>
-                                    <Typography variant="h6" sx={{ marginTop: '20px' }}>Danh sách ảnh của danh mục:</Typography>
+                                <React.Fragment>
+                                    <Typography variant="h6" sx={{ marginTop: '20px' }}>
+                                        Danh sách ảnh của danh mục:
+                                    </Typography>
                                     <Grid container spacing={2} sx={{ gap: '20px' }}>
                                         {subCategoryImages.map((image) => (
-                                            <Grid item key={image.id}>
-                                                <img
-                                                    src={image.url}
-                                                    alt={image.title}
-                                                    style={{ width: '100%', height: '100px', objectFit: 'cover' }}
-                                                />
+                                            <Grid
+                                                item
+                                                key={image.id}
+                                                style={{
+                                                    position: 'relative',
+                                                    overflow: 'hidden',
+                                                    paddingRight: '16px',
+                                                }}
+                                            >
+                                                <IconButton
+                                                    style={{ position: 'absolute', top: -12, right: -10, zIndex: 1 }}
+                                                    onClick={() => handleDeleteImage(image.id)}
+                                                >
+                                                    <CloseIcon />
+                                                </IconButton>
+                                                <div
+                                                    style={{
+                                                        width: '200px',
+                                                        height: '250px',
+                                                        overflow: 'hidden',
+                                                    }}
+                                                >
+                                                    <img
+                                                        src={image.url}
+                                                        alt={image.title}
+                                                        style={{ width: '200%', height: '200px', objectFit: 'cover' }}
+                                                    />
+                                                </div>
                                                 <Typography variant="body2">{image.title}</Typography>
                                             </Grid>
                                         ))}
                                     </Grid>
-                                </div>
+                                </React.Fragment>
                             )}
-                            <BoxComponent
-                                subcategoryId={subCategoryId}
-                                onUploadSuccess={(response) => {
-                                    setUploadedImageUrl(response.data.url);
-                                    console.log('Upload success:', response);
-                                    getAllImageSubcategory(subCategoryId);
-                                }}
-                            />
-
+                            <Grid item xs={12}>
+                                <BoxComponent
+                                    subcategoryId={subCategoryId}
+                                    onUploadSuccess={(response) => {
+                                        setUploadedImageUrl(response.data.url);
+                                        console.log('Upload success:', response);
+                                        getAllImageSubcategory(subCategoryId);
+                                    }}
+                                />
+                            </Grid>
                         </Grid>
                     </Stack>
 
@@ -812,7 +858,9 @@ const SubCategoryDetailForm = ({
                                 defaultValue="Mô tả sơ lược"
                                 sx={{ width: '100%', border: 'none' }}
                                 value={editSubCategoryMeta ? editSubCategoryMeta.key : ''}
-                                onChange={(e) => handleEditSubCategoryMeta('key', capitalizeFirstLetter(e.target.value))}
+                                onChange={(e) =>
+                                    handleEditSubCategoryMeta('key', capitalizeFirstLetter(e.target.value))
+                                }
                             />
                         </CardContent>
                     </Card>
@@ -837,7 +885,9 @@ const SubCategoryDetailForm = ({
                                 defaultValue="Mô tả"
                                 sx={{ width: '100%', border: 'none' }}
                                 value={editSubCategoryMeta ? editSubCategoryMeta.description : ''}
-                                onChange={(e) => handleEditSubCategoryMeta('description', capitalizeFirstLetter(e.target.value))}
+                                onChange={(e) =>
+                                    handleEditSubCategoryMeta('description', capitalizeFirstLetter(e.target.value))
+                                }
                             />
                         </CardContent>
                     </Card>
