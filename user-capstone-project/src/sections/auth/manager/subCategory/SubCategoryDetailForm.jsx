@@ -343,7 +343,7 @@ const SubCategoryDetailForm = ({
         }
     };
 
-    const handleClear = () => {};
+    const handleClear = () => { };
 
     const handleEdit = (field, value) => {
         console.log(`Field: ${field}, Value: ${value}`);
@@ -711,7 +711,7 @@ const SubCategoryDetailForm = ({
                                                         style={{ width: '200%', height: '200px', objectFit: 'cover' }}
                                                     />
                                                 </div>
-                                                <Typography variant="body2">{image.title}</Typography>
+                                                {/* <Typography variant="body2">{image.title}</Typography> */}
                                             </Grid>
                                         ))}
                                     </Grid>

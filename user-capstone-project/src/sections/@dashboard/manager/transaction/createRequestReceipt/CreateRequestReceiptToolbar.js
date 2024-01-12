@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types';
 // @mui
 import { styled, alpha } from '@mui/material/styles';
-import { Toolbar, Tooltip, IconButton, Typography, OutlinedInput, InputAdornment, MenuItem, Checkbox, Menu } from '@mui/material';
+import { Toolbar, Typography, OutlinedInput, InputAdornment} from '@mui/material';
 // component
-import Iconify from '../../../../components/iconify';
+import Iconify from '../../../../../components/iconify';
 import { useEffect, useState } from 'react';
-import { getCategoriesSearch } from '~/data/mutation/categories/categories-mutation';
+import { getSubCategoryByName } from '~/data/mutation/subCategory/subCategory-mutation';
 
 // ----------------------------------------------------------------------
 
@@ -34,34 +34,20 @@ const StyledSearch = styled(OutlinedInput)(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-CategoryToolbar.propTypes = {
+CreateRequestReceiptToolbar.propTypes = {
   numSelected: PropTypes.number,
   filterName: PropTypes.string,
   onFilterName: PropTypes.func,
 };
 
-export default function CategoryToolbar({ numSelected, onFilterName, onDataSearch }) {
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [selectedFilters, setSelectedFilters] = useState({ filter1: false, filter2: false, filter3: false, filter4: false, filter5: false,  filter6: false });
+export default function CreateRequestReceiptToolbar({ numSelected, onFilterName, onDataSearch }) {
   const [filterName, setFilterName] = useState('');
-
-  const handleFilterClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleFilterClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleFilterSelect = (filter) => {
-    setSelectedFilters({ ...selectedFilters, [filter]: !selectedFilters[filter] });
-  };
 
   const handleSearch = async (keyword) => {
     try {
-      const result = await getCategoriesSearch(keyword);
+      const result = await getSubCategoryByName(keyword);
       console.log('Search result:', result);
-
+      // Gọi hàm callback để truyền dữ liệu về trang chính
       onDataSearch(result.data);
     } catch (error) {
       console.error('Error searching subcategories:', error);

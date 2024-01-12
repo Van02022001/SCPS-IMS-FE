@@ -10,6 +10,11 @@ export const createImportRequestReceipt = async (recieptParams) => {
     return response.data;
 }
 
+export const getImportRequestById = async (importReceiptId) => {
+    const response = await axiosInstance.get(`import-request-receipts/${importReceiptId}`);
+    return response.data;
+}
+
 export const editImportReceipt = async (importReceiptId, editImportReceiptParams) => {
     const response = await axiosInstance.put(`/import-request-receipts/${importReceiptId}`, editImportReceiptParams);
     return response.data;

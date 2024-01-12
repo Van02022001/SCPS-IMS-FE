@@ -71,9 +71,8 @@ const CreateRequestCustomerPage = () => {
     const navigate = useNavigate();
 
     const [searchText, setSearchText] = useState('');
-    const [selectedPrice, setSelectedPrice] = useState('all'); // Bảng giá chung
     const [tabs, setTabs] = useState([
-        { label: 'Hóa đơn 1', products: [] }, // Mảng sản phẩm cho hóa đơn 1
+        { label: 'Hóa đơn 1', products: [] },
     ]);
     const [selectedTab, setSelectedTab] = useState(0);
 
@@ -84,6 +83,10 @@ const CreateRequestCustomerPage = () => {
     const [errorMessage, setErrorMessage] = useState('');
     const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
     const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
+
+
+
+
 
     const handleSuccessMessage = (message) => {
         setOpen(true);
@@ -557,9 +560,9 @@ const CreateRequestCustomerPage = () => {
                                         <DialogContent>
                                             <List>
                                                 {selectedWarehouse ? (
-                                                    itemsData.map((items, index) => (
+                                                    itemsData.map((item, index) => (
                                                         <ListItem
-                                                            key={items.id}
+                                                            key={item.id}
                                                             style={{
                                                                 display: 'inline-block',
                                                                 margin: '8px',
@@ -567,22 +570,37 @@ const CreateRequestCustomerPage = () => {
                                                                 borderRadius: '8px',
                                                                 boxShadow: '4px 4px 10px rgba(0, 0, 0, 0.1)',
                                                                 width: '150px',
+                                                                position: 'relative',
                                                             }}
-                                                            onClick={() => handleAddToCart(items)}
+                                                            InputProps={{ readOnly: true }}
+                                                            title={
+                                                                [`Tên thương hiệu:  ${item.brandName}`,
+                                                                `Số lượng: ${item.availableQuantity}`,
+                                                                `Nguồn gốc: ${item.originName}`,
+                                                                `Nhà cung cấp: ${item.supplierName}`].join('\n')
+                                                            }
+                                                            onClick={() => handleAddToCart(item)}
+                                                            titleStyle={{
+                                                                display: 'inline-block',
+                                                                margin: '8px',
+                                                                border: '1px solid #ccc',
+                                                                borderRadius: '8px',
+                                                                boxShadow: '4px 4px 10px rgba(0, 0, 0, 0.1)',
+                                                                width: '150px',
+                                                                position: 'relative',
+                                                            }}
                                                         >
-                                                            <img src={items.imageUrl} width="100%" />
+                                                            <img src={item.imageUrl} width="100%" />
                                                             <div style={{ padding: '8px' }}>
-                                                                <Typography variant="body1">{items.name}</Typography>
+                                                                <Typography variant="body1">{item.subcategoryName}</Typography>
                                                             </div>
                                                         </ListItem>
                                                     ))
                                                 ) : (
-                                                    <Typography variant="body2">
-                                                        Chọn kho hàng trước khi thêm sản phẩm.
-                                                    </Typography>
+                                                    <Typography variant="body2">Chọn kho hàng trước khi thêm sản phẩm.</Typography>
                                                 )}
-                                                {/* Nút chuyển trang 1/2 (nếu cần) và nút thanh toán */}
                                             </List>
+
                                         </DialogContent>
                                     </div>
 
@@ -610,7 +628,7 @@ const CreateRequestCustomerPage = () => {
                         </Grid>
                     </Stack>
                 </Card>
-            </Box>
+            </Box >
         </>
     );
 };

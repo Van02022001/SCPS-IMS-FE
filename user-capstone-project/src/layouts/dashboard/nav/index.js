@@ -144,10 +144,7 @@ const managerNavConfig = [
     //         },
     //     ],
     // },
-    {
-        title: 'Giao dịch',
-        icon: <ShoppingCart />,
-        children: [
+  
             {
                 title: 'Nhập hàng',
                 icon: <ClassOutlined />,
@@ -185,8 +182,7 @@ const managerNavConfig = [
                 path: '/dashboard/products-check',
                 icon: <DomainVerification />,
             },
-        ],
-    },
+ 
 
     // {
     //   title: 'login',
@@ -234,10 +230,6 @@ const inventoryNavConfig = [
             },
         ],
     },
-    {
-        title: 'Giao dịch',
-        icon: <ShoppingCart />,
-        children: [
             {
                 title: 'Nhập hàng',
                 icon: <Warehouse />,
@@ -276,13 +268,12 @@ const inventoryNavConfig = [
                 path: '/inventory-staff/inventory-check',
                 icon: <DomainVerification />,
             },
-        ],
-    },
-    {
-        title: 'Kiểm kho',
-        icon: <ShoppingCart />,
-        path: '/inventory-staff/inventory-check-item',
-    },
+
+    // {
+    //     title: 'Kiểm kho',
+    //     icon: <ShoppingCart />,
+    //     path: '/inventory-staff/inventory-check-item',
+    // },
     // { 
     //     title: 'login',
     //     path: '/login',

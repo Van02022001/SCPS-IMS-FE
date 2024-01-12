@@ -23,7 +23,7 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 // sections
-import { CreateGoodReceiptListHead } from '~/sections/@dashboard/manager/transaction/createGoodReceipt';
+
 import { createImportRequestReceipt } from '~/data/mutation/importRequestReceipt/ImportRequestReceipt-mutation';
 // mock
 import USERLIST from '~/_mock/user';
@@ -39,6 +39,9 @@ import { getAllUnit } from '~/data/mutation/unit/unit-mutation';
 import { getAllWarehouse, getInventoryStaffByWarehouseId } from '~/data/mutation/warehouse/warehouse-mutation';
 
 import SnackbarError from '~/components/alert/SnackbarError';
+import { CreateRequestReceiptHead, CreateRequestReceiptToolbar } from '~/sections/@dashboard/manager/transaction/createRequestReceipt';
+import { Dropdown } from '~/components/dropdown';
+
 
 const CreateGoodReceipt = () => {
     const [order, setOrder] = useState('asc');
@@ -80,6 +83,7 @@ const CreateGoodReceipt = () => {
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
+    const [dropdownData, setDropdownData] = useState([]);
     const handleSuccessMessage = (message) => {
         setOpen(true);
         if (message === 'Import request receipt created successfully') {
@@ -140,9 +144,9 @@ const CreateGoodReceipt = () => {
     const navigate = useNavigate();
 
     const TABLE_HEAD = [
+        { id: '' },
         { id: 'name', label: 'Tên sản phẩm', alignRight: false },
         { id: 'quality', label: 'Số lượng', alignRight: false },
-
         { id: '' },
     ];
     useEffect(() => {
@@ -316,45 +320,45 @@ const CreateGoodReceipt = () => {
         setRecieptParams(updatedRecieptParams);
     };
 
-    const handleUnitPriceChange = (index, value) => {
-        const updatedItems = [...selectedItems];
-        updatedItems[index].unitPrice = value;
-        setSelectedItems(updatedItems);
+    // const handleUnitPriceChange = (index, value) => {
+    //     const updatedItems = [...selectedItems];
+    //     updatedItems[index].unitPrice = value;
+    //     setSelectedItems(updatedItems);
 
-        // Update recieptParams
-        const updatedRecieptParams = {
-            ...recieptParams,
-            details: updatedItems.map((item) => ({
-                itemId: item.itemId,
-                quantity: item.quantity,
-                unitPrice: item.unitPrice,
-                unitId: item.unitId,
-                description: item.description,
-            })),
-        };
+    //     // Update recieptParams
+    //     const updatedRecieptParams = {
+    //         ...recieptParams,
+    //         details: updatedItems.map((item) => ({
+    //             itemId: item.itemId,
+    //             quantity: item.quantity,
+    //             unitPrice: item.unitPrice,
+    //             unitId: item.unitId,
+    //             description: item.description,
+    //         })),
+    //     };
 
-        setRecieptParams(updatedRecieptParams);
-    };
+    //     setRecieptParams(updatedRecieptParams);
+    // };
 
-    const handleUnitIdChange = (index, value) => {
-        const updatedItems = [...selectedItems];
-        updatedItems[index].unitId = value;
-        setSelectedItems(updatedItems);
+    // const handleUnitIdChange = (index, value) => {
+    //     const updatedItems = [...selectedItems];
+    //     updatedItems[index].unitId = value;
+    //     setSelectedItems(updatedItems);
 
-        // Update recieptParams
-        const updatedRecieptParams = {
-            ...recieptParams,
-            details: updatedItems.map((item) => ({
-                itemId: item.itemId,
-                quantity: item.quantity,
-                unitPrice: item.unitPrice,
-                unitId: item.unitId,
-                description: item.description,
-            })),
-        };
+    //     // Update recieptParams
+    //     const updatedRecieptParams = {
+    //         ...recieptParams,
+    //         details: updatedItems.map((item) => ({
+    //             itemId: item.itemId,
+    //             quantity: item.quantity,
+    //             unitPrice: item.unitPrice,
+    //             unitId: item.unitId,
+    //             description: item.description,
+    //         })),
+    //     };
 
-        setRecieptParams(updatedRecieptParams);
-    };
+    //     setRecieptParams(updatedRecieptParams);
+    // };
 
     const handleRemoveFromCart = (index) => {
         const updatedItems = [...selectedItems];
@@ -374,7 +378,6 @@ const CreateGoodReceipt = () => {
 
         setRecieptParams(updatedRecieptParams);
     };
-    console.log(unitId, 'aaaa');
 
     const calculateTotalQuantity = () => {
         return selectedItems.reduce((total, item) => {
@@ -395,7 +398,10 @@ const CreateGoodReceipt = () => {
             return total;
         }, 0);
     };
-
+    const handleDataSearch = (searchResult) => {
+        // Cập nhật state của trang chính với dữ liệu từ tìm kiếm
+        setDropdownData(searchResult);
+    };
     return (
         <>
             <Helmet>
@@ -410,15 +416,20 @@ const CreateGoodReceipt = () => {
                     <Typography variant="h4" gutterBottom>
                         Tạo yêu cầu nhập kho
                     </Typography>
+                    <CreateRequestReceiptToolbar
+                        numSelected={selected.length}
+                        onDataSearch={handleDataSearch}
+                    />
+                    <Dropdown data={dropdownData} />
                 </Stack>
 
                 <Grid container spacing={2}>
-                    <Grid item xs={7}>
-                        {/* Toolbar */}
 
+                    <Grid item xs={7}>
                         <FormControl sx={{ minWidth: 200, marginRight: 5, marginBottom: 2 }}>
                             <InputLabel id="warehouse-label">Chọn kho hàng...</InputLabel>
                             <Select
+                                size='small'
                                 labelId="warehouse-label"
                                 id="warehouse"
                                 value={selectedWarehouse ? selectedWarehouse.id : ''}
@@ -440,6 +451,7 @@ const CreateGoodReceipt = () => {
                             <FormControl sx={{ minWidth: 200 }}>
                                 <InputLabel id="inventory-staff-label">Chọn Nhân Viên</InputLabel>
                                 <Select
+                                    size='small'
                                     labelId="inventory-staff-label"
                                     id="inventory-staff"
                                     value={selectedInventoryStaff}
@@ -457,7 +469,7 @@ const CreateGoodReceipt = () => {
                         <Scrollbar>
                             <TableContainer sx={{ minWidth: 800 }}>
                                 <Table>
-                                    <CreateGoodReceiptListHead
+                                    <CreateRequestReceiptHead
                                         // order={order}
                                         // orderBy={orderBy}
                                         headLabel={TABLE_HEAD}
@@ -476,22 +488,24 @@ const CreateGoodReceipt = () => {
                                                 key={`${selectedItem.id}-${index}`}
                                                 sx={{ display: 'flex', alignItems: 'center' }}
                                             >
-                                                {/* <img
-                                                    src={selectedItem.avatar}
-                                                    alt={selectedItem.name}
-                                                    width="48"
-                                                    height="48"
-                                                /> */}
+                                                <ListItemText sx={{ flexBasis: '8%' }}>
+                                                    <img
+                                                        src={selectedItem.avatar}
+                                                        alt={selectedItem.name}
+                                                        width="48"
+                                                        height="48"
+                                                    />
+                                                </ListItemText>
                                                 {/* <ListItemText
                                                     // primary={selectedItem.id}
                                                     onChange={(e) => setItemId(e.target.value)}
                                                 /> */}
-                                                <ListItemText sx={{ flexBasis: '44%' }}>
+                                                <ListItemText sx={{ flexBasis: '34%' }}>
                                                     <Typography variant="body1">
                                                         {selectedItem.subCategory.name}
                                                     </Typography>
                                                 </ListItemText>
-                                                <ListItemText sx={{ flexBasis: '34%' }}>
+                                                <ListItemText sx={{ flexBasis: '30%' }}>
                                                     <TextField
                                                         type="text"
                                                         label="Số lượng"
@@ -512,46 +526,7 @@ const CreateGoodReceipt = () => {
                                                         }}
                                                     />
                                                 </ListItemText>
-                                                {/* <ListItemText>
-                                                    <TextField
-                                                        type="number"
-                                                        label="Giá"
-                                                        sx={{ width: '50%' }}
-                                                        value={selectedItem.unitPrice}
-                                                        onChange={(e) =>
-                                                            handleUnitPriceChange(
-                                                                selectedItems.indexOf(selectedItem),
-                                                                e.target.value,
-                                                            )
-                                                        }
-                                                    />
-                                                </ListItemText> */}
-                                                {/* <ListItemText>
-                                                    <Select
-                                                        label="Đơn vị"
-                                                        value={selectedItem.unitId} // Sử dụng selectedUnitId thay vì unitId
-                                                        onChange={(e) =>
-                                                            handleUnitIdChange(
-                                                                selectedItems.indexOf(selectedItem),
-                                                                e.target.value,
-                                                            )
-                                                        }
-                                                    >
-                                                        {unitId.map((unit) => (
-                                                            <MenuItem
-                                                                sx={{
-                                                                    display: 'flex',
-                                                                    justifyContent: 'space-between',
-                                                                    alignItems: 'center',
-                                                                }}
-                                                                key={unit.id}
-                                                                value={unit.id}
-                                                            >
-                                                                {unit.name}
-                                                            </MenuItem>
-                                                        ))}
-                                                    </Select>
-                                                </ListItemText> */}
+
                                                 <Button onClick={() => handleRemoveFromCart(index)}>Xóa</Button>
                                             </ListItem>
                                         ))}
@@ -621,14 +596,17 @@ const CreateGoodReceipt = () => {
                                                     border: '1px solid #ccc',
                                                     borderRadius: '8px',
                                                     boxShadow: '4px 4px 10px rgba(0, 0, 0, 0.1)',
-                                                    width: '150px',
+                                                    alignItems: 'center',
+                                                    width: '230px',
                                                 }}
                                                 onClick={() => handleAddToCart(items)}
                                             >
-                                                <img alt={items.name} width="100%" />
+
                                                 <div style={{ padding: '8px' }}>
                                                     <Typography variant="body1">{items.subCategory.name}</Typography>
+                                                    <Typography variant="body1">{items.code}</Typography>
                                                 </div>
+                                                <img alt={items.avatar} width="100%" />
                                             </ListItem>
                                         ))
                                     ) : (

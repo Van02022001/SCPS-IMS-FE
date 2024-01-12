@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 // @mui
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { alpha } from '@mui/material/styles';
+
 import LockOpenIcon from '@mui/icons-material/LockOpen';
-import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover, Button, TextField, DialogContent, Grid, FormControl, InputLabel, Input, InputAdornment } from '@mui/material';
+import { Box, Typography, Stack, Avatar, IconButton, Button, TextField, DialogContent, Grid, FormControl, InputLabel, Input, InputAdornment } from '@mui/material';
 import account from '../../../_mock/account';
 // api
 import { authenChangePassword } from '../../../data/mutation/login/login-mutation';
+import { uploadImageUser } from '~/data/mutation/image/image-mutation';
 
 export default function UserInfoForm({ profileData }) {
     const [open, setOpen] = useState(null);
@@ -18,13 +19,31 @@ export default function UserInfoForm({ profileData }) {
     const [email, setEmail] = useState(account.email);
     const [phone, setPhone] = useState(account.phone);
 
+    const [selectedFile, setSelectedFile] = useState(null);
+
     const [oldPassword, setOldPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [confirmNewPassword, setConfirmNewPassword] = useState("");
 
-    
-    const handleOpen = (event) => {
-        setOpen(event.currentTarget);
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        setSelectedFile(file);
+    };
+
+    const handleUpload = async () => {
+        if (selectedFile) {
+            try {
+                // Call the uploadImageUser function from your API file
+                const response = await uploadImageUser(selectedFile);
+                console.log('Image uploaded successfully:', response);
+
+            } catch (error) {
+                console.error('Error uploading image:', error);
+                // Handle the error as needed
+            }
+        } else {
+
+        }
     };
 
     const handleClose = () => {
@@ -32,10 +51,6 @@ export default function UserInfoForm({ profileData }) {
     };
 
     const handleSave = () => {
-        // Add logic here to save user profile changes
-        // You can send this data to your server or handle it as needed
-        // Don't forget to update the 'account' object with the new data
-        // Close the popover after saving
         handleClose();
     };
 
@@ -86,9 +101,8 @@ export default function UserInfoForm({ profileData }) {
                             <Typography variant="subtitle2" noWrap>
                                 Họ và tên: {profileData.firstName} {profileData.lastName}
                             </Typography>
-                            <Button variant="outlined" sx={{ mt: 2 }}>
-                                Tải hình ảnh
-                            </Button>
+                            <input type="file" onChange={handleFileChange} />
+                            <button onClick={handleUpload}>Tải hình ảnh</button>
                         </Box>
                     </Grid>
 

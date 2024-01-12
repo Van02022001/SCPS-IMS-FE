@@ -23,12 +23,28 @@ export const imageInstance = axios.create({
   headers: {
     common: {
       "Content-Type": "multipart/form-data",
+      "Authorization": `Bearer ${localStorage.getItem('token')}`,
     },
-    authorization: `Bearer ${localStorage.getItem('token')}`,
   },
 });
 
 axiosInstance.interceptors.request.use(
+  (config) => {
+    config.headers.Authorization = `Bearer ${localStorage.getItem('token')}`;
+    return config;
+  },
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      // Xử lý lỗi 401, ví dụ chuyển hướng đến trang đăng nhập
+      window.location.href = '/login';
+    } else {
+      console.error('Response interceptor error:', error);
+    }
+    return Promise.reject(error);
+  }
+);
+
+imageInstance.interceptors.request.use(
   (config) => {
     config.headers.Authorization = `Bearer ${localStorage.getItem('token')}`;
     return config;

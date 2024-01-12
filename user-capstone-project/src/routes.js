@@ -2,12 +2,11 @@ import { Navigate, useRoutes } from 'react-router-dom';
 // layouts
 import DashboardLayout from './layouts/dashboard';
 import SimpleLayout from './layouts/simple';
-//
+//page
 import BlogPage from './pages/BlogPage';
 import UserPage from './pages/user/UserPage';
 import LoginPage from './pages/login/LoginPage';
 import Page404 from './pages/Page404';
-import ProductsPage from './pages/manager/subCategory/SubCategoryPage';
 import DashboardAppPage from './pages/dashboard/DashboardAppPage';
 import CreateProduct from './sections/@dashboard/products/crudProducts/CreateProduct';
 import ProductDetail from './pages/manager/productDetail/ProductDetail';
@@ -47,6 +46,8 @@ import ExportReceiptManagerPage from './pages/manager/transaction/exportReceipt/
 import CreateTransferForm from './sections/auth/inventory_staff/warehouseInventory/CreateTransferForm';
 import InventoryCheckPage from './pages/inventory_staff/inventoryCheck/InventoryCheckPage';
 import CreateInventoryCheck from './pages/inventory_staff/inventoryCheck/CreateInventoryCheck';
+import DashboardInventoryPage from './pages/dashboard/DashboardInventoryPage';
+import SubCategoryPage from './pages/manager/subCategory/SubCategoryPage';
 
 // ----------------------------------------------------------------------
 
@@ -63,11 +64,10 @@ const Router = () => {
                     path: 'products',
                     children: [
                         { element: <Navigate to="/dashboard/products" />, index: true },
-                        { path: 'production', element: <ProductsPage /> },
+                        { path: 'production', element: <SubCategoryPage /> },
                         { path: 'products-price', element: <ProductsPricePage /> },
                     ],
                 },
-
                 { path: 'productsDetail', element: <ProductDetail /> },
                 { path: 'itemsManager', element: <ItemsManagerPage /> },
                 { path: 'category', element: <CategoryPage /> },
@@ -85,7 +85,6 @@ const Router = () => {
                 { path: 'request-export-receipt', element: <ExportRequestReceiptManagerPage /> },
                 { path: 'create-export-receipt', element: <CreateExportReceipt/> },
                 { path: 'export-receipt', element: <ExportReceiptManagerPage/> },
-
                 { path: 'products-check', element: <InventoryReportPage/> },
                 {
                     path: 'report',
@@ -116,6 +115,7 @@ const Router = () => {
             path: '/inventory-staff',
             element: <DashboardLayout />,
             children: [
+                { path: 'dashboard', element: <DashboardInventoryPage /> },
                 { path: 'product', element: <SubCategoryInventoryPage /> },
                 { path: 'itemsInventory', element: <ItemsInventoryPage /> },
                 { path: 'locationsInventory', element: <LocationInventoryPage /> },

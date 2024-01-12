@@ -65,6 +65,9 @@ function NavItem({ item, isReportMenuOpen }) {
         ...(item.title === 'Nhập hàng' && !isReportMenuOpen && {
           marginBottom: open ? '100px' : 0,
         }),
+        ...(item.title === 'Xuất hàng' && !isReportMenuOpen && {
+          marginBottom: open ? '100px' : 0,
+        }),
         ...(item.title === 'Xuất kho' && !isReportMenuOpen && {
           marginBottom: open ? '100px' : 0,
         }),

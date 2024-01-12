@@ -24,21 +24,11 @@ import Snackbar from '@mui/material/Snackbar';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 // api
-import {
-    editImportReceipt,
-    editImportReceiptConfirm,
-    editReceiptStartImport,
-} from '~/data/mutation/importRequestReceipt/ImportRequestReceipt-mutation';
-
-import SuccessAlerts from '~/components/alert/SuccessAlert';
-import ErrorAlerts from '~/components/alert/ErrorAlert';
-// import CreateImportReceiptForm from './CreateImportReceiptForm';
+import { useParams } from 'react-router-dom';
 
 const ImportRequestReceiptDetailManagerForm = ({
     importRequestReceipt,
     importRequestReceiptId,
-    updateImportReceiptInList,
-    updateImportReceiptConfirmInList,
     onClose,
     isOpen,
     mode,
@@ -72,11 +62,11 @@ const ImportRequestReceiptDetailManagerForm = ({
     });
 
     //thông báo
-    const [isSuccess, setIsSuccess] = useState(false);
-    const [isError, setIsError] = useState(false);
+
     const [message, setMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+
 
     const handleMessage = (message) => {
         setOpen(true);
@@ -119,14 +109,19 @@ const ImportRequestReceiptDetailManagerForm = ({
         setCurrentTab(newValue);
     };
 
-    const handleOpenAddSubCategoryMetaForm = () => {
-        setOpenAddSubCategoryMetaForm(true);
-    };
+    // const handleOpenAddSubCategoryMetaForm = () => {
+    //     setOpenAddSubCategoryMetaForm(true);
+    // };
 
-    const handleCloseAddSubCategoryMetaForm = () => {
-        setOpenAddSubCategoryMetaForm(false);
-    };
+    // const handleCloseAddSubCategoryMetaForm = () => {
+    //     setOpenAddSubCategoryMetaForm(false);
+    // };
 
+    useEffect(() => {
+        // Sử dụng importRequestReceiptId để fetch thông tin chi tiết phiếu từ API hoặc state của bạn
+        // Gọi API hoặc thay đổi state để lấy thông tin chi tiết phiếu
+        // ...
+    }, [importRequestReceiptId]);
     useEffect(() => {
         if (isOpen) {
             setFormHeight(1000);
@@ -209,144 +204,112 @@ const ImportRequestReceiptDetailManagerForm = ({
         return null;
     }
 
-    const updateImportReceipt = async () => {
-        if (!editedImportReceipt) {
-            return;
-        }
-        try {
-            const response = await editImportReceipt(importRequestReceiptId, editedImportReceipt);
+    // const updateImportReceipt = async () => {
+    //     if (!editedImportReceipt) {
+    //         return;
+    //     }
+    //     try {
+    //         const response = await editImportReceipt(importRequestReceiptId, editedImportReceipt);
 
-            if (response.status === '200 OK') {
-                setIsSuccess(true);
-                setIsError(false);
-                setSuccessMessage(response.message);
-                handleMessage(response.message);
-            }
-            updateImportReceiptInList(response.data);
-            console.log('Product updated:', response);
-        } catch (error) {
-            console.error('An error occurred while updating the product:', error);
-            setIsError(true);
-            setIsSuccess(false);
-            if (error.response?.data?.message === 'Invalid request') {
-                setErrorMessage('Yêu cầu không hợp lệ');
-            }
-            if (error.response?.data?.error === '404 NOT_FOUND') {
-                setErrorMessage('Mô tả quá dài');
-            }
-        }
-    };
-
-    const updateImportReceiptConfirm = async () => {
-        try {
-            let newStatus = currentStatus === 'Pending_Approval' ? 'Inactive' : 'Approved';
-
-            const response = await editImportReceiptConfirm(importRequestReceiptId, newStatus);
-
-            if (response.status === '200 OK') {
-                setIsSuccess(true);
-                setIsError(false);
-                setSuccessMessage(response.message);
-                handleMessage(response.message);
-            }
-
-            updateImportReceiptConfirmInList(importRequestReceiptId, newStatus);
-            setCurrentStatus(newStatus);
-
-            console.log('Product status updated:', response);
-        } catch (error) {
-            // console.error('Error updating category status:', error);
-            // setIsError(true);
-            // setIsSuccess(false);
-            // setErrorMessage(error.response.data.message);
-            // if (error.response) {
-            //     console.log('Error response:', error.response);
-            // }
-        }
-    };
-    const updateReceiptStartImport = async () => {
-        try {
-            let newStatus = currentStatus === 'Approved' ? 'Inactive' : 'Completed';
-
-            const response = await editReceiptStartImport(importRequestReceiptId, newStatus);
-
-            if (response.status === '200 OK') {
-                setIsSuccess(true);
-                setIsError(false);
-                setSuccessMessage(response.message);
-                handleMessage(response.message);
-            }
-
-            updateImportReceiptConfirmInList(importRequestReceiptId, newStatus);
-            setCurrentStatus(newStatus);
-
-            console.log('Product status updated:', response);
-        } catch (error) {
-            console.error('Error updating category status:', error);
-            setIsError(true);
-            setIsSuccess(false);
-            setErrorMessage(error.response.data.message);
-            if (error.response) {
-                console.log('Error response:', error.response);
-            }
-        }
-    };
-    const handleOpenForm = () => {
-        const validImportReceipst = importRequestReceipt.find((o) => o.id === importRequestReceiptId);
-
-        if (validImportReceipst && validImportReceipst.status === 'IN_PROGRESS') {
-            setIsOpenImportForm(true);
-
-            setImportReceipstData({
-                id: validImportReceipst.id,
-                code: validImportReceipst.code,
-                description: validImportReceipst.description,
-                createdBy: validImportReceipst.createdBy,
-                details: validImportReceipst.details || [],
-                lastModifiedBy: validImportReceipst.lastModifiedBy || '',
-                status: validImportReceipst.status || '',
-                totalPrice: validImportReceipst.totalPrice || 0,
-                totalQuantity: validImportReceipst.totalQuantity || 0,
-                type: validImportReceipst.type || '',
-                updatedAt: validImportReceipst.updatedAt || '',
-                warehouseId: validImportReceipst.warehouseId || 0,
-            });
-
-            console.log(validImportReceipst);
-        } else {
-            console.error('Không tìm thấy dữ liệu hợp lệ cho importReceiptId: ', importRequestReceiptId);
-        }
-    };
-    const handleCloseForm = () => {
-        setIsOpenImportForm(false);
-    };
-    //==========================================================================================================
-
-    // const handleEdit = (field, value) => {
-    //     console.log(`Field: ${field}, Value: ${value}`);
-    //     if (field === 'categories_id') {
-    //         const categoryIds = value.map(Number).filter(Boolean);
-    //         setEditedImportReceipt((prevProduct) => ({
-    //             ...prevProduct,
-    //             [field]: categoryIds,
-    //         }));
-    //     } else if (field === 'unit_id' || field === 'unit_mea_id') {
-    //         const id = parseInt(value);
-    //         setEditedImportReceipt((prevProduct) => ({
-    //             ...prevProduct,
-    //             [field]: id,
-    //         }));
-    //     } else {
-    //         setEditedImportReceipt((prevProduct) => ({
-    //             ...prevProduct,
-    //             [field]: value,
-    //         }));
+    //         if (response.status === '200 OK') {
+    //             setIsSuccess(true);
+    //             setIsError(false);
+    //             setSuccessMessage(response.message);
+    //             handleMessage(response.message);
+    //         }
+    //         updateImportReceiptInList(response.data);
+    //         console.log('Product updated:', response);
+    //     } catch (error) {
+    //         console.error('An error occurred while updating the product:', error);
+    //         setIsError(true);
+    //         setIsSuccess(false);
+    //         if (error.response?.data?.message === 'Invalid request') {
+    //             setErrorMessage('Yêu cầu không hợp lệ');
+    //         }
+    //         if (error.response?.data?.error === '404 NOT_FOUND') {
+    //             setErrorMessage('Mô tả quá dài');
+    //         }
     //     }
     // };
 
-    const handleDelete = () => {
-        // Xử lý xóa
-    };
+    // const updateImportReceiptConfirm = async () => {
+    //     try {
+    //         let newStatus = currentStatus === 'Pending_Approval' ? 'Inactive' : 'Approved';
+
+    //         const response = await editImportReceiptConfirm(importRequestReceiptId, newStatus);
+
+    //         if (response.status === '200 OK') {
+    //             setIsSuccess(true);
+    //             setIsError(false);
+    //             setSuccessMessage(response.message);
+    //             handleMessage(response.message);
+    //         }
+
+    //         updateImportReceiptConfirmInList(importRequestReceiptId, newStatus);
+    //         setCurrentStatus(newStatus);
+
+    //         console.log('Product status updated:', response);
+    //     } catch (error) {
+
+    //     }
+    // };
+    // const updateReceiptStartImport = async () => {
+    //     try {
+    //         let newStatus = currentStatus === 'Approved' ? 'Inactive' : 'Completed';
+
+    //         const response = await editReceiptStartImport(importRequestReceiptId, newStatus);
+
+    //         if (response.status === '200 OK') {
+    //             setIsSuccess(true);
+    //             setIsError(false);
+    //             setSuccessMessage(response.message);
+    //             handleMessage(response.message);
+    //         }
+
+    //         updateImportReceiptConfirmInList(importRequestReceiptId, newStatus);
+    //         setCurrentStatus(newStatus);
+
+    //         console.log('Product status updated:', response);
+    //     } catch (error) {
+    //         console.error('Error updating category status:', error);
+    //         setIsError(true);
+    //         setIsSuccess(false);
+    //         setErrorMessage(error.response.data.message);
+    //         if (error.response) {
+    //             console.log('Error response:', error.response);
+    //         }
+    //     }
+    // };
+    // const handleOpenForm = () => {
+    //     const validImportReceipst = importRequestReceipt.find((o) => o.id === importRequestReceiptId);
+
+    //     if (validImportReceipst && validImportReceipst.status === 'IN_PROGRESS') {
+    //         setIsOpenImportForm(true);
+
+    //         setImportReceipstData({
+    //             id: validImportReceipst.id,
+    //             code: validImportReceipst.code,
+    //             description: validImportReceipst.description,
+    //             createdBy: validImportReceipst.createdBy,
+    //             details: validImportReceipst.details || [],
+    //             lastModifiedBy: validImportReceipst.lastModifiedBy || '',
+    //             status: validImportReceipst.status || '',
+    //             totalPrice: validImportReceipst.totalPrice || 0,
+    //             totalQuantity: validImportReceipst.totalQuantity || 0,
+    //             type: validImportReceipst.type || '',
+    //             updatedAt: validImportReceipst.updatedAt || '',
+    //             warehouseId: validImportReceipst.warehouseId || 0,
+    //         });
+
+    //         console.log(validImportReceipst);
+    //     } else {
+    //         console.error('Không tìm thấy dữ liệu hợp lệ cho importReceiptId: ', importRequestReceiptId);
+    //     }
+    // };
+    // const handleCloseForm = () => {
+    //     setIsOpenImportForm(false);
+    // };
+    //==========================================================================================================
 
     return editedImportReceipt ? (
         <div
@@ -359,27 +322,11 @@ const ImportRequestReceiptDetailManagerForm = ({
         >
             <Tabs value={currentTab} onChange={handleChangeTab} indicatorColor="primary" textColor="primary">
                 <Tab label="Thông tin" />
-                {/* <Tab label="Thông tin thêm" /> */}
-                {/* <Tab label="Tồn kho" /> */}
             </Tabs>
 
             {currentTab === 0 && (
                 <div>
                     <div>
-                        {/* <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                            <Button variant="contained" color="primary" onClick={handleOpenForm}>
-                                Tạo phiếu nhập kho
-                            </Button>
-                        </div>
-                        <Dialog maxWidth="lg" fullWidth open={isOpenImportForm}>
-                            <DialogTitle style={{ textAlign: 'center' }}>Phiếu Nhập Kho
-                                <IconButton style={{ float: 'right' }} onClick={handleCloseForm}>
-                                    <CloseIcon color="primary" />
-                                </IconButton>{' '}
-                            </DialogTitle>
-
-                            <CreateImportReceiptForm open={isOpenImportForm} importReceipst={importReceipst} />
-                        </Dialog> */}
                     </div>
                     <Stack spacing={4} margin={2}>
                         <Grid container spacing={2}>
@@ -448,12 +395,12 @@ const ImportRequestReceiptDetailManagerForm = ({
                                                 currentStatus === 'Pending_Approval'
                                                     ? 'Chờ phê duyệt'
                                                     : currentStatus === 'Approved'
-                                                    ? 'Đã xác nhận'
-                                                    : currentStatus === 'IN_PROGRESS'
-                                                    ? 'Đang tiến hành'
-                                                    : currentStatus === 'Completed'
-                                                    ? 'Hoàn thành'
-                                                    : 'Ngừng hoạt động'
+                                                        ? 'Đã xác nhận'
+                                                        : currentStatus === 'IN_PROGRESS'
+                                                            ? 'Đang tiến hành'
+                                                            : currentStatus === 'Completed'
+                                                                ? 'Hoàn thành'
+                                                                : 'Ngừng hoạt động'
                                             }
                                         />
                                     </Grid>
@@ -482,11 +429,6 @@ const ImportRequestReceiptDetailManagerForm = ({
                                                 }}
                                                 value={importReceipst.createdBy}
                                             />
-                                            {/* {categories_id.map((category) => (
-                                                    <MenuItem key={category.id} value={category.id}>
-                                                        {category.name}
-                                                    </MenuItem>
-                                                ))} */}
                                         </Grid>
                                     </Grid>
 
@@ -562,58 +504,9 @@ const ImportRequestReceiptDetailManagerForm = ({
                             </CardContent>
                         </Card>
                     </div>
-
-                    {/* {isSuccess && <SuccessAlerts message={successMessage} />}
-                    {isError && <ErrorAlerts errorMessage={errorMessage} />} */}
                     <Stack spacing={4} margin={2}>
                         <Grid container spacing={1} sx={{ gap: '10px' }}>
-                            {/* <Button
-                                variant="contained"
-                                color="primary"
-                                startIcon={<SaveIcon />}
-                                onClick={updateImportReceipt}
-                            >
-                                Cập nhật
-                            </Button> */}
-                            {/* 
-                            <div>
-                                <Button variant="contained" color="primary" onClick={updateImportReceiptConfirm}>
-                                    Xác nhận
-                                </Button>
-                                <Snackbar
-                                    open={open}
-                                    autoHideDuration={6000}
-                                    onClose={handleClose}
-                                    anchorOrigin={{
-                                        vertical: 'bottom',
-                                        horizontal: 'right',
-                                    }}
-                                    message={message}
-                                    action={action}
-                                    style={{ bottom: '16px', right: '16px' }}
-                                />
 
-                            </div>
-                            <div>
-                                <Button variant="contained" color="warning" onClick={updateReceiptStartImport}>
-                                    Tiến hành nhập kho
-                                </Button>
-                                <Snackbar
-                                    open={open}
-                                    autoHideDuration={6000}
-                                    onClose={handleClose}
-                                    anchorOrigin={{
-                                        vertical: 'bottom',
-                                        horizontal: 'right',
-                                    }}
-                                    message={message}
-                                    action={action}
-                                    style={{ bottom: '16px', right: '16px' }}
-                                />
-                            </div> */}
-                            {/* <Button variant="outlined" color="error" onClick={handleClear}>
-                                Hủy bỏ
-                            </Button> */}
                         </Grid>
                     </Stack>
                 </div>
