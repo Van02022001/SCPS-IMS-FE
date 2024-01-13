@@ -48,7 +48,7 @@ const TABLE_HEAD = [
     { id: 'email', label: 'Email', alignRight: false },
     { id: 'role', label: 'Vị trí', alignRight: false },
     { id: 'registeredAt', label: 'Ngày tạo tài khoản', alignRight: false },
-    { id: 'status', label: 'Status', alignRight: false },
+    // { id: 'status', label: 'Trạng thái', alignRight: false },
 ];
 
 // ----------------------------------------------------------------------
@@ -268,7 +268,7 @@ const UserPage = () => {
                 <UserListToolbar
                     numSelected={selected.length}
                     filterName={filterName}
-                    // onFilterName={handleFilterByName}
+                // onFilterName={handleFilterByName}
                 />
 
                 <Scrollbar>
@@ -281,7 +281,7 @@ const UserPage = () => {
                                 rowCount={userData.length}
                                 numSelected={selected.length}
                                 onRequestSort={handleRequestSort}
-                                // onSelectAllClick={handleSelectAllClick}
+                            // onSelectAllClick={handleSelectAllClick}
                             />
                             <TableBody>
                                 {userData.slice(startIndex, endIndex).map((users) => {
@@ -296,7 +296,7 @@ const UserPage = () => {
                                                 onClick={() => handleUserClick(users)}
                                             >
                                                 <TableCell padding="checkbox">
-                                                    
+
                                                 </TableCell>
 
                                                 <TableCell component="th" scope="row" padding="none">
@@ -309,17 +309,22 @@ const UserPage = () => {
 
                                                 <TableCell align="left">{users.email}</TableCell>
 
-                                                <TableCell align="left">{users.role.name}</TableCell>
+                                                <TableCell align="left">
+                                                    {users.role.name === 'MANAGER' && 'Quản lý'}
+                                                    {users.role.name === 'ADMIN' && 'Admin'}
+                                                    {users.role.name === 'INVENTORY_STAFF' && 'Nhân viên quản kho'}
+                                                    {users.role.name === 'SALE_STAFF' && 'Nhân viên bán hàng'}
+                                                </TableCell>
 
                                                 <TableCell align="left">{formatDate(users.registeredAt)}</TableCell>
 
-                                                <TableCell align="left">
+                                                {/* <TableCell align="left">
                                                     <Label
                                                         color={(users.role.status === 'banned' && 'error') || 'success'}
                                                     >
                                                         {users.role.status}
                                                     </Label>
-                                                </TableCell>
+                                                </TableCell> */}
                                                 <TableCell align="left">{users.company}</TableCell>
                                                 {/* <TableCell align="right">
                                                     <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
