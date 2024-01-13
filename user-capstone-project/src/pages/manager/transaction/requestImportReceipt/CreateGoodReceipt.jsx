@@ -39,9 +39,11 @@ import { getAllUnit } from '~/data/mutation/unit/unit-mutation';
 import { getAllWarehouse, getInventoryStaffByWarehouseId } from '~/data/mutation/warehouse/warehouse-mutation';
 
 import SnackbarError from '~/components/alert/SnackbarError';
-import { CreateRequestReceiptHead, CreateRequestReceiptToolbar } from '~/sections/@dashboard/manager/transaction/createRequestReceipt';
+import {
+    CreateRequestReceiptHead,
+    CreateRequestReceiptToolbar,
+} from '~/sections/@dashboard/manager/transaction/createRequestReceipt';
 import { Dropdown } from '~/components/dropdown';
-
 
 const CreateGoodReceipt = () => {
     const [order, setOrder] = useState('asc');
@@ -105,6 +107,8 @@ const CreateGoodReceipt = () => {
             setErrorMessage('Hãy chọn kho và nhân viên !');
         } else if (message === 'Hãy nhập số lượng') {
             setErrorMessage('Hãy nhập số lượng !');
+        } else if (message === 'Hãy chọn ít nhất 1 sản phẩm') {
+            setErrorMessage('Hãy chọn ít nhất 1 sản phẩm !');
         }
     };
 
@@ -145,6 +149,7 @@ const CreateGoodReceipt = () => {
 
     const TABLE_HEAD = [
         { id: '' },
+        { id: 'code', label: 'Mã sản phẩm', alignRight: false },
         { id: 'name', label: 'Tên sản phẩm', alignRight: false },
         { id: 'quality', label: 'Số lượng', alignRight: false },
         { id: '' },
@@ -182,6 +187,9 @@ const CreateGoodReceipt = () => {
             // Validate if all quantities are provided
             if (selectedItems.some((item) => !item.quantity || parseInt(item.quantity, 10) <= 0)) {
                 handleErrorMessage('Hãy nhập số lượng');
+                return;
+            } else if (selectedItems.length === 0) {
+                handleErrorMessage('Hãy chọn ít nhất 1 sản phẩm');
                 return;
             }
 
@@ -416,20 +424,14 @@ const CreateGoodReceipt = () => {
                     <Typography variant="h4" gutterBottom>
                         Tạo yêu cầu nhập kho
                     </Typography>
-                    <CreateRequestReceiptToolbar
-                        numSelected={selected.length}
-                        onDataSearch={handleDataSearch}
-                    />
-                    <Dropdown data={dropdownData} />
                 </Stack>
 
                 <Grid container spacing={2}>
-
                     <Grid item xs={7}>
-                        <FormControl sx={{ minWidth: 200, marginRight: 5, marginBottom: 2 }}>
+                        <FormControl sx={{ minWidth: 200, marginRight: 5, marginBottom: 2, marginTop: 3 }}>
                             <InputLabel id="warehouse-label">Chọn kho hàng...</InputLabel>
                             <Select
-                                size='small'
+                                size="large"
                                 labelId="warehouse-label"
                                 id="warehouse"
                                 value={selectedWarehouse ? selectedWarehouse.id : ''}
@@ -448,10 +450,10 @@ const CreateGoodReceipt = () => {
                         </FormControl>
 
                         {selectedWarehouse && (
-                            <FormControl sx={{ minWidth: 200 }}>
+                            <FormControl sx={{ minWidth: 200, marginTop: 3 }}>
                                 <InputLabel id="inventory-staff-label">Chọn Nhân Viên</InputLabel>
                                 <Select
-                                    size='small'
+                                    size="large"
                                     labelId="inventory-staff-label"
                                     id="inventory-staff"
                                     value={selectedInventoryStaff}
@@ -466,112 +468,117 @@ const CreateGoodReceipt = () => {
                             </FormControl>
                         )}
 
-                        <Scrollbar>
-                            <TableContainer sx={{ minWidth: 800 }}>
-                                <Table>
-                                    <CreateRequestReceiptHead
-                                        // order={order}
-                                        // orderBy={orderBy}
-                                        headLabel={TABLE_HEAD}
-                                        rowCount={USERLIST.length}
-                                        numSelected={selected.length}
-                                        onRequestSort={handleRequestSort}
-                                        onSelectAllClick={handleSelectAllClick}
-                                    />
-                                </Table>
+                        <TableContainer sx={{ minWidth: 800 }}>
+                            <Table>
+                                <CreateRequestReceiptHead
+                                    // order={order}
+                                    // orderBy={orderBy}
+                                    headLabel={TABLE_HEAD}
+                                    rowCount={USERLIST.length}
+                                    numSelected={selected.length}
+                                    onRequestSort={handleRequestSort}
+                                    onSelectAllClick={handleSelectAllClick}
+                                />
+                            </Table>
 
-                                {/* Danh sách sản phẩm đã thêm bên trái */}
-                                <Paper>
-                                    <List>
-                                        {selectedItems.map((selectedItem, index) => (
-                                            <ListItem
-                                                key={`${selectedItem.id}-${index}`}
-                                                sx={{ display: 'flex', alignItems: 'center' }}
-                                            >
-                                                <ListItemText sx={{ flexBasis: '8%' }}>
-                                                    <img
-                                                        src={selectedItem.avatar}
-                                                        alt={selectedItem.name}
-                                                        width="48"
-                                                        height="48"
-                                                    />
-                                                </ListItemText>
-                                                {/* <ListItemText
-                                                    // primary={selectedItem.id}
-                                                    onChange={(e) => setItemId(e.target.value)}
-                                                /> */}
-                                                <ListItemText sx={{ flexBasis: '34%' }}>
-                                                    <Typography variant="body1">
-                                                        {selectedItem.subCategory.name}
-                                                    </Typography>
-                                                </ListItemText>
-                                                <ListItemText sx={{ flexBasis: '30%' }}>
-                                                    <TextField
-                                                        type="text"
-                                                        label="Số lượng"
-                                                        sx={{ width: '40%' }}
-                                                        value={selectedItem.quantity}
-                                                        onChange={(e) => {
-                                                            const inputValue = e.target.value;
-                                                            if (/^\d*$/.test(inputValue) && inputValue !== '0') {
-                                                                handleQuantityChange(
-                                                                    selectedItems.indexOf(selectedItem),
-                                                                    inputValue,
-                                                                );
-                                                            }
-                                                        }}
-                                                        inputProps={{
-                                                            inputMode: 'numeric',
-                                                            pattern: '[0-9]*',
-                                                        }}
-                                                    />
-                                                </ListItemText>
-
-                                                <Button onClick={() => handleRemoveFromCart(index)}>Xóa</Button>
-                                            </ListItem>
-                                        ))}
-                                    </List>
-                                </Paper>
-                            </TableContainer>
-                            <div>
-                                <Card sx={{ marginTop: 5 }}>
-                                    <CardContent
-                                        sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
-                                    >
-                                        {/* <EditIcon /> */}
-                                        <Stack
-                                            sx={{
-                                                display: 'grid',
-                                                gridTemplateColumns: '1fr auto',
-                                                gap: 1,
-                                                alignItems: 'center',
-                                            }}
+                            {/* Danh sách sản phẩm đã thêm bên trái */}
+                            <Paper>
+                                <List>
+                                    {selectedItems.map((selectedItem, index) => (
+                                        <ListItem
+                                            key={`${selectedItem.id}-${index}`}
+                                            sx={{ display: 'flex', alignItems: 'center' }}
                                         >
-                                            <EditIcon sx={{ mt: 2 }} />
-                                            <TextField
-                                                id="outlined-multiline-static"
-                                                multiline
-                                                label="Ghi chú"
-                                                sx={{ border: 'none' }}
-                                                variant="standard"
-                                                value={descriptionReceipt}
-                                                onChange={(e) => setDescriptionReceipt(e.target.value)}
-                                            />
-                                        </Stack>
-                                        <Typography variant="subtitle1" sx={{ fontSize: '16px' }}>
-                                            Tổng số lượng: {calculateTotalQuantity()}
-                                        </Typography>
-                                        {/* <Typography variant="subtitle1" sx={{ fontSize: '16px' }}>
+                                            <ListItemText sx={{ flexBasis: '0%' }}>
+                                                {selectedItem.subCategory.images &&
+                                                    selectedItem.subCategory.images.length > 0 && (
+                                                        <img
+                                                            src={selectedItem.subCategory.images[0].url}
+                                                            alt={selectedItem.name}
+                                                            width="48"
+                                                            height="48"
+                                                        />
+                                                    )}
+                                            </ListItemText>
+                                            <ListItemText sx={{ flexBasis: '24%' }}>
+                                                <Typography variant="body1">{selectedItem.code}</Typography>
+                                            </ListItemText>
+                                            <ListItemText sx={{ flexBasis: '22%' }}>
+                                                <Typography variant="body1">{selectedItem.subCategory.name}</Typography>
+                                            </ListItemText>
+                                            <ListItemText sx={{ flexBasis: '16%' }}>
+                                                <TextField
+                                                    type="text"
+                                                    label="Số lượng"
+                                                    sx={{ width: '60%' }}
+                                                    value={selectedItem.quantity}
+                                                    onChange={(e) => {
+                                                        const inputValue = e.target.value;
+                                                        if (/^\d*$/.test(inputValue) && inputValue !== '0') {
+                                                            handleQuantityChange(
+                                                                selectedItems.indexOf(selectedItem),
+                                                                inputValue,
+                                                            );
+                                                        }
+                                                    }}
+                                                    inputProps={{
+                                                        inputMode: 'numeric',
+                                                        pattern: '[0-9]*',
+                                                    }}
+                                                />
+                                            </ListItemText>
+
+                                            <Button onClick={() => handleRemoveFromCart(index)}>Xóa</Button>
+                                        </ListItem>
+                                    ))}
+                                </List>
+                            </Paper>
+                        </TableContainer>
+                        <div>
+                            <Card sx={{ marginTop: 5 }}>
+                                <CardContent
+                                    sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+                                >
+                                    {/* <EditIcon /> */}
+                                    <Stack
+                                        sx={{
+                                            display: 'grid',
+                                            gridTemplateColumns: '1fr auto',
+                                            gap: 1,
+                                            alignItems: 'center',
+                                        }}
+                                    >
+                                        <EditIcon sx={{ mt: 2 }} />
+                                        <TextField
+                                            id="outlined-multiline-static"
+                                            multiline
+                                            label="Ghi chú"
+                                            sx={{ border: 'none', width: '300px' }}
+                                            variant="standard"
+                                            value={descriptionReceipt}
+                                            onChange={(e) => setDescriptionReceipt(e.target.value)}
+                                        />
+                                    </Stack>
+                                    <Typography variant="subtitle1" sx={{ fontSize: '16px' }}>
+                                        Tổng số lượng: {calculateTotalQuantity()?.toLocaleString('vi-VN')}
+                                    </Typography>
+                                    {/* <Typography variant="subtitle1" sx={{ fontSize: '16px' }}>
                                                 Tổng tiền hàng: {calculateTotalAmount().toLocaleString()}
                                             </Typography> */}
-                                    </CardContent>
-                                </Card>
-                            </div>
-                        </Scrollbar>
+                                </CardContent>
+                            </Card>
+                        </div>
                     </Grid>
 
                     {/* Danh sách sản phẩm bên phải */}
                     <Grid item xs={5}>
+                        <Stack direction="row" alignItems="center">
+                            <CreateRequestReceiptToolbar
+                                numSelected={selected.length}
+                                onDataSearch={handleDataSearch}
+                            />
+                            <Dropdown data={dropdownData} />
+                        </Stack>
                         <div style={{ textAlign: 'center' }}>
                             <DialogContent
                                 style={{
@@ -599,14 +606,41 @@ const CreateGoodReceipt = () => {
                                                     alignItems: 'center',
                                                     width: '230px',
                                                 }}
+                                                title={[
+                                                    `Tên thương hiệu:  ${items.brand.name}`,
+                                                    `Nguồn gốc: ${items.origin.name}`,
+                                                    `Nhà cung cấp: ${items.supplier.name}`,
+                                                ].join('\n')}
                                                 onClick={() => handleAddToCart(items)}
+                                                titleStyle={{
+                                                    display: 'inline-block',
+                                                    margin: '8px',
+                                                    border: '1px solid #ccc',
+                                                    borderRadius: '8px',
+                                                    boxShadow: '4px 4px 10px rgba(0, 0, 0, 0.1)',
+                                                    width: '230px',
+                                                    position: 'relative',
+                                                }}
                                             >
-
-                                                <div style={{ padding: '8px' }}>
-                                                    <Typography variant="body1">{items.subCategory.name}</Typography>
-                                                    <Typography variant="body1">{items.code}</Typography>
+                                                <div style={{ display: 'flex' }}>
+                                                    {items.subCategory.images &&
+                                                        items.subCategory.images.length > 0 && (
+                                                            <img
+                                                                src={items.subCategory.images[0].url}
+                                                                style={{
+                                                                    width: '40%',
+                                                                    height: '70px',
+                                                                    objectFit: 'cover',
+                                                                }}
+                                                            />
+                                                        )}
+                                                    <div style={{ padding: '8px' }}>
+                                                        <Typography variant="body1">
+                                                            {items.subCategory.name}
+                                                        </Typography>
+                                                        <Typography variant="body1">{items.code}</Typography>
+                                                    </div>
                                                 </div>
-                                                <img alt={items.avatar} width="100%" />
                                             </ListItem>
                                         ))
                                     ) : (
@@ -617,21 +651,6 @@ const CreateGoodReceipt = () => {
                                     Lưu
                                 </Button>
                             </DialogContent>
-                            {/* <CustomDialog
-                                open={confirmOpen1}
-                                onClose={handleConfirmClose1}
-                                title="Thông báo!"
-                                content="Bạn có chắc muốn cập nhật không?"
-                                onConfirm={handleConfirmUpdate1}
-                                confirmText="Xác nhận"
-                            /> */}
-                            {/* <SnackbarSuccess
-                                open={open}
-                                handleClose={handleClose}
-                                message={successMessage}
-                                action={action}
-                                style={{ bottom: '16px', right: '16px' }}
-                            /> */}
                             <SnackbarError
                                 open={open1}
                                 handleClose={handleClose}

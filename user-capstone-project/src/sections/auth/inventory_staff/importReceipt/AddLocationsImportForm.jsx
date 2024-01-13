@@ -124,9 +124,12 @@ const AddLocationsImportForm = ({ open, onClose, importReceipst, onUpdate, onSav
             const response = await getExaminationItem(importReceipst.id);
             console.log('API Response:', response);
             if (response.status === '200 OK') {
-                onSave && onSave(response.message);
+                onSave && onSave(response.message, 'Completed');
                 // Đóng form
                 onClose && onClose();
+                navigate('/inventory-staff/import-receipt', {
+                    state: { successMessage: response.message },
+                });
             }
         } catch (error) {
             console.error('Error calling getExaminationItem API:', error);
@@ -229,7 +232,7 @@ const AddLocationsImportForm = ({ open, onClose, importReceipst, onUpdate, onSav
                                                 importReceipst?.details && selectedDetailId
                                                     ? importReceipst.details.find(
                                                           (detail) => detail.id === selectedDetailId,
-                                                      )?.itemId
+                                                      )?.item?.id
                                                     : null
                                             }
                                             onUpdate={handleUpdateLocations}

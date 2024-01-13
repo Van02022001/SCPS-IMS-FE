@@ -67,7 +67,6 @@ const CreateItemsForm = (props) => {
     const [brandError, setBrandError] = useState(null);
     const [supplierError, setSupplierError] = useState(null);
     const [originError, setOriginError] = useState(null);
-    const [selectedDate, setSelectedDate] = useState(dayjs().startOf('day'));
 
     //thông báo
     const [message, setMessage] = useState('');
@@ -225,7 +224,7 @@ const CreateItemsForm = (props) => {
             setSupplierError('Vui lòng chọn nhà cung cấp');
             return;
         } else if (!tab1Data.origin_id || !tab1Data.origin_id.length) {
-            setOriginError('Vui lòng chọn nguồn góc');
+            setOriginError('Vui lòng chọn xuất xứ');
             return;
         }
 
@@ -244,9 +243,6 @@ const CreateItemsForm = (props) => {
         //     return;
         // }
 
-        const endOfDayDate = selectedDate.endOf('day');
-        const formattedStartDate = endOfDayDate.toISOString();
-
         const itemParams = {
             minStockLevel: parsedMinStockLevel,
             maxStockLevel: parsedMaxStockLevel,
@@ -254,7 +250,6 @@ const CreateItemsForm = (props) => {
             brand_id: parsedBrandId,
             supplier_id: parsedSupplierId,
             origin_id: parsedOriginId,
-            startDate: formattedStartDate,
             price: parsedPrice,
             purchasePrice: parsedPurchasePrice,
         };
@@ -311,11 +306,6 @@ const CreateItemsForm = (props) => {
             })
             .catch((error) => console.error('Error fetching brands:', error));
     }, [openAddOriginForm, openAddBrandForm, openAddSuplierForm]);
-
-    useEffect(() => {
-        // If you want to do something when the selected date changes, add your logic here
-        console.log('Selected date changed:', selectedDate);
-    }, [selectedDate]);
 
     return (
         <>
@@ -472,7 +462,7 @@ const CreateItemsForm = (props) => {
                                                 sx={{ marginBottom: 4, gap: 5 }}
                                             >
                                                 <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
-                                                    Nguồn gốc:{' '}
+                                                    Xuất xứ:{' '}
                                                 </Typography>
                                                 <Grid xs={8.5}>
                                                     <Select
@@ -569,37 +559,13 @@ const CreateItemsForm = (props) => {
                                                 </FormControl>
                                             </div>
                                         </Grid>
-                                        <Grid
-                                            container
-                                            spacing={1}
-                                            direction="row"
-                                            justifyContent="space-between"
-                                            alignItems="center"
-                                            sx={{ marginBottom: 4, gap: 2 }}
-                                        >
-                                            <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
-                                                Ngày bắt đầu:{' '}
-                                            </Typography>
-                                            <Grid xs={8.5}>
-                                                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                    <DemoContainer components={['DatePicker']}>
-                                                        <DemoItem>
-                                                            <DatePicker
-                                                                value={selectedDate}
-                                                                onChange={(newDate) => setSelectedDate(newDate)}
-                                                            />
-                                                        </DemoItem>
-                                                    </DemoContainer>
-                                                </LocalizationProvider>
-                                            </Grid>
-                                        </Grid>
                                     </Grid>
                                 </Grid>
-                                <Grid container spacing={2} sx={{ gap: '20px' }}>
+                                {/* <Grid container spacing={2} sx={{ gap: '20px' }}>
                                     <BoxComponent />
                                     <BoxComponent />
                                     <BoxComponent />
-                                </Grid>
+                                </Grid> */}
 
                                 <Grid container spacing={1} sx={{ gap: '20px' }}>
                                     <Button

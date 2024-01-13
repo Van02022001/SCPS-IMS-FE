@@ -409,7 +409,7 @@ const ExportRequestReceiptDetailForm = ({
                                         variant="outlined"
                                         label="Mô tả"
                                         sx={{ width: '70%' }}
-                                        value={importReceipst.description}
+                                        value={importReceipst.note}
                                     />
                                 </Grid>
                             </Grid>
@@ -513,6 +513,7 @@ const ExportRequestReceiptDetailForm = ({
                                                     padding: '10px 0 0 20px',
                                                 }}
                                             >
+                                                <TableCell>Mã sản phẩm</TableCell>
                                                 <TableCell>Tên sản phẩm</TableCell>
                                                 <TableCell>Số lượng</TableCell>
                                                 <TableCell>Giá sản phẩm</TableCell>
@@ -522,7 +523,8 @@ const ExportRequestReceiptDetailForm = ({
                                             {importReceipst.details.map((items) => {
                                                 return (
                                                     <TableRow key={items.id}>
-                                                        <TableCell>{items.itemName}</TableCell>
+                                                        <TableCell>{items.item.code}</TableCell>
+                                                        <TableCell>{items.item.subcategoryName}</TableCell>
                                                         <TableCell>{items.quantity}</TableCell>
                                                         <TableCell>{items.price}</TableCell>
                                                         <TableCell>{items.totalPrice}</TableCell>
@@ -536,7 +538,7 @@ const ExportRequestReceiptDetailForm = ({
                                         <Typography variant="h6">Thông tin phiếu</Typography>
                                         <TableRow>
                                             <TableCell>Tổng số lượng:</TableCell>
-                                            <TableCell>{importReceipst.totalQuantity}</TableCell>
+                                            <TableCell>{importReceipst.totalQuantity?.toLocaleString('vi-VN')}</TableCell>
                                         </TableRow>
                                     </TableBody>
                                 </TableContainer>

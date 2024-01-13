@@ -491,13 +491,13 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
-                                    <Typography variant="body1">Nguồn gốc:</Typography>
+                                    <Typography variant="body1">Xuất xứ:</Typography>
                                     <Grid xs={8.5}>
                                         <Select
                                             size="small"
                                             labelId="group-label"
                                             id="group-select"
-                                            label="Nguồn gốc"
+                                            label="Xuất xứ"
                                             sx={{ width: '92%', fontSize: '16px' }}
                                             value={editedItem.origin_id ? editedItem.origin_id : ''}
                                             onChange={(e) => handleEdit('origin_id', e.target.value)}

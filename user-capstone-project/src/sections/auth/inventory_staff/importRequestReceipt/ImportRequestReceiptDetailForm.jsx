@@ -461,12 +461,12 @@ const ImportRequestReceiptDetailForm = ({
                                                 currentStatus === 'Pending_Approval'
                                                     ? 'Chờ phê duyệt'
                                                     : currentStatus === 'Approved'
-                                                        ? 'Đã xác nhận'
-                                                        : currentStatus === 'IN_PROGRESS'
-                                                            ? 'Đang tiến hành'
-                                                            : currentStatus === 'Completed'
-                                                                ? 'Hoàn thành'
-                                                                : 'Ngừng hoạt động'
+                                                    ? 'Đã xác nhận'
+                                                    : currentStatus === 'IN_PROGRESS'
+                                                    ? 'Đang tiến hành'
+                                                    : currentStatus === 'Completed'
+                                                    ? 'Hoàn thành'
+                                                    : 'Ngừng hoạt động'
                                             }
                                         />
                                     </Grid>
@@ -538,6 +538,7 @@ const ImportRequestReceiptDetailForm = ({
                                                     padding: '10px 0 0 20px',
                                                 }}
                                             >
+                                                <TableCell>Mã sản phẩm</TableCell>
                                                 <TableCell>Tên sản phẩm</TableCell>
                                                 <TableCell>Số lượng</TableCell>
                                                 <TableCell>Giá sản phẩm</TableCell>
@@ -547,7 +548,8 @@ const ImportRequestReceiptDetailForm = ({
                                             {importReceipst.details.map((items) => {
                                                 return (
                                                     <TableRow key={items.id}>
-                                                        <TableCell>{items.itemName}</TableCell>
+                                                        <TableCell>{items.item.code}</TableCell>
+                                                        <TableCell>{items.item.subcategoryName}</TableCell>
                                                         <TableCell>{items.quantity}</TableCell>
                                                         <TableCell>{items.price}</TableCell>
                                                         <TableCell>{items.totalPrice}</TableCell>

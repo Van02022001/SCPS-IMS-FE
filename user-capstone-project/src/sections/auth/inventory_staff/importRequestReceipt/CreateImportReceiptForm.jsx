@@ -250,6 +250,7 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose,
                                             padding: '10px 0 0 20px',
                                         }}
                                     >
+                                        <TableCell>Mã sản phẩm</TableCell>
                                         <TableCell>Tên sản phẩm</TableCell>
                                         <TableCell>Số lượng yêu cầu</TableCell>
                                         <TableCell>Đơn vị</TableCell>
@@ -258,41 +259,42 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose,
                                     </TableRow>
                                     {dataReceiptDetail !== null
                                         ? dataReceiptDetail.details.map((detail) => (
-                                            <TableRow key={detail.id}>
-                                                <TableCell>{detail.itemName}</TableCell>
+                                              <TableRow key={detail.id}>
+                                                  <TableCell>{detail.item.code}</TableCell>
+                                                  <TableCell>{detail.item.subcategoryName}</TableCell>
+                                                  <TableCell>
+                                                      {detail.discrepancyLogs && detail.discrepancyLogs.length > 0
+                                                          ? detail.discrepancyLogs[0].requiredQuantity
+                                                          : detail.quantity}
+                                                  </TableCell>
 
-                                                <TableCell>
-                                                    {detail.discrepancyLogs && detail.discrepancyLogs.length > 0
-                                                        ? detail.discrepancyLogs[0].requiredQuantity
-                                                        : detail.quantity}
-                                                </TableCell>
+                                                  <TableCell>{detail.unitName}</TableCell>
 
-                                                <TableCell>{detail.unitName}</TableCell>
+                                                  <TableCell>{detail.quantity}</TableCell>
 
-                                                <TableCell>{detail.quantity}</TableCell>
-
-                                                <TableCell>
-                                                    {!locationQuantities[detail.id] > 0 &&
-                                                        !selectedLocationsFlag[detail.id] &&
-                                                        selectedLocations.find(
-                                                            (loc) => loc.detailId === detail.id,
-                                                        ) === undefined && (
-                                                            <Button
-                                                                variant="contained"
-                                                                color="primary"
-                                                                onClick={() => handleOpenAddCategoryDialog(detail.id)}
-                                                                disabled={selectedLocationsFlag[detail.id]}
-                                                            >
-                                                                Chọn vị trí
-                                                            </Button>
-                                                        )}
-                                                </TableCell>
-                                            </TableRow>
-                                        ))
+                                                  <TableCell>
+                                                      {!locationQuantities[detail.id] > 0 &&
+                                                          !selectedLocationsFlag[detail.id] &&
+                                                          selectedLocations.find(
+                                                              (loc) => loc.detailId === detail.id,
+                                                          ) === undefined && (
+                                                              <Button
+                                                                  variant="contained"
+                                                                  color="primary"
+                                                                  onClick={() => handleOpenAddCategoryDialog(detail.id)}
+                                                                  disabled={selectedLocationsFlag[detail.id]}
+                                                              >
+                                                                  Chọn vị trí
+                                                              </Button>
+                                                          )}
+                                                  </TableCell>
+                                              </TableRow>
+                                          ))
                                         : importReceipst.details.map((items) => (
                                               <TableRow key={items.id}>
                                                   {console.log(quantities[items.id])}
-                                                  <TableCell>{items.itemName}</TableCell>
+                                                  <TableCell>{items.item.code}</TableCell>
+                                                  <TableCell>{items.item.subcategoryName}</TableCell>
                                                   <TableCell>{items.quantity}</TableCell>
                                                   <TableCell>{items.unitName}</TableCell>
                                                   <TableCell>
@@ -308,9 +310,9 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose,
                                                               }
                                                           }}
                                                           inputProps={{
-                                                            inputMode: 'numeric',
-                                                            pattern: '[0-9]*',
-                                                        }}
+                                                              inputMode: 'numeric',
+                                                              pattern: '[0-9]*',
+                                                          }}
                                                       />
                                                   </TableCell>
                                               </TableRow>
@@ -356,7 +358,7 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose,
                                 itemId={
                                     dataReceiptDetail?.details && selectedDetailId
                                         ? dataReceiptDetail.details.find((detail) => detail.id === selectedDetailId)
-                                            ?.itemId
+                                              ?.item?.id
                                         : null
                                 }
                                 selectedDetailQuantity={selectedDetailQuantity}

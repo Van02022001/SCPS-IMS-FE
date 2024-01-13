@@ -9,7 +9,7 @@ const Dropdown = ({ data }) => {
       getOptionLabel={(option) => option.name}
       style={{ width: 300 }}
       renderInput={(params) => (
-        <TextField {...params} label="Choose an option" variant="outlined" />
+        <TextField {...params} label="Lựa chọn..." variant="outlined" />
       )}
     />
   );

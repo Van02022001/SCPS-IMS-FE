@@ -36,7 +36,7 @@ import { ItemsInventoryListHead, ItemsInventoryToolbar } from '~/sections/@dashb
 import CreateItemsForm from '~/sections/auth/manager/items/CreateItemsForm';
 //api 
 import USERLIST from '../../../_mock/user';
-import { getAllItem } from '~/data/mutation/items/item-mutation';
+import { getAllItem, getItemByWarehouse } from '~/data/mutation/items/item-mutation';
 import { getAllBrands } from '~/data/mutation/brand/brands-mutation';
 import { getAllSubCategory } from '~/data/mutation/subCategory/subCategory-mutation';
 import { getAllOrigins } from '~/data/mutation/origins/origins-mutation';
@@ -54,6 +54,7 @@ import dayjs from 'dayjs';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import ItemDetaiIventoryForm from '~/sections/auth/inventory_staff/itemInventory/ItemDetaiIventoryForm';
+import { useLocation } from 'react-router-dom';
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -139,6 +140,9 @@ const ItemsInventoryPage = () => {
     const [selectedItemId, setSelectedItemId] = useState([]);
     // State data và xử lý data
     const [itemsData, setItemData] = useState([]);
+    const location = useLocation();
+    const { state } = location;
+    const successMessage = state?.successMessage;
 
     const [sortedItem, setSortedItem] = useState([]);
     //--------------------Filter------------------------
@@ -262,7 +266,7 @@ const ItemsInventoryPage = () => {
     const isNotFound = !filteredUsers.length && !!filterName;
 
     useEffect(() => {
-        getAllItem()
+        getItemByWarehouse()
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
@@ -280,6 +284,10 @@ const ItemsInventoryPage = () => {
             .catch((error) => {
                 console.error('Error fetching users:', error);
             });
+    }, [successMessage]);
+
+    useEffect(() => {
+        
         getAllBrands()
             .then((respone) => {
                 const data = respone.data;

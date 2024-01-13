@@ -31,6 +31,7 @@ import {
 
 import AddLocationsImportForm from './AddLocationsImportForm';
 import SnackbarError from '~/components/alert/SnackbarError';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 // import CreateImportReceiptForm from './CreateImportReceiptForm';
 
 const ImportReceiptInventoryDetailForm = ({
@@ -289,14 +290,19 @@ const ImportReceiptInventoryDetailForm = ({
     const handleCloseForm = () => {
         setIsOpenImportForm(false);
     };
-    const handleSaveImport = (successMessage) => {
+    const handleSaveImport = (successMessage, newStatus) => {
         // You can handle any logic here after saving the category
-        handleCloseForm();
-        setSnackbarSuccessMessage(successMessage);
+        setSnackbarSuccessMessage(
+            successMessage === 'Cập nhật vị trí các sản phẩm thành công.'
+                ? 'Cập nhật vị trí các sản phẩm thành công.'
+                : 'Thành công',
+        );
         setSnackbarSuccessOpen(true);
+        setCurrentStatus(newStatus);
+        console.log(newStatus);
     };
     //==========================================================================================================
-    console.log(importReceipst, "Find itemid");
+    console.log(importReceipst, 'Find itemid');
     return editedImportReceipt ? (
         <div
             id="productDetailForm"
@@ -326,7 +332,6 @@ const ImportReceiptInventoryDetailForm = ({
                                 onSave={handleSaveImport}
                                 onClose={handleCloseForm}
                             />
-
                         </Dialog>
                     </div>
                     <Stack spacing={4} margin={2}>
@@ -396,12 +401,12 @@ const ImportReceiptInventoryDetailForm = ({
                                                 currentStatus === 'Pending_Approval'
                                                     ? 'Chờ phê duyệt'
                                                     : currentStatus === 'Approved'
-                                                        ? 'Đã xác nhận'
-                                                        : currentStatus === 'NOT_COMPLETED'
-                                                            ? 'Chưa hoàn thành'
-                                                            : currentStatus === 'Completed'
-                                                                ? 'Hoàn thành'
-                                                                : 'Ngừng hoạt động'
+                                                    ? 'Đã xác nhận'
+                                                    : currentStatus === 'NOT_COMPLETED'
+                                                    ? 'Chưa hoàn thành'
+                                                    : currentStatus === 'Completed'
+                                                    ? 'Hoàn thành'
+                                                    : 'Ngừng hoạt động'
                                             }
                                         />
                                     </Grid>
@@ -411,7 +416,7 @@ const ImportReceiptInventoryDetailForm = ({
                                         direction="row"
                                         justifyContent="space-between"
                                         alignItems="center"
-                                        sx={{ marginBottom: 4, gap: 5 }}
+                                        sx={{ marginBottom: 4, gap: 5, marginLeft: 0.1}}
                                     >
                                         <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
                                             Người tạo:{' '}
@@ -422,7 +427,7 @@ const ImportReceiptInventoryDetailForm = ({
                                                 InputProps={{ readOnly: true }}
                                                 labelId="group-label"
                                                 id="group-select"
-                                                sx={{ width: '100%', fontSize: '14px', pointerEvents: 'none' }}
+                                                sx={{ width: '99%', fontSize: '14px', pointerEvents: 'none' }}
                                                 value={importReceipst.createdBy}
                                             />
                                         </Grid>
@@ -438,12 +443,12 @@ const ImportReceiptInventoryDetailForm = ({
                                     >
                                         <Typography variant="body1">Ngày tạo:</Typography>
                                         <TextField
-                                            disabled
                                             size="small"
                                             variant="outlined"
                                             label="Ngày tạo"
                                             sx={{ width: '70%', pointerEvents: 'none' }}
                                             value={importReceipst.createdAt}
+                                            InputProps={{ readOnly: true }}
                                         />
                                     </Grid>
                                 </div>
@@ -479,8 +484,8 @@ const ImportReceiptInventoryDetailForm = ({
                                                     <TableRow key={items.id}>
                                                         <TableCell>{items.itemName}</TableCell>
                                                         <TableCell>{items.quantity}</TableCell>
-                                                        <TableCell>{items.price}</TableCell>
-                                                        <TableCell>{items.totalPrice}</TableCell>
+                                                        <TableCell>{items.price?.toLocaleString('vi-VN')}</TableCell>
+                                                        <TableCell>{items.totalPrice?.toLocaleString('vi-VN')}</TableCell>
                                                         <TableCell>{items.unitName}</TableCell>
                                                         <TableCell>{/* Thêm thành tiền nếu có */}</TableCell>
                                                     </TableRow>
@@ -494,11 +499,11 @@ const ImportReceiptInventoryDetailForm = ({
                                         </Typography>
                                         <TableRow>
                                             <TableCell>Tổng số lượng:</TableCell>
-                                            <TableCell>{importReceipst.totalQuantity}</TableCell>
+                                            <TableCell>{importReceipst.totalQuantity?.toLocaleString('vi-VN')}</TableCell>
                                         </TableRow>
                                         <TableRow>
                                             <TableCell>Tổng tiền:</TableCell>
-                                            <TableCell>{importReceipst.totalPrice} VND</TableCell>
+                                            <TableCell>{importReceipst.totalPrice?.toLocaleString('vi-VN')} VND</TableCell>
                                         </TableRow>
                                     </TableBody>
                                 </TableContainer>
@@ -506,12 +511,19 @@ const ImportReceiptInventoryDetailForm = ({
                         </Card>
                     </div>
                     <Stack spacing={4} margin={2}>
-                        <Grid container spacing={1} sx={{ gap: '10px' }}>
-
-                        </Grid>
+                        <Grid container spacing={1} sx={{ gap: '10px' }}></Grid>
                     </Stack>
                 </div>
             )}
+            <SnackbarSuccess
+                open={snackbarSuccessOpen}
+                handleClose={() => {
+                    setSnackbarSuccessOpen(false);
+                    setSnackbarSuccessMessage('');
+                }}
+                message={snackbarSuccessMessage}
+                style={{ bottom: '16px', right: '16px' }}
+            />
             <SnackbarError
                 open={open}
                 handleClose={handleClose}

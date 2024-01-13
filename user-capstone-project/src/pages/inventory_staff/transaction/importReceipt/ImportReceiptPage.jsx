@@ -28,7 +28,10 @@ import Scrollbar from '~/components/scrollbar/Scrollbar';
 import CloseIcon from '@mui/icons-material/Close';
 
 // sections
-import { ImportReceiptInventoryListHead, ImportReceiptInventoryToolbar } from '~/sections/@dashboard/inventoryStaff/transaction/importReceipt';
+import {
+    ImportReceiptInventoryListHead,
+    ImportReceiptInventoryToolbar,
+} from '~/sections/@dashboard/inventoryStaff/transaction/importReceipt';
 // mock
 import PRODUCTSLIST from '../../../../_mock/products';
 // api
@@ -37,10 +40,9 @@ import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import ImportReaceiptDetailForm from '~/sections/auth/inventory_staff/importRequestReceipt/ImportRequestReceiptDetailForm';
 // import EditCategoryForm from '~/sections/auth/manager/categories/EditCategoryForm';
 // import GoodsReceiptPage from '../GoodsReceiptPage';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import ImportReceiptInventoryDetailForm from '~/sections/auth/inventory_staff/importReceipt/ImportReceiptInventoryDetailForm';
-
 
 // ----------------------------------------------------------------------
 
@@ -105,6 +107,9 @@ const MenuProps = {
 };
 
 const ImportReceiptPage = () => {
+    const location = useLocation();
+    const { state } = location;
+    const successMessage = state?.successMessage;
     // State mở các form----------------------------------------------------------------
     const [open, setOpen] = useState(null);
     const [openOderForm, setOpenOderForm] = useState(false);
@@ -112,6 +117,8 @@ const ImportReceiptPage = () => {
 
     const [selected, setSelected] = useState([]);
     const [selectedImportReceiptId, setSelectedImportReceiptId] = useState([]);
+    const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
+    const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
 
     // State cho phần soft theo name-------------------------------------------------------
     const [filterName, setFilterName] = useState('');
@@ -290,12 +297,17 @@ const ImportReceiptPage = () => {
             .catch((error) => {
                 console.error('Error fetching users:', error);
             });
-    }, []);
+    }, [successMessage]);
     console.log(importReceiptData);
+
+    useEffect(() => {
+        if (successMessage) {
+            setSnackbarSuccessOpen(true);
+            setSnackbarSuccessMessage(successMessage);
+        }
+    }, [successMessage]);
     //==============================* filter *==============================
-    const pendingApprovalItems = importReceiptData.filter(
-        (importRequest) => importRequest.status === 'NOT_COMPLETED',
-    );
+    const pendingApprovalItems = importReceiptData.filter((importRequest) => importRequest.status === 'NOT_COMPLETED');
 
     const otherItems = importReceiptData.filter((importRequest) => importRequest.status !== 'NOT_COMPLETED');
 
@@ -304,15 +316,14 @@ const ImportReceiptPage = () => {
     const uniqueStatusArray = Array.from(new Set(statusArray));
 
     // Chỉ chọn những giá trị mà bạn quan tâm
-    const filteredStatusArray = uniqueStatusArray.filter(status => (
-        status === "NOT_COMPLETED" ||
-        status === "Completed"
-    ));
+    const filteredStatusArray = uniqueStatusArray.filter(
+        (status) => status === 'NOT_COMPLETED' || status === 'Completed',
+    );
 
     const translateStatusToVietnamese = (status) => {
         const vietnameseStatusMap = {
-            "NOT_COMPLETED": 'Chưa hoàn thành',
-            "Completed": 'Hoàn thành',
+            NOT_COMPLETED: 'Chưa hoàn thành',
+            Completed: 'Hoàn thành',
         };
 
         return vietnameseStatusMap[status] || status;
@@ -434,7 +445,8 @@ const ImportReceiptPage = () => {
                                                 <TableCell align="left">
                                                     <Label
                                                         color={
-                                                            (importReceipt.status === 'Pending_Approval' && 'warning') ||
+                                                            (importReceipt.status === 'Pending_Approval' &&
+                                                                'warning') ||
                                                             (importReceipt.status === 'Approved' && 'primary') ||
                                                             (importReceipt.status === ' IN_PROGRESS' && 'warning') ||
                                                             (importReceipt.status === 'Completed' && 'success') ||
@@ -445,12 +457,12 @@ const ImportReceiptPage = () => {
                                                         {importReceipt.status === 'Pending_Approval'
                                                             ? 'Chờ phê duyệt'
                                                             : importReceipt.status === 'Approved'
-                                                                ? 'Đã xác nhận'
-                                                                : importReceipt.status === 'NOT_COMPLETED'
-                                                                    ? 'Chưa hoàn thành'
-                                                                    : importReceipt.status === 'Completed'
-                                                                        ? 'Hoàn thành'
-                                                                        : 'Ngừng hoạt động'}
+                                                            ? 'Đã xác nhận'
+                                                            : importReceipt.status === 'NOT_COMPLETED'
+                                                            ? 'Chưa hoàn thành'
+                                                            : importReceipt.status === 'Completed'
+                                                            ? 'Hoàn thành'
+                                                            : 'Ngừng hoạt động'}
                                                     </Label>
                                                 </TableCell>
                                             </TableRow>
@@ -463,7 +475,9 @@ const ImportReceiptPage = () => {
                                                             // productStatus={productStatus}
                                                             importReceiptId={selectedImportReceiptId}
                                                             updateImportReceiptInList={updateImportReceiptInList}
-                                                            updateImportReceiptConfirmInList={updateImportReceiptConfirmInList}
+                                                            updateImportReceiptConfirmInList={
+                                                                updateImportReceiptConfirmInList
+                                                            }
                                                             onClose={handleCloseProductDetails}
                                                         />
                                                     </TableCell>
@@ -517,8 +531,6 @@ const ImportReceiptPage = () => {
                 />
             </Card>
             {/* </Container> */}
-
-
         </>
     );
 };

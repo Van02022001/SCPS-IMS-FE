@@ -16,12 +16,11 @@ import CloseIcon from '@mui/icons-material/Close';
 import { getAllLocation, getAllLocationByItem } from '~/data/mutation/location/location-mutation';
 import { getExaminationItem, getUpdatedLocationDetails } from '~/data/mutation/items/item-mutation';
 import UpdateLocationToExportForm from './UpdateLocationToExportForm';
+import { useNavigate } from 'react-router-dom';
 
-
-
-const AddLocationToExportReceipt = ({ open, onClose, dataReceiptDetail, details, updateDataReceiptDetail }) => {
+const AddLocationToExportReceipt = ({ open, onClose, dataReceiptDetail, details, updateDataReceiptDetail, onSave }) => {
     const [quantity, setQuantity] = useState('');
-
+    const navigate = useNavigate();
     const [exportLocation_id, setExportLocation_id] = useState([]);
     const [showLocationSelection, setShowLocationSelection] = useState(false);
     const [locationQuantities, setLocationQuantities] = useState({});
@@ -83,6 +82,14 @@ const AddLocationToExportReceipt = ({ open, onClose, dataReceiptDetail, details,
         try {
             const response = await getExaminationItem(dataReceiptDetail.id);
             console.log('API Response:', response);
+            if (response.status === '200 OK') {
+                onSave && onSave(response.message, 'Completed');
+                // Đóng form
+                onClose && onClose();
+                navigate('/inventory-staff/export-receipt', {
+                    state: { successMessage: response.message },
+                });
+            }
         } catch (error) {
             console.error('Error calling getExaminationItem API:', error);
         }
@@ -126,10 +133,8 @@ const AddLocationToExportReceipt = ({ open, onClose, dataReceiptDetail, details,
         }
     }, [details]);
 
-
     return (
         <>
-
             <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 Hãy Chọn Địa Chỉ Trong Kho
                 <IconButton edge="start" color="inherit" onClick={handleClosePopup} aria-label="close">
@@ -153,20 +158,22 @@ const AddLocationToExportReceipt = ({ open, onClose, dataReceiptDetail, details,
                                             ) : (
                                                 <div>Vị trí chưa có hoặc chưa cập nhật!</div>
                                             )}
-
                                         </TableCell>
 
                                         <TableCell>
                                             {!locationQuantities[detail.id] > 0 &&
                                                 !selectedLocationsFlag[detail.id] &&
-                                                selectedLocations.find((loc) => loc.detailId === detail.id) === undefined && (
+                                                selectedLocations.find((loc) => loc.detailId === detail.id) ===
+                                                    undefined && (
                                                     <Button
                                                         variant="contained"
                                                         color="primary"
                                                         onClick={() => handleOpenAddCategoryDialog(detail.id)}
                                                         disabled={selectedLocationsFlag[detail.id]}
                                                     >
-                                                        {selectedLocationsFlag[detail.id] ? 'Đã cập nhật' : 'Chọn vị trí'}
+                                                        {selectedLocationsFlag[detail.id]
+                                                            ? 'Đã cập nhật'
+                                                            : 'Chọn vị trí'}
                                                     </Button>
                                                 )}
                                         </TableCell>
@@ -178,8 +185,9 @@ const AddLocationToExportReceipt = ({ open, onClose, dataReceiptDetail, details,
                                             detailId={selectedDetailId}
                                             itemId={
                                                 dataReceiptDetail?.details && selectedDetailId
-                                                    ? dataReceiptDetail.details.find((detail) => detail.id === selectedDetailId)
-                                                        ?.itemId
+                                                    ? dataReceiptDetail.details.find(
+                                                          (detail) => detail.id === selectedDetailId,
+                                                      )?.item?.id
                                                     : null
                                             }
                                             onUpdate={handleUpdateLocations}
@@ -197,10 +205,9 @@ const AddLocationToExportReceipt = ({ open, onClose, dataReceiptDetail, details,
                     Lưu
                 </Button>
             </div>
-
+            
         </>
     );
 };
-
 
 export default AddLocationToExportReceipt;

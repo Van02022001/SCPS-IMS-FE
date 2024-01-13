@@ -436,11 +436,11 @@ const SubCategoryDetailForm = ({
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
-                                    <Typography variant="body1">Tên sản phẩm:</Typography>
+                                    <Typography variant="body1">Tên danh mục:</Typography>
                                     <TextField
                                         size="small"
                                         variant="outlined"
-                                        label="Tên sản phẩm"
+                                        label="Tên danh mục"
                                         sx={{ width: '70%' }}
                                         value={editedSubCategory ? editedSubCategory.name : ''}
                                         onChange={(e) => handleEdit('name', capitalizeFirstLetter(e.target.value))}
@@ -537,7 +537,7 @@ const SubCategoryDetailForm = ({
                                         alignItems="center"
                                         sx={{ marginBottom: 4, gap: 5 }}
                                     >
-                                        <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
+                                        <Typography variant="subtitle1" sx={{ fontSize: '16px' }}>
                                             Nhóm hàng:{' '}
                                         </Typography>
                                         <Grid xs={8.5}>
@@ -545,7 +545,7 @@ const SubCategoryDetailForm = ({
                                                 size="small"
                                                 labelId="group-label"
                                                 id="group-select"
-                                                sx={{ width: '99%', fontSize: '14px', marginLeft: 0.6 }}
+                                                sx={{ width: '99%', fontSize: '16px', marginLeft: 0.6 }}
                                                 multiple
                                                 value={editedSubCategory.categories_id}
                                                 onChange={(e) => handleEdit('categories_id', e.target.value)}
@@ -633,7 +633,7 @@ const SubCategoryDetailForm = ({
                                         alignItems="center"
                                         sx={{ marginBottom: 4, gap: 2 }}
                                     >
-                                        <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
+                                        <Typography variant="subtitle1" sx={{ fontSize: '16px' }}>
                                             Kích thước:{' '}
                                         </Typography>
                                         <div style={{ display: 'flex' }}>
@@ -747,7 +747,7 @@ const SubCategoryDetailForm = ({
                                                     padding: '10px 0 0 20px',
                                                 }}
                                             >
-                                                <TableCell>Mã sản phẩm</TableCell>
+                                                <TableCell>Mã danh mục</TableCell>
                                                 <TableCell>Số lượng</TableCell>
                                                 <TableCell>Đơn giá</TableCell>
                                                 <TableCell>Thương hiệu</TableCell>

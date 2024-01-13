@@ -21,9 +21,7 @@ import Snackbar from '@mui/material/Snackbar';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 // api
-import {
-    editImportReceipt,
-} from '~/data/mutation/importRequestReceipt/ImportRequestReceipt-mutation';
+import { editImportReceipt } from '~/data/mutation/importRequestReceipt/ImportRequestReceipt-mutation';
 
 import { getAllImportReceipt } from '~/data/mutation/importReceipt/ImportReceipt-mutation';
 import { editExportRequestReceipt } from '~/data/mutation/customerRequest/CustomerRequest-mutation';
@@ -272,6 +270,18 @@ const ExportReceiptDetailForm = ({
     const handleCloseForm = () => {
         setIsOpenImportForm(false);
     };
+
+    const handleSaveImport = (successMessage, newStatus) => {
+        // You can handle any logic here after saving the category
+        setSnackbarSuccessMessage(
+            successMessage === 'Cập nhật vị trí các sản phẩm thành công.'
+                ? 'Cập nhật vị trí các sản phẩm thành công.'
+                : 'Thành công',
+        );
+        setSnackbarSuccessOpen(true);
+        setCurrentStatus(newStatus);
+        console.log(newStatus);
+    };
     //==========================================================================================================
 
     const handleDataReload = () => {
@@ -320,6 +330,7 @@ const ExportReceiptDetailForm = ({
                             <AddLocationToExportReceipt
                                 isOpen={isOpenImportForm}
                                 onClose={handleCloseAddCategoryDialog}
+                                onSave={handleSaveImport}
                                 dataReceiptDetail={importReceipst}
                             />
                         </Dialog>
@@ -334,6 +345,7 @@ const ExportReceiptDetailForm = ({
                                     justifyContent="space-between"
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
+                                    InputProps={{ readOnly: true }}
                                 >
                                     <Typography variant="body1">Mã phiếu:</Typography>
                                     <TextField
@@ -352,6 +364,7 @@ const ExportReceiptDetailForm = ({
                                     justifyContent="space-between"
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
+                                    InputProps={{ readOnly: true }}
                                 >
                                     <Typography variant="body1">Mô tả:</Typography>
                                     <TextField
@@ -362,7 +375,7 @@ const ExportReceiptDetailForm = ({
                                         variant="outlined"
                                         label="Mô tả"
                                         sx={{ width: '70%' }}
-                                        value={importReceipst.note}
+                                        value={importReceipst.description}
                                     />
                                 </Grid>
                             </Grid>
@@ -377,6 +390,7 @@ const ExportReceiptDetailForm = ({
                                         justifyContent="space-between"
                                         alignItems="center"
                                         sx={{ marginBottom: 4, gap: 5 }}
+                                        InputProps={{ readOnly: true }}
                                     >
                                         <Typography variant="body1">Trạng thái:</Typography>
                                         <TextField
@@ -388,12 +402,12 @@ const ExportReceiptDetailForm = ({
                                                 currentStatus === 'Pending_Approval'
                                                     ? 'Chờ phê duyệt'
                                                     : currentStatus === 'IN_PROGRESS'
-                                                        ? 'Đang tiến hành'
-                                                        : currentStatus === 'NOT_COMPLETED'
-                                                            ? 'Chưa hoàn thành'
-                                                            : currentStatus === 'Completed'
-                                                                ? 'Hoàn thành'
-                                                                : 'Ngừng hoạt động'
+                                                    ? 'Đang tiến hành'
+                                                    : currentStatus === 'NOT_COMPLETED'
+                                                    ? 'Chưa hoàn thành'
+                                                    : currentStatus === 'Completed'
+                                                    ? 'Hoàn thành'
+                                                    : 'Ngừng hoạt động'
                                             }
                                         />
                                     </Grid>
@@ -403,7 +417,7 @@ const ExportReceiptDetailForm = ({
                                         direction="row"
                                         justifyContent="space-between"
                                         alignItems="center"
-                                        sx={{ marginBottom: 4, gap: 5 }}
+                                        sx={{ marginBottom: 4, gap: 5, marginLeft: 0.05 }}
                                     >
                                         <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
                                             Người tạo:{' '}
@@ -413,8 +427,9 @@ const ExportReceiptDetailForm = ({
                                                 size="small"
                                                 labelId="group-label"
                                                 id="group-select"
-                                                sx={{ width: '100%', fontSize: '14px' }}
+                                                sx={{ width: '99%', fontSize: '14px' }}
                                                 value={importReceipst.createdBy}
+                                                InputProps={{ readOnly: true }}
                                             />
                                         </Grid>
                                     </Grid>
@@ -429,7 +444,7 @@ const ExportReceiptDetailForm = ({
                                     >
                                         <Typography variant="body1">Ngày tạo:</Typography>
                                         <TextField
-                                            disabled
+                                            InputProps={{ readOnly: true }}
                                             size="small"
                                             variant="outlined"
                                             label="Ngày tạo"
@@ -459,6 +474,7 @@ const ExportReceiptDetailForm = ({
                                                     padding: '10px 0 0 20px',
                                                 }}
                                             >
+                                                <TableCell>Mã sản phẩm</TableCell>
                                                 <TableCell>Tên sản phẩm</TableCell>
                                                 <TableCell>Số lượng</TableCell>
                                                 <TableCell>Tổng giá phiếu</TableCell>
@@ -467,9 +483,10 @@ const ExportReceiptDetailForm = ({
                                             {importReceipst.details.map((items) => {
                                                 return (
                                                     <TableRow key={items.id}>
-                                                        <TableCell>{items.itemName}</TableCell>
+                                                        <TableCell>{items.item.code}</TableCell>
+                                                        <TableCell>{items.item.subcategoryName}</TableCell>
                                                         <TableCell>{items.quantity}</TableCell>
-                                                        <TableCell>{items.totalPrice}</TableCell>
+                                                        <TableCell>{items.totalPrice?.toLocaleString('vi-VN')}</TableCell>
                                                         <TableCell>{items.unitName}</TableCell>
                                                     </TableRow>
                                                 );
@@ -480,7 +497,7 @@ const ExportReceiptDetailForm = ({
                                         <Typography variant="h6">Thông tin phiếu</Typography>
                                         <TableRow>
                                             <TableCell>Tổng số lượng:</TableCell>
-                                            <TableCell>{importReceipst.totalQuantity}</TableCell>
+                                            <TableCell>{importReceipst.totalQuantity?.toLocaleString('vi-VN')}</TableCell>
                                         </TableRow>
                                     </TableBody>
                                 </TableContainer>
@@ -488,8 +505,7 @@ const ExportReceiptDetailForm = ({
                         </Card>
                     </div>
                     <Stack spacing={4} margin={2}>
-                        <Grid container spacing={1} sx={{ gap: '10px' }}>
-                        </Grid>
+                        <Grid container spacing={1} sx={{ gap: '10px' }}></Grid>
                     </Stack>
                 </div>
             )}
@@ -498,6 +514,15 @@ const ExportReceiptDetailForm = ({
                 handleClose={handleClose}
                 message={errorMessage}
                 action={action}
+                style={{ bottom: '16px', right: '16px' }}
+            />
+            <SnackbarSuccess
+                open={snackbarSuccessOpen}
+                handleClose={() => {
+                    setSnackbarSuccessOpen(false);
+                    setSnackbarSuccessMessage('');
+                }}
+                message={snackbarSuccessMessage}
                 style={{ bottom: '16px', right: '16px' }}
             />
         </div>

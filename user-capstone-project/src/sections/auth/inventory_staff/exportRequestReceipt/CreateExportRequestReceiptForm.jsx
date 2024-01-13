@@ -205,7 +205,7 @@ const CreateExportRequestReceiptForm = ({ isOpen, onCloseForm, importReceipst, o
                                     </TableRow>
                                     <TableRow>
                                         <TableCell>Mô tả:</TableCell>
-                                        <TableCell>{importReceipst.description}</TableCell>
+                                        <TableCell>{importReceipst.note}</TableCell>
                                     </TableRow>
                                     <TableRow>
                                         <TableCell>Người tạo phiếu:</TableCell>
@@ -243,6 +243,7 @@ const CreateExportRequestReceiptForm = ({ isOpen, onCloseForm, importReceipst, o
                                             padding: '10px 0 0 20px',
                                         }}
                                     >
+                                        <TableCell>Mã sản phẩm</TableCell>
                                         <TableCell>Tên sản phẩm</TableCell>
                                         <TableCell>Số lượng yêu cầu</TableCell>
                                         <TableCell>Đơn vị</TableCell>
@@ -252,43 +253,45 @@ const CreateExportRequestReceiptForm = ({ isOpen, onCloseForm, importReceipst, o
                                     </TableRow>
                                     {dataReceiptDetail.details
                                         ? dataReceiptDetail.details.map((detail) => (
-                                            <TableRow key={detail.id}>
-                                                <TableCell>{detail.itemName}</TableCell>
+                                              <TableRow key={detail.id}>
+                                                  <TableCell>{detail.item.code}</TableCell>
 
-                                                <TableCell>{detail.quantity}</TableCell>
+                                                  <TableCell>{detail.item.subcategoryName}</TableCell>
 
-                                                <TableCell>{detail.unitName}</TableCell>
+                                                  <TableCell>{detail.quantity}</TableCell>
 
-                                                <TableCell>{detail.price} VNĐ</TableCell>
+                                                  <TableCell>{detail.unitName}</TableCell>
 
-                                                <TableCell>{detail.totalPrice} VNĐ</TableCell>
+                                                  <TableCell>{detail.price} VNĐ</TableCell>
 
+                                                  <TableCell>{detail.totalPrice} VNĐ</TableCell>
 
-                                                <TableCell>
-                                                    {!locationQuantities[detail.id] > 0 &&
-                                                        !selectedLocationsFlag[detail.id] &&
-                                                        selectedLocations.find(
-                                                            (loc) => loc.detailId === detail.id,
-                                                        ) === undefined && (
-                                                            <Button
-                                                                variant="contained"
-                                                                color="primary"
-                                                                onClick={() => handleOpenAddCategoryDialog(detail.id)}
-                                                                disabled={selectedLocationsFlag[detail.id]}
-                                                            >
-                                                                Chọn vị trí
-                                                            </Button>
-                                                        )}
-                                                </TableCell>
-                                            </TableRow>
-                                        ))
+                                                  <TableCell>
+                                                      {!locationQuantities[detail.id] > 0 &&
+                                                          !selectedLocationsFlag[detail.id] &&
+                                                          selectedLocations.find(
+                                                              (loc) => loc.detailId === detail.id,
+                                                          ) === undefined && (
+                                                              <Button
+                                                                  variant="contained"
+                                                                  color="primary"
+                                                                  onClick={() => handleOpenAddCategoryDialog(detail.id)}
+                                                                  disabled={selectedLocationsFlag[detail.id]}
+                                                              >
+                                                                  Chọn vị trí
+                                                              </Button>
+                                                          )}
+                                                  </TableCell>
+                                              </TableRow>
+                                          ))
                                         : importReceipst.details.map((items) => (
-                                            <TableRow key={items.id}>
-                                                {console.log(quantities[items.id])}
-                                                <TableCell>{items.itemName}</TableCell>
-                                                <TableCell>{items.quantity}</TableCell>
-                                                <TableCell>{items.unitName}</TableCell>
-                                                {/* <TableCell>
+                                              <TableRow key={items.id}>
+                                                  {console.log(quantities[items.id])}
+                                                  <TableCell>{items.item.code}</TableCell>
+                                                  <TableCell>{items.item.subcategoryName}</TableCell>
+                                                  <TableCell>{items.quantity}</TableCell>
+                                                  <TableCell>{items.unitName}</TableCell>
+                                                  {/* <TableCell>
                                                     <TextField
                                                         style={{ width: '50%' }}
                                                         type="number"
@@ -299,8 +302,8 @@ const CreateExportRequestReceiptForm = ({ isOpen, onCloseForm, importReceipst, o
                                                         label="Số lượng nhập thực tế"
                                                     />
                                                 </TableCell> */}
-                                            </TableRow>
-                                        ))}
+                                              </TableRow>
+                                          ))}
                                     <div
                                         style={{
                                             display: 'flex',
@@ -343,7 +346,7 @@ const CreateExportRequestReceiptForm = ({ isOpen, onCloseForm, importReceipst, o
                                 itemId={
                                     dataReceiptDetail?.details && selectedDetailId
                                         ? dataReceiptDetail.details.find((detail) => detail.id === selectedDetailId)
-                                            ?.itemId
+                                              ?.item?.id
                                         : null
                                 }
                             />

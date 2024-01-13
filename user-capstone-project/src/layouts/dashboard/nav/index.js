@@ -67,7 +67,7 @@ const managerNavConfig = [
                 title: 'Danh mục',
                 path: '/dashboard/products/production',
                 icon: <ClassOutlined />,
-            }
+            },
             // {
             //     title: 'Thiết lập giá',
             //     path: '/dashboard/products/products-price',
@@ -144,45 +144,44 @@ const managerNavConfig = [
     //         },
     //     ],
     // },
-  
+
+    {
+        title: 'Nhập hàng',
+        icon: <ClassOutlined />,
+        children: [
             {
-                title: 'Nhập hàng',
-                icon: <ClassOutlined />,
-                children: [
-                    {
-                        title: 'Yêu cầu nhập kho',
-                        path: '/dashboard/request-import-receipt',
-                        icon: <ReceiptLong />,
-                    },
-                    {
-                        title: 'Phiếu nhập kho',
-                        path: '/dashboard/import-receipt',
-                        icon: <Receipt />,
-                    },
-                ],
+                title: 'Yêu cầu nhập kho',
+                path: '/dashboard/request-import-receipt',
+                icon: <ReceiptLong />,
             },
             {
-                title: 'Xuất kho',
-                icon: <PriceChangeOutlined />,
-                children: [
-                    {
-                        title: 'Yêu cầu xuất kho',
-                        path: '/dashboard/request-export-receipt',
-                        icon: <ReceiptLong />,
-                    },
-                    {
-                        title: 'Phiếu xuất kho',
-                        path: '/dashboard/export-receipt',
-                        icon: <Receipt />,
-                    },
-                ]
+                title: 'Phiếu nhập kho',
+                path: '/dashboard/import-receipt',
+                icon: <Receipt />,
             },
+        ],
+    },
+    {
+        title: 'Xuất kho',
+        icon: <PriceChangeOutlined />,
+        children: [
+            // {
+            //     title: 'Yêu cầu xuất kho',
+            //     path: '/dashboard/request-export-receipt',
+            //     icon: <ReceiptLong />,
+            // },
             {
-                title: 'Nhập tồn kho',
-                path: '/dashboard/products-check',
-                icon: <DomainVerification />,
+                title: 'Phiếu xuất kho',
+                path: '/dashboard/export-receipt',
+                icon: <Receipt />,
             },
- 
+        ],
+    },
+    {
+        title: 'Nhập tồn kho',
+        path: '/dashboard/products-check',
+        icon: <DomainVerification />,
+    },
 
     // {
     //   title: 'login',
@@ -230,51 +229,50 @@ const inventoryNavConfig = [
             },
         ],
     },
+    {
+        title: 'Nhập hàng',
+        icon: <Warehouse />,
+        children: [
             {
-                title: 'Nhập hàng',
-                icon: <Warehouse />,
-                children: [
-                    {
-                        title: 'Yêu cầu nhập kho',
-                        path: '/inventory-staff/requests-import-receipt',
-                        icon: <ReceiptLong />,
-                    },
-                    {
-                        title: 'Phiếu nhập kho',
-                        path: '/inventory-staff/import-receipt',
-                        icon: <Receipt />,
-                    },
-                ],
+                title: 'Yêu cầu nhập kho',
+                path: '/inventory-staff/requests-import-receipt',
+                icon: <ReceiptLong />,
             },
             {
-                title: 'Xuất hàng',
-                icon: <Warehouse />,
-                children: [
-                    {
-                        title: 'Yêu cầu xuất kho',
-                        path: '/inventory-staff/requests-export-receipt',
-                        icon: <ReceiptLong />,
-                    },
-                    {
-                        title: 'Phiếu xuất kho',
-                        path: '/inventory-staff/export-receipt',
-                        icon: <Receipt />,
-                    },
-                    
-                ]
+                title: 'Phiếu nhập kho',
+                path: '/inventory-staff/import-receipt',
+                icon: <Receipt />,
+            },
+        ],
+    },
+    {
+        title: 'Xuất hàng',
+        icon: <Warehouse />,
+        children: [
+            {
+                title: 'Yêu cầu xuất kho',
+                path: '/inventory-staff/requests-export-receipt',
+                icon: <ReceiptLong />,
             },
             {
-                title: 'Nhập tồn kho',
-                path: '/inventory-staff/inventory-check',
-                icon: <DomainVerification />,
+                title: 'Phiếu xuất kho',
+                path: '/inventory-staff/export-receipt',
+                icon: <Receipt />,
             },
+        ],
+    },
+    {
+        title: 'Nhập tồn kho',
+        path: '/inventory-staff/inventory-check',
+        icon: <DomainVerification />,
+    },
 
+    {
+        title: 'Kiểm kho',
+        icon: <ShoppingCart />,
+        path: '/inventory-staff/inventory-check-item',
+    },
     // {
-    //     title: 'Kiểm kho',
-    //     icon: <ShoppingCart />,
-    //     path: '/inventory-staff/inventory-check-item',
-    // },
-    // { 
     //     title: 'login',
     //     path: '/login',
     //     icon: icon('ic_lock'),
@@ -299,7 +297,6 @@ const saleNavConfig = [
         path: '/sale-staff/request-customer',
         icon: <Payments />,
     },
-
 
     // ...
 ];

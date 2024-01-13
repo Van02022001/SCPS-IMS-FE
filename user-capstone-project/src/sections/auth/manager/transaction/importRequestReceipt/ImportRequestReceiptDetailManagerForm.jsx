@@ -344,7 +344,7 @@ const ImportRequestReceiptDetailManagerForm = ({
                                         InputProps={{ readOnly: true }}
                                         size="small"
                                         variant="outlined"
-                                        label="Tên sản phẩm"
+                                        label="Mã phiếu"
                                         sx={{ width: '70%', pointerEvents: 'none' }}
                                         value={importReceipst.code}
                                     />
@@ -368,7 +368,7 @@ const ImportRequestReceiptDetailManagerForm = ({
                                         variant="outlined"
                                         label="Mô tả"
                                         sx={{ width: '70%', pointerEvents: 'none' }}
-                                        value={importReceipst.description}
+                                        value={importReceipst.note}
                                     />
                                 </Grid>
                             </Grid>
@@ -472,6 +472,7 @@ const ImportRequestReceiptDetailManagerForm = ({
                                                     padding: '10px 0 0 20px',
                                                 }}
                                             >
+                                                <TableCell>Mã sản phẩm</TableCell>
                                                 <TableCell>Tên sản phẩm</TableCell>
                                                 <TableCell>Số lượng</TableCell>
                                                 <TableCell>Đơn vị</TableCell>
@@ -479,7 +480,8 @@ const ImportRequestReceiptDetailManagerForm = ({
                                             {importReceipst.details.map((items) => {
                                                 return (
                                                     <TableRow key={items.id}>
-                                                        <TableCell>{items.itemName}</TableCell>
+                                                        <TableCell>{items.item.code}</TableCell>
+                                                        <TableCell>{items.item.subcategoryName}</TableCell>
                                                         <TableCell>{items.quantity}</TableCell>
                                                         <TableCell>{items.unitName}</TableCell>
                                                     </TableRow>
@@ -497,7 +499,7 @@ const ImportRequestReceiptDetailManagerForm = ({
                                         </TableRow>
                                         <TableRow>
                                             <TableCell>Tổng tiền:</TableCell>
-                                            <TableCell>{importReceipst.totalPrice} VND</TableCell>
+                                            <TableCell>{importReceipst.totalPrice?.toLocaleString('vi-VN')} VND</TableCell>
                                         </TableRow>
                                     </TableBody>
                                 </TableContainer>

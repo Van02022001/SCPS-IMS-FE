@@ -98,7 +98,7 @@ const CreateSubCategoryForm = (props) => {
         if (message === 'Invalid request') {
             setErrorMessage('Yêu cầu không hợp lệ !');
         } else if (message === 'Sub category name was existed') {
-            setErrorMessage('Tên hàng hóa đã tồn tại !');
+            setErrorMessage('Tên danh mục đã tồn tại !');
         } else if (message === 'unit_mea_id: Unit of measurement id is required') {
             setErrorMessage('Vui lòng chọn đơn vị đo lường !');
         } else if (message === 'unit_id: Required field') {
@@ -281,7 +281,7 @@ const CreateSubCategoryForm = (props) => {
 
     const validateName = (value) => {
         if (!value.trim()) {
-            return 'Tên hàng hóa không được để trống';
+            return 'Tên danh mục không được để trống';
         } else if (!/^\p{Lu}/u.test(value)) {
             return 'Chữ cái đầu phải in hoa.';
         }
@@ -291,7 +291,7 @@ const CreateSubCategoryForm = (props) => {
 
     const validateDescription = (value) => {
         if (!value.trim()) {
-            return 'Mô tả hàng hóa không được để trống.';
+            return 'Mô tả danh mục không được để trống.';
         }
         return null;
     };
@@ -344,7 +344,7 @@ const CreateSubCategoryForm = (props) => {
                 <DialogContent style={{ width: '90%' }}>
                     <Tabs value={currentTab} onChange={handleChangeTab} indicatorColor="primary" textColor="primary">
                         <Tab label="Thông tin" />
-                        <Tab label="Mô tả chi tiết" />
+                        {/* <Tab label="Mô tả chi tiết" /> */}
                     </Tabs>
                     {currentTab === 0 && (
                         <div style={{ marginLeft: 100 }}>
@@ -360,7 +360,7 @@ const CreateSubCategoryForm = (props) => {
                                             sx={{ marginBottom: 4, gap: 5 }}
                                         >
                                             <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
-                                                Tên hàng hóa:{' '}
+                                                Tên danh mục:{' '}
                                             </Typography>
                                             <TextField
                                                 helperText={nameError}
@@ -383,7 +383,7 @@ const CreateSubCategoryForm = (props) => {
                                             sx={{ marginBottom: 4, gap: 5 }}
                                         >
                                             <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
-                                                Mô tả về hàng hóa:{' '}
+                                                Mô tả về danh mục:{' '}
                                             </Typography>
                                             <TextField
                                                 id="outlined-multiline-static"
@@ -654,11 +654,11 @@ const CreateSubCategoryForm = (props) => {
                                         {/* Thêm các trường khác ở đây */}
                                     </Grid>
                                 </Grid>
-                                <Grid container spacing={2} sx={{ gap: '20px' }}>
+                                {/* <Grid container spacing={2} sx={{ gap: '20px' }}>
                                     <BoxComponent />
                                     <BoxComponent />
                                     <BoxComponent />
-                                </Grid>
+                                </Grid> */}
 
                                 <Grid container spacing={1} sx={{ gap: '20px' }}>
                                     <Button
@@ -702,7 +702,7 @@ const CreateSubCategoryForm = (props) => {
                         </div>
                     )}
 
-                    {currentTab === 1 && (
+                    {/* {currentTab === 1 && (
                         <div style={{ marginLeft: 100 }}>
                             <Card sx={{ minWidth: 275, marginTop: 5 }} spacing={2}>
                                 <Typography
@@ -772,7 +772,7 @@ const CreateSubCategoryForm = (props) => {
                                 </Grid>
                             </Stack>
                         </div>
-                    )}
+                    )} */}
                 </DialogContent>
             </div>
             <SnackbarSuccess

@@ -19,7 +19,6 @@ import {
     TablePagination,
 } from '@mui/material';
 
-
 import { getItemsByPriceHistory } from '~/data/mutation/items/item-mutation';
 import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
@@ -31,9 +30,11 @@ import { getAllSuppliers } from '~/data/mutation/supplier/suppliers-mutation';
 import { getItemsByMovementsHistory } from '~/data/mutation/items-movement/items-movement-mutation';
 import AddItemsMovementForm from './AddItemsMovementForm';
 import dayjs from 'dayjs';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 
 const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode, updateItemStatusInList }) => {
     // const [expandedItem, setExpandedItem] = useState(itemId);
+    const [itemsData, setItemsData] = useState(items);
     const [formHeight, setFormHeight] = useState(0);
     const [selectedTab, setSelectedTab] = useState(0);
     const [tab1Data, setTab1Data] = useState({ categories_id: [] });
@@ -57,6 +58,8 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
     const [isError, setIsError] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
+    const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
     // phân trang
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [page, setPage] = useState(0);
@@ -166,7 +169,6 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
         return null;
     }
 
-
     const handleEdit = (field, value) => {
         console.log(`Field: ${field}, Value: ${value}`);
         if (field === 'sub_category_id') {
@@ -195,6 +197,16 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
     const handleOpenAddItemMovementDialog = () => {
         setOpenAddItemMovementDialog(true);
     };
+
+    const handleSaveLocation = (successMessage) => {
+        setSnackbarSuccessMessage(
+            successMessage === 'Create item movement successfully'
+                ? 'Chuyển vị trí sản phẩm thành công.'
+                : 'Thành công',
+        );
+        setSnackbarSuccessOpen(true);
+    };
+
     const handleCloseAddItemMovementDialog = () => {
         setOpenAddItemMovementDialog(false);
     };
@@ -379,7 +391,9 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
-                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>Vị trí :</Typography>
+                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                                        Vị trí :
+                                    </Typography>
                                     <div style={{ display: 'flex', width: '71%', alignItems: 'center' }}>
                                         <TextField
                                             size="small"
@@ -391,28 +405,29 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                             value={
                                                 item.locations
                                                     ? [
-                                                        ...new Set(
-                                                            item.locations.map(
-                                                                (location) =>
-                                                                    `${location.warehouse.name
-                                                                    } - Số lượng: ${calculateTotalQuantity(
-                                                                        location.warehouse.name,
-                                                                    )}`,
-                                                            ),
-                                                        ),
-                                                    ].join('\n')
+                                                          ...new Set(
+                                                              item.locations.map(
+                                                                  (location) =>
+                                                                      `${
+                                                                          location.warehouse.name
+                                                                      } - Số lượng: ${calculateTotalQuantity(
+                                                                          location.warehouse.name,
+                                                                      )}`,
+                                                              ),
+                                                          ),
+                                                      ].join('\n')
                                                     : ''
                                             }
                                             title={
                                                 item.locations
                                                     ? [
-                                                        ...new Set(
-                                                            item.locations.map(
-                                                                (location) =>
-                                                                    `${location.warehouse.address} - ${location.warehouse.name}`,
-                                                            ),
-                                                        ),
-                                                    ].join('\n')
+                                                          ...new Set(
+                                                              item.locations.map(
+                                                                  (location) =>
+                                                                      `${location.warehouse.address} - ${location.warehouse.name}`,
+                                                              ),
+                                                          ),
+                                                      ].join('\n')
                                                     : ''
                                             }
                                         />
@@ -510,7 +525,9 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
-                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>Giá mua:</Typography>
+                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                                        Giá mua:
+                                    </Typography>
                                     <TextField
                                         InputProps={{ readOnly: true }}
                                         size="small"
@@ -528,7 +545,9 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
-                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>Giá bán:</Typography>
+                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                                        Giá bán:
+                                    </Typography>
                                     <TextField
                                         InputProps={{ readOnly: true }}
                                         size="small"
@@ -565,19 +584,6 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                     <div>
                         {isSuccess && <SuccessAlerts message={successMessage} />}
                         {isError && <ErrorAlerts errorMessage={errorMessage} />}
-                        <Stack spacing={4} margin={2}>
-                            <Grid container spacing={1} sx={{ gap: '20px' }}>
-                                <Button variant="contained" color="warning" onClick={handleOpenAddItemMovementDialog}>
-                                    Chuyển sản phẩm trong kho
-                                </Button>
-                                <AddItemsMovementForm
-                                    open={openAddItemMovementDialog}
-                                    onClose={handleCloseAddItemMovementDialog}
-                                    itemId={itemId}
-                                    itemMovementsData={itemMovementsData}
-                                />
-                            </Grid>
-                        </Stack>
                     </div>
                 </div>
             )}
@@ -691,8 +697,8 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                                             </TableCell>
                                                             <TableCell>
                                                                 {items.toLocation &&
-                                                                    items.toLocation.binNumber &&
-                                                                    items.toLocation.shelfNumber
+                                                                items.toLocation.binNumber &&
+                                                                items.toLocation.shelfNumber
                                                                     ? `${items.toLocation.binNumber} - ${items.toLocation.shelfNumber}`
                                                                     : 'Không có'}
                                                             </TableCell>
@@ -775,6 +781,24 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                     onPageChange={handleChangePage}
                                     onRowsPerPageChange={handleChangeRowsPerPage}
                                 />
+                                <Stack spacing={4} margin={2}>
+                                    <Grid container spacing={1} sx={{ gap: '20px' }}>
+                                        <Button
+                                            variant="contained"
+                                            color="warning"
+                                            onClick={handleOpenAddItemMovementDialog}
+                                        >
+                                            Chuyển sản phẩm trong kho
+                                        </Button>
+                                        <AddItemsMovementForm
+                                            open={openAddItemMovementDialog}
+                                            onClose={handleCloseAddItemMovementDialog}
+                                            onSave={handleSaveLocation}
+                                            itemId={itemId}
+                                            itemMovementsData={itemMovementsData}
+                                        />
+                                    </Grid>
+                                </Stack>
                             </Card>
                         </div>
                     </Stack>
@@ -782,6 +806,15 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                     <div>
                         {isSuccess && <SuccessAlerts message={successMessage} />}
                         {isError && <ErrorAlerts errorMessage={errorMessage} />}
+                        <SnackbarSuccess
+                            open={snackbarSuccessOpen}
+                            handleClose={() => {
+                                setSnackbarSuccessOpen(false);
+                                setSnackbarSuccessMessage('');
+                            }}
+                            message={snackbarSuccessMessage}
+                            style={{ bottom: '16px', right: '16px' }}
+                        />
                     </div>
                 </div>
             )}

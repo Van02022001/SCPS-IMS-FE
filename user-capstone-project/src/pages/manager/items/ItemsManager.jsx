@@ -65,7 +65,7 @@ const TABLE_HEAD = [
     { id: 'role', label: 'Số lượng', alignRight: false },
     { id: 'status', label: 'Thương hiệu', alignRight: false },
     { id: 'isVerified', label: 'Nhà cung cấp', alignRight: false },
-    { id: 'origin', label: 'Nguồn gốc', alignRight: false },
+    { id: 'origin', label: 'Xuất xứ', alignRight: false },
     { id: 'status', label: 'Trạng thái', alignRight: false },
 ];
 // const orderDetailFormStyles = {
@@ -495,14 +495,14 @@ const ItemsManagerPage = () => {
             </FormControl>
 
             <FormControl sx={{ m: 1, width: 200, mb: 2 }}>
-                <InputLabel id="demo-multiple-checkbox-label">Nguồn gốc</InputLabel>
+                <InputLabel id="demo-multiple-checkbox-label">Xuất xứ</InputLabel>
                 <Select
                     labelId="demo-multiple-checkbox-label"
                     id="demo-multiple-checkbox"
                     multiple
                     value={selectedOrigins}
                     onChange={(event) => setSelectedOrigins(event.target.value)}
-                    input={<OutlinedInput label="Nguồn gốc" />}
+                    input={<OutlinedInput label="Xuất xứ" />}
                     renderValue={(selected) => selected.join(', ')}
                     MenuProps={MenuProps}
                 >

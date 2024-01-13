@@ -64,7 +64,7 @@ dayjs.extend(isSameOrBefore);
 const TABLE_HEAD = [
     { id: 'image', label: '', alignRight: false },
     // { id: 'id', label: 'Mã hàng', alignRight: false },
-    { id: 'name', label: 'Tên sản phẩm', alignRight: false },
+    { id: 'name', label: 'Tên danh mục', alignRight: false },
     { id: 'description', label: 'Mô tả', alignRight: false },
     { id: 'createdAt', label: 'Ngày tạo', alignRight: false },
     // { id: 'updatedAt', label: 'Ngày cập nhập', alignRight: false },
@@ -203,7 +203,11 @@ const SubCategoryPage = () => {
         setOpenOderForm(false);
         setSubCategoryData((prevSubCategoryData) => [newSubCategory, ...prevSubCategoryData]);
 
-        setSnackbarSuccessMessage(successMessage === 'Create sub category successfully.' ? 'Tạo danh mục sản phẩm thành công!' : 'Thành công');
+        setSnackbarSuccessMessage(
+            successMessage === 'Create sub category successfully.'
+                ? 'Tạo danh mục danh mục thành công!'
+                : successMessage,
+        );
         setSnackbarSuccessOpen(true);
     };
 
@@ -242,7 +246,7 @@ const SubCategoryPage = () => {
         if (selectedSubCategoryId === subCategory.id) {
             setSelectedSubCategoryId(null); // Đóng nếu đã mở
         } else {
-            setSelectedSubCategoryId(subCategory.id); // Mở hoặc chuyển sang sản phẩm khác
+            setSelectedSubCategoryId(subCategory.id); // Mở hoặc chuyển sang danh mục khác
         }
     };
 
@@ -261,10 +265,10 @@ const SubCategoryPage = () => {
     // Các hàm xử lý soft theo name--------------------------------------------------------------------------------------------------------------------------------
     const handleCheckboxChange = (event, subCategoryId) => {
         if (event.target.checked) {
-            // Nếu người dùng chọn checkbox, thêm sản phẩm vào danh sách đã chọn.
+            // Nếu người dùng chọn checkbox, thêm danh mục vào danh sách đã chọn.
             setSelectedSubCategoryId([...selectedSubCategoryId, subCategoryId]);
         } else {
-            // Nếu người dùng bỏ chọn checkbox, loại bỏ sản phẩm khỏi danh sách đã chọn.
+            // Nếu người dùng bỏ chọn checkbox, loại bỏ danh mục khỏi danh sách đã chọn.
             setSelectedSubCategoryId(selectedSubCategoryId.filter((id) => id !== subCategoryId));
         }
     };
@@ -272,7 +276,7 @@ const SubCategoryPage = () => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
         setOrderBy(property);
-        // Sắp xếp danh sách sản phẩm dựa trên trường và hướng đã chọn
+        // Sắp xếp danh sách danh mục dựa trên trường và hướng đã chọn
         const sortedProduct = [...subCategoryData].sort((a, b) => {
             const valueA = a[property];
             const valueB = b[property];
@@ -389,7 +393,7 @@ const SubCategoryPage = () => {
                 </Button>
                 <Dialog fullWidth maxWidth open={openOderForm}>
                     <DialogTitle>
-                        Tạo Sản Phẩm{' '}
+                        Tạo Danh Mục{' '}
                         <IconButton style={{ float: 'right' }} onClick={handleCloseOdersForm}>
                             <CloseIcon color="primary" />
                         </IconButton>{' '}
@@ -592,7 +596,6 @@ const SubCategoryPage = () => {
                 message={snackbarSuccessMessage}
                 style={{ bottom: '16px', right: '16px' }}
             />
-
         </>
     );
 };

@@ -71,9 +71,7 @@ const CreateRequestCustomerPage = () => {
     const navigate = useNavigate();
 
     const [searchText, setSearchText] = useState('');
-    const [tabs, setTabs] = useState([
-        { label: 'Hóa đơn 1', products: [] },
-    ]);
+    const [tabs, setTabs] = useState([{ label: 'Hóa đơn 1', products: [] }]);
     const [selectedTab, setSelectedTab] = useState(0);
 
     //========================== Hàm notification của trang ==================================
@@ -83,10 +81,6 @@ const CreateRequestCustomerPage = () => {
     const [errorMessage, setErrorMessage] = useState('');
     const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
     const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
-
-
-
-
 
     const handleSuccessMessage = (message) => {
         setOpen(true);
@@ -108,6 +102,8 @@ const CreateRequestCustomerPage = () => {
             setErrorMessage('Không tìm thấy sản phẩm trong kho!');
         } else if (message === 'Hãy nhập số lượng') {
             setErrorMessage('Hãy nhập số lượng !');
+        } else if (message === 'Hãy chọn ít nhất 1 sản phẩm') {
+            setErrorMessage('Hãy chọn ít nhất 1 sản phẩm !');
         }
     };
 
@@ -134,6 +130,7 @@ const CreateRequestCustomerPage = () => {
 
     const TABLE_HEAD = [
         { id: 'image' },
+        { id: 'code', label: 'Mã sản phẩm', alignRight: false },
         { id: 'name', label: 'Tên sản phẩm', alignRight: false },
         { id: 'availableQuantity', label: 'Số lượng tồn kho', alignRight: false },
         { id: 'quality', label: 'Số lượng', alignRight: false },
@@ -284,9 +281,11 @@ const CreateRequestCustomerPage = () => {
 
     const handleCreateImportReceipt = async () => {
         try {
-
             if (selectedItems.some((item) => !item.quantity || parseInt(item.quantity, 10) <= 0)) {
                 handleErrorMessage('Hãy nhập số lượng');
+                return;
+            } else if (selectedItems.length === 0) {
+                handleErrorMessage('Hãy chọn ít nhất 1 sản phẩm');
                 return;
             }
             // Use the data from descriptionReceipt and other relevant states
@@ -360,33 +359,35 @@ const CreateRequestCustomerPage = () => {
                                                             key={`${selectedItem.id}-${index}`}
                                                             sx={{ display: 'flex', alignItems: 'center' }}
                                                         >
-                                                            <ListItemText sx={{ flexBasis: '2%' }}>
+                                                            <ListItemText sx={{ flexBasis: '7%' }}>
                                                                 <img
-                                                                    src={selectedItem.avatar}
+                                                                    src={selectedItem.imageUrl}
                                                                     // alt={selectedItem.name}
                                                                     width="48"
                                                                     height="48"
                                                                 />
                                                             </ListItemText>
-                                                            {/* <ListItemText
-                                                                // primary={selectedItem.id}
-                                                                onChange={(e) => setItemId(e.target.value)}
-                                                            /> */}
-                                                            <ListItemText sx={{ flexBasis: '24%' }}>
+
+                                                            <ListItemText sx={{ flexBasis: '22%' }}>
                                                                 <Typography variant="body1">
-                                                                    {selectedItem.name}
+                                                                    {selectedItem.code}
                                                                 </Typography>
                                                             </ListItemText>
-                                                            <ListItemText sx={{ flexBasis: '24%' }}>
+                                                            <ListItemText sx={{ flexBasis: '32%' }}>
+                                                                <Typography variant="body1">
+                                                                    {selectedItem.subcategoryName}
+                                                                </Typography>
+                                                            </ListItemText>
+                                                            <ListItemText sx={{ flexBasis: '22%' }}>
                                                                 <Typography variant="body1">
                                                                     {selectedItem.availableQuantity}
                                                                 </Typography>
                                                             </ListItemText>
-                                                            <ListItemText sx={{ flexBasis: '12%' }}>
+                                                            <ListItemText sx={{ flexBasis: '16%' }}>
                                                                 <TextField
                                                                     type="text"
                                                                     label="Số lượng"
-                                                                    sx={{ width: '60%' }}
+                                                                    sx={{ width: '70%' }}
                                                                     value={selectedItem.quantity}
                                                                     onChange={(e) => {
                                                                         const inputValue = e.target.value;
@@ -428,7 +429,7 @@ const CreateRequestCustomerPage = () => {
                                             id="outlined-multiline-static"
                                             multiline
                                             label="Ghi chú"
-                                            sx={{ border: 'none' }}
+                                            sx={{ border: 'none', width: '300px', marginLeft: '10px' }}
                                             variant="standard"
                                             value={descriptionReceipt}
                                             onChange={(e) => setDescriptionReceipt(e.target.value)}
@@ -569,16 +570,16 @@ const CreateRequestCustomerPage = () => {
                                                                 border: '1px solid #ccc',
                                                                 borderRadius: '8px',
                                                                 boxShadow: '4px 4px 10px rgba(0, 0, 0, 0.1)',
-                                                                width: '150px',
+                                                                width: '230px',
                                                                 position: 'relative',
                                                             }}
                                                             InputProps={{ readOnly: true }}
-                                                            title={
-                                                                [`Tên thương hiệu:  ${item.brandName}`,
+                                                            title={[
+                                                                `Tên thương hiệu:  ${item.brandName}`,
                                                                 `Số lượng: ${item.availableQuantity}`,
                                                                 `Nguồn gốc: ${item.originName}`,
-                                                                `Nhà cung cấp: ${item.supplierName}`].join('\n')
-                                                            }
+                                                                `Nhà cung cấp: ${item.supplierName}`,
+                                                            ].join('\n')}
                                                             onClick={() => handleAddToCart(item)}
                                                             titleStyle={{
                                                                 display: 'inline-block',
@@ -586,21 +587,34 @@ const CreateRequestCustomerPage = () => {
                                                                 border: '1px solid #ccc',
                                                                 borderRadius: '8px',
                                                                 boxShadow: '4px 4px 10px rgba(0, 0, 0, 0.1)',
-                                                                width: '150px',
+                                                                width: '230px',
                                                                 position: 'relative',
                                                             }}
                                                         >
-                                                            <img src={item.imageUrl} width="100%" />
-                                                            <div style={{ padding: '8px' }}>
-                                                                <Typography variant="body1">{item.subcategoryName}</Typography>
+                                                            <div style={{ display: 'flex' }}>
+                                                                <img
+                                                                    src={item.imageUrl}
+                                                                    style={{
+                                                                        width: '40%',
+                                                                        height: '70px',
+                                                                        objectFit: 'cover',
+                                                                    }}
+                                                                />
+                                                                <div style={{ padding: '8px' }}>
+                                                                    <Typography variant="body1">
+                                                                        {item.subcategoryName}
+                                                                    </Typography>
+                                                                    <Typography variant="body1">{item.code}</Typography>
+                                                                </div>
                                                             </div>
                                                         </ListItem>
                                                     ))
                                                 ) : (
-                                                    <Typography variant="body2">Chọn kho hàng trước khi thêm sản phẩm.</Typography>
+                                                    <Typography variant="body2">
+                                                        Chọn kho hàng trước khi thêm sản phẩm.
+                                                    </Typography>
                                                 )}
                                             </List>
-
                                         </DialogContent>
                                     </div>
 
@@ -628,7 +642,7 @@ const CreateRequestCustomerPage = () => {
                         </Grid>
                     </Stack>
                 </Card>
-            </Box >
+            </Box>
         </>
     );
 };

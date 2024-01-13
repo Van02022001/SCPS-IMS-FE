@@ -117,7 +117,10 @@ const CreateTransferForm = (props) => {
     });
 
     const TABLE_HEAD = [
+        { id: 'image' },
+        { id: 'code', label: 'Mã code', alignRight: false },
         { id: 'name', label: 'Tên sản phẩm', alignRight: false },
+        { id: 'availableQuantity', label: 'Số lượng tồn kho', alignRight: false },
         { id: 'unit', label: 'Kho đến', alignRight: false },
         { id: 'quality', label: 'Số lượng', alignRight: false },
     ];
@@ -311,7 +314,7 @@ const CreateTransferForm = (props) => {
                     </Typography>
                 </Stack>
                 <Grid container spacing={2}>
-                    <Grid item xs={7}>
+                    <Grid item xs={8.5}>
                         {/* Toolbar */}
 
                         <Scrollbar>
@@ -336,22 +339,29 @@ const CreateTransferForm = (props) => {
                                                 key={`${selectedItem.id}-${index}`}
                                                 sx={{ display: 'flex', alignItems: 'center' }}
                                             >
-                                                {/* <img
-                                                    src={selectedItem.avatar}
-                                                    alt={selectedItem.name}
-                                                    width="48"
-                                                    height="48"
-                                                /> */}
-                                                {/* <ListItemText
-                                                    // primary={selectedItem.id}
-                                                    onChange={(e) => setItemId(e.target.value)}
-                                                /> */}
-                                                <ListItemText sx={{ flexBasis: '44%' }}>
+                                                <ListItemText sx={{ flexBasis: '0%' }}>
+                                                    {selectedItem.subCategory.images &&
+                                                        selectedItem.subCategory.images.length > 0 && (
+                                                            <img
+                                                                src={selectedItem.subCategory.images[0].url}
+                                                                // alt={selectedItem.name}
+                                                                width="48"
+                                                                height="48"
+                                                            />
+                                                        )}
+                                                </ListItemText>
+                                                <ListItemText sx={{ flexBasis: '14%' }}>
+                                                    <Typography variant="body1">{selectedItem.code}</Typography>
+                                                </ListItemText>
+                                                <ListItemText sx={{ flexBasis: '18%' }}>
                                                     <Typography variant="body1">
                                                         {selectedItem.subCategory.name}
                                                     </Typography>
                                                 </ListItemText>
-                                                <ListItemText sx={{ flexBasis: '32%' }}>
+                                                <ListItemText sx={{ flexBasis: '16%' }}>
+                                                    <Typography variant="body1">{selectedItem.available}</Typography>
+                                                </ListItemText>
+                                                <ListItemText sx={{ flexBasis: '12%' }}>
                                                     <Select
                                                         label="Kho đến"
                                                         sx={{ width: '50%' }}
@@ -378,7 +388,7 @@ const CreateTransferForm = (props) => {
                                                         ))}
                                                     </Select>
                                                 </ListItemText>
-                                                <ListItemText sx={{ flexBasis: '22%' }}>
+                                                <ListItemText sx={{ flexBasis: '4%' }}>
                                                     <TextField
                                                         type="number"
                                                         label="Số lượng"
@@ -405,7 +415,7 @@ const CreateTransferForm = (props) => {
                     </Grid>
 
                     {/* Danh sách sản phẩm bên phải */}
-                    <Grid item xs={5}>
+                    <Grid item xs={3.5}>
                         <div style={{ textAlign: 'center' }}>
                             <DialogContent
                                 style={{
@@ -429,13 +439,30 @@ const CreateTransferForm = (props) => {
                                                 border: '1px solid #ccc',
                                                 borderRadius: '8px',
                                                 boxShadow: '4px 4px 10px rgba(0, 0, 0, 0.1)',
-                                                width: '150px',
+                                                width: '230px',
                                             }}
+                                            title={[
+                                                `Tên thương hiệu:  ${items.brand.name}`,
+                                                `Nguồn gốc: ${items.origin.name}`,
+                                                `Nhà cung cấp: ${items.supplier.name}`,
+                                            ].join('\n')}
                                             onClick={() => handleAddToCart(items)}
                                         >
-                                            <img alt={items.name} width="100%" />
-                                            <div style={{ padding: '8px' }}>
-                                                <Typography variant="body1">{items.subCategory.name}</Typography>
+                                            <div style={{ display: 'flex' }}>
+                                                {items.subCategory.images && items.subCategory.images.length > 0 && (
+                                                    <img
+                                                        src={items.subCategory.images[0].url}
+                                                        style={{
+                                                            width: '40%',
+                                                            height: '70px',
+                                                            objectFit: 'cover',
+                                                        }}
+                                                    />
+                                                )}
+                                                <div style={{ padding: '8px' }}>
+                                                    <Typography variant="body1">{items.subCategory.name}</Typography>
+                                                    <Typography variant="body1">{items.code}</Typography>
+                                                </div>
                                             </div>
                                         </ListItem>
                                     ))}
