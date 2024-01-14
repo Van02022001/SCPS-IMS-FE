@@ -11,10 +11,8 @@ import {
     Paper,
     Avatar,
     Button,
-    Popover,
     Checkbox,
     TableRow,
-    MenuItem,
     TableBody,
     TableCell,
     Container,
@@ -31,16 +29,18 @@ import Scrollbar from '../../../components/scrollbar';
 import CloseIcon from '@mui/icons-material/Close';
 
 // sections
-import { UserListHead, UserListToolbar } from '../../../sections/@dashboard/user';
+import { OriginListHead, OriginToolbar } from '~/sections/@dashboard/manager/origin';
 // mock
 import USERLIST from '../../../_mock/user';
 import { getAllOrigins } from '~/data/mutation/origins/origins-mutation';
 import OriginDetailForm from '~/sections/auth/manager/origin/OriginDetailForm';
 import CreateOriginForm from '~/sections/auth/manager/origin/CreateOriginForm';
+import dayjs from 'dayjs';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 
 // ----------------------------------------------------------------------
 
-const TABLE_HEAD = [{ id: 'name', label: 'Tên', alignRight: false },];
+const TABLE_HEAD = [{ id: 'name', label: 'Tên nguồn', alignRight: false },];
 
 // ----------------------------------------------------------------------
 
@@ -78,7 +78,7 @@ const OriginPage = () => {
 
     const [open, setOpen] = useState(null);
 
-    const [openOderForm, setOpenOderForm] = useState(false);
+    const [openCreateOriginForm, setOpenCreateOriginForm] = useState(false);
 
     const [page, setPage] = useState(0);
 
@@ -94,11 +94,22 @@ const OriginPage = () => {
 
     const [originData, setOriginData] = useState([]);
 
+    const startIndex = page * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
+
+    const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
+    const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
+
     useEffect(() => {
         getAllOrigins()
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
+                    const sortedData = data.sort((a, b) => {
+                        return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(
+                            dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
+                        );
+                    });
                     setOriginData(data);
                 } else {
                     console.error('API response is not an array:', data);
@@ -109,14 +120,6 @@ const OriginPage = () => {
             });
     }, []);
 
-    const handleOpenMenu = (event) => {
-        setOpen(event.currentTarget);
-    };
-
-    const handleCloseMenu = () => {
-        setOpen(null);
-    };
-
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
@@ -125,7 +128,7 @@ const OriginPage = () => {
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelecteds = USERLIST.map((n) => n.name);
+            const newSelecteds = originData.map((n) => n.name);
             setSelected(newSelecteds);
             return;
         }
@@ -150,9 +153,9 @@ const OriginPage = () => {
     const handleOriginClick = (origin) => {
         if (selectedOriginId === origin.id) {
             console.log(selectedOriginId);
-            setSelectedOriginId(null); // Đóng nếu đã mở
+            setSelectedOriginId(null);
         } else {
-            setSelectedOriginId(origin.id); // Mở hoặc chuyển sang hóa đơn khác
+            setSelectedOriginId(origin.id);
         }
     };
 
@@ -162,8 +165,20 @@ const OriginPage = () => {
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
+    }
+    const handleCloseOdersForm = () => {
+        setOpenCreateOriginForm(false);
     };
 
+    const handleCreateCategorySuccess = (newOrigin, successMessage) => {
+        // Close the form
+        setOpenCreateOriginForm(false);
+        setOriginData((prevOriginData) => [...prevOriginData, newOrigin]);
+        // Show success message
+        setSnackbarSuccessMessage(successMessage === 'Create origin successfully' ? 'Tạo thể loại thành công!' : 'Thành công');
+        setSnackbarSuccessOpen(true);
+    };
+    //=========================Phân trang số lượng==========================
     const handleChangeRowsPerPage = (event) => {
         setPage(0);
         setRowsPerPage(parseInt(event.target.value, 10));
@@ -173,48 +188,44 @@ const OriginPage = () => {
         setPage(0);
         setFilterName(event.target.value);
     };
+    //============================================================================
+    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - originData.length) : 0;
 
-    const handleCloseOdersForm = () => {
-        setOpenOderForm(false);
-    };
-
-    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
-
-    const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
+    const filteredUsers = applySortFilter(originData, getComparator(order, orderBy), filterName);
 
     const isNotFound = !filteredUsers.length && !!filterName;
 
     return (
         <>
             <Helmet>
-                <title> Quản lý nguồn gốc | Minimal UI </title>
+                <title> Quản lý xuất xứ | Minimal UI </title>
             </Helmet>
 
             <Container>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                     <Typography variant="h4" gutterBottom>
-                        Quản lý nguồn gốc
+                        Quản lý xuất xứ
                     </Typography>
                     <Button
                         variant="contained"
                         startIcon={<Iconify icon="eva:plus-fill" />}
-                        onClick={() => setOpenOderForm(true)}
+                        onClick={() => setOpenCreateOriginForm(true)}
                     >
-                        Thêm nguồn gốc
+                        Thêm xuất xứ
                     </Button>
-                    <Dialog fullWidth maxWidth="sm" open={openOderForm}>
+                    <Dialog fullWidth maxWidth="sm" open={openCreateOriginForm}>
                         <DialogTitle>
-                            Tạo nguồn gốc{' '}
+                            Tạo xuất xứ{' '}
                             <IconButton style={{ float: 'right' }} onClick={handleCloseOdersForm}>
                                 <CloseIcon color="primary" />
                             </IconButton>{' '}
                         </DialogTitle>
-                        <CreateOriginForm />
+                        <CreateOriginForm onClose={handleCreateCategorySuccess} open={openCreateOriginForm} />
                     </Dialog>
                 </Stack>
 
                 <Card>
-                    <UserListToolbar
+                    <OriginToolbar
                         numSelected={selected.length}
                         filterName={filterName}
                         onFilterName={handleFilterByName}
@@ -223,17 +234,17 @@ const OriginPage = () => {
                     <Scrollbar>
                         <TableContainer sx={{ minWidth: 800 }}>
                             <Table>
-                                <UserListHead
+                                <OriginListHead
                                     order={order}
                                     orderBy={orderBy}
                                     headLabel={TABLE_HEAD}
-                                    rowCount={USERLIST.length}
+                                    rowCount={originData.length}
                                     numSelected={selected.length}
                                     onRequestSort={handleRequestSort}
                                     onSelectAllClick={handleSelectAllClick}
                                 />
                                 <TableBody>
-                                    {originData.map((origin) => {
+                                    {originData.slice(startIndex, endIndex).map((origin) => {
                                         return (
                                             <React.Fragment key={origin.id}>
                                                 <TableRow
@@ -244,14 +255,14 @@ const OriginPage = () => {
                                                     selected={selectedOriginId === origin.id}
                                                     onClick={() => handleOriginClick(origin)}
                                                 >
-                                                    <TableCell padding="checkbox">
+                                                    {/* <TableCell padding="checkbox">
                                                         <Checkbox
                                                             onChange={(event) => handleClick(event, origin.name)}
                                                         />
-                                                    </TableCell>
+                                                    </TableCell> */}
 
                                                     {/* tên  */}
-                                                    <TableCell component="th" scope="row" padding="none">
+                                                    <TableCell align="left">
                                                         <Stack direction="row" alignItems="center" spacing={2}>
                                                             {/* <Avatar alt={name} src={avatarUrl} /> */}
                                                             <Typography variant="subtitle2" noWrap>
@@ -311,7 +322,7 @@ const OriginPage = () => {
                     <TablePagination
                         rowsPerPageOptions={[5, 10, 25]}
                         component="div"
-                        count={USERLIST.length}
+                        count={originData.length}
                         rowsPerPage={rowsPerPage}
                         page={page}
                         onPageChange={handleChangePage}
@@ -319,25 +330,13 @@ const OriginPage = () => {
                     />
                 </Card>
             </Container>
+            <SnackbarSuccess
+                open={snackbarSuccessOpen}
+                handleClose={() => setSnackbarSuccessOpen(false)}
+                message={snackbarSuccessMessage}
+                style={{ bottom: '16px', right: '16px' }}
+            />
 
-            <Popover
-                open={Boolean(open)}
-                anchorEl={open}
-                onClose={handleCloseMenu}
-                anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                PaperProps={{
-                    sx: {
-                        p: 1,
-                        width: 140,
-                        '& .MuiMenuItem-root': {
-                            px: 1,
-                            typography: 'body2',
-                            borderRadius: 0.75,
-                        },
-                    },
-                }}
-            ></Popover>
         </>
     );
 };

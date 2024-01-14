@@ -30,6 +30,7 @@ import Label from '../../../components/label';
 import Iconify from '../../../components/iconify';
 import Scrollbar from '../../../components/scrollbar';
 import CloseIcon from '@mui/icons-material/Close';
+import dayjs from 'dayjs';
 
 // sections
 import { WarehouseListHead, WarehouseToolbar } from '~/sections/@dashboard/manager/warehouse';
@@ -39,6 +40,7 @@ import { getAllWarehouse } from '~/data/mutation/warehouse/warehouse-mutation';
 // form validation
 import CreateWarehouseForm from '~/sections/auth/manager/warehouse/CreateWarehouseForm';
 import WarehouseDetailForm from '~/sections/auth/manager/warehouse/WarehouseDetailForm';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 
 
 
@@ -49,7 +51,6 @@ const TABLE_HEAD = [
     { id: 'name', label: 'Tên', alignRight: false },
     { id: 'address', label: 'Địa chỉ', alignRight: false },
     { id: 'status', label: 'Trạng thái', alignRight: false },
-    { id: '' },
 ];
 
 // ----------------------------------------------------------------------
@@ -104,7 +105,11 @@ const WarehousePage = () => {
 
     const [warehouseData, setWarehouseData] = useState([]);
     const [warehouseStatus, setWarehouseStatus] = useState('');
+    const startIndex = page * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
 
+    const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
+    const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
     //Hàm để thay đổi data mỗi khi Edit xong api-------------------------------------------------------------
     const updateWarehouseInList = (updatedWarehouse) => {
         const warehouseIndex = warehouseData.findIndex((warehouse) => warehouse.id === updatedWarehouse.id);
@@ -128,6 +133,14 @@ const WarehousePage = () => {
         }
     };
 
+    const handleCreateWarehouseSuccess = (newWarehouse, successMessage) => {
+        // Close the form
+        setOpenOderForm(false);
+        setWarehouseData((prevWarehouseData) => [...prevWarehouseData, newWarehouse]);
+
+        setSnackbarSuccessMessage(successMessage === 'Create warehouse successfully' ? 'Tạo đơn vị thành công!' : 'Thành công');
+        setSnackbarSuccessOpen(true);
+    };
     //----------------------------------------------------------------
     const handleOpenMenu = (event) => {
         setOpen(event.currentTarget);
@@ -145,7 +158,7 @@ const WarehousePage = () => {
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelecteds = USERLIST.map((n) => n.name);
+            const newSelecteds = warehouseData.map((n) => n.name);
             setSelected(newSelecteds);
             return;
         }
@@ -212,7 +225,12 @@ const WarehousePage = () => {
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
-                    setWarehouseData(data);
+                    const sortedData = data.sort((a, b) => {
+                        return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(
+                            dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
+                        );
+                    });
+                    setWarehouseData(sortedData);
                 } else {
                     console.error('API response is not an array:', data);
                 }
@@ -247,7 +265,7 @@ const WarehousePage = () => {
                                 <CloseIcon color="primary" />
                             </IconButton>{' '}
                         </DialogTitle>
-                        <CreateWarehouseForm />
+                        <CreateWarehouseForm onClose={handleCreateWarehouseSuccess} open={openOderForm} />
                     </Dialog>
                 </Stack>
 
@@ -266,13 +284,13 @@ const WarehousePage = () => {
                                     order={order}
                                     orderBy={orderBy}
                                     headLabel={TABLE_HEAD}
-                                    rowCount={USERLIST.length}
+                                    rowCount={warehouseData.length}
                                     numSelected={selected.length}
                                     onRequestSort={handleRequestSort}
                                     onSelectAllClick={handleSelectAllClick}
                                 />
                                 <TableBody>
-                                    {warehouseData.map((warehouse) => {
+                                    {warehouseData.slice(startIndex, endIndex).map((warehouse) => {
                                         return (
                                             <React.Fragment key={warehouse.id}>
                                                 <TableRow
@@ -283,13 +301,13 @@ const WarehousePage = () => {
                                                     selected={selectedWarehouseId === warehouse.id}
                                                     onClick={() => handleWarehouseClick(warehouse)}
                                                 >
-                                                    <TableCell padding="checkbox">
+                                                    {/* <TableCell padding="checkbox">
                                                         <Checkbox
                                                             onChange={(event) => handleClick(event, warehouse.name)}
                                                         />
-                                                    </TableCell>
+                                                    </TableCell> */}
                                                     {/* tên  */}
-                                                    <TableCell component="th" scope="row" padding="none">
+                                                    <TableCell align="left">
                                                         <Stack direction="row" alignItems="center" spacing={2}>
                                                             {/* <Avatar alt={name} src={avatarUrl} /> */}
                                                             <Typography variant="subtitle2" noWrap>
@@ -310,7 +328,7 @@ const WarehousePage = () => {
                                                         </Label>
                                                     </TableCell>
 
-                                                    <TableCell align="right">
+                                                    {/* <TableCell align="right">
                                                         <IconButton
                                                             size="large"
                                                             color="inherit"
@@ -318,7 +336,7 @@ const WarehousePage = () => {
                                                         >
                                                             <Iconify icon={'eva:more-vertical-fill'} />
                                                         </IconButton>
-                                                    </TableCell>
+                                                    </TableCell> */}
                                                 </TableRow>
                                                 {selectedWarehouseId === warehouse.id && (
                                                     <TableRow>
@@ -373,7 +391,7 @@ const WarehousePage = () => {
                     <TablePagination
                         rowsPerPageOptions={[5, 10, 25]}
                         component="div"
-                        count={USERLIST.length}
+                        count={warehouseData.length}
                         rowsPerPage={rowsPerPage}
                         page={page}
                         onPageChange={handleChangePage}
@@ -381,7 +399,12 @@ const WarehousePage = () => {
                     />
                 </Card>
             </Container>
-
+            <SnackbarSuccess
+                open={snackbarSuccessOpen}
+                handleClose={() => setSnackbarSuccessOpen(false)}
+                message={snackbarSuccessMessage}
+                style={{ bottom: '16px', right: '16px' }}
+            />
         </>
     );
 };

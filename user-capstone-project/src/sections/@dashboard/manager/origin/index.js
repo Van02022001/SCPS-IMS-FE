@@ -1,2 +1,2 @@
-export { default as CategoryListHead } from './ItemsListHead';
-export { default as CategoryToolbar } from './ItemsToolbar';
+export { default as OriginListHead } from './OriginListHead';
+export { default as OriginToolbar } from './OriginToolbar';

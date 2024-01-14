@@ -57,20 +57,32 @@ function NavItem({ item, isReportMenuOpen }) {
           marginBottom: open ? '170px' : 0,
         }),
         ...(item.title === 'Hàng hóa' && !isReportMenuOpen && {
-          marginBottom: open ? '170px' : 0,
+          marginBottom: open ? '50px' : 0,
         }),
         ...(item.title === 'Quản lý mục' && !isReportMenuOpen && {
           marginBottom: open ? '350px' : 0,
+        }),
+        ...(item.title === 'Nhập hàng' && !isReportMenuOpen && {
+          marginBottom: open ? '100px' : 0,
+        }),
+        ...(item.title === 'Xuất hàng' && !isReportMenuOpen && {
+          marginBottom: open ? '100px' : 0,
+        }),
+        ...(item.title === 'Xuất kho' && !isReportMenuOpen && {
+          marginBottom: open ? '50px' : 0,
+        }),
+        ...(item.title === 'Quản lý kho' && !isReportMenuOpen && {
+          marginBottom: open ? '150px' : 0,
         }),
       }}
     >
       <StyledNavItemIcon>{icon && icon}</StyledNavItemIcon>
 
       <ListItemText disableTypography primary={title} 
-      sx={{
+        sx={{
           fontWeight: isActive ? 'bold' : 'normal',
         }} 
-        />
+      />
 
       {children ? (
         <IconButton
@@ -81,30 +93,29 @@ function NavItem({ item, isReportMenuOpen }) {
         </IconButton>
       ) : null}
 
-{children && (
-  <Collapse
-    in={open}
-    timeout="auto"
-    unmountOnExit
-    sx={{
-      position: 'absolute',
-      top: '100%',
-      left: 0,
-      backgroundColor: 'white',
-      zIndex: 1,
-      width: 260
-    }}
-  >
-    <List disablePadding>
-      {children.map((child) => (
-        <NavItem key={child.title} item={child} />
-      ))}
-    </List>
-  </Collapse>
-)}
+      {children && (
+        <Collapse
+          in={open}
+          timeout="auto"
+          unmountOnExit
+          sx={{
+            position: 'absolute',
+            top: '100%',
+            left: 0,
+            backgroundColor: 'white',
+            zIndex: 1,
+            width: 260
+          }}
+        >
+          <List disablePadding>
+            {children.map((child) => (
+              <NavItem key={child.title} item={child} />
+            ))}
+          </List>
+        </Collapse>
+      )}
 
       {info && info}
     </StyledNavItem>
   );
 }
-

@@ -1,10 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Button, Stack, Grid, TextField } from '@mui/material';
+import {
+    Typography,
+    Button,
+    Stack,
+    Grid,
+    TextField,
+    IconButton,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogContentText,
+    DialogActions,
+} from '@mui/material';
 
 import { editCategories, editStatusCategories } from '~/data/mutation/categories/categories-mutation';
-import SuccessAlerts from '~/components/alert/SuccessAlert';
-import ErrorAlerts from '~/components/alert/ErrorAlert';
+
+import CloseIcon from '@mui/icons-material/Close';
 import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
+import CustomDialog from '~/components/alert/ConfirmDialog';
+import SnackbarError from '~/components/alert/SnackbarError';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 
 const CategoryDetailForm = ({
     categories,
@@ -23,11 +38,74 @@ const CategoryDetailForm = ({
     const [editedCategory, setEditedCategory] = useState(null);
     const [currentStatus, setCurrentStatus] = useState('');
 
-    //thông báo
-    const [isSuccess, setIsSuccess] = useState(false);
-    const [isError, setIsError] = useState(false);
+    //========================== Hàm notification của trang ==================================
+    const [open, setOpen] = React.useState(false);
+    const [open1, setOpen1] = React.useState(false);
+    const [confirmOpen1, setConfirmOpen1] = useState(false);
+    const [confirmOpen2, setConfirmOpen2] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+
+    const handleSuccessMessage = (message) => {
+        setOpen(true);
+        if (message === 'Update category status successfully') {
+            setSuccessMessage('Cập nhập trạng thái thể loại thành công !');
+        } else if (message === 'Update category successfully') {
+            setSuccessMessage('Cập nhập thể loại thành công !');
+        }
+    };
+
+    const handleErrorMessage = (message) => {
+        setOpen1(true);
+        if (message === 'Category name was existed') {
+            setErrorMessage('Tên thể loại đã tồn tại !');
+        } else if (message === 'Update category successfully') {
+            setErrorMessage('Cập nhập thể loại thành công !');
+        }
+    };
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpen(false);
+        setOpen1(false);
+        setSuccessMessage('');
+        setErrorMessage('');
+    };
+
+    const action = (
+        <React.Fragment>
+            <Button color="secondary" size="small" onClick={handleClose}></Button>
+            <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
+                <CloseIcon fontSize="lage" />
+            </IconButton>
+        </React.Fragment>
+    );
+    const handleConfirmClose1 = () => {
+        setConfirmOpen1(false);
+    };
+
+    const handleConfirmUpdate1 = () => {
+        setConfirmOpen1(false);
+        updateCategory();
+    };
+
+    const handleConfirm1 = () => {
+        setConfirmOpen1(true);
+    };
+
+    const handleConfirmUpdateStatus2 = () => {
+        setConfirmOpen2(false);
+        updateCategoryStatus();
+    };
+
+    const handleConfirm2 = () => {
+        setConfirmOpen2(true);
+    };
+
+    //========================== Hàm notification của trang ==================================
 
     useEffect(() => {
         if (isOpen) {
@@ -80,9 +158,7 @@ const CategoryDetailForm = ({
                 const response = await editCategories(categoriesId, updateData);
 
                 if (response.status === '200 OK') {
-                    setIsSuccess(true);
-                    setIsError(false);
-                    setSuccessMessage(response.message);
+                    handleSuccessMessage(response.message); // thông báo
                 }
 
                 updateCategoryInList(response.data);
@@ -92,12 +168,10 @@ const CategoryDetailForm = ({
         } catch (error) {
             // Handle errors
             console.error('Error updating category:', error);
-            setIsError(true);
-            setIsSuccess(false);
-            setErrorMessage(error.response.data.message);
             if (error.response) {
                 console.log('Error response:', error.response);
             }
+            handleErrorMessage(error.response.data.message); // thông báo
         }
     };
 
@@ -116,9 +190,8 @@ const CategoryDetailForm = ({
             const response = await editStatusCategories(categoriesId, newStatus);
 
             if (response.status === '200 OK') {
-                setIsSuccess(true);
-                setIsError(false);
                 setSuccessMessage(response.message);
+                handleSuccessMessage(response.message);
             }
 
             // Sử dụng hàm để cập nhật trạng thái trong danh sách categories trong CategoryPage
@@ -128,8 +201,6 @@ const CategoryDetailForm = ({
             console.log('Category status updated:', response);
         } catch (error) {
             console.error('Error updating category status:', error);
-            setIsError(true);
-            setIsSuccess(false);
             setErrorMessage(error.response.data.message);
             if (error.response) {
                 console.log('Error response:', error.response);
@@ -192,7 +263,9 @@ const CategoryDetailForm = ({
                                         label="Mô tả"
                                         sx={{ width: '70%' }}
                                         value={editedCategory ? editedCategory.description : ''}
-                                        onChange={(e) => handleEdit('description', capitalizeFirstLetter(e.target.value))}
+                                        onChange={(e) =>
+                                            handleEdit('description', capitalizeFirstLetter(e.target.value))
+                                        }
                                     />
                                 </Grid>
                                 <Grid
@@ -205,10 +278,11 @@ const CategoryDetailForm = ({
                                 >
                                     <Typography variant="body1">Ngày tạo:</Typography>
                                     <TextField
+                                        InputProps={{ readOnly: true }}
                                         size="small"
                                         variant="outlined"
                                         label="Ngày tạo"
-                                        sx={{ width: '70%' }}
+                                        sx={{ width: '70%', pointerEvents: 'none' }}
                                         value={category.createdAt}
                                     />
                                 </Grid>
@@ -223,10 +297,11 @@ const CategoryDetailForm = ({
                                 >
                                     <Typography variant="body1">Ngày cập nhập:</Typography>
                                     <TextField
+                                        InputProps={{ readOnly: true }}
                                         size="small"
                                         variant="outlined"
                                         label="Ngày cập nhập"
-                                        sx={{ width: '70%' }}
+                                        sx={{ width: '70%', pointerEvents: 'none' }}
                                         value={category.updatedAt}
                                     />
                                 </Grid>
@@ -235,16 +310,47 @@ const CategoryDetailForm = ({
                         <div style={{ background: currentStatus === 'Active' ? 'green' : 'red' }} />
                         <Typography variant="body1">Trạng thái: {currentStatus}</Typography>
                     </Stack>
-                    {isSuccess && <SuccessAlerts />}
-                    {isError && <ErrorAlerts errorMessage={errorMessage} />}
                     <Stack spacing={4} margin={2}>
                         <Grid container spacing={1} sx={{ gap: '10px' }}>
-                            <Button variant="contained" color="primary" onClick={updateCategory}>
+                            <Button variant="contained" color="primary" onClick={handleConfirm1}>
                                 Cập nhật
                             </Button>
-                            <Button variant="contained" color="error" onClick={updateCategoryStatus}>
+                            {/* Thông báo confirm */}
+                            <CustomDialog
+                                open={confirmOpen1}
+                                onClose={handleConfirmClose1}
+                                title="Thông báo!"
+                                content="Bạn có chắc muốn cập nhật không?"
+                                onConfirm={handleConfirmUpdate1}
+                                confirmText="Xác nhận"
+                            />
+
+                            <Button variant="contained" color="error" onClick={handleConfirm2}>
                                 Thay đổi trạng thái
                             </Button>
+                            {/* Thông báo confirm */}
+                            <CustomDialog
+                                open={confirmOpen2}
+                                onClose={handleConfirmClose1}
+                                title="Thông báo!"
+                                content="Bạn có chắc muốn cập nhật không?"
+                                onConfirm={handleConfirmUpdateStatus2}
+                                confirmText="Xác nhận"
+                            />
+                            <SnackbarSuccess
+                                open={open}
+                                handleClose={handleClose}
+                                message={successMessage}
+                                action={action}
+                                style={{ bottom: '16px', right: '16px' }}
+                            />
+                            <SnackbarError
+                                open={open1}
+                                handleClose={handleClose}
+                                message={errorMessage}
+                                action={action}
+                                style={{ bottom: '16px', right: '16px' }}
+                            />
                         </Grid>
                     </Stack>
                 </div>

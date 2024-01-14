@@ -65,8 +65,11 @@ const LoginPage = () => {
 
                 {mdUp && (
                     <StyledSection>
-                        <Typography variant="h3" sx={{ px: 3, mt: 10 }}>
-                            Welcome to Công ty TNHH Sài Gòn kỹ thuật điều khiển
+                        <Typography
+                            variant="h4"
+                            sx={{ px: 5, mt: 10, mb: 5, display: 'flex', alignItems: 'center', textAlign: 'center' }}
+                        >
+                            Chào mừng bạn đến công ty <br /> Phụ Tùng Bơm Bê Tông SÀI GÒN
                         </Typography>
                         <img src="/assets/illustrations/IMS.png" alt="login" />
                     </StyledSection>

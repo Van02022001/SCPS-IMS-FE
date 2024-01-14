@@ -2,6 +2,7 @@ import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
 import React, { useEffect, useState } from 'react';
+import dayjs from 'dayjs';
 
 // @mui
 import {
@@ -30,15 +31,19 @@ import Scrollbar from '../../../components/scrollbar';
 import CloseIcon from '@mui/icons-material/Close';
 
 // sections
-import { UserListHead, UserListToolbar } from '../../../sections/@dashboard/user';
+import { UnitListHead, UnitToolbar } from '~/sections/@dashboard/manager/unit';
+import CreateUnitForm from '~/sections/auth/manager/unit/CreateUnitForm';
+
 // mock
 import { getAllUnit } from '~/data/mutation/unit/unit-mutation';
-import UnitForm from '~/sections/auth/manager/unit/UnitForm';
+
 import UnitDetailForm from '~/sections/auth/manager/unit/UnitDetailForm';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
+
 
 // ----------------------------------------------------------------------
 
-const TABLE_HEAD = [{ id: 'name', label: 'Tên đơn vị', alignRight: false }, { id: '' }];
+const TABLE_HEAD = [{ id: 'name', label: 'Tên đơn vị', alignRight: false }];
 
 // ----------------------------------------------------------------------
 
@@ -92,12 +97,23 @@ const UnitPage = () => {
 
     const [unitData, setUnitData] = useState([]);
 
+    const startIndex = page * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
+
+    const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
+    const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
+
     useEffect(() => {
         getAllUnit()
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
-                    setUnitData(data);
+                    const sortedData = data.sort((a, b) => {
+                        return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(
+                            dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
+                        );
+                    });
+                    setUnitData(sortedData);
                 } else {
                     console.error('API response is not an array:', data);
                 }
@@ -107,13 +123,6 @@ const UnitPage = () => {
             });
     }, []);
 
-    const handleOpenMenu = (event) => {
-        setOpen(event.currentTarget);
-    };
-
-    const handleCloseMenu = () => {
-        setOpen(null);
-    };
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -129,6 +138,16 @@ const UnitPage = () => {
         }
         setSelected([]);
     };
+    //===================================Những hàm update thay đổi data========================================
+    const handleCreateUnitSuccess = (newUnit, successMessage) => {
+        // Close the form
+        setOpenOderForm(false);
+        setUnitData((prevUnitData) => [...prevUnitData, newUnit]);
+
+        setSnackbarSuccessMessage(successMessage === 'Create unit successfully' ? 'Tạo đơn vị thành công!' : 'Thành công');
+        setSnackbarSuccessOpen(true);
+    };
+    //=========================================================================================================
 
     const handleClick = (event, name) => {
         const selectedIndex = selected.indexOf(name);
@@ -145,12 +164,12 @@ const UnitPage = () => {
         setSelected(newSelected);
     };
 
-    const handleUnitClick = (origin) => {
-        if (selectedUnitId === origin.id) {
+    const handleUnitClick = (unit) => {
+        if (selectedUnitId === unit.id) {
             console.log(selectedUnitId);
-            setSelectedUnitId(null); // Đóng nếu đã mở
+            setSelectedUnitId(null);
         } else {
-            setSelectedUnitId(origin.id); // Mở hoặc chuyển sang hóa đơn khác
+            setSelectedUnitId(unit.id);
         }
     };
 
@@ -207,12 +226,12 @@ const UnitPage = () => {
                                 <CloseIcon color="primary" />
                             </IconButton>{' '}
                         </DialogTitle>
-                        <UnitForm />
+                        <CreateUnitForm onClose={handleCreateUnitSuccess} open={openOderForm} />
                     </Dialog>
                 </Stack>
 
                 <Card>
-                    <UserListToolbar
+                    <UnitToolbar
                         numSelected={selected.length}
                         filterName={filterName}
                         onFilterName={handleFilterByName}
@@ -221,7 +240,7 @@ const UnitPage = () => {
                     <Scrollbar>
                         <TableContainer sx={{ minWidth: 800 }}>
                             <Table>
-                                <UserListHead
+                                <UnitListHead
                                     order={order}
                                     orderBy={orderBy}
                                     headLabel={TABLE_HEAD}
@@ -231,7 +250,7 @@ const UnitPage = () => {
                                     onSelectAllClick={handleSelectAllClick}
                                 />
                                 <TableBody>
-                                    {unitData.map((unit) => {
+                                    {unitData.slice(startIndex, endIndex).map((unit) => {
                                         return (
                                             <React.Fragment key={unit.id}>
                                                 <TableRow
@@ -242,14 +261,12 @@ const UnitPage = () => {
                                                     selected={selectedUnitId === unit.id}
                                                     onClick={() => handleUnitClick(unit)}
                                                 >
-                                                    <TableCell padding="checkbox">
-                                                        <Checkbox
-                                                            onChange={(event) => handleClick(event, unit.name)}
-                                                        />
-                                                    </TableCell>
+                                                    {/* <TableCell padding="checkbox">
+                                                        <Checkbox onChange={(event) => handleClick(event, unit.name)} />
+                                                    </TableCell> */}
 
                                                     {/* tên  */}
-                                                    <TableCell component="th" scope="row" padding="none">
+                                                    <TableCell align="left">
                                                         <Stack direction="row" alignItems="center" spacing={2}>
                                                             {/* <Avatar alt={name} src={avatarUrl} /> */}
                                                             <Typography variant="subtitle2" noWrap>
@@ -317,25 +334,12 @@ const UnitPage = () => {
                     />
                 </Card>
             </Container>
-
-            <Popover
-                open={Boolean(open)}
-                anchorEl={open}
-                onClose={handleCloseMenu}
-                anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                PaperProps={{
-                    sx: {
-                        p: 1,
-                        width: 140,
-                        '& .MuiMenuItem-root': {
-                            px: 1,
-                            typography: 'body2',
-                            borderRadius: 0.75,
-                        },
-                    },
-                }}
-            ></Popover>
+            <SnackbarSuccess
+                open={snackbarSuccessOpen}
+                handleClose={() => setSnackbarSuccessOpen(false)}
+                message={snackbarSuccessMessage}
+                style={{ bottom: '16px', right: '16px' }}
+            />
         </>
     );
 };

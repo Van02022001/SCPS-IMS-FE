@@ -31,21 +31,24 @@ import Scrollbar from '../../../components/scrollbar';
 import CloseIcon from '@mui/icons-material/Close';
 
 // sections
-import { UserListHead, UserListToolbar } from '../../../sections/@dashboard/user';
+import { SupplierListHead, SupplierToolbar } from '~/sections/@dashboard/manager/supplier';
 // mock
 import USERLIST from '../../../_mock/user';
 import { getAllSuppliers } from '~/data/mutation/supplier/suppliers-mutation';
-import SupplierForm from '~/sections/auth/manager/supplier/SupplierForm';
+import CreateSupplierForm from '~/sections/auth/manager/supplier/CreateSupplierForm';
 import SupplierDetailForm from '~/sections/auth/manager/supplier/SupplierDetailForm';
+import dayjs from 'dayjs';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
+
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-    { id: 'code', label: 'Mã người bán', alignRight: false },
+    { id: 'code', label: 'Mã nhà cung cấp', alignRight: false },
     { id: 'name', label: 'Tên', alignRight: false },
     { id: 'phone', label: 'Số điện thoại', alignRight: false },
     { id: 'email', label: 'Email', alignRight: false },
-    { id: 'taxCode', label: 'taxCode', alignRight: false },
+    { id: 'taxCode', label: 'Mã số thuế', alignRight: false },
     { id: 'address', label: 'Địa chỉ', alignRight: false },
 ];
 
@@ -101,12 +104,23 @@ const SupplierPage = () => {
 
     const [suppliersData, setSupplierData] = useState([]);
 
+    const startIndex = page * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
+
+    const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
+    const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
+
     useEffect(() => {
         getAllSuppliers()
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
-                    setSupplierData(data);
+                    const sortedData = data.sort((a, b) => {
+                        return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(
+                            dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
+                        );
+                    });
+                    setSupplierData(sortedData);
                 } else {
                     console.error('API response is not an array:', data);
                 }
@@ -116,14 +130,6 @@ const SupplierPage = () => {
             });
     }, []);
 
-    const handleOpenMenu = (event) => {
-        setOpen(event.currentTarget);
-    };
-
-    const handleCloseMenu = () => {
-        setOpen(null);
-    };
-
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
@@ -132,7 +138,7 @@ const SupplierPage = () => {
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelecteds = USERLIST.map((n) => n.name);
+            const newSelecteds = suppliersData.map((n) => n.name);
             setSelected(newSelecteds);
             return;
         }
@@ -184,7 +190,7 @@ const SupplierPage = () => {
     const handleCloseOdersForm = () => {
         setOpenOderForm(false);
     };
-
+    //===================================================== Những hàm update thay đổi data =====================================================
     const updateSupplierStatusInList = (supplierId, newStatus) => {
         const supplierIndex = suppliersData.findIndex((supplier) => supplier.id === supplierId);
 
@@ -195,7 +201,15 @@ const SupplierPage = () => {
             setSupplierData(updatedSupplierData);
         }
     };
+    const handleCreateSupplierSuccess = (newSupplier, successMessage) => {
+        // Close the form
+        setOpenOderForm(false);
+        setSupplierData((prevSupplierData) => [...prevSupplierData, newSupplier]);
 
+        setSnackbarSuccessMessage(successMessage === 'Updated supplier successfully!' ? 'Tạo thể loại thành công!' : 'Thành công');
+        setSnackbarSuccessOpen(true);
+    };
+    //==========================================================================================================
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
     const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
@@ -205,34 +219,34 @@ const SupplierPage = () => {
     return (
         <>
             <Helmet>
-                <title> Quản lý người bán | Minimal UI </title>
+                <title> Quản lý nhà cung cấp | Minimal UI </title>
             </Helmet>
 
             <Container>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                     <Typography variant="h4" gutterBottom>
-                        Quản lý người bán
+                        Quản lý nhà cung cấp
                     </Typography>
                     <Button
                         variant="contained"
                         startIcon={<Iconify icon="eva:plus-fill" />}
                         onClick={() => setOpenOderForm(true)}
                     >
-                        Thêm người bán
+                        Thêm nhà cung cấp
                     </Button>
                     <Dialog fullWidth maxWidth="sm" open={openOderForm}>
                         <DialogTitle>
-                            Tạo người bán{' '}
+                            Tạo nhà cung cấp{' '}
                             <IconButton style={{ float: 'right' }} onClick={handleCloseOdersForm}>
                                 <CloseIcon color="primary" />
                             </IconButton>{' '}
                         </DialogTitle>
-                        <SupplierForm />
+                        <CreateSupplierForm onClose={handleCreateSupplierSuccess} open={openOderForm} />
                     </Dialog>
                 </Stack>
 
                 <Card>
-                    <UserListToolbar
+                    <SupplierToolbar
                         numSelected={selected.length}
                         filterName={filterName}
                         onFilterName={handleFilterByName}
@@ -241,17 +255,17 @@ const SupplierPage = () => {
                     <Scrollbar>
                         <TableContainer sx={{ minWidth: 800 }}>
                             <Table>
-                                <UserListHead
+                                <SupplierListHead
                                     order={order}
                                     orderBy={orderBy}
                                     headLabel={TABLE_HEAD}
-                                    rowCount={USERLIST.length}
+                                    rowCount={suppliersData.length}
                                     numSelected={selected.length}
                                     onRequestSort={handleRequestSort}
                                     onSelectAllClick={handleSelectAllClick}
                                 />
                                 <TableBody>
-                                    {suppliersData.map((supplier) => {
+                                    {suppliersData.slice(startIndex, endIndex).map((supplier) => {
                                         return (
                                             <React.Fragment key={supplier.id}>
                                                 <TableRow
@@ -262,13 +276,13 @@ const SupplierPage = () => {
                                                     selected={selectedSupplierId === supplier.id}
                                                     onClick={() => handleSupplierClick(supplier)}
                                                 >
-                                                    <TableCell padding="checkbox">
+                                                    {/* <TableCell padding="checkbox">
                                                         <Checkbox
                                                             onChange={(event) => handleClick(event, supplier.name)}
                                                         />
-                                                    </TableCell>
+                                                    </TableCell> */}
                                                     {/* code  */}
-                                                    <TableCell component="th" scope="row" padding="none">
+                                                    <TableCell align="left">
                                                         <Stack direction="row" alignItems="center" spacing={2}>
                                                             <Typography variant="subtitle2" noWrap>
                                                                 {supplier.code}
@@ -366,7 +380,7 @@ const SupplierPage = () => {
                     <TablePagination
                         rowsPerPageOptions={[5, 10, 25]}
                         component="div"
-                        count={USERLIST.length}
+                        count={suppliersData.length}
                         rowsPerPage={rowsPerPage}
                         page={page}
                         onPageChange={handleChangePage}
@@ -374,25 +388,12 @@ const SupplierPage = () => {
                     />
                 </Card>
             </Container>
-
-            <Popover
-                open={Boolean(open)}
-                anchorEl={open}
-                onClose={handleCloseMenu}
-                anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                PaperProps={{
-                    sx: {
-                        p: 1,
-                        width: 140,
-                        '& .MuiMenuItem-root': {
-                            px: 1,
-                            typography: 'body2',
-                            borderRadius: 0.75,
-                        },
-                    },
-                }}
-            ></Popover>
+            <SnackbarSuccess
+                open={snackbarSuccessOpen}
+                handleClose={() => setSnackbarSuccessOpen(false)}
+                message={snackbarSuccessMessage}
+                style={{ bottom: '16px', right: '16px' }}
+            />
         </>
     );
 };

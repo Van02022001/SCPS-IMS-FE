@@ -1,22 +1,88 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Button, Tab, Tabs, Stack, Grid, TextField, FormControl, Select, MenuItem } from '@mui/material';
+import {
+    Typography,
+    Button,
+    Stack,
+    Grid,
+    TextField,
+    IconButton,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogContentText,
+    DialogActions,
+} from '@mui/material';
 import { deleteOrigins, editOrigins } from '~/data/mutation/origins/origins-mutation';
-import SuccessAlerts from '~/components/alert/SuccessAlert';
-import ErrorAlerts from '~/components/alert/ErrorAlert';
+
+import CloseIcon from '@mui/icons-material/Close';
 import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
+import CustomDialog from '~/components/alert/ConfirmDialog';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
+import SnackbarError from '~/components/alert/SnackbarError';
 
 const OriginDetailForm = ({ origins, originsId, onClose, isOpen, mode }) => {
-    const [expandedItem, setExpandedItem] = useState(originsId);
+    // const [expandedItem, setExpandedItem] = useState(originsId);
     const [formHeight, setFormHeight] = useState(0);
     const [selectedTab, setSelectedTab] = useState(0);
-    //thông báo
-    const [isSuccess, setIsSuccess] = useState(false);
-    const [isError, setIsError] = useState(false);
+    const [editedOrigin, setEditedOrigin] = useState(null);
+
+    //========================== Hàm notification của trang ==================================
+    const [open, setOpen] = React.useState(false);
+    const [open1, setOpen1] = React.useState(false);
+    const [confirmOpen1, setConfirmOpen1] = useState(false);
+    const [confirmOpen2, setConfirmOpen2] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
-    const [editedOrigin, setEditedOrigin] = useState(null);
+    const handleSuccessMessage = (message) => {
+        setOpen(true);
+        if (message === 'Create origin successfully') {
+            setSuccessMessage('Cập nhập nguồn gốc thành công !');
+        }
+    };
 
+    const handleErrorMessage = (message) => {
+        setOpen1(true);
+        if (message === 'Origin name was existed') {
+            setErrorMessage('Tên nguồn gốc đã tồn tại !');
+        } else if (message === 'Invalid request') {
+            setErrorMessage('Yêu cầu không hợp lệ !');
+        }
+    };
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpen(false);
+        setOpen1(false);
+        setSuccessMessage('');
+        setErrorMessage('');
+    };
+
+    const action = (
+        <React.Fragment>
+            <Button color="secondary" size="small" onClick={handleClose}></Button>
+            <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
+                <CloseIcon fontSize="lage" />
+            </IconButton>
+        </React.Fragment>
+    );
+    const handleConfirmClose1 = () => {
+        setConfirmOpen1(false);
+    };
+
+    const handleConfirmUpdate1 = () => {
+        setConfirmOpen1(false);
+        updateOrigin();
+    };
+
+    const handleConfirm1 = () => {
+        setConfirmOpen1(true);
+    };
+
+    //========================== Hàm notification của trang ==================================
     useEffect(() => {
         if (isOpen) {
             setFormHeight(1000);
@@ -63,9 +129,7 @@ const OriginDetailForm = ({ origins, originsId, onClose, isOpen, mode }) => {
                 // Call your API to update the category
                 const response = await editOrigins(originsId, updateData);
                 if (response.status === '200 OK') {
-                    setIsSuccess(true);
-                    setIsError(false);
-                    setSuccessMessage(response.message);
+                    handleSuccessMessage(response.message);
                 }
 
                 // Handle the response as needed
@@ -74,12 +138,11 @@ const OriginDetailForm = ({ origins, originsId, onClose, isOpen, mode }) => {
         } catch (error) {
             // Handle errors
             console.error('Error updating category:', error);
-            setIsError(true);
-            setIsSuccess(false);
-            setErrorMessage(error.response.data.message);
-            if (error.response) {
-                console.log('Error response:', error.response);
-            }
+            // setErrorMessage(error.response.data.message);
+            // if (error.response) {
+            //     console.log('Error response:', error.response);
+            // }
+            handleErrorMessage(error.response.data.message);
         }
     };
 
@@ -128,33 +191,55 @@ const OriginDetailForm = ({ origins, originsId, onClose, isOpen, mode }) => {
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
-                                    <Typography variant="body1">Tên thương hiệu:</Typography>
+                                    <Typography variant="body1">Tên nguồn gốc:</Typography>
                                     <TextField
                                         size="small"
                                         variant="outlined"
-                                        label="Tên thương hiệu"
+                                        label="Tên nguồn gốc"
                                         sx={{ width: '70%' }}
                                         value={editedOrigin ? editedOrigin.name : ''}
                                         onChange={(e) => handleEdit('name', capitalizeFirstLetter(e.target.value))}
+                                        helperText="kích thước phải nằm trong khoảng từ 1 đến 100"
                                     />
                                 </Grid>
                             </Grid>
                         </Grid>
                     </Stack>
-                    {isSuccess && <SuccessAlerts />}
-                    {isError && <ErrorAlerts errorMessage={errorMessage} />}
                     <Stack spacing={4} margin={2}>
                         <Grid container spacing={1} sx={{ gap: '10px' }}>
-                            <Button variant="contained" color="primary" onClick={updateOrigin}>
+                            <Button variant="contained" color="primary" onClick={handleConfirm1}>
                                 Cập nhập
                             </Button>
+                            {/* Thông báo confirm */}
+                            <CustomDialog
+                                open={confirmOpen1}
+                                onClose={handleConfirmClose1}
+                                title="Thông báo!"
+                                content="Bạn có chắc muốn cập nhật không?"
+                                onConfirm={handleConfirmUpdate1}
+                                confirmText="Xác nhận"
+                            />
+                            <SnackbarSuccess
+                                open={open}
+                                handleClose={handleClose}
+                                message={successMessage}
+                                action={action}
+                                style={{ bottom: '16px', right: '16px' }}
+                            />
+                            <SnackbarError
+                                open={open1}
+                                handleClose={handleClose}
+                                message={errorMessage}
+                                action={action}
+                                style={{ bottom: '16px', right: '16px' }}
+                            />
                         </Grid>
                     </Stack>
                 </div>
             )}
-            {selectedTab === 1 && (
-                <div style={{ flex: 1 }}>{/* Hiển thị nội dung cho tab "Lịch sử thanh toán" ở đây */}</div>
-            )}
+            {/* {selectedTab === 1 && (
+                <div style={{ flex: 1 }}></div>
+            )} */}
         </div>
     );
 };

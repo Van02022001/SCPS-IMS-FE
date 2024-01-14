@@ -5,6 +5,11 @@ export const getAllCategories = async () => {
     return response.data;
 }
 
+export const getAllCategoriesActive = async () => {
+    const response = await axiosInstance.get("/categories/active-categories");
+    return response.data;
+}
+
 export const createCategories = async (categoriesParams) => {
     const response = await axiosInstance.post("/categories", categoriesParams);
     return response.data;

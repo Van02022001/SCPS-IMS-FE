@@ -1,42 +1,40 @@
-import * as React from 'react';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
+import React from 'react';
 import Snackbar from '@mui/material/Snackbar';
-import { Alert, Stack } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
+import PropTypes from 'prop-types';
+import MuiAlert from '@mui/material/Alert';
 
-export default function PositionedSnackbarError() {
-    const [state, setState] = React.useState({
-        open: false,
-        vertical: 'top',
-        horizontal: 'center',
-    });
-    const { vertical, horizontal, open } = state;
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
-    const handleClick = (newState) => () => {
-        setState({ ...newState, open: true });
-    };
-
-    const handleClose = () => {
-        setState({ ...state, open: false });
-    };
-
+const SnackbarError = ({ open, handleClose, message, action, style }) => {
     return (
-        <Box sx={{ width: 500 }}>
-            <Stack spacing={2} sx={{ width: '100%' }}>
-                <Snackbar
-                    open={open}
-                    autoHideDuration={6000}
-                    onClose={handleClose}
-                    anchorOrigin={{ vertical, horizontal }}
-                    message="I love snacks"
-                    key={vertical + horizontal}
-                >
-                    <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
-                        This is an error message!
-                    </Alert>
-                </Snackbar>
-            </Stack>
-        </Box>
+        <Snackbar
+            open={open}
+            autoHideDuration={6000}
+            onClose={handleClose}
+            anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'right',
+            }}
+            action={action}
+            style={style}
+        >
+            <Alert severity="error" sx={{ width: '100%' }}>
+                {message}
+            </Alert>
+        </Snackbar>
     );
-}
+};
+
+SnackbarError.propTypes = {
+    open: PropTypes.bool.isRequired,
+    handleClose: PropTypes.func.isRequired,
+    message: PropTypes.node.isRequired,
+    action: PropTypes.node.isRequired,
+    style: PropTypes.object,
+};
+
+export default SnackbarError;

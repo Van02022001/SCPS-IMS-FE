@@ -55,6 +55,7 @@ import dayjs from 'dayjs';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import { getAllCategories } from '~/data/mutation/categories/categories-mutation';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
 
@@ -63,13 +64,12 @@ dayjs.extend(isSameOrBefore);
 const TABLE_HEAD = [
     { id: 'image', label: '', alignRight: false },
     // { id: 'id', label: 'Mã hàng', alignRight: false },
-    { id: 'name', label: 'Tên sản phẩm', alignRight: false },
+    { id: 'name', label: 'Tên danh mục', alignRight: false },
     { id: 'description', label: 'Mô tả', alignRight: false },
     { id: 'createdAt', label: 'Ngày tạo', alignRight: false },
-    { id: 'updatedAt', label: 'Ngày cập nhập', alignRight: false },
+    // { id: 'updatedAt', label: 'Ngày cập nhập', alignRight: false },
     { id: 'categories', label: 'Nhóm hàng', alignRight: false },
     { id: 'status', label: 'Trạng thái', alignRight: false },
-    { id: '' },
 ];
 
 // ----------------------------------------------------------------------
@@ -147,8 +147,6 @@ const SubCategoryPage = () => {
     const [subCategoryData, setSubCategoryData] = useState([]);
     const [subCategoryStatus, setSubCategoryStatus] = useState('');
 
-    const [selectedProduct, setSelectedProduct] = useState(null);
-
     const [filteredCategory, setFilteredCategory] = useState(null);
 
     // const [anchorElOptions, setAnchorElOptions] = useState(null);
@@ -156,6 +154,10 @@ const SubCategoryPage = () => {
     const [selectedFilterOptions, setSelectedFilterOptions] = useState(null);
 
     const [personName, setPersonName] = React.useState([]);
+
+    const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
+    const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
+
     //--------------------Filter------------------------
     const [selectedCategories, setSelectedCategories] = React.useState([]);
     const [categoryData, setCategoryData] = useState([]);
@@ -163,6 +165,8 @@ const SubCategoryPage = () => {
     // fiter createdAt //
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
+    const startIndex = page * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
 
     const handleChange = (event) => {
         setPersonName(event.target.value);
@@ -194,10 +198,17 @@ const SubCategoryPage = () => {
         }
     };
 
-    const handleCreateSubCategorySuccess = (newSubCategory) => {
+    const handleCreateSubCategorySuccess = (newSubCategory, successMessage) => {
         // Close the form
         setOpenOderForm(false);
-        setSubCategoryData((prevSubCategoryData) => [...prevSubCategoryData, newSubCategory]);
+        setSubCategoryData((prevSubCategoryData) => [newSubCategory, ...prevSubCategoryData]);
+
+        setSnackbarSuccessMessage(
+            successMessage === 'Create sub category successfully.'
+                ? 'Tạo danh mục danh mục thành công!'
+                : successMessage,
+        );
+        setSnackbarSuccessOpen(true);
     };
 
     //===========================================================================================
@@ -205,10 +216,6 @@ const SubCategoryPage = () => {
     //     setSelectedProduct(subCategory);
     //     setOpen(event.currentTarget);
     // };
-
-    const handleCloseMenu = () => {
-        setOpen(null);
-    };
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
@@ -219,27 +226,27 @@ const SubCategoryPage = () => {
         setSelected([]);
     };
 
-    // const handleClick = (event, name) => {
-    //     const selectedIndex = selected.indexOf(name);
-    //     let newSelected = [];
-    //     if (selectedIndex === -1) {
-    //         newSelected = newSelected.concat(selected, name);
-    //     } else if (selectedIndex === 0) {
-    //         newSelected = newSelected.concat(selected.slice(1));
-    //     } else if (selectedIndex === selected.length - 1) {
-    //         newSelected = newSelected.concat(selected.slice(0, -1));
-    //     } else if (selectedIndex > 0) {
-    //         newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-    //     }
-    //     setSelected(newSelected);
-    // };
+    const handleClick = (event, name) => {
+        const selectedIndex = selected.indexOf(name);
+        let newSelected = [];
+        if (selectedIndex === -1) {
+            newSelected = newSelected.concat(selected, name);
+        } else if (selectedIndex === 0) {
+            newSelected = newSelected.concat(selected.slice(1));
+        } else if (selectedIndex === selected.length - 1) {
+            newSelected = newSelected.concat(selected.slice(0, -1));
+        } else if (selectedIndex > 0) {
+            newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
+        }
+        setSelected(newSelected);
+    };
 
     const handleSubCategoryClick = (subCategory) => {
         console.log(subCategory);
         if (selectedSubCategoryId === subCategory.id) {
             setSelectedSubCategoryId(null); // Đóng nếu đã mở
         } else {
-            setSelectedSubCategoryId(subCategory.id); // Mở hoặc chuyển sang sản phẩm khác
+            setSelectedSubCategoryId(subCategory.id); // Mở hoặc chuyển sang danh mục khác
         }
     };
 
@@ -258,10 +265,10 @@ const SubCategoryPage = () => {
     // Các hàm xử lý soft theo name--------------------------------------------------------------------------------------------------------------------------------
     const handleCheckboxChange = (event, subCategoryId) => {
         if (event.target.checked) {
-            // Nếu người dùng chọn checkbox, thêm sản phẩm vào danh sách đã chọn.
+            // Nếu người dùng chọn checkbox, thêm danh mục vào danh sách đã chọn.
             setSelectedSubCategoryId([...selectedSubCategoryId, subCategoryId]);
         } else {
-            // Nếu người dùng bỏ chọn checkbox, loại bỏ sản phẩm khỏi danh sách đã chọn.
+            // Nếu người dùng bỏ chọn checkbox, loại bỏ danh mục khỏi danh sách đã chọn.
             setSelectedSubCategoryId(selectedSubCategoryId.filter((id) => id !== subCategoryId));
         }
     };
@@ -269,7 +276,7 @@ const SubCategoryPage = () => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
         setOrderBy(property);
-        // Sắp xếp danh sách sản phẩm dựa trên trường và hướng đã chọn
+        // Sắp xếp danh sách danh mục dựa trên trường và hướng đã chọn
         const sortedProduct = [...subCategoryData].sort((a, b) => {
             const valueA = a[property];
             const valueB = b[property];
@@ -307,9 +314,9 @@ const SubCategoryPage = () => {
         setOpenEditForm(false);
     };
 
-    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - PRODUCTSLIST.length) : 0;
+    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - categoryData.length) : 0;
 
-    const filteredUsers = applySortFilter(PRODUCTSLIST, getComparator(order, orderBy), filterName);
+    const filteredUsers = applySortFilter(categoryData, getComparator(order, orderBy), filterName);
 
     const isNotFound = !filteredUsers.length && !!filterName;
 
@@ -318,8 +325,13 @@ const SubCategoryPage = () => {
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
-                    setSubCategoryData(data);
-                    setSortedProduct(data);
+                    const sortedData = data.sort((a, b) => {
+                        return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(
+                            dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
+                        );
+                    });
+                    setSubCategoryData(sortedData);
+                    setSortedProduct(sortedData);
                 } else {
                     console.error('API response is not an array:', data);
                 }
@@ -351,7 +363,8 @@ const SubCategoryPage = () => {
             (!Array.isArray(sub_category.categories) && selectedCategories.includes(sub_category.categories.name));
 
         const isDateInRange =
-            (!startDate || dayjs(sub_category.createdAt, 'DD/MM/YYYY HH:mm:ss').isSameOrAfter(dayjs(startDate), 'day')) &&
+            (!startDate ||
+                dayjs(sub_category.createdAt, 'DD/MM/YYYY HH:mm:ss').isSameOrAfter(dayjs(startDate), 'day')) &&
             (!endDate || dayjs(sub_category.createdAt, 'DD/MM/YYYY HH:mm:ss').isSameOrBefore(dayjs(endDate), 'day'));
 
         return isCategoriesMatch && isDateInRange;
@@ -363,7 +376,7 @@ const SubCategoryPage = () => {
     return (
         <>
             <Helmet>
-                <title> Quản lý danh mục | Minimal UI </title>
+                <title> Quản lý danh mục</title>
             </Helmet>
 
             {/* <Container> */}
@@ -376,11 +389,11 @@ const SubCategoryPage = () => {
                     startIcon={<Iconify icon="eva:plus-fill" />}
                     onClick={() => setOpenOderForm(true)}
                 >
-                    Thêm Sản Phẩm
+                    Thêm danh mục
                 </Button>
                 <Dialog fullWidth maxWidth open={openOderForm}>
                     <DialogTitle>
-                        Tạo Sản Phẩm{' '}
+                        Tạo Danh Mục{' '}
                         <IconButton style={{ float: 'right' }} onClick={handleCloseOdersForm}>
                             <CloseIcon color="primary" />
                         </IconButton>{' '}
@@ -453,7 +466,7 @@ const SubCategoryPage = () => {
                                 onSelectAllClick={handleSelectAllClick}
                             />
                             <TableBody>
-                                {filteredSubcate.map((sub_category) => {
+                                {filteredSubcate.slice(startIndex, endIndex).map((sub_category) => {
                                     return (
                                         <React.Fragment key={sub_category.id}>
                                             <TableRow
@@ -464,18 +477,18 @@ const SubCategoryPage = () => {
                                                 selected={selectedSubCategoryId === sub_category.id}
                                                 onClick={() => handleSubCategoryClick(sub_category)}
                                             >
-                                                <TableCell padding="checkbox">
+                                                {/* <TableCell padding="checkbox">
                                                     <Checkbox
                                                         checked={selectedSubCategoryId === sub_category.id}
-                                                        onChange={(event) =>
-                                                            handleCheckboxChange(event, sub_category.id)
-                                                        }
-                                                    // checked={selectedUser}
-                                                    // onChange={(event) => handleClick(event, name)}
+                                                        // onChange={(event) =>
+                                                        //     handleCheckboxChange(event, sub_category.id)
+                                                        // }
+                                                        // checked={selectedUser}
+                                                        onChange={(event) => handleClick(event, sub_category.name)}
                                                     />
-                                                </TableCell>
+                                                </TableCell> */}
 
-                                                <TableCell component="th" scope="row" padding="none">
+                                                <TableCell align="left">
                                                     <Stack direction="row" alignItems="center" spacing={2}>
                                                         {/* <Avatar alt={name} src={avatarUrl} /> */}
                                                     </Stack>
@@ -490,7 +503,7 @@ const SubCategoryPage = () => {
                                                 </TableCell>
                                                 <TableCell align="left">{sub_category.description}</TableCell>
                                                 <TableCell align="left">{sub_category.createdAt}</TableCell>
-                                                <TableCell align="left">{sub_category.updatedAt}</TableCell>
+                                                {/* <TableCell align="left">{sub_category.updatedAt}</TableCell> */}
                                                 <TableCell align="left">
                                                     <Typography variant="subtitle2" noWrap>
                                                         {sub_category.categories.map((category, index) => {
@@ -533,11 +546,11 @@ const SubCategoryPage = () => {
                                         </React.Fragment>
                                     );
                                 })}
-                                {emptyRows > 0 && (
+                                {/* {emptyRows > 0 && (
                                     <TableRow style={{ height: 53 * emptyRows }}>
                                         <TableCell colSpan={6} />
                                     </TableRow>
-                                )}
+                                )} */}
                             </TableBody>
 
                             {isNotFound && (
@@ -570,56 +583,19 @@ const SubCategoryPage = () => {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={PRODUCTSLIST.length}
+                    count={filteredSubcate.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </Card>
-            {/* </Container> */}
-
-            <Popover
-                open={Boolean(open)}
-                anchorEl={open}
-                onClose={handleCloseMenu}
-                anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                PaperProps={{
-                    sx: {
-                        p: 1,
-                        width: 140,
-                        '& .MuiMenuItem-root': {
-                            px: 1,
-                            typography: 'body2',
-                            borderRadius: 0.75,
-                        },
-                    },
-                }}
-            >
-                <MenuItem onClick={() => setOpenEditForm(true)}>
-                    <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-                    Edit
-                </MenuItem>
-                <Dialog fullWidth maxWidth open={openEditForm}>
-                    <DialogTitle>
-                        Cập Nhật Sản Phẩm{' '}
-                        <IconButton style={{ float: 'right' }} onClick={handleCloseEditsForm}>
-                            <CloseIcon color="primary" />
-                        </IconButton>{' '}
-                    </DialogTitle>
-                    <EditCategoryForm
-                        open={openEditForm}
-                        product={selectedProduct}
-                        handleClose={handleCloseEditsForm}
-                    />
-                </Dialog>
-
-                <MenuItem sx={{ color: 'error.main' }}>
-                    <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
-                    Delete
-                </MenuItem>
-            </Popover>
+            <SnackbarSuccess
+                open={snackbarSuccessOpen}
+                handleClose={() => setSnackbarSuccessOpen(false)}
+                message={snackbarSuccessMessage}
+                style={{ bottom: '16px', right: '16px' }}
+            />
         </>
     );
 };

@@ -26,15 +26,21 @@ import SaveIcon from '@mui/icons-material/Save';
 import Snackbar from '@mui/material/Snackbar';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+import BoxComponent from '~/components/box/BoxComponent';
 // api
 import { editSubCategory, editStatusCategory } from '~/data/mutation/subCategory/subCategory-mutation';
 import { getAllCategories } from '~/data/mutation/categories/categories-mutation';
 import { getAllUnit, getAllUnitMeasurement } from '~/data/mutation/unit/unit-mutation';
-import SuccessAlerts from '~/components/alert/SuccessAlert';
-import ErrorAlerts from '~/components/alert/ErrorAlert';
+
 import AddSubCategoryMetaForm from './AddSubCategoryMetaForm';
 import { editSubCategorysMeta, getAllSubCategoryMeta } from '~/data/mutation/subCategoryMeta/subCategoryMeta-mutation';
 import { getItemsBySubCategory } from '~/data/mutation/items/item-mutation';
+//Thông báo
+import CustomDialog from '~/components/alert/ConfirmDialog';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
+import SnackbarError from '~/components/alert/SnackbarError';
+import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
+import { deleteImageSubcategory, getAllImageSubcategory } from '~/data/mutation/image/image-mutation';
 
 const SubCategoryDetailForm = ({
     subCategory,
@@ -45,8 +51,6 @@ const SubCategoryDetailForm = ({
     isOpen,
     mode,
 }) => {
-    const [open, setOpen] = React.useState(false);
-
     const [tab1Data, setTab1Data] = useState({ categories_id: [] });
     const [tab2Data, setTab2Data] = useState({});
     const [tab3Data, setTab3Data] = useState({});
@@ -70,21 +74,39 @@ const SubCategoryDetailForm = ({
     // form
     const [openAddSubCategoryMetaForm, setOpenAddSubCategoryMetaForm] = useState(false);
 
-    //thông báo
-    const [isSuccess, setIsSuccess] = useState(false);
-    const [isError, setIsError] = useState(false);
-    const [message, setMessage] = useState('');
+    //========================== Hàm notification của trang ==================================
+    const [open, setOpen] = React.useState(false);
+    const [open1, setOpen1] = React.useState(false);
+    const [confirmOpen1, setConfirmOpen1] = useState(false);
+    const [confirmOpen2, setConfirmOpen2] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
-    const handleMessage = (message) => {
+    const [uploadedImageUrl, setUploadedImageUrl] = useState(null);
+    const [subCategoryImages, setSubCategoryImages] = useState([]);
+    const handleSuccessMessage = (message) => {
         setOpen(true);
-        // Đặt logic hiển thị nội dung thông báo từ API ở đây
-        if (message === 'Update SubCategory status successfully.') {
-            setMessage('Cập nhập trạng thái danh mục thành công')
-        } else if (message === 'Update SubCategory successfully.') {
-            setMessage('Cập nhập danh mục thành công')
-            console.error('Error message:', errorMessage);
+        if (message === 'Update sub category status successfully.') {
+            setSuccessMessage('Cập nhập trạng thái danh mục thành công');
+        } else if (message === 'Update sub category successfully.') {
+            setSuccessMessage('Cập nhập danh mục thành công');
+        } else if (message === 'Xóa ảnh thành công.') {
+            setSuccessMessage('Xóa ảnh thành công !');
+        }
+    };
+
+    const handleErrorMessage = (message) => {
+        setOpen1(true);
+        if (message === 'Category name was existed') {
+            setErrorMessage('Tên thể loại đã tồn tại !');
+        } else if (message === 'Invalid request') {
+            setErrorMessage('Yêu cầu không hợp lệ');
+        } else if (message === '404 NOT_FOUND') {
+            setErrorMessage('Mô tả quá dài');
+        } else if (message === 'Sub category name was existed') {
+            setErrorMessage('Tên đã tồn tại !');
+        } else if (message === 'SubCategory must have at least one category') {
+            setErrorMessage('Vui lòng chọn ít nhất 1 nhóm hàng !');
         }
     };
 
@@ -94,18 +116,42 @@ const SubCategoryDetailForm = ({
         }
 
         setOpen(false);
-
+        setOpen1(false);
+        setSuccessMessage('');
+        setErrorMessage('');
     };
 
     const action = (
         <React.Fragment>
-            <Button color="secondary" size="small" onClick={handleClose}>
-            </Button>
+            <Button color="secondary" size="small" onClick={handleClose}></Button>
             <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
                 <CloseIcon fontSize="lage" />
             </IconButton>
         </React.Fragment>
     );
+    const handleConfirmClose1 = () => {
+        setConfirmOpen1(false);
+    };
+
+    const handleConfirmUpdate1 = () => {
+        setConfirmOpen1(false);
+        updateSubCategory();
+    };
+
+    const handleConfirm1 = () => {
+        setConfirmOpen1(true);
+    };
+
+    const handleConfirmUpdateStatus2 = () => {
+        setConfirmOpen2(false);
+        updateSubCategoryStatus();
+    };
+
+    const handleConfirm2 = () => {
+        setConfirmOpen2(true);
+    };
+
+    //========================== Hàm notification của trang ==================================
 
     const handleTab1DataChange = (event) => {
         // Cập nhật dữ liệu cho tab 1 tại đây
@@ -181,7 +227,6 @@ const SubCategoryDetailForm = ({
         }
     }, [subCategoryId, subCategory, mode]);
 
-
     useEffect(() => {
         getAllCategories()
             .then((respone) => {
@@ -200,15 +245,15 @@ const SubCategoryDetailForm = ({
             const data = respone.data;
             setUnit_mea_id(data);
         });
-        // getAllSubCategoryMeta(subCategoryId)
-        //     .then((respone) => {
-        //         const data = respone.data;
-        //         setSubCategoryMeta(data);
-        //     })
-        //     .catch((error) => {
-        //         console.error('Error fetching subcategory meta:', error);
-        //         setSubCategoryMeta(null);
-        //     });
+        getAllSubCategoryMeta(subCategoryId)
+            .then((respone) => {
+                const data = respone.data;
+                setSubCategoryMeta(data);
+            })
+            .catch((error) => {
+                console.error('Error fetching subcategory meta:', error);
+                setSubCategoryMeta(null);
+            });
 
         getItemsBySubCategory(subCategoryId)
             .then((respone) => {
@@ -218,6 +263,16 @@ const SubCategoryDetailForm = ({
 
             .catch((error) => console.error('Error fetching units measurement:', error));
     }, []);
+
+    useEffect(() => {
+        getAllImageSubcategory(subCategoryId)
+            .then((respone) => {
+                const data = respone.data;
+                setSubCategoryImages(data);
+            })
+
+            .catch((error) => console.error('Error fetching units measurement:', error));
+    }, [uploadedImageUrl]);
 
     // useEffect(() => {
     //     if (mode === 'create') {
@@ -252,24 +307,15 @@ const SubCategoryDetailForm = ({
             const response = await editSubCategory(subCategoryId, editedSubCategory);
 
             if (response.status === '200 OK') {
-                setIsSuccess(true);
-                setIsError(false);
                 setSuccessMessage(response.message);
-                handleMessage(response.message);
+                handleSuccessMessage(response.message);
             }
 
             updateSubCategoryInList(response.data);
-            console.log('Product updated:', response);
+            console.log('Product updated:', response.message);
         } catch (error) {
             console.error('An error occurred while updating the product:', error);
-            setIsError(true);
-            setIsSuccess(false);
-            if (error.response?.data?.message === 'Invalid request') {
-                setErrorMessage('Yêu cầu không hợp lệ');
-            }
-            if (error.response?.data?.error === '404 NOT_FOUND') {
-                setErrorMessage('Mô tả quá dài');
-            }
+            handleErrorMessage(error.response?.data?.message);
         }
     };
 
@@ -280,10 +326,8 @@ const SubCategoryDetailForm = ({
             const response = await editStatusCategory(subCategoryId, newStatus);
 
             if (response.status === '200 OK') {
-                setIsSuccess(true);
-                setIsError(false);
                 setSuccessMessage(response.message);
-                handleMessage(response.message);
+                handleSuccessMessage(response.message);
             }
 
             updateSubCategoryStatusInList(subCategoryId, newStatus);
@@ -292,9 +336,7 @@ const SubCategoryDetailForm = ({
             console.log('Product status updated:', response);
         } catch (error) {
             console.error('Error updating category status:', error);
-            setIsError(true);
-            setIsSuccess(false);
-            setErrorMessage(error.response.data.message);
+            handleErrorMessage(error.response.data.message);
             if (error.response) {
                 console.log('Error response:', error.response);
             }
@@ -325,9 +367,6 @@ const SubCategoryDetailForm = ({
         }
     };
 
-    const handleDelete = () => {
-        // Xử lý xóa
-    };
     const handleEditSubCategoryMeta = (field, value) => {
         setEditSubCategoryMeta((prevSubCategoryMeta) => ({
             ...prevSubCategoryMeta,
@@ -344,18 +383,28 @@ const SubCategoryDetailForm = ({
             const response = await editSubCategorysMeta(subCategoryId, editSubCategoryMeta);
 
             if (response.status === '200 OK') {
-                setIsSuccess(true);
-                setIsError(false);
                 setSuccessMessage(response.message);
             }
         } catch (error) {
             console.error('An error occurred while updating the product:', error);
-            setIsError(true);
-            setIsSuccess(false);
             setErrorMessage(error.response.data.message);
             if (error.response) {
                 console.log('Error response:', error.response);
             }
+        }
+    };
+
+    const handleDeleteImage = async (imageId) => {
+        console.log(imageId);
+        try {
+            const response = await deleteImageSubcategory(imageId);
+            if (response.status === '200 OK') {
+                const updatedImages = subCategoryImages.filter((image) => image.id !== imageId);
+                setSubCategoryImages(updatedImages);
+                setSuccessMessage(response.message);
+            }
+        } catch (error) {
+            setErrorMessage(error.response.data.message);
         }
     };
 
@@ -387,14 +436,14 @@ const SubCategoryDetailForm = ({
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
-                                    <Typography variant="body1">Tên sản phẩm:</Typography>
+                                    <Typography variant="body1">Tên danh mục:</Typography>
                                     <TextField
                                         size="small"
                                         variant="outlined"
-                                        label="Tên sản phẩm"
+                                        label="Tên danh mục"
                                         sx={{ width: '70%' }}
                                         value={editedSubCategory ? editedSubCategory.name : ''}
-                                        onChange={(e) => handleEdit('name', e.target.value)}
+                                        onChange={(e) => handleEdit('name', capitalizeFirstLetter(e.target.value))}
                                     />
                                 </Grid>
 
@@ -416,7 +465,9 @@ const SubCategoryDetailForm = ({
                                         label="Mô tả"
                                         sx={{ width: '70%' }}
                                         value={editedSubCategory ? editedSubCategory.description : ''}
-                                        onChange={(e) => handleEdit('description', e.target.value)}
+                                        onChange={(e) =>
+                                            handleEdit('description', capitalizeFirstLetter(e.target.value))
+                                        }
                                     />
                                 </Grid>
                                 <Grid
@@ -429,11 +480,11 @@ const SubCategoryDetailForm = ({
                                 >
                                     <Typography variant="body1">Ngày tạo:</Typography>
                                     <TextField
-                                        disabled
+                                        InputProps={{ readOnly: true }}
                                         size="small"
                                         variant="outlined"
                                         label="Ngày tạo"
-                                        sx={{ width: '70%' }}
+                                        sx={{ width: '70%', pointerEvents: 'none' }}
                                         value={subCategorys.createdAt}
                                     />
                                 </Grid>
@@ -448,11 +499,11 @@ const SubCategoryDetailForm = ({
                                 >
                                     <Typography variant="body1">Ngày cập nhập:</Typography>
                                     <TextField
-                                        disabled
+                                        InputProps={{ readOnly: true }}
                                         size="small"
                                         variant="outlined"
                                         label="Ngày cập nhập"
-                                        sx={{ width: '70%' }}
+                                        sx={{ width: '70%', pointerEvents: 'none' }}
                                         value={subCategorys.updatedAt}
                                     />
                                 </Grid>
@@ -486,7 +537,7 @@ const SubCategoryDetailForm = ({
                                         alignItems="center"
                                         sx={{ marginBottom: 4, gap: 5 }}
                                     >
-                                        <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
+                                        <Typography variant="subtitle1" sx={{ fontSize: '16px' }}>
                                             Nhóm hàng:{' '}
                                         </Typography>
                                         <Grid xs={8.5}>
@@ -494,7 +545,7 @@ const SubCategoryDetailForm = ({
                                                 size="small"
                                                 labelId="group-label"
                                                 id="group-select"
-                                                sx={{ width: '100%', fontSize: '14px' }}
+                                                sx={{ width: '99%', fontSize: '16px', marginLeft: 0.6 }}
                                                 multiple
                                                 value={editedSubCategory.categories_id}
                                                 onChange={(e) => handleEdit('categories_id', e.target.value)}
@@ -582,7 +633,7 @@ const SubCategoryDetailForm = ({
                                         alignItems="center"
                                         sx={{ marginBottom: 4, gap: 2 }}
                                     >
-                                        <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
+                                        <Typography variant="subtitle1" sx={{ fontSize: '16px' }}>
                                             Kích thước:{' '}
                                         </Typography>
                                         <div style={{ display: 'flex' }}>
@@ -623,6 +674,60 @@ const SubCategoryDetailForm = ({
                                 </div>
                             </Grid>
                         </Grid>
+                        <Grid container spacing={2} sx={{ gap: '20px' }}>
+                            {/* Hiển thị danh sách ảnh của danh mục */}
+                            {subCategoryImages && subCategoryImages.length > 0 && (
+                                <React.Fragment>
+                                    <Typography variant="h6" sx={{ marginTop: '20px' }}>
+                                        Danh sách ảnh của danh mục:
+                                    </Typography>
+                                    <Grid container spacing={2} sx={{ gap: '20px' }}>
+                                        {subCategoryImages.map((image) => (
+                                            <Grid
+                                                item
+                                                key={image.id}
+                                                style={{
+                                                    position: 'relative',
+                                                    overflow: 'hidden',
+                                                    paddingRight: '16px',
+                                                }}
+                                            >
+                                                <IconButton
+                                                    style={{ position: 'absolute', top: -12, right: -10, zIndex: 1 }}
+                                                    onClick={() => handleDeleteImage(image.id)}
+                                                >
+                                                    <CloseIcon />
+                                                </IconButton>
+                                                <div
+                                                    style={{
+                                                        width: '200px',
+                                                        height: '250px',
+                                                        overflow: 'hidden',
+                                                    }}
+                                                >
+                                                    <img
+                                                        src={image.url}
+                                                        alt={image.title}
+                                                        style={{ width: '200%', height: '200px', objectFit: 'cover' }}
+                                                    />
+                                                </div>
+                                                {/* <Typography variant="body2">{image.title}</Typography> */}
+                                            </Grid>
+                                        ))}
+                                    </Grid>
+                                </React.Fragment>
+                            )}
+                            <Grid item xs={12}>
+                                <BoxComponent
+                                    subcategoryId={subCategoryId}
+                                    onUploadSuccess={(response) => {
+                                        setUploadedImageUrl(response.data.url);
+                                        console.log('Upload success:', response);
+                                        getAllImageSubcategory(subCategoryId);
+                                    }}
+                                />
+                            </Grid>
+                        </Grid>
                     </Stack>
 
                     <div>
@@ -641,9 +746,8 @@ const SubCategoryDetailForm = ({
                                                     fontFamily: 'bold',
                                                     padding: '10px 0 0 20px',
                                                 }}
-
                                             >
-                                                <TableCell>Mã sản phẩm</TableCell>
+                                                <TableCell>Mã danh mục</TableCell>
                                                 <TableCell>Số lượng</TableCell>
                                                 <TableCell>Đơn giá</TableCell>
                                                 <TableCell>Thương hiệu</TableCell>
@@ -657,11 +761,16 @@ const SubCategoryDetailForm = ({
                                                     <TableRow key={items.id}>
                                                         <TableCell>{items.code}</TableCell>
                                                         <TableCell>{items.quantity}</TableCell>
-                                                        {/* <TableCell>{items.pricing.price !== null ? items.pricing.price : 0}</TableCell> */}
+                                                        <TableCell>
+                                                            {items.pricing !== null ? (
+                                                                <div>{items.pricing.price}</div>
+                                                            ) : (
+                                                                'Chưa có'
+                                                            )}
+                                                        </TableCell>
                                                         <TableCell>{items.brand.name}</TableCell>
                                                         <TableCell>{items.supplier.name}</TableCell>
                                                         <TableCell>{items.origin.name}</TableCell>
-
                                                     </TableRow>
                                                 );
                                             })}
@@ -672,38 +781,55 @@ const SubCategoryDetailForm = ({
                         </Card>
                     </div>
 
-                    {isSuccess && <SuccessAlerts message={successMessage} />}
-                    {isError && <ErrorAlerts errorMessage={errorMessage} />}
                     <Stack spacing={4} margin={2}>
                         <Grid container spacing={1} sx={{ gap: '10px' }}>
                             <Button
                                 variant="contained"
                                 color="primary"
                                 startIcon={<SaveIcon />}
-                                onClick={updateSubCategory}
+                                onClick={handleConfirm1}
                             >
                                 Cập nhật
                             </Button>
+                            <CustomDialog
+                                open={confirmOpen1}
+                                onClose={handleConfirmClose1}
+                                title="Thông báo!"
+                                content="Bạn có chắc muốn cập nhật không?"
+                                onConfirm={handleConfirmUpdate1}
+                                confirmText="Xác nhận"
+                            />
                             <div>
-                                <Button variant="contained" color="error" onClick={updateSubCategoryStatus}>
+                                <Button variant="contained" color="error" onClick={handleConfirm2}>
                                     Thay đổi trạng thái
                                 </Button>
-                                <Snackbar
+                                {/* Thông báo confirm */}
+                                <CustomDialog
+                                    open={confirmOpen2}
+                                    onClose={handleConfirmClose1}
+                                    title="Thông báo!"
+                                    content="Bạn có chắc muốn cập nhật không?"
+                                    onConfirm={handleConfirmUpdateStatus2}
+                                    confirmText="Xác nhận"
+                                />
+                                <SnackbarSuccess
                                     open={open}
-                                    autoHideDuration={6000}
-                                    onClose={handleClose}
-                                    anchorOrigin={{
-                                        vertical: 'bottom',
-                                        horizontal: 'right',
-                                    }}
-                                    message={message}
+                                    handleClose={handleClose}
+                                    message={successMessage}
+                                    action={action}
+                                    style={{ bottom: '16px', right: '16px' }}
+                                />
+                                <SnackbarError
+                                    open={open1}
+                                    handleClose={handleClose}
+                                    message={errorMessage}
                                     action={action}
                                     style={{ bottom: '16px', right: '16px' }}
                                 />
                             </div>
-                            <Button variant="outlined" color="error" onClick={handleClear}>
+                            {/* <Button variant="outlined" color="error" onClick={handleClear}>
                                 Hủy bỏ
-                            </Button>
+                            </Button> */}
                         </Grid>
                     </Stack>
                 </div>
@@ -732,7 +858,9 @@ const SubCategoryDetailForm = ({
                                 defaultValue="Mô tả sơ lược"
                                 sx={{ width: '100%', border: 'none' }}
                                 value={editSubCategoryMeta ? editSubCategoryMeta.key : ''}
-                                onChange={(e) => handleEditSubCategoryMeta('key', e.target.value)}
+                                onChange={(e) =>
+                                    handleEditSubCategoryMeta('key', capitalizeFirstLetter(e.target.value))
+                                }
                             />
                         </CardContent>
                     </Card>
@@ -757,7 +885,9 @@ const SubCategoryDetailForm = ({
                                 defaultValue="Mô tả"
                                 sx={{ width: '100%', border: 'none' }}
                                 value={editSubCategoryMeta ? editSubCategoryMeta.description : ''}
-                                onChange={(e) => handleEditSubCategoryMeta('description', e.target.value)}
+                                onChange={(e) =>
+                                    handleEditSubCategoryMeta('description', capitalizeFirstLetter(e.target.value))
+                                }
                             />
                         </CardContent>
                     </Card>
@@ -778,9 +908,6 @@ const SubCategoryDetailForm = ({
                                 onClick={updateSubCategoryMeta}
                             >
                                 Cập nhập
-                            </Button>
-                            <Button color="primary" variant="outlined" startIcon={<ClearIcon />}>
-                                Hủy
                             </Button>
                         </Grid>
                     </Stack>

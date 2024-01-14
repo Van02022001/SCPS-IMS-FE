@@ -1,21 +1,109 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Button, Tab, Tabs, Stack, Grid, TextField, FormControl, Select, MenuItem } from '@mui/material';
+import {
+    Typography,
+    Button,
+    Tab,
+    Tabs,
+    Stack,
+    Grid,
+    TextField,
+    FormControl,
+    Select,
+    MenuItem,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogContentText,
+    DialogActions,
+    IconButton,
+} from '@mui/material';
 import { deleteOrigins, editOrigins } from '~/data/mutation/origins/origins-mutation';
 import { deleteBrands, editBrands } from '~/data/mutation/brand/brands-mutation';
 import { deleteSuppliers, editStatusSuppliers, editSuppliers } from '~/data/mutation/supplier/suppliers-mutation';
 import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
+import CloseIcon from '@mui/icons-material/Close';
+import CustomDialog from '~/components/alert/ConfirmDialog';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
+import SnackbarError from '~/components/alert/SnackbarError';
 
 const SupplierDetailForm = ({ suppliers, suppliersId, onClose, isOpen, mode, updateSupplierStatusInList }) => {
     const [formHeight, setFormHeight] = useState(0);
     const [selectedTab, setSelectedTab] = useState(0);
     const [currentStatus, setCurrentStatus] = useState('');
     const [editedSupplier, setEditedSupplier] = useState(null);
-    //thông báo
-    const [isSuccess, setIsSuccess] = useState(false);
-    const [isError, setIsError] = useState(false);
+    //========================== Hàm notification của trang ==================================
+    const [open, setOpen] = React.useState(false);
+    const [open1, setOpen1] = React.useState(false);
+    const [confirmOpen1, setConfirmOpen1] = useState(false);
+    const [confirmOpen2, setConfirmOpen2] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+
+    const handleSuccessMessage = (message) => {
+        setOpen(true);
+        if (message === 'Updated supplier successfully!') {
+            setSuccessMessage('Cập nhập nguồn gốc thành công !');
+        } else if (message === 'Update supplier status successfully!') {
+            setSuccessMessage('Cập nhập trạng thái thành công !');
+        }
+    };
+
+    const handleErrorMessage = (message) => {
+        setOpen1(true);
+        if (message === 'Email already in use!') {
+            setErrorMessage('Email đã tồn tại !');
+        } else if (message === 'Phone number already in use!') {
+            setErrorMessage('Số điện thoại đã tồn tại !');
+        } else if (message === 'Tax code already in use!') {
+            setErrorMessage('Mã số thuế đã tồn tại !');
+        } else if (message === 'could not execute!') {
+            setErrorMessage('Yêu cầu không hợp lệ !');
+        }
+    };
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpen(false);
+        setOpen1(false);
+        setSuccessMessage('');
+        setErrorMessage('');
+    };
+
+    const action = (
+        <React.Fragment>
+            <Button color="secondary" size="small" onClick={handleClose}></Button>
+            <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
+                <CloseIcon fontSize="lage" />
+            </IconButton>
+        </React.Fragment>
+    );
+    const handleConfirmClose1 = () => {
+        setConfirmOpen1(false);
+    };
+
+    const handleConfirmUpdate1 = () => {
+        setConfirmOpen1(false);
+        updateSupplier();
+    };
+
+    const handleConfirm1 = () => {
+        setConfirmOpen1(true);
+    };
+
+    const handleConfirmUpdateStatus2 = () => {
+        setConfirmOpen2(false);
+        updateSupplierStatus();
+    };
+
+    const handleConfirm2 = () => {
+        setConfirmOpen2(true);
+    };
+
+    //========================== Hàm notification của trang ==================================
 
     useEffect(() => {
         if (isOpen) {
@@ -28,7 +116,7 @@ const SupplierDetailForm = ({ suppliers, suppliersId, onClose, isOpen, mode, upd
     useEffect(() => {
         if (mode === 'create') {
             setEditedSupplier({
-                code: '',
+                // code: '',
                 name: '',
                 phone: '',
                 email: '',
@@ -41,7 +129,7 @@ const SupplierDetailForm = ({ suppliers, suppliersId, onClose, isOpen, mode, upd
             if (supplier) {
                 // Create a new object with only the desired fields
                 const editedSupplier = {
-                    code: supplier.code,
+                    // code: supplier.code,
                     name: supplier.name,
                     phone: supplier.phone,
                     email: supplier.email,
@@ -65,7 +153,7 @@ const SupplierDetailForm = ({ suppliers, suppliersId, onClose, isOpen, mode, upd
             if (editedSupplier) {
                 // Define the update data
                 const updateData = {
-                    code: editedSupplier.code,
+                    // code: editedSupplier.code,
                     name: editedSupplier.name,
                     phone: editedSupplier.phone,
                     email: editedSupplier.email,
@@ -79,20 +167,13 @@ const SupplierDetailForm = ({ suppliers, suppliersId, onClose, isOpen, mode, upd
                 // Handle the response as needed
                 console.log('Category updated:', response);
                 if (response.status === '200 OK') {
-                    setIsSuccess(true);
-                    setIsError(false);
-                    setSuccessMessage(response.message);
+                    handleSuccessMessage(response.message);
                 }
             }
         } catch (error) {
             // Handle errors
             console.error('Error updating supplier:', error);
-            setIsError(true);
-            setIsSuccess(false);
-            setErrorMessage(error.response.data.message);
-            if (error.response) {
-                console.log('Error response:', error.response);
-            }
+            handleErrorMessage(error.response.data.message);
         }
     };
 
@@ -122,9 +203,7 @@ const SupplierDetailForm = ({ suppliers, suppliersId, onClose, isOpen, mode, upd
             const response = await editStatusSuppliers(suppliersId, newStatus);
 
             if (response.status === '200 OK') {
-                setIsSuccess(true);
-                setIsError(false);
-                setSuccessMessage(response.message);
+                handleSuccessMessage(response.message);
             }
 
             // Sử dụng hàm để cập nhật trạng thái trong danh sách categories trong CategoryPage
@@ -134,12 +213,7 @@ const SupplierDetailForm = ({ suppliers, suppliersId, onClose, isOpen, mode, upd
             console.log('Product status updated:', response);
         } catch (error) {
             console.error('Error updating category status:', error);
-            setIsError(true);
-            setIsSuccess(false);
-            setErrorMessage(error.response.data.message);
-            if (error.response) {
-                console.log('Error response:', error.response);
-            }
+            handleErrorMessage(error.response.data.message);
         }
     };
 
@@ -165,13 +239,14 @@ const SupplierDetailForm = ({ suppliers, suppliersId, onClose, isOpen, mode, upd
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
-                                    <Typography variant="body1">Mã người bán:</Typography>
+                                    <Typography variant="body1">Mã nhà cung cấp:</Typography>
                                     <TextField
+                                        InputProps={{ readOnly: true }}
                                         size="small"
                                         variant="outlined"
-                                        label="Mã người bán"
-                                        sx={{ width: '70%' }}
-                                        value={editedSupplier ? editedSupplier.code : ''}
+                                        label="Mã nhà cung cấp"
+                                        sx={{ width: '70%', pointerEvents: 'none' }}
+                                        value={supplier ? supplier.code : ''}
                                         onChange={(e) => handleEdit('code', e.target.value)}
                                     />
                                 </Grid>
@@ -183,11 +258,11 @@ const SupplierDetailForm = ({ suppliers, suppliersId, onClose, isOpen, mode, upd
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
-                                    <Typography variant="body1">Tên người bán:</Typography>
+                                    <Typography variant="body1">Nhà cung cấp:</Typography>
                                     <TextField
                                         size="small"
                                         variant="outlined"
-                                        label="Tên người bán"
+                                        label="Tên nhà cung cấp"
                                         sx={{ width: '70%' }}
                                         value={editedSupplier ? editedSupplier.name : ''}
                                         onChange={(e) => handleEdit('name', e.target.value)}
@@ -237,7 +312,7 @@ const SupplierDetailForm = ({ suppliers, suppliersId, onClose, isOpen, mode, upd
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
-                                    <Typography variant="body1">taxCode:</Typography>
+                                    <Typography variant="body1">Mã số thuế:</Typography>
                                     <TextField
                                         size="small"
                                         variant="outlined"
@@ -275,10 +350,11 @@ const SupplierDetailForm = ({ suppliers, suppliersId, onClose, isOpen, mode, upd
                                 >
                                     <Typography variant="body1">Ngày tạo:</Typography>
                                     <TextField
+                                        InputProps={{ readOnly: true }}
                                         size="small"
                                         variant="outlined"
                                         label="Ngày tạo"
-                                        sx={{ width: '70%' }}
+                                        sx={{ width: '70%', pointerEvents: 'none' }}
                                         value={supplier.createdAt}
                                     />
                                 </Grid>
@@ -292,29 +368,57 @@ const SupplierDetailForm = ({ suppliers, suppliersId, onClose, isOpen, mode, upd
                                 >
                                     <Typography variant="body1">Ngày cập nhật:</Typography>
                                     <TextField
+                                        InputProps={{ readOnly: true }}
                                         size="small"
                                         variant="outlined"
                                         label="Ngày cập nhật"
-                                        sx={{ width: '70%' }}
+                                        sx={{ width: '70%', pointerEvents: 'none' }}
                                         value={supplier.updatedAt}
                                     />
                                 </Grid>
                             </Grid>
                         </Grid>
                     </Stack>
-                    {isSuccess && <SuccessAlerts message={successMessage} />}
-                    {isError && <ErrorAlerts errorMessage={errorMessage} />}
                     <Stack spacing={4} margin={2}>
                         <Grid container spacing={1} sx={{ gap: '10px' }}>
-                            <Button variant="contained" color="primary" onClick={updateSupplier}>
+                            <Button variant="contained" color="primary" onClick={handleConfirm1}>
                                 Cập nhập
                             </Button>
-                            <Button variant="contained" color="error" onClick={updateSupplierStatus}>
+                            {/* Thông báo confirm */}
+                            <CustomDialog
+                                open={confirmOpen1}
+                                onClose={handleConfirmClose1}
+                                title="Thông báo!"
+                                content="Bạn có chắc muốn cập nhật không?"
+                                onConfirm={handleConfirmUpdate1}
+                                confirmText="Xác nhận"
+                            />
+                            <Button variant="contained" color="error" onClick={handleConfirm2}>
                                 Thay đổi trạng thái
                             </Button>
-                            <Button variant="outlined" color="error" >
-                                Hủy bỏ
-                            </Button>
+                            {/* Thông báo confirm */}
+                            <CustomDialog
+                                open={confirmOpen2}
+                                onClose={handleConfirmClose1}
+                                title="Thông báo!"
+                                content="Bạn có chắc muốn cập nhật không?"
+                                onConfirm={handleConfirmUpdateStatus2}
+                                confirmText="Xác nhận"
+                            />
+                            <SnackbarSuccess
+                                open={open}
+                                handleClose={handleClose}
+                                message={successMessage}
+                                action={action}
+                                style={{ bottom: '16px', right: '16px' }}
+                            />
+                            <SnackbarError
+                                open={open1}
+                                handleClose={handleClose}
+                                message={errorMessage}
+                                action={action}
+                                style={{ bottom: '16px', right: '16px' }}
+                            />
                         </Grid>
                     </Stack>
                 </div>

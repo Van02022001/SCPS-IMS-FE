@@ -23,10 +23,6 @@ import {
 
 const CustomerRequestForm = ({ open, onClose, onSave }) => {
 
-
-    //thông báo
-
-
     return (
         <>
             <div

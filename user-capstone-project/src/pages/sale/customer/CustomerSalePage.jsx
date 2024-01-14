@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
-import { sentenceCase } from 'change-case';
+
 import React, { useEffect, useState } from 'react';
 // @mui
 import {
@@ -11,12 +11,9 @@ import {
     Avatar,
     Button,
     Popover,
-    Checkbox,
     TableRow,
-    MenuItem,
     TableBody,
     TableCell,
-    Container,
     Typography,
     IconButton,
     TableContainer,
@@ -31,15 +28,15 @@ import Scrollbar from '~/components/scrollbar/Scrollbar';
 import CloseIcon from '@mui/icons-material/Close';
 
 // sections
-import { ProductsListHead, ProductsListToolbar } from '~/sections/@dashboard/products';
+import { CustomerSaleListHead, CustomerSaleToolbar } from '~/sections/@dashboard/sale/customer';
 import CreateCustomerForm from '~/sections/auth/sale/manageCustomer/CreateCustomerForm';
 import CustomerDetailForm from '~/sections/auth/sale/manageCustomer/CustomerDetailForm';
 // mock
 import PRODUCTSLIST from '../../../_mock/products';
 // api
-import EditCategoryForm from '~/sections/auth/manager/categories/EditCategoryForm';
 import { getAllCustomer } from '~/data/mutation/customer/customer-mutation';
-
+import dayjs from 'dayjs';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 
 
 // ----------------------------------------------------------------------
@@ -52,11 +49,9 @@ const TABLE_HEAD = [
     { id: 'email', label: 'Email', alignRight: false },
     { id: 'taxCode', label: 'Mã thuế', alignRight: false },
     { id: 'address', label: 'Địa chỉ', alignRight: false },
-    { id: 'type', label: 'Vị trí', alignRight: false },
-    // { id: 'isVerified', label: 'Phân loại', alignRight: false },
+    { id: 'type', label: 'Hình thức', alignRight: false },
     { id: 'description', label: 'Mô tả', alignRight: false },
     { id: 'status', label: 'Trạng thái', alignRight: false },
-    { id: '' },
 ];
 
 // ----------------------------------------------------------------------
@@ -90,14 +85,14 @@ function applySortFilter(array, comparator, query) {
     return stabilizedThis.map((el) => el[0]);
 }
 
-function formatDate(dateString) {
-    const date = new Date(dateString);
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
+// function formatDate(dateString) {
+//     const date = new Date(dateString);
+//     const day = date.getDate();
+//     const month = date.getMonth() + 1;
+//     const year = date.getFullYear();
 
-    return `${day}/${month}/${year}`;
-}
+//     return `${day}/${month}/${year}`;
+// }
 
 const CustomerSalePage = () => {
     // State mở các form----------------------------------------------------------------
@@ -120,9 +115,11 @@ const CustomerSalePage = () => {
 
     // State data và xử lý data
     const [customerData, setCustomerData] = useState([]);
-    const [productStatus, setProductStatus] = useState('');
 
-    const [selectedProduct, setSelectedProduct] = useState(null);
+    const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
+    const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
+    const startIndex = page * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
 
     // Hàm để thay đổi data mỗi khi Edit xong api-------------------------------------------------------------
     const updateProductInList = (updatedProduct) => {
@@ -136,34 +133,34 @@ const CustomerSalePage = () => {
         }
     };
 
-    const updateProductStatusInList = (productId, newStatus) => {
-        const productIndex = customerData.findIndex((product) => product.id === productId);
+    const updateCustomerStatusInList = (customerId, newStatus) => {
+        console.log('Updating status for customer with ID:', customerId);
+        console.log('New status:', newStatus);
+        const customerIndex = customerData.findIndex((customer) => customer.customerId === customerId);
 
-        if (productIndex !== -1) {
-            const updatedProductData = [...customerData];
-            updatedProductData[productIndex].status = newStatus;
+        if (customerIndex !== -1) {
+            const updatedCustomerData = [...customerData];
+            updatedCustomerData[customerIndex].status = newStatus;
 
-            setCustomerData(updatedProductData);
+            console.log('Updated customer data:', updatedCustomerData);
+
+            setCustomerData(updatedCustomerData);
         }
     };
-
-    const handleCreateCustomerSuccess = (newProduct) => {
+    const handleCreateCustomerSuccess = (newCustomer, successMessage) => {
         // Close the form
         setOpenOderForm(false);
-        setCustomerData((prevProductData) => [...prevProductData, newProduct]);
+        setCustomerData((prevCustomerData) => [...prevCustomerData, newCustomer]);
+
+        setSnackbarSuccessMessage(successMessage === 'Create customer successfully!' ? 'Tạo thêm khách hàng thành công!' : 'Thành công');
+        setSnackbarSuccessOpen(true);
+    };
+
+    const handleCloseOdersForm = () => {
+        setOpenOderForm(false);
     };
 
     //----------------------------------------------------------------
-    const handleOpenMenu = (event, product) => {
-        setSelectedProduct(product);
-        setOpen(event.currentTarget);
-    };
-
-    const handleCloseMenu = () => {
-        setOpen(null);
-    };
-
-
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
             const newSelecteds = customerData.map((n) => n.name);
@@ -173,26 +170,27 @@ const CustomerSalePage = () => {
         setSelected([]);
     };
 
-    const handleClick = (event, name) => {
-        const selectedIndex = selected.indexOf(name);
-        let newSelected = [];
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, name);
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-        }
-        setSelected(newSelected);
-    };
+    // const handleClick = (event, name) => {
+    //     const selectedIndex = selected.indexOf(name);
+    //     let newSelected = [];
+    //     if (selectedIndex === -1) {
+    //         newSelected = newSelected.concat(selected, name);
+    //     } else if (selectedIndex === 0) {
+    //         newSelected = newSelected.concat(selected.slice(1));
+    //     } else if (selectedIndex === selected.length - 1) {
+    //         newSelected = newSelected.concat(selected.slice(0, -1));
+    //     } else if (selectedIndex > 0) {
+    //         newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
+    //     }
+    //     setSelected(newSelected);
+    // };
 
     const handleCustomerClick = (customer) => {
-        if (selectedCustomerId === customer.id) {
-            setSelectedCustomerId(null); // Đóng nếu đã mở
+        console.log(customer);
+        if (selectedCustomerId === customer.customerId) {
+            setSelectedCustomerId(null);
         } else {
-            setSelectedCustomerId(customer.id); // Mở hoặc chuyển sang sản phẩm khác
+            setSelectedCustomerId(customer.customerId);
         }
     };
 
@@ -210,15 +208,15 @@ const CustomerSalePage = () => {
         setRowsPerPage(parseInt(event.target.value, 10));
     };
     // Các hàm xử lý soft theo name--------------------------------------------------------------------------------------------------------------------------------
-    const handleCheckboxChange = (event, customerId) => {
-        if (event.target.checked) {
-            // Nếu người dùng chọn checkbox, thêm sản phẩm vào danh sách đã chọn.
-            setSelectedCustomerId([...selectedCustomerId, customerId]);
-        } else {
-            // Nếu người dùng bỏ chọn checkbox, loại bỏ sản phẩm khỏi danh sách đã chọn.
-            setSelectedCustomerId(selectedCustomerId.filter((id) => id !== customerId));
-        }
-    };
+    // const handleCheckboxChange = (event, customerId) => {
+    //     if (event.target.checked) {
+    //         // Nếu người dùng chọn checkbox, thêm sản phẩm vào danh sách đã chọn.
+    //         setSelectedCustomerId([...selectedCustomerId, customerId]);
+    //     } else {
+    //         // Nếu người dùng bỏ chọn checkbox, loại bỏ sản phẩm khỏi danh sách đã chọn.
+    //         setSelectedCustomerId(selectedCustomerId.filter((id) => id !== customerId));
+    //     }
+    // };
     const handleRequestSort = (property) => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
@@ -247,17 +245,8 @@ const CustomerSalePage = () => {
         setSortedProduct(filteredUsers)
     };
 
-    const handleCloseOdersForm = () => {
-        setOpenOderForm(false);
-    };
 
-    const handleCloseEditsForm = () => {
-        setOpenEditForm(false);
-    };
-
-
-
-    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - PRODUCTSLIST.length) : 0;
+    // const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - PRODUCTSLIST.length) : 0;
 
     const filteredUsers = applySortFilter(PRODUCTSLIST, getComparator(order, orderBy), filterName);
 
@@ -268,8 +257,13 @@ const CustomerSalePage = () => {
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
-                    setCustomerData(data);
-                    setSortedProduct(data);
+                    const sortedData = data.sort((a, b) => {
+                        return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(
+                            dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
+                        );
+                    });
+                    setCustomerData(sortedData);
+                    setSortedProduct(sortedData);
                 } else {
                     console.error('API response is not an array:', data);
                 }
@@ -309,7 +303,7 @@ const CustomerSalePage = () => {
             </Stack>
 
             <Card>
-                <ProductsListToolbar
+                <CustomerSaleToolbar
                     numSelected={selected.length}
                     filterName={filterName}
                     onFilterName={handleFilterByName}
@@ -318,9 +312,9 @@ const CustomerSalePage = () => {
                 <Scrollbar>
                     <TableContainer sx={{ minWidth: 800 }}>
                         <Table>
-                            <ProductsListHead
-                                order={order}
-                                orderBy={orderBy}
+                            <CustomerSaleListHead
+                                // order={order}
+                                // orderBy={orderBy}
                                 headLabel={TABLE_HEAD}
                                 rowCount={customerData.length}
                                 numSelected={selected.length}
@@ -328,25 +322,25 @@ const CustomerSalePage = () => {
                                 onSelectAllClick={handleSelectAllClick}
                             />
                             <TableBody>
-                                {customerData.map((customer) => {
+                                {customerData.slice(startIndex, endIndex).map((customer) => {
                                     return (
-                                        <React.Fragment key={customer.id}>
+                                        <React.Fragment key={customer.customerId}>
                                             <TableRow
                                                 hover
-                                                key={customer.id}
+                                                key={customer.customerId}
                                                 tabIndex={-1}
                                                 role="checkbox"
-                                                selected={selectedCustomerId === customer.id}
+                                                selected={selectedCustomerId === customer.customerId}
                                                 onClick={() => handleCustomerClick(customer)}
                                             >
-                                                <TableCell padding="checkbox">
+                                                {/* <TableCell padding="checkbox">
                                                     <Checkbox
                                                         checked={selectedCustomerId === customer.id}
-                                                        onChange={(event) => handleCheckboxChange(event, customer.id)}
-                                                    // checked={selectedUser}
-                                                    // onChange={(event) => handleClick(event, name)}
+                                                        // onChange={(event) => handleCheckboxChange(event, customer.id)}
+                                                        // checked={selectedUser}
+                                                        onChange={(event) => handleClick(event, customer.name)}
                                                     />
-                                                </TableCell>
+                                                </TableCell> */}
 
                                                 <TableCell component="th" scope="row" padding="none">
                                                     <Stack direction="row" alignItems="center" spacing={2}>
@@ -372,25 +366,27 @@ const CustomerSalePage = () => {
                                                 <TableCell align="left">{customer.email}</TableCell>
                                                 <TableCell align="left">{customer.taxCode}</TableCell>
                                                 <TableCell align="left">{customer.address}</TableCell>
-                                                <TableCell align="left">{customer.type}</TableCell>
+                                                <TableCell align="left">
+                                                    {(customer.customerType === "INDIVIDUAL") ? "Cá nhân" :
+                                                        (customer.customerType === "COMPANY") ? "Công ty" : 'Không có'}
+                                                </TableCell>
                                                 <TableCell align="left">{customer.description}</TableCell>
 
                                                 <TableCell align="left">
-                                                    <Label color={(customer.status === 'Inactive' && 'error') || 'success'}>
-                                                        {(customer.status === 'Active') ? 'Đang hoạt động' : 'Ngừng hoạt động'}
+                                                    <Label color={(customer.status === true && 'success') || 'error'}>
+                                                        {customer.status === true ? 'Đang hoạt động' : 'Ngừng hoạt động'}
                                                     </Label>
                                                 </TableCell>
                                             </TableRow>
 
-                                            {selectedCustomerId === customer.id && (
+                                            {selectedCustomerId === customer.customerId && (
                                                 <TableRow>
-                                                    <TableCell colSpan={8}>
+                                                    <TableCell colSpan={12}>
                                                         <CustomerDetailForm
                                                             customer={customerData}
-                                                            productStatus={productStatus}
                                                             customerId={selectedCustomerId}
                                                             updateProductInList={updateProductInList}
-                                                            updateProductStatusInList={updateProductStatusInList}
+                                                            updateCustomerStatusInList={updateCustomerStatusInList}
                                                             onClose={handleCloseCustomerDetails} />
                                                     </TableCell>
                                                 </TableRow>
@@ -398,11 +394,6 @@ const CustomerSalePage = () => {
                                         </React.Fragment>
                                     );
                                 })}
-                                {emptyRows > 0 && (
-                                    <TableRow style={{ height: 53 * emptyRows }}>
-                                        <TableCell colSpan={6} />
-                                    </TableRow>
-                                )}
                             </TableBody>
 
                             {isNotFound && (
@@ -435,56 +426,19 @@ const CustomerSalePage = () => {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={PRODUCTSLIST.length}
+                    count={customerData.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </Card>
-            {/* </Container> */}
-
-            <Popover
-                open={Boolean(open)}
-                anchorEl={open}
-                onClose={handleCloseMenu}
-                anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                PaperProps={{
-                    sx: {
-                        p: 1,
-                        width: 140,
-                        '& .MuiMenuItem-root': {
-                            px: 1,
-                            typography: 'body2',
-                            borderRadius: 0.75,
-                        },
-                    },
-                }}
-            >
-                <MenuItem onClick={() => setOpenEditForm(true)}>
-                    <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-                    Edit
-                </MenuItem>
-                <Dialog fullWidth maxWidth open={openEditForm}>
-                    <DialogTitle>
-                        Cập Nhật Sản Phẩm{' '}
-                        <IconButton style={{ float: 'right' }} onClick={handleCloseEditsForm}>
-                            <CloseIcon color="primary" />
-                        </IconButton>{' '}
-                    </DialogTitle>
-                    <EditCategoryForm
-                        open={openEditForm}
-                        product={selectedProduct}
-                        handleClose={handleCloseEditsForm}
-                    />
-                </Dialog>
-
-                <MenuItem sx={{ color: 'error.main' }}>
-                    <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
-                    Delete
-                </MenuItem>
-            </Popover>
+            <SnackbarSuccess
+                open={snackbarSuccessOpen}
+                handleClose={() => setSnackbarSuccessOpen(false)}
+                message={snackbarSuccessMessage}
+                style={{ bottom: '16px', right: '16px' }}
+            />
         </>
     );
 };

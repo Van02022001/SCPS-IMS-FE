@@ -12,14 +12,17 @@ import {
     Typography,
     Card,
     CardContent,
+    IconButton,
+    FormHelperText,
 } from '@mui/material';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 //icons
+import Snackbar from '@mui/material/Snackbar';
+import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
 import ClearIcon from '@mui/icons-material/Clear';
 import SaveIcon from '@mui/icons-material/Save';
-import CloseIcon from '@mui/icons-material/Close';
 
 //components
 import BoxComponent from '~/components/box/BoxComponent';
@@ -33,14 +36,16 @@ import AddUnitForm from './AddUnitForm';
 
 // api
 import { createSubCategory } from '~/data/mutation/subCategory/subCategory-mutation';
-import { getAllCategories } from '~/data/mutation/categories/categories-mutation';
-import { deleteUnits, getAllUnit, getAllUnitMeasurement } from '~/data/mutation/unit/unit-mutation';
-import { deleteOrigins, getAllOrigins } from '~/data/mutation/origins/origins-mutation';
-import SuccessAlerts from '~/components/alert/SuccessAlert';
-import ErrorAlerts from '~/components/alert/ErrorAlert';
+import { getAllCategoriesActive } from '~/data/mutation/categories/categories-mutation';
+import { getAllUnit, getAllUnitMeasurement } from '~/data/mutation/unit/unit-mutation';
+import { getAllOrigins } from '~/data/mutation/origins/origins-mutation';
+
 import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
+import SnackbarError from '~/components/alert/SnackbarError';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 
 const CreateSubCategoryForm = (props) => {
+    const [openSubAddCategory, setOpenSubAddCategory] = React.useState(false);
     const [currentTab, setCurrentTab] = useState(0);
     const [tab1Data, setTab1Data] = useState({ categories_id: [] });
     const [tab2Data, setTab2Data] = useState({});
@@ -53,6 +58,7 @@ const CreateSubCategoryForm = (props) => {
     // form để call api
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
+
     // const [minStockLevel, setMinStockLevel] = useState('');
     // const [maxStockLevel, setMaxStockLevel] = useState('');
     const [length, setLength] = useState('');
@@ -64,15 +70,109 @@ const CreateSubCategoryForm = (props) => {
     const [origins_id, setOrigins_id] = useState([]);
     const [unit_mea_id, setUnit_mea_id] = useState([]);
 
+    const [nameError, setNameError] = useState(null);
+    const [descriptionError, setDescriptionError] = useState(null);
+    const [categoriesError, setCategoriesError] = useState(null);
+    const [UnitError, setUnitError] = useState(null);
+    const [unitMeaError, setUnitMeaError] = useState(null);
     //thông báo
-    const [isSuccess, setIsSuccess] = useState(false);
-    const [isError, setIsError] = useState(false);
-    const [successMessage, setSuccessMessage] = useState('');
+    const [message, setMessage] = useState('');
+
     const [errorMessage, setErrorMessage] = useState('');
+    const [open1, setOpen1] = React.useState(false);
+    const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
+    const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
+    //========================== Hàm notification của trang ==================================
+    const handleMessage = (message) => {
+        setOpenSubAddCategory(true);
+        // Đặt logic hiển thị nội dung thông báo từ API ở đây
+        if (message === 'Create sub category successfully.') {
+            setMessage('Tạo mới sản phẩm thành công !');
+        } else if (message === 'Update SubCategory successfully.') {
+            setMessage('Cập nhập danh mục thành công');
+        }
+    };
+
+    const handleErrorMessage = (message) => {
+        setOpen1(true);
+        if (message === 'Invalid request') {
+            setErrorMessage('Yêu cầu không hợp lệ !');
+        } else if (message === 'Sub category name was existed') {
+            setErrorMessage('Tên danh mục đã tồn tại !');
+        } else if (message === 'unit_mea_id: Unit of measurement id is required') {
+            setErrorMessage('Vui lòng chọn đơn vị đo lường !');
+        } else if (message === 'unit_id: Required field') {
+            setErrorMessage('Vui lòng chọn đơn vị !');
+        } else if (message === 'name: size must be between 1 and 100') {
+            setErrorMessage('Tên phải từ 1 - 100 ký tự !');
+        } else if (message === 'description: Required field') {
+            setErrorMessage('Vui lòng nhập mô tả !');
+        } else if (message === 'description: The first letter must be uppercase.') {
+            setErrorMessage('Chữ cái đầu của mô tả phải viết hoa !');
+        } else if (message === 'SubCategory must have at least one category') {
+            setErrorMessage('Vui lòng chọn nhóm hàng !');
+        }
+    };
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenSubAddCategory(false);
+        setOpen1(false);
+        setErrorMessage('');
+    };
+
+    const action = (
+        <React.Fragment>
+            <Button color="secondary" size="small" onClick={handleClose}></Button>
+            <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
+                <CloseIcon fontSize="lage" />
+            </IconButton>
+        </React.Fragment>
+    );
+
+    const handleCloseSnackbar = () => {
+        setOpen1(false);
+    };
+    //============================================================
 
     const handleTab1DataChange = (event) => {
-        // Cập nhật dữ liệu cho tab 1 tại đây
-        setTab1Data({ ...tab1Data, [event.target.name]: event.target.value });
+        const { name, value } = event.target;
+
+        if (name === 'categories_id') {
+            setCategoriesError(null);
+        } else if (name === 'unit_id') {
+            setUnitError(null);
+        } else if (name === 'unit_mea_id') {
+            setUnitMeaError(null);
+        }
+
+        if (name === 'categories_id') {
+            setCategoriesError(null);
+            setTab1Data((prevData) => ({
+                ...prevData,
+                [name]: value,
+            }));
+        } else if (name === 'unit_id') {
+            setUnitError(null);
+            setTab1Data((prevData) => ({
+                ...prevData,
+                [name]: [value],
+            }));
+        } else if (name === 'unit_mea_id') {
+            setUnitMeaError(null);
+            setTab1Data((prevData) => ({
+                ...prevData,
+                [name]: [value],
+            }));
+        } else {
+            setTab1Data((prevData) => ({
+                ...prevData,
+                [name]: value,
+            }));
+        }
     };
 
     const handleTab2DataChange = (event) => {
@@ -92,7 +192,14 @@ const CreateSubCategoryForm = (props) => {
     const handleCloseAddCategoryDialog = () => {
         setOpenAddCategoryDialog(false);
     };
+    const handleSaveCategory = (successMessage) => {
+        handleCloseAddCategoryDialog();
 
+        setSnackbarSuccessMessage(
+            successMessage === 'Create category successfully' ? 'Tạo nhóm hàng thành công!' : 'Thành công',
+        );
+        setSnackbarSuccessOpen(true);
+    };
     // const handleOpenAddOriginForm = () => {
     //     setOpenAddOriginForm(true);
     // };
@@ -105,69 +212,57 @@ const CreateSubCategoryForm = (props) => {
         setOpenAddUnitForm(true);
     };
 
-    const handleCloseAddUnitFormm = () => {
+    const handleCloseAddUnitForm = () => {
         setOpenAddUnitForm(false);
     };
-    // Hàm delete của trang ---------------------------------------------------------------------
-    const handleDeleteOrigin = async (id) => {
-        try {
-            const response = await deleteOrigins(id);
+    const handleSaveUnit = (successMessage) => {
+        handleCloseAddUnitForm();
 
-            if (response.status === 202) {
-                const updatedOrigins = origins_id.filter((origin) => origin.id !== id);
-                setOrigins_id(updatedOrigins);
-            }
-        } catch (error) {
-            console.error('Error delete origins:', error);
-        }
+        setSnackbarSuccessMessage(
+            successMessage === 'Create unit successfully' ? 'Tạo đơn vị thành công!' : 'Thành công',
+        );
+        setSnackbarSuccessOpen(true);
     };
 
-    const handleDeleteUnit = async (id) => {
-        try {
-            const response = await deleteUnits(id);
-
-            if (response.status === 202) {
-                const updatedUnits = unit_id.filter((unit) => unit.id !== id);
-                setUnits_id(updatedUnits);
-            }
-        } catch (error) {
-            console.error('Error delete origins:', error);
-        }
-    };
     // hàm create category-----------------------------------------
     const handleCreateProduct = async () => {
+        if (!tab1Data.categories_id || !tab1Data.categories_id.length) {
+            setCategoriesError('Vui lòng chọn ít nhất một nhóm hàng');
+            return;
+        } else if (!tab1Data.unit_id || !tab1Data.unit_id.length) {
+            setUnitError('Vui lòng chọn đơn vị');
+            return;
+        } else if (!tab1Data.unit_mea_id || !tab1Data.unit_mea_id.length) {
+            setUnitMeaError('Vui lòng chọn đơn vị đo lường');
+            return;
+        }
+        const parsedUnitId = parseInt(tab1Data.unit_id) || 0;
+        const parsedUnitMeaId = parseInt(tab1Data.unit_mea_id) || 0;
         const productParams = {
             name,
             description,
             // minStockLevel,
             // maxStockLevel,
             categories_id: tab1Data.categories_id,
-            unit_id: tab1Data.unit_id,
+            unit_id: parsedUnitId,
             length,
             width,
             height,
             diameter,
-            unit_mea_id: tab1Data.unit_mea_id,
+            unit_mea_id: parsedUnitMeaId,
         };
         try {
             const response = await createSubCategory(productParams);
             if (response.status === '200 OK') {
-                setIsSuccess(true);
-                setIsError(false);
-                setSuccessMessage(response.message);
-
+                handleMessage(response.message);
                 props.onClose(response.data); // Call the callback function
             }
         } catch (error) {
             console.error('Error creating product:', error.response);
-            setIsError(true);
-            setIsSuccess(false);
-            if (error.response?.data?.message === 'Invalid request') {
-                setErrorMessage('Yêu cầu không hợp lệ');
-            }
-            if (error.response?.data?.error === '404 NOT_FOUND') {
-                setErrorMessage('Mô tả quá dài');
-            }
+
+            const errorMessage = error.response?.data?.message || error.response?.data?.data?.[0];
+
+            handleErrorMessage(errorMessage);
         }
     };
 
@@ -184,10 +279,39 @@ const CreateSubCategoryForm = (props) => {
         // setUnit_mea_id([]);
     };
 
-    const handleAddCategories = async () => { };
+    const validateName = (value) => {
+        if (!value.trim()) {
+            return 'Tên danh mục không được để trống';
+        } else if (!/^\p{Lu}/u.test(value)) {
+            return 'Chữ cái đầu phải in hoa.';
+        }
+
+        return null;
+    };
+
+    const validateDescription = (value) => {
+        if (!value.trim()) {
+            return 'Mô tả danh mục không được để trống.';
+        }
+        return null;
+    };
+
+    const handleNameChange = (e) => {
+        const newName = capitalizeFirstLetter(e.target.value);
+        setName(newName);
+
+        setNameError(validateName(newName));
+    };
+
+    const handleDescriptionChange = (e) => {
+        const newDescription = capitalizeFirstLetter(e.target.value);
+        setDescription(newDescription);
+
+        setDescriptionError(validateDescription(newDescription)); // Implement validateDescription function
+    };
 
     useEffect(() => {
-        getAllCategories()
+        getAllCategoriesActive()
             .then((respone) => {
                 const data = respone.data;
                 setCategories_id(data);
@@ -212,7 +336,7 @@ const CreateSubCategoryForm = (props) => {
                 setOrigins_id(data);
             })
             .catch((error) => console.error('Error fetching origins:', error));
-    }, []);
+    }, [openAddUnitForm, openAddCategoryDialog]);
 
     return (
         <>
@@ -220,7 +344,7 @@ const CreateSubCategoryForm = (props) => {
                 <DialogContent style={{ width: '90%' }}>
                     <Tabs value={currentTab} onChange={handleChangeTab} indicatorColor="primary" textColor="primary">
                         <Tab label="Thông tin" />
-                        <Tab label="Mô tả chi tiết" />
+                        {/* <Tab label="Mô tả chi tiết" /> */}
                     </Tabs>
                     {currentTab === 0 && (
                         <div style={{ marginLeft: 100 }}>
@@ -236,16 +360,17 @@ const CreateSubCategoryForm = (props) => {
                                             sx={{ marginBottom: 4, gap: 5 }}
                                         >
                                             <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
-                                                Tên hàng hóa:{' '}
+                                                Tên danh mục:{' '}
                                             </Typography>
                                             <TextField
-                                                helperText="Nhập tối đa 100 ký tự"
+                                                helperText={nameError}
+                                                error={Boolean(nameError)}
                                                 size="small"
                                                 variant="outlined"
                                                 label="Tên hàng"
                                                 sx={{ width: '70%' }}
                                                 value={name}
-                                                onChange={(e) => setName(capitalizeFirstLetter(e.target.value))}
+                                                onChange={handleNameChange}
                                             />
                                         </Grid>
 
@@ -258,10 +383,12 @@ const CreateSubCategoryForm = (props) => {
                                             sx={{ marginBottom: 4, gap: 5 }}
                                         >
                                             <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
-                                                Mô tả về hàng hóa:{' '}
+                                                Mô tả về danh mục:{' '}
                                             </Typography>
                                             <TextField
                                                 id="outlined-multiline-static"
+                                                helperText={descriptionError}
+                                                error={Boolean(descriptionError)}
                                                 multiline
                                                 rows={4}
                                                 size="small"
@@ -269,9 +396,10 @@ const CreateSubCategoryForm = (props) => {
                                                 variant="outlined"
                                                 sx={{ width: '70%' }}
                                                 value={description}
-                                                onChange={(e) => setDescription(capitalizeFirstLetter(e.target.value))}
+                                                onChange={handleDescriptionChange}
                                             />
                                         </Grid>
+
                                         <FormControl size="small" variant="outlined" sx={{ width: '100%' }}>
                                             <Grid
                                                 container
@@ -290,11 +418,12 @@ const CreateSubCategoryForm = (props) => {
                                                         labelId="group-label"
                                                         id="group-select"
                                                         sx={{ width: '90%', fontSize: '14px' }}
-                                                        multiple // Thêm thuộc tính multiple để cho phép chọn nhiều giá trị
+                                                        multiple
                                                         value={[...tab1Data.categories_id]}
                                                         onChange={handleTab1DataChange}
                                                         name="categories_id"
                                                         required
+                                                        error={Boolean(categoriesError)}
                                                     >
                                                         {categories_id.map((category) => (
                                                             <MenuItem key={category.id} value={category.id}>
@@ -312,15 +441,18 @@ const CreateSubCategoryForm = (props) => {
                                                     <AddCategoryForm
                                                         open={openAddCategoryDialog}
                                                         onClose={handleCloseAddCategoryDialog}
+                                                        onSave={handleSaveCategory}
                                                     />
+                                                    <FormHelperText error={Boolean(categoriesError)}>
+                                                        {categoriesError}
+                                                    </FormHelperText>
                                                 </Grid>
                                             </Grid>
                                         </FormControl>
 
                                         <FormControl size="small" variant="outlined" sx={{ width: '100%' }}>
                                             <Grid
-                                                container
-                                                spacing={1}
+                                                container={1}
                                                 direction="row"
                                                 justifyContent="space-between"
                                                 alignItems="center"
@@ -339,6 +471,7 @@ const CreateSubCategoryForm = (props) => {
                                                         onChange={handleTab1DataChange}
                                                         name="unit_id"
                                                         required
+                                                        error={Boolean(UnitError)}
                                                     >
                                                         {unit_id.map((unit) => (
                                                             <MenuItem
@@ -369,8 +502,12 @@ const CreateSubCategoryForm = (props) => {
                                                     </Button>
                                                     <AddUnitForm
                                                         open={openAddUnitForm}
-                                                        onClose={handleCloseAddUnitFormm}
+                                                        onClose={handleCloseAddUnitForm}
+                                                        onSave={handleSaveUnit}
                                                     />
+                                                    <FormHelperText error={Boolean(setUnitError)}>
+                                                        {UnitError}
+                                                    </FormHelperText>
                                                 </Grid>
                                             </Grid>
                                         </FormControl>
@@ -397,6 +534,7 @@ const CreateSubCategoryForm = (props) => {
                                                         value={tab1Data.unit_mea_id}
                                                         onChange={handleTab1DataChange}
                                                         name="unit_mea_id"
+                                                        error={Boolean(unitMeaError)}
                                                     >
                                                         {unit_mea_id.map((unit_mea) => (
                                                             <MenuItem key={unit_mea.id} value={unit_mea.id}>
@@ -415,6 +553,9 @@ const CreateSubCategoryForm = (props) => {
                                                         open={openAddCategoryDialog}
                                                         onClose={handleCloseAddCategoryDialog}
                                                     />
+                                                    <FormHelperText error={Boolean(setUnitMeaError)}>
+                                                        {unitMeaError}
+                                                    </FormHelperText>
                                                 </Grid>
                                             </Grid>
                                         </FormControl>
@@ -436,7 +577,18 @@ const CreateSubCategoryForm = (props) => {
                                                         id="demo-customized-textbox"
                                                         label="Chiều dài"
                                                         value={length}
-                                                        onChange={(e) => setLength(e.target.value)}
+                                                        onChange={(e) =>
+                                                            setLength(
+                                                                Math.min(
+                                                                    Number(e.target.value.replace(/[^0-9.-]/g, '')),
+                                                                    1000,
+                                                                ),
+                                                            )
+                                                        }
+                                                        inputProps={{
+                                                            max: 1000,
+                                                            step: 1,
+                                                        }}
                                                     />
                                                 </FormControl>
                                                 <FormControl sx={{ m: 0.2 }} variant="standard">
@@ -444,7 +596,18 @@ const CreateSubCategoryForm = (props) => {
                                                         id="demo-customized-textbox"
                                                         label="Chiều rộng"
                                                         value={width}
-                                                        onChange={(e) => setWidth(e.target.value)}
+                                                        onChange={(e) =>
+                                                            setWidth(
+                                                                Math.min(
+                                                                    Number(e.target.value.replace(/[^0-9.-]/g, '')),
+                                                                    1000,
+                                                                ),
+                                                            )
+                                                        }
+                                                        inputProps={{
+                                                            max: 1000,
+                                                            step: 1,
+                                                        }}
                                                     />
                                                 </FormControl>
                                                 <FormControl sx={{ m: 0.2 }} variant="standard">
@@ -452,7 +615,18 @@ const CreateSubCategoryForm = (props) => {
                                                         id="demo-customized-textbox"
                                                         label="Chiều cao"
                                                         value={height}
-                                                        onChange={(e) => setHeight(e.target.value)}
+                                                        onChange={(e) =>
+                                                            setHeight(
+                                                                Math.min(
+                                                                    Number(e.target.value.replace(/[^0-9.-]/g, '')),
+                                                                    1000,
+                                                                ),
+                                                            )
+                                                        }
+                                                        inputProps={{
+                                                            max: 1000,
+                                                            step: 1,
+                                                        }}
                                                     />
                                                 </FormControl>
                                                 <FormControl sx={{ m: 0.2 }} variant="standard">
@@ -460,7 +634,18 @@ const CreateSubCategoryForm = (props) => {
                                                         id="demo-customized-textbox"
                                                         label="Đường kính"
                                                         value={diameter}
-                                                        onChange={(e) => setDiameter(e.target.value)}
+                                                        onChange={(e) =>
+                                                            setDiameter(
+                                                                Math.min(
+                                                                    Number(e.target.value.replace(/[^0-9.-]/g, '')),
+                                                                    1000,
+                                                                ),
+                                                            )
+                                                        }
+                                                        inputProps={{
+                                                            max: 1000,
+                                                            step: 1,
+                                                        }}
                                                     />
                                                 </FormControl>
                                             </div>
@@ -469,22 +654,41 @@ const CreateSubCategoryForm = (props) => {
                                         {/* Thêm các trường khác ở đây */}
                                     </Grid>
                                 </Grid>
-                                <Grid container spacing={2} sx={{ gap: '20px' }}>
+                                {/* <Grid container spacing={2} sx={{ gap: '20px' }}>
                                     <BoxComponent />
                                     <BoxComponent />
                                     <BoxComponent />
-                                </Grid>
-                                {isSuccess && <SuccessAlerts message={successMessage} />}
-                                {isError && <ErrorAlerts errorMessage={errorMessage} />}
+                                </Grid> */}
+
                                 <Grid container spacing={1} sx={{ gap: '20px' }}>
                                     <Button
                                         color="primary"
                                         variant="contained"
                                         startIcon={<SaveIcon />}
                                         onClick={handleCreateProduct}
+                                        disabled={Boolean(nameError || descriptionError)}
                                     >
                                         Lưu
                                     </Button>
+                                    <Snackbar
+                                        open={openSubAddCategory}
+                                        autoHideDuration={6000}
+                                        onClose={handleClose}
+                                        anchorOrigin={{
+                                            vertical: 'bottom',
+                                            horizontal: 'right',
+                                        }}
+                                        message={message}
+                                        action={action}
+                                        style={{ bottom: '16px', right: '16px' }}
+                                    />
+                                    <SnackbarError
+                                        open={open1}
+                                        handleClose={handleCloseSnackbar}
+                                        message={errorMessage}
+                                        action={action}
+                                        style={{ bottom: '16px', right: '16px' }}
+                                    />
                                     <Button
                                         color="error"
                                         variant="outlined"
@@ -498,7 +702,7 @@ const CreateSubCategoryForm = (props) => {
                         </div>
                     )}
 
-                    {currentTab === 1 && (
+                    {/* {currentTab === 1 && (
                         <div style={{ marginLeft: 100 }}>
                             <Card sx={{ minWidth: 275, marginTop: 5 }} spacing={2}>
                                 <Typography
@@ -568,9 +772,18 @@ const CreateSubCategoryForm = (props) => {
                                 </Grid>
                             </Stack>
                         </div>
-                    )}
+                    )} */}
                 </DialogContent>
             </div>
+            <SnackbarSuccess
+                open={snackbarSuccessOpen}
+                handleClose={() => {
+                    setSnackbarSuccessOpen(false);
+                    setSnackbarSuccessMessage('');
+                }}
+                message={snackbarSuccessMessage}
+                style={{ bottom: '16px', right: '16px' }}
+            />
         </>
     );
 };

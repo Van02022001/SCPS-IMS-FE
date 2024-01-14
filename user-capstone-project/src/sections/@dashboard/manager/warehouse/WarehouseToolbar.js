@@ -102,11 +102,11 @@ export default function WarehouseToolbar({ numSelected, onFilterName, onDataSear
             }
           />
 
-          <Tooltip title="Filter list">
+          {/* <Tooltip title="Filter list">
             <IconButton onClick={handleFilterClick}>
               <Iconify icon="ic:round-filter-list" />
             </IconButton>
-          </Tooltip>
+          </Tooltip> */}
 
           <Menu
             anchorEl={anchorEl}

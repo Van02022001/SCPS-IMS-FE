@@ -1,9 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Button, Tab, Tabs, Stack, Grid, TextField, FormControl, Select, MenuItem } from '@mui/material';
+import {
+    Typography,
+    Button,
+    Tab,
+    Tabs,
+    Stack,
+    Grid,
+    TextField,
+    IconButton,
+} from '@mui/material';
 import { deleteOrigins, editOrigins } from '~/data/mutation/origins/origins-mutation';
 import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
 import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
+import CustomDialog from '~/components/alert/ConfirmDialog';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
+import SnackbarError from '~/components/alert/SnackbarError';
+import CloseIcon from '@mui/icons-material/Close';
+import { editUnits } from '~/data/mutation/unit/unit-mutation';
+
 
 const UnitDetailForm = ({ units, unitsId, onClose, isOpen, mode }) => {
     const [expandedItem, setExpandedItem] = useState(unitsId);
@@ -12,11 +27,63 @@ const UnitDetailForm = ({ units, unitsId, onClose, isOpen, mode }) => {
 
     const [editedUnit, setEditedUnit] = useState(null);
 
-    //thông báo
-    const [isSuccess, setIsSuccess] = useState(false);
-    const [isError, setIsError] = useState(false);
+    //========================== Hàm notification của trang ==================================
+    const [open, setOpen] = React.useState(false);
+    const [open1, setOpen1] = React.useState(false);
+    const [confirmOpen1, setConfirmOpen1] = useState(false);
+    const [confirmOpen2, setConfirmOpen2] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+
+    const handleSuccessMessage = (message) => {
+        setOpen(true);
+        if (message === 'Update unit successfully') {
+            setSuccessMessage('Cập nhập đơn vị thành công !');
+        }
+    };
+
+    const handleErrorMessage = (message) => {
+        setOpen1(true);
+        if (message === 'Unit name was existed') {
+            setErrorMessage('Tên đơn vị đã tồn tại !');
+        } else if (message === 'Invalid request') {
+            setErrorMessage('Yêu cầu không hợp lệ !');
+        }
+    };
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpen(false);
+        setOpen1(false);
+        setSuccessMessage('');
+        setErrorMessage('');
+    };
+
+    const action = (
+        <React.Fragment>
+            <Button color="secondary" size="small" onClick={handleClose}></Button>
+            <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
+                <CloseIcon fontSize="lage" />
+            </IconButton>
+        </React.Fragment>
+    );
+    const handleConfirmClose1 = () => {
+        setConfirmOpen1(false);
+    };
+
+    const handleConfirmUpdate1 = () => {
+        setConfirmOpen1(false);
+        updateUnit();
+    };
+
+    const handleConfirm1 = () => {
+        setConfirmOpen1(true);
+    };
+
+    //========================== Hàm notification của trang ==================================
 
     useEffect(() => {
         if (isOpen) {
@@ -59,34 +126,17 @@ const UnitDetailForm = ({ units, unitsId, onClose, isOpen, mode }) => {
                     name: editedUnit.name,
                 };
 
-                // Call your API to update the category
-                const response = await editOrigins(unitsId, updateData);
+                const response = await editUnits(unitsId, updateData);
 
-                // Handle the response as needed
                 console.log('Category updated:', response);
                 if (response.status === '200 OK') {
-                    setIsSuccess(true);
-                    setIsError(false);
-                    setSuccessMessage(response.message);
+                    handleSuccessMessage(response.message);
                 }
             }
         } catch (error) {
             // Handle errors
             console.error('Error updating unit:', error);
-            setIsError(true);
-            setIsSuccess(false);
-            if (error.response?.data?.message === 'Invalid request') {
-                setErrorMessage('Yêu cầu không hợp lệ');
-            }
-        }
-    };
-
-    const deleteUnit = async () => {
-        try {
-            await deleteOrigins(unitsId);
-            onClose();
-        } catch (error) {
-            console.error('Error deleting unit:', error);
+            handleErrorMessage(error.response.data.message);
         }
     };
 
@@ -140,11 +190,32 @@ const UnitDetailForm = ({ units, unitsId, onClose, isOpen, mode }) => {
                             </Grid>
                         </Grid>
                     </Stack>
-                    {isSuccess && <SuccessAlerts message={successMessage} />}
-                    {isError && <ErrorAlerts errorMessage={errorMessage} />}
-                    <Button variant="contained" color="primary" onClick={updateUnit}>
+                    <Button variant="contained" color="primary" onClick={handleConfirm1}>
                         Cập nhập
                     </Button>
+                    {/* Thông báo confirm */}
+                    <CustomDialog
+                        open={confirmOpen1}
+                        onClose={handleConfirmClose1}
+                        title="Thông báo!"
+                        content="Bạn có chắc muốn cập nhật không?"
+                        onConfirm={handleConfirmUpdate1}
+                        confirmText="Xác nhận"
+                    />
+                    <SnackbarSuccess
+                        open={open}
+                        handleClose={handleClose}
+                        message={successMessage}
+                        action={action}
+                        style={{ bottom: '16px', right: '16px' }}
+                    />
+                    <SnackbarError
+                        open={open1}
+                        handleClose={handleClose}
+                        message={errorMessage}
+                        action={action}
+                        style={{ bottom: '16px', right: '16px' }}
+                    />
                 </div>
             )}
             {selectedTab === 1 && (

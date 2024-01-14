@@ -1,22 +1,97 @@
 import React, { useState } from 'react';
-import { Dialog, DialogTitle, DialogContent, TextField, Button } from '@mui/material';
+import { DialogContent, TextField, Button, IconButton } from '@mui/material';
 
 import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
-import SuccessAlerts from '~/components/alert/SuccessAlert';
-import ErrorAlerts from '~/components/alert/ErrorAlert';
 // api
 import { createWarehouse } from '~/data/mutation/warehouse/warehouse-mutation';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
+import SnackbarError from '~/components/alert/SnackbarError';
+import CloseIcon from '@mui/icons-material/Close';
 
-const CreateWarehouseForm = ({ open, onClose, onSave, props }) => {
+
+const CreateWarehouseForm = ({ onSave, props }) => {
     const [warehouseName, setWarehouseName] = useState('');
     const [warehouseAddress, setWarehouseAddress] = useState('');
-    const [showNotification, setShowNotification] = useState(false);
-
+    const [warehouseNameError, setWarehouseNameError] = useState('');
+    const [warehouseAddressError, setWarehouseAddressError] = useState('');
     //thông báo
-    const [isSuccess, setIsSuccess] = useState(false);
-    const [isError, setIsError] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    //========================== Hàm notification của trang ==================================
+    const [open, setOpen] = React.useState(false);
+    const [open1, setOpen1] = React.useState(false);
+
+    const handleSuccessMessage = (message) => {
+        setOpen(true);
+        if (message === 'Create category successfully') {
+            setSuccessMessage('Tạo nhóm hàng thành công');
+        } else if (message === 'Update SubCategory successfully.') {
+            setSuccessMessage('Cập nhập danh mục thành công');
+        }
+    };
+
+    const handleErrorMessage = (message) => {
+        setOpen1(true);
+        if (message === 'Invalid request') {
+            setErrorMessage('Yêu cầu không hợp lệ !');
+        } else if (message === 'Warehouse name was existed') {
+            setErrorMessage('Tên bị trùng lặp !');
+        }
+    };
+    const validateName = (value) => {
+        if (!value.trim()) {
+            return "Tên hàng hóa không được để trống"
+        } else if (!/^\p{Lu}/u.test(value)) {
+            return "Chữ cái đầu phải in hoa.";
+        }
+
+        return null;
+    };
+
+    const validateAdress = (value) => {
+        if (!value.trim()) {
+            return "Mô tả hàng hóa không được để trống.";
+        }
+        return null;
+    };
+    const handleWarehouseNameChange = (e) => {
+        const newName = capitalizeFirstLetter(e.target.value);
+        setWarehouseName(newName);
+
+        setWarehouseNameError(validateName(newName));
+    };
+
+    const handleWarehouseAddressChange = (e) => {
+        const newAddress = capitalizeFirstLetter(e.target.value);
+        setWarehouseAddress(newAddress);
+
+        setWarehouseAddressError(validateAdress(newAddress));
+    };
+    //============================================================
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        console.log('Closing Snackbar...');
+        setOpen(false);
+        setOpen1(false);
+        setSuccessMessage('');
+        setErrorMessage('');
+    };
+
+    const action = (
+        <React.Fragment>
+            <Button color="secondary" size="small" onClick={handleClose}></Button>
+            <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
+                <CloseIcon fontSize="lage" />
+            </IconButton>
+        </React.Fragment>
+    );
+    const handleCloseSnackbar = () => {
+        setOpen(false);
+        setOpen1(false);
+    };
+    //============================================================
 
     const handleSave = async () => {
         const warehouseParams = {
@@ -27,24 +102,13 @@ const CreateWarehouseForm = ({ open, onClose, onSave, props }) => {
             const response = await createWarehouse(warehouseParams);
 
             if (response.status === '200 OK') {
-                setIsSuccess(true);
-                setIsError(false);
-                setSuccessMessage(response.message);
-                props.onClose(response.data);
-                //clear
-                // setWarehouseName('');
-                // setWarehouseAddress('');
+                handleSuccessMessage(response.message);
+                handleCloseSnackbar();
+                props.onClose(response.data, response.message);
             }
         } catch (error) {
             console.error("can't feaching category", error);
-            setIsError(true);
-            setIsSuccess(false);
-            if (error.response?.data?.message === 'Invalid request') {
-                setErrorMessage('Yêu cầu không hợp lệ');
-            }
-            if (error.response?.data?.error === '404 NOT_FOUND') {
-                setErrorMessage('Mô tả quá dài');
-            }
+            handleErrorMessage(error.response?.data?.message);
         }
     };
 
@@ -52,29 +116,44 @@ const CreateWarehouseForm = ({ open, onClose, onSave, props }) => {
         <>
             <DialogContent sx={{ width: 500 }}>
                 <TextField
+                    helperText={warehouseNameError}
+                    error={Boolean(warehouseNameError)}
                     label="Tên kho"
                     variant="outlined"
                     fullWidth
                     margin="normal"
                     value={warehouseName}
-                    onChange={(e) => setWarehouseName(capitalizeFirstLetter(e.target.value))}
+                    onChange={handleWarehouseNameChange}
                 />
                 <TextField
-                    helperText="Địa chỉ phải có từ 1 đến 200 ký tự."
+                    helperText={warehouseAddressError}
+                    error={Boolean(warehouseAddressError)}
                     label="Địa chỉ kho"
                     variant="outlined"
                     fullWidth
                     margin="normal"
                     value={warehouseAddress}
-                    onChange={(e) => setWarehouseAddress(capitalizeFirstLetter(e.target.value))}
+                    onChange={handleWarehouseAddressChange}
                 />
-                {isSuccess && <SuccessAlerts message={successMessage} />}
-                {isError && <ErrorAlerts errorMessage={errorMessage} />}
             </DialogContent>
             <div style={{ padding: '16px' }}>
                 <Button variant="contained" color="primary" onClick={handleSave}>
                     lưu
                 </Button>
+                <SnackbarSuccess
+                    open={open}
+                    handleClose={handleCloseSnackbar}
+                    message={successMessage}
+                    action={action}
+                    style={{ bottom: '16px', right: '16px' }}
+                />
+                <SnackbarError
+                    open={open1}
+                    handleClose={handleCloseSnackbar}
+                    message={errorMessage}
+                    action={action}
+                    style={{ bottom: '16px', right: '16px' }}
+                />
             </div>
         </>
     );

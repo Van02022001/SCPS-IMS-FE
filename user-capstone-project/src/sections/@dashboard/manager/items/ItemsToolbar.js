@@ -34,13 +34,13 @@ const StyledSearch = styled(OutlinedInput)(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-CategoryToolbar.propTypes = {
+ItemsToolbar.propTypes = {
   numSelected: PropTypes.number,
   filterName: PropTypes.string,
   onFilterName: PropTypes.func,
 };
 
-export default function CategoryToolbar({ numSelected, onFilterName, onDataSearch }) {
+export default function ItemsToolbar({ numSelected, onFilterName, onDataSearch }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedFilters, setSelectedFilters] = useState({ filter1: false, filter2: false, filter3: false, filter4: false, filter5: false,  filter6: false });
   const [filterName, setFilterName] = useState('');
@@ -101,13 +101,13 @@ export default function CategoryToolbar({ numSelected, onFilterName, onDataSearc
             }
           />
 
-          <Tooltip title="Filter list">
+          {/* <Tooltip title="Filter list">
             <IconButton onClick={handleFilterClick}>
               <Iconify icon="ic:round-filter-list" />
             </IconButton>
-          </Tooltip>
+          </Tooltip> */}
 
-          <Menu
+          {/* <Menu
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}
             onClose={handleFilterClose}
@@ -154,7 +154,7 @@ export default function CategoryToolbar({ numSelected, onFilterName, onDataSearc
               />
               Giá chung
             </MenuItem>
-          </Menu>
+          </Menu> */}
         </>
       )}
     </StyledRoot>

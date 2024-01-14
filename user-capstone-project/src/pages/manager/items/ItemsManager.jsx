@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
-import { sentenceCase } from 'change-case';
+
 import React, { useEffect, useState } from 'react';
 // @mui
 import {
@@ -10,13 +10,11 @@ import {
     Paper,
     Avatar,
     Button,
-    Popover,
     Checkbox,
     TableRow,
     MenuItem,
     TableBody,
     TableCell,
-    Container,
     Typography,
     IconButton,
     TableContainer,
@@ -35,7 +33,7 @@ import Iconify from '../../../components/iconify';
 import Scrollbar from '../../../components/scrollbar';
 import CloseIcon from '@mui/icons-material/Close';
 // sections
-import { UserListHead, UserListToolbar } from '../../../sections/@dashboard/user';
+import { ItemsListHead, ItemsToolbar } from '~/sections/@dashboard/manager/items';
 import CreateItemsForm from '~/sections/auth/manager/items/CreateItemsForm';
 import ItemDetailForm from '~/sections/auth/manager/items/ItemDetailForm';
 import USERLIST from '../../../_mock/user';
@@ -54,6 +52,8 @@ import { DateRangePicker } from '@mui/x-date-pickers-pro/DateRangePicker';
 import dayjs from 'dayjs';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
+
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
 
@@ -65,9 +65,8 @@ const TABLE_HEAD = [
     { id: 'role', label: 'Số lượng', alignRight: false },
     { id: 'status', label: 'Thương hiệu', alignRight: false },
     { id: 'isVerified', label: 'Nhà cung cấp', alignRight: false },
-    { id: 'status', label: 'Nguồn gốc', alignRight: false },
+    { id: 'origin', label: 'Xuất xứ', alignRight: false },
     { id: 'status', label: 'Trạng thái', alignRight: false },
-    { id: '' },
 ];
 // const orderDetailFormStyles = {
 //     maxHeight: 0,
@@ -134,14 +133,14 @@ const ItemsManagerPage = () => {
 
     const [rowsPerPage, setRowsPerPage] = useState(5);
     //-------------------------------------------------
-    const [openOderFormDetail, setOpenOderFormDetail] = useState(false);
-    const [selectedOrderId, setSelectedOrderId] = useState(null);
+    // const [openOderFormDetail, setOpenOderFormDetail] = useState(false);
+    // const [selectedOrderId, setSelectedOrderId] = useState(null);
     const [selectedOrder, setSelectedOrder] = useState(null);
 
     const [selectedItemId, setSelectedItemId] = useState([]);
     // State data và xử lý data
     const [itemsData, setItemData] = useState([]);
-    const [itemStatus, setItemStatus] = useState('');
+    // const [itemStatus, setItemStatus] = useState('');
     const [sortedItem, setSortedItem] = useState([]);
     //--------------------Filter------------------------
     const [personName, setPersonName] = React.useState([]);
@@ -164,6 +163,11 @@ const ItemsManagerPage = () => {
     // fiter createdAt //
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
+    const startIndex = page * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
+
+    const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
+    const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
 
     const handleChange = (event) => {
         setPersonName(event.target.value);
@@ -182,9 +186,9 @@ const ItemsManagerPage = () => {
         setOpen(event.currentTarget);
     };
 
-    const handleCloseMenu = () => {
-        setOpen(null);
-    };
+    // const handleCloseMenu = () => {
+    //     setOpen(null);
+    // };
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -194,7 +198,7 @@ const ItemsManagerPage = () => {
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelecteds = USERLIST.map((n) => n.name);
+            const newSelecteds = itemsData.map((n) => n.name);
             setSelected(newSelecteds);
             return;
         }
@@ -215,6 +219,7 @@ const ItemsManagerPage = () => {
         }
         setSelected(newSelected);
     };
+
     const handleCloseOdersForm = () => {
         setOpenOderForm(false);
     };
@@ -271,10 +276,13 @@ const ItemsManagerPage = () => {
             setItemData(updatedItemData);
         }
     };
-    const handleCreateItemsSuccess = (newItems) => {
+    const handleCreateItemsSuccess = (newItems, successMessage) => {
         // Close the form
         setOpenOderForm(false);
-        setItemData((prevItemsData) => [...prevItemsData, newItems]);
+        setItemData((prevItemsData) => [newItems, ...prevItemsData]);
+        // Show success message
+        setSnackbarSuccessMessage(successMessage === 'Create item successfully' ? 'Tạo thể loại thành công!' : 'Thành công');
+        setSnackbarSuccessOpen(true);
     };
     //===========================================================================================
 
@@ -289,8 +297,13 @@ const ItemsManagerPage = () => {
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
-                    setItemData(data);
-                    setSortedItem(data);
+                    const sortedData = data.sort((a, b) => {
+                        return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(
+                            dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
+                        );
+                    });
+                    setItemData(sortedData);
+                    setSortedItem(sortedData);
                 } else {
                     console.error('API response is not an array:', data);
                 }
@@ -482,14 +495,14 @@ const ItemsManagerPage = () => {
             </FormControl>
 
             <FormControl sx={{ m: 1, width: 200, mb: 2 }}>
-                <InputLabel id="demo-multiple-checkbox-label">Nguồn gốc</InputLabel>
+                <InputLabel id="demo-multiple-checkbox-label">Xuất xứ</InputLabel>
                 <Select
                     labelId="demo-multiple-checkbox-label"
                     id="demo-multiple-checkbox"
                     multiple
                     value={selectedOrigins}
                     onChange={(event) => setSelectedOrigins(event.target.value)}
-                    input={<OutlinedInput label="Nguồn gốc" />}
+                    input={<OutlinedInput label="Xuất xứ" />}
                     renderValue={(selected) => selected.join(', ')}
                     MenuProps={MenuProps}
                 >
@@ -501,6 +514,7 @@ const ItemsManagerPage = () => {
                     ))}
                 </Select>
             </FormControl>
+
             <FormControl sx={{ ml: 44, width: 300 }}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DemoContainer components={['DateRangePicker']}>
@@ -519,26 +533,22 @@ const ItemsManagerPage = () => {
             {/* ===========================================filter=========================================== */}
 
             <Card>
-                <UserListToolbar
-                    numSelected={selected.length}
-                    filterName={filterName}
-                    onFilterName={handleFilterByName}
-                />
+                <ItemsToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
 
                 <Scrollbar>
                     <TableContainer sx={{ minWidth: 800 }}>
                         <Table>
-                            <UserListHead
+                            <ItemsListHead
                                 order={order}
                                 orderBy={orderBy}
                                 headLabel={TABLE_HEAD}
-                                rowCount={USERLIST.length}
+                                rowCount={itemsData.length}
                                 numSelected={selected.length}
                                 onRequestSort={handleRequestSort}
                                 onSelectAllClick={handleSelectAllClick}
                             />
                             <TableBody>
-                                {filteredItems.map((item) => {
+                                {filteredItems.slice(startIndex, endIndex).map((item) => {
                                     return (
                                         <React.Fragment key={item.id}>
                                             <TableRow
@@ -549,14 +559,14 @@ const ItemsManagerPage = () => {
                                                 selected={selectedItemId === item.id}
                                                 onClick={() => handleItemClick(item)}
                                             >
-                                                <TableCell padding="checkbox">
+                                                {/* <TableCell padding="checkbox">
                                                     <Checkbox
                                                         checked={selectedItemId === item.id}
-                                                        onChange={(event) => handleCheckboxChange(event, item.id)}
+                                                        // onChange={(event) => handleCheckboxChange(event, item.id)}
                                                         // checked={selectedUser}
-                                                        // onChange={(event) => handleClick(event, name)}
+                                                        onChange={(event) => handleClick(event, item.name)}
                                                     />
-                                                </TableCell>
+                                                </TableCell> */}
 
                                                 <TableCell align="left">
                                                     <Typography variant="subtitle2" noWrap>
@@ -580,12 +590,6 @@ const ItemsManagerPage = () => {
                                                             ? 'Đang hoạt động'
                                                             : 'Ngừng hoạt động'}
                                                     </Label>
-                                                </TableCell>
-
-                                                <TableCell align="right">
-                                                    <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
-                                                        <Iconify icon={'eva:more-vertical-fill'} />
-                                                    </IconButton>
                                                 </TableCell>
                                             </TableRow>
 
@@ -637,42 +641,20 @@ const ItemsManagerPage = () => {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={USERLIST.length}
+                    count={filteredItems.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
+                    labelRowsPerPage="Số lượng sản phẩm mỗi trang:"
                 />
             </Card>
-
-            {/* <Popover
-                open={Boolean(open)}
-                anchorEl={open}
-                onClose={handleCloseMenu}
-                anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                PaperProps={{
-                    sx: {
-                        p: 1,
-                        width: 140,
-                        '& .MuiMenuItem-root': {
-                            px: 1,
-                            typography: 'body2',
-                            borderRadius: 0.75,
-                        },
-                    },
-                }}
-            >
-                <MenuItem>
-                    <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-                    Edit
-                </MenuItem>
-
-                <MenuItem sx={{ color: 'error.main' }}>
-                    <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
-                    Delete
-                </MenuItem>
-            </Popover> */}
+            <SnackbarSuccess
+                open={snackbarSuccessOpen}
+                handleClose={() => setSnackbarSuccessOpen(false)}
+                message={snackbarSuccessMessage}
+                style={{ bottom: '16px', right: '16px' }}
+            />
         </>
     );
 };

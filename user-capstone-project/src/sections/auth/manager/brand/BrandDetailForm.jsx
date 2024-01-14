@@ -1,21 +1,96 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Button, Tab, Tabs, Stack, Grid, TextField, FormControl, Select, MenuItem } from '@mui/material';
+import {
+    Typography,
+    Button,
+    Tab,
+    Tabs,
+    Stack,
+    Grid,
+    TextField,
+    FormControl,
+    Select,
+    MenuItem,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogContentText,
+    DialogActions,
+    IconButton,
+} from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import { deleteOrigins, editOrigins } from '~/data/mutation/origins/origins-mutation';
 import { deleteBrands, editBrands } from '~/data/mutation/brand/brands-mutation';
 import SuccessAlerts from '~/components/alert/SuccessAlert';
 import ErrorAlerts from '~/components/alert/ErrorAlert';
 import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
+import CustomDialog from '~/components/alert/ConfirmDialog';
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
+import SnackbarError from '~/components/alert/SnackbarError';
 
 const BrandDetailForm = ({ brands, brandsId, onClose, isOpen, mode }) => {
     const [formHeight, setFormHeight] = useState(0);
     const [selectedTab, setSelectedTab] = useState(0);
-    //thông báo
-    const [isSuccess, setIsSuccess] = useState(false);
-    const [isError, setIsError] = useState(false);
+    const [editedBrand, setEditedBrand] = useState(null);
+
+    //========================== Hàm notification của trang ==================================
+    const [open, setOpen] = React.useState(false);
+    const [open1, setOpen1] = React.useState(false);
+    const [confirmOpen1, setConfirmOpen1] = useState(false);
+    const [confirmOpen2, setConfirmOpen2] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
-    const [editedBrand, setEditedBrand] = useState(null);
+    const handleSuccessMessage = (message) => {
+        setOpen(true);
+        if (message === 'Update brand successfully') {
+            setSuccessMessage('Cập nhập thành công !');
+        }
+    };
+
+    const handleErrorMessage = (message) => {
+        setOpen1(true);
+        if (message === 'Invalid request') {
+            setErrorMessage('Yêu cầu không hợp lệ !');
+        } else if (message === '404 NOT_FOUND') {
+            setErrorMessage('Mô tả quá dài !');
+        } else if (message === 'Brand name was existed') {
+            setErrorMessage('Tên thương hiệu đã tồn tại !');
+        }
+    };
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpen(false);
+        setOpen1(false);
+        setSuccessMessage('');
+        setErrorMessage('');
+    };
+
+    const action = (
+        <React.Fragment>
+            <Button color="secondary" size="small" onClick={handleClose}></Button>
+            <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
+                <CloseIcon fontSize="lage" />
+            </IconButton>
+        </React.Fragment>
+    );
+    const handleConfirmClose1 = () => {
+        setConfirmOpen1(false);
+    };
+
+    const handleConfirmUpdate1 = () => {
+        setConfirmOpen1(false);
+        updateBrand();
+    };
+
+    const handleConfirm1 = () => {
+        setConfirmOpen1(true);
+    };
+
+    //========================== Hàm notification của trang ==================================
 
     useEffect(() => {
         if (isOpen) {
@@ -64,18 +139,15 @@ const BrandDetailForm = ({ brands, brandsId, onClose, isOpen, mode }) => {
                 // Call your API to update the category
                 const response = await editBrands(brandsId, updateData);
                 if (response.status === '200 OK') {
-                    setIsSuccess(true);
-                    setIsError(false);
-                    setSuccessMessage(response.message);
+                    handleSuccessMessage(response.message);
                 }
                 // Handle the response as needed
                 console.log('Category updated:', response);
             }
         } catch (error) {
             // Handle errors
+            handleErrorMessage(error.response.data.message);
             console.error('Error updating brand:', error);
-            setIsError(true);
-            setIsSuccess(false);
             if (error.response?.data?.message === 'Invalid request') {
                 setErrorMessage('Yêu cầu không hợp lệ');
             }
@@ -166,11 +238,32 @@ const BrandDetailForm = ({ brands, brandsId, onClose, isOpen, mode }) => {
                             </Grid>
                         </Grid>
                     </Stack>
-                    {isSuccess && <SuccessAlerts />}
-                    {isError && <ErrorAlerts errorMessage={errorMessage} />}
-                    <Button variant="contained" color="primary" onClick={updateBrand}>
+                    <Button variant="contained" color="primary" onClick={handleConfirm1}>
                         Cập nhập
                     </Button>
+                    {/* Thông báo confirm */}
+                    <CustomDialog
+                        open={confirmOpen1}
+                        onClose={handleConfirmClose1}
+                        title="Thông báo!"
+                        content="Bạn có chắc muốn cập nhật không?"
+                        onConfirm={handleConfirmUpdate1}
+                        confirmText="Xác nhận"
+                    />
+                    <SnackbarSuccess
+                        open={open}
+                        handleClose={handleClose}
+                        message={successMessage}
+                        action={action}
+                        style={{ bottom: '16px', right: '16px' }}
+                    />
+                    <SnackbarError
+                        open={open1}
+                        handleClose={handleClose}
+                        message={errorMessage}
+                        action={action}
+                        style={{ bottom: '16px', right: '16px' }}
+                    />
                 </div>
             )}
             {selectedTab === 1 && (

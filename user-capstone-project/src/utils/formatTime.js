@@ -18,10 +18,11 @@ export function fTimestamp(date) {
   return date ? getTime(new Date(date)) : '';
 }
 
-export function fToNow(date) {
-  return date
-    ? formatDistanceToNow(new Date(date), {
-        addSuffix: true,
-      })
-    : '';
-}
+export const fToNow = (date) => {
+  try {
+    return formatDistanceToNow(new Date(date), { addSuffix: true });
+  } catch (error) {
+    console.error('Error formatting date:', error);
+    return 'Invalid Date';
+  }
+};

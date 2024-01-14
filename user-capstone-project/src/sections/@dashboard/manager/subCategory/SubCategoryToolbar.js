@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 // @mui
 import { styled, alpha } from '@mui/material/styles';
-import { Toolbar, Tooltip, IconButton, Typography, OutlinedInput, InputAdornment, MenuItem, Checkbox, Menu } from '@mui/material';
+import { Toolbar, Typography, OutlinedInput, InputAdornment } from '@mui/material';
 // component
 import Iconify from '../../../../components/iconify';
 import { useEffect, useState } from 'react';
@@ -101,7 +101,7 @@ export default function SubCategoryToolbar({ numSelected, onFilterName, onDataSe
             }
           />
 
-          <Tooltip title="Filter list">
+          {/* <Tooltip title="Filter list">
             <IconButton onClick={handleFilterClick}>
               <Iconify icon="ic:round-filter-list" />
             </IconButton>
@@ -154,7 +154,7 @@ export default function SubCategoryToolbar({ numSelected, onFilterName, onDataSe
               />
               Giá chung
             </MenuItem>
-          </Menu>
+          </Menu> */}
         </>
       )}
     </StyledRoot>

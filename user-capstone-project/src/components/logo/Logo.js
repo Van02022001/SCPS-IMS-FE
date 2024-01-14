@@ -6,6 +6,18 @@ import { useTheme } from '@mui/material/styles';
 import { Box, Link } from '@mui/material';
 
 // ----------------------------------------------------------------------
+export const setRole = (role) => {
+  localStorage.setItem('role', role);
+};
+
+export const getRole = () => {
+  return localStorage.getItem('role');
+};
+
+export const removeRole = () => {
+  localStorage.removeItem('role');
+};
+
 
 const Logo = forwardRef(({ disabledLink = false, sx, ...other }, ref) => {
   const theme = useTheme();
@@ -92,9 +104,25 @@ const Logo = forwardRef(({ disabledLink = false, sx, ...other }, ref) => {
   if (disabledLink) {
     return <>{logo}</>;
   }
-
+  const userRole = getRole();
+  let dashboardPath;
+  
+  switch (userRole) {
+    case 'MANAGER':
+      dashboardPath = "/dashboard/app";
+      break;
+    case 'INVENTORY_STAFF':
+      dashboardPath = "/inventory-staff/dashboard";
+      break;
+    case 'sale':
+      dashboardPath = "/sale-staff";
+      break;
+    default:
+      dashboardPath = "/dashboard/app";
+  }
+  
   return (
-    <Link to="/" component={RouterLink} sx={{ display: 'contents' }}>
+    <Link to={dashboardPath} component={RouterLink} sx={{ display: 'contents' }}>
       {logo}
     </Link>
   );

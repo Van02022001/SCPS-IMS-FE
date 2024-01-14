@@ -1,6 +1,5 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
-
 import React, { useEffect, useState } from 'react';
 // @mui
 import {
@@ -10,52 +9,39 @@ import {
     Paper,
     Avatar,
     Button,
-    Popover,
     Checkbox,
     TableRow,
-    MenuItem,
     TableBody,
     TableCell,
     Typography,
-    IconButton,
     TableContainer,
     TablePagination,
-    Dialog,
-    DialogTitle,
-    FormControl,
-    InputLabel,
-    Select,
-    OutlinedInput,
-    ListItemText,
 } from '@mui/material';
 // components
 import Label from '~/components/label/Label';
-import Iconify from '~/components/iconify/Iconify';
 import Scrollbar from '~/components/scrollbar/Scrollbar';
-import CloseIcon from '@mui/icons-material/Close';
 
 // sections
-import { SubCategoryListHead, SubCategoryToolbar } from '~/sections/@dashboard/manager/subCategory';
+import { ProductsListHead, ProductsListToolbar } from '~/sections/@dashboard/products';
 // mock
 import PRODUCTSLIST from '../../../../_mock/products';
-import { useNavigate } from 'react-router-dom';
 // api
-
-import SubCategoryDetailForm from '~/sections/auth/manager/subCategory/SubCategoryDetailForm';
-//icons
-import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import CreateExportReceipt from './CreateExportReceipt';
+import ImportReceiptDetailManagerForm from '~/sections/auth/manager/transaction/importReceipt/ImportReceiptDetailManagerForm';
+// import EditCategoryForm from '~/sections/auth/manager/categories/EditCategoryForm';
+// import GoodsReceiptPage from '../GoodsReceiptPage';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { getAllExportReceipt } from '~/data/mutation/exportReceipt/ExportReceipt-mutation';
+import dayjs from 'dayjs';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
     { id: 'image', label: '', alignRight: false },
-    // { id: 'id', label: 'Mã hàng', alignRight: false },
-    { id: 'name', label: 'Tên sản phẩm', alignRight: false },
+    { id: 'id', label: 'Mã phiếu', alignRight: false },
     { id: 'description', label: 'Mô tả', alignRight: false },
+    { id: 'createdBy', label: 'Người tạo', alignRight: false },
     { id: 'createdAt', label: 'Ngày tạo', alignRight: false },
-    { id: 'updatedAt', label: 'Ngày cập nhập', alignRight: false },
-    { id: 'categories', label: 'Nhóm hàng', alignRight: false },
+    // { id: 'type', label: 'Loại yêu cầu', alignRight: false },
     { id: 'status', label: 'Trạng thái', alignRight: false },
     { id: '' },
 ];
@@ -100,27 +86,13 @@ function applySortFilter(array, comparator, query) {
 //     return `${day}/${month}/${year}`;
 // }
 
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-    PaperProps: {
-        style: {
-            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-            width: 250,
-        },
-    },
-};
-
-const filterOptions = ['Ren', 'Ron', 'Abc', 'Test1', 'Test12', 'Test123'];
-
 const ExportReceiptManagerPage = () => {
     // State mở các form----------------------------------------------------------------
     const [open, setOpen] = useState(null);
     const [openOderForm, setOpenOderForm] = useState(false);
-    const [openEditForm, setOpenEditForm] = useState(false);
 
     const [selected, setSelected] = useState([]);
-    const [selectedExportReceiptId, setSelectedExportReceiptId] = useState([]);
+    const [selectedImportReceiptId, setSelectedImportReceiptId] = useState([]);
 
     // State cho phần soft theo name-------------------------------------------------------
     const [filterName, setFilterName] = useState('');
@@ -128,105 +100,93 @@ const ExportReceiptManagerPage = () => {
     const [orderBy, setOrderBy] = useState('name');
     const [order, setOrder] = useState('asc');
     const [sortBy, setSortBy] = useState('createdAt');
-    const [sortedExportReceipt, setSortedExportReceipt] = useState([]);
+    const [sortedProduct, setSortedProduct] = useState([]);
 
     const [rowsPerPage, setRowsPerPage] = useState(5);
-    // Search data
-    const [displayedExportReceiptData, setDisplayedExportReceiptData] = useState([]);
-    // State data và xử lý data
-    const [exportReceiptData, setExportReceiptData] = useState([]);
-    const [exportReceiptStatus, setExportReceiptStatus] = useState('');
 
-    const [selectedExportReceipt, setSelectedExportReceipt] = useState(null);
-
-    const [filteredCategory, setFilteredCategory] = useState(null);
-
-    // const [anchorElOptions, setAnchorElOptions] = useState(null);
-
-    const [selectedFilterOptions, setSelectedFilterOptions] = useState(null);
-
-    const [personName, setPersonName] = React.useState([]);
     const navigate = useNavigate();
+    const location = useLocation();
 
-    const handleChange = (event) => {
-        setPersonName(event.target.value);
-        const selectedValues = event.target.value.length > 0 ? event.target.value : null;
-        setFilteredCategory(selectedValues);
-        setSelectedFilterOptions(selectedValues);
-    };
+    // State data và xử lý data
+    const [importReceiptData, setImportReceiptData] = useState([]);
+    const [productStatus, setProductStatus] = useState('');
 
-    // ========================== Hàm để thay đổi data mỗi khi Edit xong api=======================================
-    const updateExportReceiptInList = (updatedExportReceipt) => {
-        const exportReceiptIndex = exportReceiptData.findIndex((export_receipt) => export_receipt.id === updatedExportReceipt.id);
+    const [selectedProduct, setSelectedProduct] = useState(null);
+    const startIndex = page * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
+    // Hàm để thay đổi data mỗi khi Edit xong api-------------------------------------------------------------
+    const updateImportReceiptInList = (updatedImportReceipt) => {
+        const importReceiptIndex = importReceiptData.findIndex((product) => product.id === updatedImportReceipt.id);
 
-        if (exportReceiptIndex !== -1) {
-            const UpdatedExportReceipt = [...exportReceiptData];
-            UpdatedExportReceipt[exportReceiptIndex] = UpdatedExportReceipt;
+        if (importReceiptIndex !== -1) {
+            const updatedImportReceiptData = [...importReceiptData];
+            updatedImportReceiptData[importReceiptIndex] = updatedImportReceipt;
 
-            setExportReceiptData(UpdatedExportReceipt);
+            setImportReceiptData(updatedImportReceiptData);
         }
     };
 
-    const updateExportReceiptStatusInList = (exportReceiptId, newStatus) => {
-        const exportReceiptIndex = exportReceiptData.findIndex((export_receipt) => export_receipt.id === exportReceiptId);
+    const updateImportReceiptConfirmInList = (importReceiptId, newStatus) => {
+        const importReceiptIndex = importReceiptData.findIndex((product) => product.id === importReceiptId);
 
-        if (exportReceiptIndex !== -1) {
-            const UpdatedExportReceipt = [...exportReceiptData];
-            UpdatedExportReceipt[exportReceiptIndex].status = newStatus;
+        if (importReceiptIndex !== -1) {
+            const updatedImportReceiptData = [...importReceiptData];
+            updatedImportReceiptData[importReceiptIndex].status = newStatus;
 
-            setExportReceiptData(UpdatedExportReceipt);
+            setImportReceiptData(updatedImportReceiptData);
         }
     };
 
-    const handleCreateGoodReceiptSuccess = (newExportReceipt) => {
+    const handleCreateImportReceiptSuccess = (newImportReceipt) => {
         // Close the form
         setOpenOderForm(false);
-        setExportReceiptData((prevExportReceiptData) => [...prevExportReceiptData, newExportReceipt]);
+        setImportReceiptData((prevImportReceiptData) => [...prevImportReceiptData, newImportReceipt]);
     };
 
-    const handleDataSearch = (searchResult) => {
-        // Cập nhật state của trang chính với dữ liệu từ tìm kiếm
-        setExportReceiptData(searchResult);
-        setDisplayedExportReceiptData(searchResult);
-        console.log(displayedExportReceiptData);
-    };
-
-    //===========================================================================================
-    // const handleOpenMenu = (event, subCategory) => {
-    //     setSelectedProduct(subCategory);
+    //----------------------------------------------------------------
+    // const handleOpenMenu = (event, product) => {
+    //     setSelectedProduct(product);
     //     setOpen(event.currentTarget);
     // };
 
-    const handleCloseMenu = () => {
-        setOpen(null);
-    };
-
-    // const handleClick = (event, name) => {
-    //     const selectedIndex = selected.indexOf(name);
-    //     let newSelected = [];
-    //     if (selectedIndex === -1) {
-    //         newSelected = newSelected.concat(selected, name);
-    //     } else if (selectedIndex === 0) {
-    //         newSelected = newSelected.concat(selected.slice(1));
-    //     } else if (selectedIndex === selected.length - 1) {
-    //         newSelected = newSelected.concat(selected.slice(0, -1));
-    //     } else if (selectedIndex > 0) {
-    //         newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-    //     }
-    //     setSelected(newSelected);
+    // const handleCloseMenu = () => {
+    //     setOpen(null);
     // };
 
-    const handleSubCategoryClick = (subCategory) => {
+    const handleSelectAllClick = (event) => {
+        if (event.target.checked) {
+            const newSelecteds = importReceiptData.map((n) => n.name);
+            setSelected(newSelecteds);
+            return;
+        }
+        setSelected([]);
+    };
 
-        if (selectedExportReceiptId === subCategory.id) {
-            setSelectedExportReceiptId(null); // Đóng nếu đã mở
+    const handleClick = (event, name) => {
+        const selectedIndex = selected.indexOf(name);
+        let newSelected = [];
+        if (selectedIndex === -1) {
+            newSelected = newSelected.concat(selected, name);
+        } else if (selectedIndex === 0) {
+            newSelected = newSelected.concat(selected.slice(1));
+        } else if (selectedIndex === selected.length - 1) {
+            newSelected = newSelected.concat(selected.slice(0, -1));
+        } else if (selectedIndex > 0) {
+            newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
+        }
+        setSelected(newSelected);
+    };
+
+    const handleProductClick = (importReceipt) => {
+        if (selectedImportReceiptId === importReceipt.id) {
+            setSelectedImportReceiptId(null); // Đóng nếu đã mở
         } else {
-            setSelectedExportReceiptId(subCategory.id); // Mở hoặc chuyển sang sản phẩm khác
+            setSelectedImportReceiptId(importReceipt.id); // Mở hoặc chuyển sang sản phẩm khác
         }
     };
 
-    const handleCloseSubCategoryDetails = () => {
-        setSelectedExportReceiptId(null);
+    const handleCloseProductDetails = () => {
+        setSelectedImportReceiptId(null);
     };
 
     const handleChangePage = (event, newPage) => {
@@ -237,24 +197,14 @@ const ExportReceiptManagerPage = () => {
         setPage(0);
         setRowsPerPage(parseInt(event.target.value, 10));
     };
-
-    //=========================================== Các hàm xử lý soft theo name===========================================
-    const handleSelectAllClick = (event) => {
-        if (event.target.checked) {
-            const newSelecteds = exportReceiptData.map((n) => n.name);
-            setSelected(newSelecteds);
-            return;
-        }
-        setSelected([]);
-    };
-
-    const handleCheckboxChange = (event, subCategoryId) => {
+    // Các hàm xử lý soft theo name--------------------------------------------------------------------------------------------------------------------------------
+    const handleCheckboxChange = (event, productId) => {
         if (event.target.checked) {
             // Nếu người dùng chọn checkbox, thêm sản phẩm vào danh sách đã chọn.
-            setSelectedExportReceiptId([...selectedExportReceiptId, subCategoryId]);
+            setSelectedImportReceiptId([...selectedImportReceiptId, productId]);
         } else {
             // Nếu người dùng bỏ chọn checkbox, loại bỏ sản phẩm khỏi danh sách đã chọn.
-            setSelectedExportReceiptId(selectedExportReceiptId.filter((id) => id !== subCategoryId));
+            setSelectedImportReceiptId(selectedImportReceiptId.filter((id) => id !== productId));
         }
     };
     const handleRequestSort = (property) => {
@@ -262,7 +212,7 @@ const ExportReceiptManagerPage = () => {
         setOrder(isAsc ? 'desc' : 'asc');
         setOrderBy(property);
         // Sắp xếp danh sách sản phẩm dựa trên trường và hướng đã chọn
-        const sortedExportReceipt = [...exportReceiptData].sort((a, b) => {
+        const sortedProduct = [...importReceiptData].sort((a, b) => {
             const valueA = a[property];
             const valueB = b[property];
             if (valueA < valueB) {
@@ -273,7 +223,7 @@ const ExportReceiptManagerPage = () => {
             }
             return 0;
         });
-        setSortedExportReceipt(sortedExportReceipt);
+        setSortedProduct(sortedProduct);
     };
 
     const handleFilterByName = (event) => {
@@ -281,18 +231,13 @@ const ExportReceiptManagerPage = () => {
         const query = event.target.value;
         setFilterName(query);
 
-        const filteredUsers = applySortFilter(sortedExportReceipt, getComparator(order, sortBy), query);
-        setSortedExportReceipt(filteredUsers);
+        const filteredUsers = applySortFilter(sortedProduct, getComparator(order, sortBy), query);
+        setSortedProduct(filteredUsers);
     };
 
-
-    const handleCloseOdersForm = () => {
-        setOpenOderForm(false);
-    };
-
-    const handleCloseEditsForm = () => {
-        setOpenEditForm(false);
-    };
+    // const handleCloseEditsForm = () => {
+    //     setOpenEditForm(false);
+    // };
 
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - PRODUCTSLIST.length) : 0;
 
@@ -300,182 +245,163 @@ const ExportReceiptManagerPage = () => {
 
     const isNotFound = !filteredUsers.length && !!filterName;
 
-    // useEffect(() => {
-    //     getAllSubCategory()
-    //         .then((respone) => {
-    //             const data = respone.data;
-    //             if (Array.isArray(data)) {
-    //                 setSubCategoryData(data);
-    //                 setSortedProduct(data);
-    //             } else {
-    //                 console.error('API response is not an array:', data);
-    //             }
-    //         })
-    //         .catch((error) => {
-    //             console.error('Error fetching users:', error);
-    //         });
-    // }, []);
+    useEffect(() => {
+        getAllExportReceipt()
+            .then((respone) => {
+                const data = respone.data;
+                if (Array.isArray(data)) {
+                    const sortedData = data.sort((a, b) => {
+                        return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(
+                            dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
+                        );
+                    });
+                    setImportReceiptData(sortedData);
+                } else {
+                    console.error('API response is not an array:', data);
+                }
+            })
+            .catch((error) => {
+                console.error('Error fetching users:', error);
+            });
+    }, []);
 
-
-    //==============================* filter *==============================
-    const renderedTodoList = exportReceiptData.filter((sub_category) => {
-        if (!selectedFilterOptions || selectedFilterOptions.length === 0) {
-            return true;
-        }
-        return sub_category.categories.some((category) => selectedFilterOptions.includes(category.name));
-    });
-    //==============================* filter *==============================
+    useEffect(() => {
+        getAllExportReceipt()
+            .then((response) => {
+                const data = response.data;
+                if (Array.isArray(data)) {
+                    setImportReceiptData(data);
+                } else {
+                    console.error('API response is not an array:', data);
+                }
+            })
+            .catch((error) => {
+                console.error('Error fetching import receipts:', error);
+            });
+    }, [location.pathname]);
 
     return (
         <>
             <Helmet>
-                <title> Quản lý xuât kho| Minimal UI </title>
+                <title> Nhập kho | Minimal UI </title>
             </Helmet>
 
             {/* <Container> */}
-            <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
+            <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                 <Typography variant="h4" gutterBottom>
-                    Quản lý phiếu xuất kho
+                    Phiếu xuất kho
                 </Typography>
-                <Button
+                {/* <Button
                     variant="contained"
                     startIcon={<Iconify icon="eva:plus-fill" />}
-                    onClick={() => navigate("/dashboard/create-export-receipt")}
+                    onClick={handleNavigate}
                 >
-                    Thêm phiếu xuất kho
-                </Button>
-                <Dialog fullWidth maxWidth open={openOderForm}>
-                    <DialogTitle>
-                        Tạo Sản Phẩm{' '}
-                        <IconButton style={{ float: 'right' }} onClick={handleCloseOdersForm}>
-                            <CloseIcon color="primary" />
-                        </IconButton>{' '}
-                    </DialogTitle>
-                    <CreateExportReceipt onClose={handleCreateGoodReceiptSuccess} open={openOderForm} />
-                </Dialog>
+                    Nhập hàng
+                </Button> */}
             </Stack>
 
-            {/* ===========================================filter=========================================== */}
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-                <FilterAltIcon color="action" />
-                <Typography gutterBottom variant="h6" color="text.secondary" component="div" sx={{ m: 1 }}>
-                    Bộ lọc tìm kiếm
-                </Typography>
-            </div>
-            <FormControl sx={{ m: 1, width: 300, mb: 2 }}>
-                <InputLabel id="demo-multiple-checkbox-label">Nhóm hàng</InputLabel>
-                <Select
-                    labelId="demo-multiple-checkbox-label"
-                    id="demo-multiple-checkbox"
-                    multiple
-                    value={personName}
-                    onChange={handleChange}
-                    input={<OutlinedInput label="Nhóm hàng" />}
-                    renderValue={(selected) => selected.join(', ')}
-                    MenuProps={MenuProps}
-                >
-                    {filterOptions.map((name) => (
-                        <MenuItem key={name} value={name}>
-                            <Checkbox checked={personName.indexOf(name) > -1} />
-                            <ListItemText primary={name} />
-                        </MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
-            {/* ===========================================filter=========================================== */}
             <Card>
-                <SubCategoryToolbar
+                <ProductsListToolbar
                     numSelected={selected.length}
                     filterName={filterName}
                     onFilterName={handleFilterByName}
-                    onDataSearch={handleDataSearch}
                 />
 
                 <Scrollbar>
                     <TableContainer sx={{ minWidth: 800 }}>
                         <Table>
-                            <SubCategoryListHead
+                            <ProductsListHead
                                 order={order}
                                 orderBy={orderBy}
                                 headLabel={TABLE_HEAD}
-                                rowCount={exportReceiptData.length}
+                                rowCount={importReceiptData.length}
                                 numSelected={selected.length}
                                 onRequestSort={handleRequestSort}
                                 onSelectAllClick={handleSelectAllClick}
                             />
                             <TableBody>
-                                {renderedTodoList.map((sub_category) => {
+                                {importReceiptData.slice(startIndex, endIndex).map((importReceipt) => {
                                     return (
-                                        <React.Fragment key={sub_category.id}>
+                                        <React.Fragment key={importReceipt.id}>
                                             <TableRow
                                                 hover
-                                                key={sub_category.id}
+                                                key={importReceipt.id}
                                                 tabIndex={-1}
                                                 role="checkbox"
-                                                selected={selectedExportReceiptId === sub_category.id}
-                                                onClick={() => handleSubCategoryClick(sub_category)}
+                                                selected={selectedImportReceiptId === importReceipt.id}
+                                                onClick={() => handleProductClick(importReceipt)}
                                             >
-                                                <TableCell padding="checkbox">
+                                                {/* <TableCell padding="checkbox">
                                                     <Checkbox
-                                                        checked={selectedExportReceiptId === sub_category.id}
-                                                        onChange={(event) =>
-                                                            handleCheckboxChange(event, sub_category.id)
-                                                        }
-                                                    // checked={selectedUser}
-                                                    // onChange={(event) => handleClick(event, name)}
+                                                        checked={selectedImportReceiptId === importReceipt.id}
+                                                        // onChange={(event) => handleCheckboxChange(event, importReceipt.id)}
+                                                        // checked={selectedUser}
+                                                        onChange={(event) => handleClick(event, importReceipt.code)}
                                                     />
-                                                </TableCell>
+                                                </TableCell> */}
 
                                                 <TableCell component="th" scope="row" padding="none">
                                                     <Stack direction="row" alignItems="center" spacing={2}>
                                                         {/* <Avatar alt={name} src={avatarUrl} /> */}
                                                     </Stack>
+                                                </TableCell>
+
+                                                <TableCell align="left">
+                                                    <Typography variant="subtitle2" noWrap>
+                                                        {importReceipt.code}
+                                                    </Typography>
                                                 </TableCell>
 
                                                 <TableCell component="th" scope="row" padding="none">
                                                     <Stack direction="row" alignItems="center" spacing={2}>
                                                         {/* <Avatar alt={name} src={avatarUrl} /> */}
                                                         <Typography variant="subtitle2" noWrap>
-                                                            {sub_category.name}
+                                                            {importReceipt.description}
                                                         </Typography>
                                                     </Stack>
                                                 </TableCell>
-                                                <TableCell align="left">{sub_category.description}</TableCell>
-                                                <TableCell align="left">{sub_category.createdAt}</TableCell>
-                                                <TableCell align="left">{sub_category.updatedAt}</TableCell>
-                                                <TableCell align="left">
-                                                    <Typography variant="subtitle2" noWrap>
-                                                        {sub_category.categories.map((category, index) => {
-                                                            return index === sub_category.categories.length - 1
-                                                                ? category.name
-                                                                : `${category.name}, `;
-                                                        })}
-                                                    </Typography>
-                                                </TableCell>
-
+                                                <TableCell align="left">{importReceipt.createdBy}</TableCell>
+                                                <TableCell align="left">{importReceipt.createdAt}</TableCell>
+                                                {/* <TableCell align="left">{importReceipt.type}</TableCell> */}
                                                 <TableCell align="left">
                                                     <Label
                                                         color={
-                                                            (sub_category.status === 'Inactive' && 'error') || 'success'
+                                                            (importReceipt.status === 'Pending_Approval' &&
+                                                                'warning') ||
+                                                            (importReceipt.status === 'Approved' && 'primary') ||
+                                                            (importReceipt.status === ' IN_PROGRESS' && 'warning') ||
+                                                            (importReceipt.status === 'Completed' && 'success') ||
+                                                            (importReceipt.status === 'Inactive' && 'error') ||
+                                                            'default'
                                                         }
                                                     >
-                                                        {sub_category.status === 'Active'
-                                                            ? 'Đang hoạt động'
+                                                        {importReceipt.status === 'Pending_Approval'
+                                                            ? 'Chờ phê duyệt'
+                                                            : importReceipt.status === 'Approved'
+                                                            ? 'Đã xác nhận'
+                                                            : importReceipt.status === 'IN_PROGRESS'
+                                                            ? 'Đang tiến hành'
+                                                            : importReceipt.status === 'NOT_COMPLETED'
+                                                            ? 'Chưa hoàn thành'
+                                                            : importReceipt.status === 'Completed'
+                                                            ? 'Hoàn thành'
                                                             : 'Ngừng hoạt động'}
                                                     </Label>
                                                 </TableCell>
                                             </TableRow>
 
-                                            {selectedExportReceiptId === sub_category.id && (
+                                            {selectedImportReceiptId === importReceipt.id && (
                                                 <TableRow>
                                                     <TableCell colSpan={8}>
-                                                        <SubCategoryDetailForm
-                                                            exportReceipt={exportReceiptData}
-                                                            exportReceiptStatus={exportReceiptStatus}
-                                                            exportReceiptId={selectedExportReceiptId}
-                                                            updateExportReceiptInList={updateExportReceiptInList}
-                                                            updateExportReceiptStatusInList={updateExportReceiptStatusInList}
-                                                            onClose={handleCloseSubCategoryDetails}
+                                                        <ImportReceiptDetailManagerForm
+                                                            importReceipt={importReceiptData}
+                                                            // productStatus={productStatus}
+                                                            importReceiptId={selectedImportReceiptId}
+                                                            updateImportReceiptInList={updateImportReceiptInList}
+                                                            updateImportReceiptConfirmInList={
+                                                                updateImportReceiptConfirmInList
+                                                            }
+                                                            onClose={handleCloseProductDetails}
                                                         />
                                                     </TableCell>
                                                 </TableRow>
@@ -520,14 +446,14 @@ const ExportReceiptManagerPage = () => {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={PRODUCTSLIST.length}
+                    count={importReceiptData.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </Card>
-
+            {/* </Container> */}
         </>
     );
 };

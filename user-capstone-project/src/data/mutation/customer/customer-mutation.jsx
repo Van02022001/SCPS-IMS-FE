@@ -10,17 +10,7 @@ export const createCustomer = async (customerParams) => {
     return response.data;
 }
 
-export const deleteProduct = async (id) => {
-    const response = await axiosInstance.delete(`/origins/${id}`,);
-    return response.data;
-}
-
-export const editProduct = async (productId, editProductParams) => {
-    const response = await axiosInstance.put(`/products/${productId}`, editProductParams);
-    return response.data;
-}
-
-export const editStatusProduct = async (productId, status) => {
-    const response = await axiosInstance.put(`/products/product-status/${productId}?status=${status}`);
+export const editStatusCustomer = async (id) => {
+    const response = await axiosInstance.put(`/customers/status/${id}`);
     return response.data;
 }
