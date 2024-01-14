@@ -44,6 +44,7 @@ export default function LoginForm() {
           .then((result) => {
             localStorage.setItem('role', `${result.data.role.name}`);
             localStorage.setItem('userName', `${result.data.lastName} ${result.data.firstName}`);
+            localStorage.setItem('email', `${result.data.email}`);
             if (localStorage.getItem('role') === 'ADMIN') {
               navigate('/dashboard', { replace: true });
             } else {
@@ -92,8 +93,8 @@ export default function LoginForm() {
       <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={handleClick} sx={{ my: 1 }}>
         Đăng nhập
       </LoadingButton>
-      {/* 
-      <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={handleRegister}>
+
+      {/* <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={handleRegister}>
         Đăng ký
       </LoadingButton> */}
     </>
