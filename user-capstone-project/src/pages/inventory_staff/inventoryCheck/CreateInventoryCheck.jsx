@@ -88,6 +88,8 @@ const CreateInventoryCheck = ({
             setErrorMessage('Hãy chọn kho và nhân viên !');
         } else if (message === 'An error occurred while creating the inventory check receipt') {
             setErrorMessage('Hãy nhập số lượng thực tế !');
+        } else if (message === 'An error occurred while creating the inventory check receipt') {
+            setErrorMessage('Hãy nhập số lượng thực tế !');
         }
     };
     const handleClose = (event, reason) => {
@@ -147,7 +149,10 @@ const CreateInventoryCheck = ({
         }));
 
         // Calculate and update total quantities and total locations
-        const newTotalQuantity = Object.values({ ...locationQuantities, [locationId]: newQuantity }).reduce((acc, val) => acc + parseInt(val, 10) || 0, 0);
+        const newTotalQuantity = Object.values({ ...locationQuantities, [locationId]: newQuantity }).reduce(
+            (acc, val) => acc + parseInt(val, 10) || 0,
+            0,
+        );
         const newTotalLocations = Object.keys({ ...locationQuantities, [locationId]: newQuantity }).length;
 
         setTotalQuantities((prevTotal) => ({
@@ -158,11 +163,16 @@ const CreateInventoryCheck = ({
     };
 
     const handleUpdateQuantities = async () => {
+        if (itemsCheckData.some((item) => !item.actualQuantities || parseInt(item.actualQuantities, 10) <= 0)) {
+            handleErrorMessage('Hãy nhập số lượng');
+            return;
+        }
+
         try {
             const details = itemsCheckData.map((item) => ({
                 itemId: item.id,
                 actualQuantity: actualQuantities[item.id] || 0,
-                note: productDescriptions[item.id] || "",
+                note: productDescriptions[item.id] || '',
                 locationQuantities: item.locations.map((location) => ({
                     locationId: location.id,
                     quantity: locationQuantities[location.id] || 0,
@@ -206,15 +216,18 @@ const CreateInventoryCheck = ({
             });
     }, []);
 
+    const handleNavigate = () => {
+        navigate('/inventory-staff/inventory-check-item');
+    };
+
     return (
         <>
             <Helmet>
                 <title>Kiểm kho</title>
             </Helmet>
 
-
             <Stack direction="row" alignItems="center" mb={5}>
-                <Button>
+                <Button onClick={handleNavigate}>
                     <ArrowBackIcon fontSize="large" color="action" />
                 </Button>
                 <Typography variant="h4" gutterBottom>
@@ -242,7 +255,7 @@ const CreateInventoryCheck = ({
                                 // orderBy={orderBy}
                                 headLabel={TABLE_HEAD}
                                 rowCount={itemsCheckData.length}
-                            // numSelected={selected.length}
+                                // numSelected={selected.length}
                             />
                             {itemsCheckData.map((item) => (
                                 <React.Fragment key={item.id}>
@@ -289,22 +302,35 @@ const CreateInventoryCheck = ({
                                                 <TableBody>
                                                     {item.locations.map((location) => (
                                                         <TableRow key={location.id}>
-                                                            <TableCell sx={{ width: '44%' }}>{`${location.shelfNumber} - ${location.binNumber}`}</TableCell>
-                                                            <TableCell sx={{ width: '40%' }}>{location.item_quantity}</TableCell>
+                                                            <TableCell
+                                                                sx={{ width: '44%' }}
+                                                            >{`${location.shelfNumber} - ${location.binNumber}`}</TableCell>
+                                                            <TableCell sx={{ width: '40%' }}>
+                                                                {location.item_quantity}
+                                                            </TableCell>
                                                             <TableCell sx={{ width: '40%' }}>
                                                                 <TextField
                                                                     label="Số lượng"
                                                                     type="number"
                                                                     value={locationQuantities[location.id] || ''}
-                                                                    onChange={(event) => handleLocationQuantityChange(location.id, event)}
+                                                                    onChange={(event) =>
+                                                                        handleLocationQuantityChange(location.id, event)
+                                                                    }
                                                                 />
                                                             </TableCell>
                                                         </TableRow>
                                                     ))}
                                                     <TableRow>
-                                                        <TableCell colSpan={1} sx={{ fontWeight: "bold" }}>Tổng số vị trí: {totalQuantities.totalLocations}</TableCell>
-                                                        <TableCell sx={{ fontWeight: "bold" }}>Tổng số lượng hiện tại: {totalQuantities.totalActualQuantity}</TableCell>
-                                                        <TableCell sx={{ fontWeight: "bold" }}>Tổng số lượng thực tế: {totalQuantities.totalQuantity}</TableCell>
+                                                        <TableCell colSpan={1} sx={{ fontWeight: 'bold' }}>
+                                                            Tổng số vị trí: {totalQuantities.totalLocations}
+                                                        </TableCell>
+                                                        <TableCell sx={{ fontWeight: 'bold' }}>
+                                                            Tổng số lượng hiện tại:{' '}
+                                                            {totalQuantities.totalActualQuantity}
+                                                        </TableCell>
+                                                        <TableCell sx={{ fontWeight: 'bold' }}>
+                                                            Tổng số lượng thực tế: {totalQuantities.totalQuantity}
+                                                        </TableCell>
                                                     </TableRow>
                                                 </TableBody>
                                             </TableCell>

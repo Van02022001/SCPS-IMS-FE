@@ -327,7 +327,7 @@ const CreateRequestCustomerPage = () => {
                         <ArrowBackIcon fontSize="large" color="action" />
                     </Button>
                     <Typography variant="h4" gutterBottom>
-                        Tạo yêu cầu khách hàng
+                        Tạo yêu cầu xuất kho
                     </Typography>
                 </Stack>
 
@@ -625,7 +625,6 @@ const CreateRequestCustomerPage = () => {
                                             right: 34,
                                         }}
                                     >
-                                        <Button>Trang</Button>
                                         <Button color="primary" variant="contained" onClick={handleCreateImportReceipt}>
                                             Lưu
                                         </Button>

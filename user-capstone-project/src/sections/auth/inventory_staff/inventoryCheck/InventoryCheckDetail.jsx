@@ -31,13 +31,7 @@ import { getAllImportReceipt } from '~/data/mutation/importReceipt/ImportReceipt
 import SnackbarError from '~/components/alert/SnackbarError';
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 
-const InventoryCheckDetail = ({
-    inventoryCheckData,
-    inventoryCheckId,
-    onClose,
-    isOpen,
-    mode,
-}) => {
+const InventoryCheckDetail = ({ inventoryCheckData, inventoryCheckId, onClose, isOpen, mode }) => {
     const [tab1Data, setTab1Data] = useState({ categories_id: [] });
     const [tab2Data, setTab2Data] = useState({});
 
@@ -359,7 +353,6 @@ const InventoryCheckDetail = ({
 
             {currentTab === 0 && (
                 <div>
-
                     {/* {currentStatus === 'IN_PROGRESS' && (
                             
                         )} */}
@@ -431,12 +424,12 @@ const InventoryCheckDetail = ({
                                                 currentStatus === 'Pending_Approval'
                                                     ? 'Chờ phê duyệt'
                                                     : currentStatus === 'Approved'
-                                                        ? 'Đã xác nhận'
-                                                        : currentStatus === 'IN_PROGRESS'
-                                                            ? 'Đang tiến hành'
-                                                            : currentStatus === 'Completed'
-                                                                ? 'Hoàn thành'
-                                                                : 'Ngừng hoạt động'
+                                                    ? 'Đã xác nhận'
+                                                    : currentStatus === 'IN_PROGRESS'
+                                                    ? 'Đang tiến hành'
+                                                    : currentStatus === 'Completed'
+                                                    ? 'Hoàn thành'
+                                                    : 'Ngừng hoạt động'
                                             }
                                         />
                                     </Grid>
@@ -508,28 +501,34 @@ const InventoryCheckDetail = ({
                                                     padding: '10px 0 0 20px',
                                                 }}
                                             >
+                                                <TableCell>Mã sản phẩm</TableCell>
+
                                                 <TableCell>Tên sản phẩm</TableCell>
                                                 <TableCell>Số lượng</TableCell>
-                                                <TableCell>Đơn vị</TableCell>
+                                                {/* <TableCell>Đơn vị</TableCell> */}
                                             </TableRow>
                                             {checkInventory.details.map((items) => {
                                                 return (
                                                     <TableRow key={items.id}>
+                                                        <TableCell>{items.codeItem}</TableCell>
                                                         <TableCell>{items.itemName}</TableCell>
-                                                        <TableCell>{items.quantity}</TableCell>
-                                                        <TableCell>{items.unitName}</TableCell>
+                                                        <TableCell>{items.expectedQuantity}</TableCell>
+                                                        {/* <TableCell>{items.unitName}</TableCell> */}
                                                     </TableRow>
                                                 );
                                             })}
                                         </TableBody>
                                     </Table>
-                                    <TableBody style={{ marginTop: 30 }}>
+                                    {/* <TableBody style={{ marginTop: 30 }}>
                                         <Typography variant="h6">Thông tin phiếu</Typography>
                                         <TableRow>
                                             <TableCell>Tổng số lượng:</TableCell>
                                             <TableCell>{checkInventory.totalQuantity}</TableCell>
                                         </TableRow>
-                                    </TableBody>
+                                    </TableBody> */}
+                                    <Button variant="contained" color="primary" sx={{marginTop: 2}}>
+                                        Xác Nhận
+                                    </Button>
                                 </TableContainer>
                             </CardContent>
                         </Card>
