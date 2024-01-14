@@ -198,24 +198,24 @@ const OriginPage = () => {
     return (
         <>
             <Helmet>
-                <title> Quản lý nguồn gốc | Minimal UI </title>
+                <title> Quản lý xuất xứ | Minimal UI </title>
             </Helmet>
 
             <Container>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                     <Typography variant="h4" gutterBottom>
-                        Quản lý nguồn gốc
+                        Quản lý xuất xứ
                     </Typography>
                     <Button
                         variant="contained"
                         startIcon={<Iconify icon="eva:plus-fill" />}
                         onClick={() => setOpenCreateOriginForm(true)}
                     >
-                        Thêm nguồn gốc
+                        Thêm xuất xứ
                     </Button>
                     <Dialog fullWidth maxWidth="sm" open={openCreateOriginForm}>
                         <DialogTitle>
-                            Tạo nguồn gốc{' '}
+                            Tạo xuất xứ{' '}
                             <IconButton style={{ float: 'right' }} onClick={handleCloseOdersForm}>
                                 <CloseIcon color="primary" />
                             </IconButton>{' '}

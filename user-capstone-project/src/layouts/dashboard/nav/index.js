@@ -96,7 +96,7 @@ const managerNavConfig = [
                 icon: <CategoryOutlined />,
             },
             {
-                title: 'Quản lý nguồn gốc',
+                title: 'Quản lý xuất xứ',
                 path: '/dashboard/origin',
                 icon: <LocalOfferOutlined />,
             },

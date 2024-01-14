@@ -107,7 +107,7 @@ const CreateOriginForm = (props) => {
                             error={Boolean(nameError)}
                             variant="outlined"
                             value={name}
-                            label="Tên thương hiệu"
+                            label="Tên xuất xứ"
                             onChange={handleNameChange}
                         />
                         <Button color="primary" variant="contained" onClick={handleCreateOrigins}>
