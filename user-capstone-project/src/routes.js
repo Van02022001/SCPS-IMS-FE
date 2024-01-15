@@ -48,6 +48,7 @@ import InventoryCheckPage from './pages/inventory_staff/inventoryCheck/Inventory
 import CreateInventoryCheck from './pages/inventory_staff/inventoryCheck/CreateInventoryCheck';
 import DashboardInventoryPage from './pages/dashboard/DashboardInventoryPage';
 import SubCategoryPage from './pages/manager/subCategory/SubCategoryPage';
+import InventoryCheckManagerPage from './pages/manager/inventoryCheck/InventoryCheckManagerPage';
 
 // ----------------------------------------------------------------------
 
@@ -86,6 +87,7 @@ const Router = () => {
                 { path: 'create-export-receipt', element: <CreateExportReceipt/> },
                 { path: 'export-receipt', element: <ExportReceiptManagerPage/> },
                 { path: 'products-check', element: <InventoryReportPage/> },
+                { path: 'inventory-check-manager', element: <InventoryCheckManagerPage/> },
                 {
                     path: 'report',
                     children: [

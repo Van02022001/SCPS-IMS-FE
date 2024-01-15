@@ -178,21 +178,21 @@ const managerNavConfig = [
         ],
     },
     {
-        title: 'Nhập tồn kho',
-        path: '/dashboard/products-check',
-        icon: <DomainVerification />,
+        title: 'Kiểm kho',
+        icon: <PriceChangeOutlined />,
+        children: [
+            {
+                title: 'Phiếu kiểm kho',
+                path: '/dashboard/request-export-receipt',
+                icon: <ReceiptLong />,
+            },
+            {
+                title: 'Nhập tồn kho',
+                path: '/dashboard/products-check',
+                icon: <DomainVerification />,
+            },
+        ],
     },
-
-    // {
-    //   title: 'login',
-    //   path: '/login',
-    //   icon: icon('ic_lock'),
-    // },
-    // {
-    //   title: 'Not found',
-    //   path: '/404',
-    //   icon: icon('ic_disabled'),
-    // },
 ];
 
 // Cấu hình navbar cho vai trò INVENTORY
