@@ -182,9 +182,9 @@ const ItemsManagerPage = () => {
         setSelectedOrder(null);
     };
 
-    const handleOpenMenu = (event) => {
-        setOpen(event.currentTarget);
-    };
+    // const handleOpenMenu = (event) => {
+    //     setOpen(event.currentTarget);
+    // };
 
     // const handleCloseMenu = () => {
     //     setOpen(null);
@@ -205,20 +205,20 @@ const ItemsManagerPage = () => {
         setSelected([]);
     };
 
-    const handleClick = (event, name) => {
-        const selectedIndex = selected.indexOf(name);
-        let newSelected = [];
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, name);
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-        }
-        setSelected(newSelected);
-    };
+    // const handleClick = (event, name) => {
+    //     const selectedIndex = selected.indexOf(name);
+    //     let newSelected = [];
+    //     if (selectedIndex === -1) {
+    //         newSelected = newSelected.concat(selected, name);
+    //     } else if (selectedIndex === 0) {
+    //         newSelected = newSelected.concat(selected.slice(1));
+    //     } else if (selectedIndex === selected.length - 1) {
+    //         newSelected = newSelected.concat(selected.slice(0, -1));
+    //     } else if (selectedIndex > 0) {
+    //         newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
+    //     }
+    //     setSelected(newSelected);
+    // };
 
     const handleCloseOdersForm = () => {
         setOpenOderForm(false);
@@ -246,15 +246,15 @@ const ItemsManagerPage = () => {
         }
     };
     // ============================================== Các hàm xử lý soft theo name==============================================
-    const handleCheckboxChange = (event, itemId) => {
-        if (event.target.checked) {
-            // Nếu người dùng chọn checkbox, thêm sản phẩm vào danh sách đã chọn.
-            setSelectedItemId([...selectedItemId, itemId]);
-        } else {
-            // Nếu người dùng bỏ chọn checkbox, loại bỏ sản phẩm khỏi danh sách đã chọn.
-            setSelectedItemId(selectedItemId.filter((id) => id !== itemId));
-        }
-    };
+    // const handleCheckboxChange = (event, itemId) => {
+    //     if (event.target.checked) {
+    //         // Nếu người dùng chọn checkbox, thêm sản phẩm vào danh sách đã chọn.
+    //         setSelectedItemId([...selectedItemId, itemId]);
+    //     } else {
+    //         // Nếu người dùng bỏ chọn checkbox, loại bỏ sản phẩm khỏi danh sách đã chọn.
+    //         setSelectedItemId(selectedItemId.filter((id) => id !== itemId));
+    //     }
+    // };
 
     //============================================== Hàm để thay đổi data mỗi khi Edit xong api=============================================
     const updateItemInList = (updatedItem) => {
@@ -281,7 +281,7 @@ const ItemsManagerPage = () => {
         setOpenOderForm(false);
         setItemData((prevItemsData) => [newItems, ...prevItemsData]);
         // Show success message
-        setSnackbarSuccessMessage(successMessage === 'Create item successfully' ? 'Tạo thể loại thành công!' : 'Thành công');
+        setSnackbarSuccessMessage(successMessage === 'Create item successfully' ? 'Tạo sản phẩm thành công!' : 'Thành công');
         setSnackbarSuccessOpen(true);
 
         setTimeout(() => {

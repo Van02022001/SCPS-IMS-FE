@@ -19,16 +19,19 @@ import {
   ListSubheader,
   ListItemAvatar,
   ListItemButton,
+  DialogContent,
+  DialogTitle,
+  Dialog,
 } from '@mui/material';
 // utils
 import { fToNow } from '../../../utils/formatTime';
-
+import CloseIcon from '@mui/icons-material/Close';
 // components
 import Iconify from '../../../components/iconify';
 import Scrollbar from '../../../components/scrollbar';
 import { getAllNotification } from '~/data/mutation/notification/notification-mutation';
-import NotificationDetail from '~/sections/auth/notification/NotificationDetail';
 import { useNavigate } from 'react-router-dom';
+import NotificationAll from '~/sections/auth/notification/NotificationAll';
 
 // ----------------------------------------------------------------------
 
@@ -42,6 +45,7 @@ export default function NotificationsPopover() {
 
   const [open, setOpen] = useState(null);
 
+  const [viewAllDialogOpen, setViewAllDialogOpen] = useState(false);
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
   };
@@ -86,13 +90,29 @@ export default function NotificationsPopover() {
       if (notification.type === 'DANG_TIEN_HANH_NHAP_KHO' || notification.type === 'XAC_NHAN_NHAP_KHO') {
         navigate(`/dashboard/request-import-receipt`);
       }
-    } else {
+    }else if (userRole === 'INVENTORY_STAFF') {
+     
+      if (notification.type === 'XAC_NHAN_NHAP_KHO' || notification.type === 'YEU_CAU_NHAP_KHO') {
+        navigate(`/inventory-staff/requests-import-receipt`);
+      }
+      if (notification.type === 'YEU_CAU_XUAT_KHO') {
+        navigate(`/inventory-staff/requests-export-receipt`);
+      }
+    } 
+    else {
       console.log('User does not have the MANAGER role');
     }
     // setSelectedNotification(notification);
     // setOpen(null);
   };
-  
+
+  const handleViewAllClick = () => {
+    setViewAllDialogOpen(true);
+  };
+
+  const handleCloseViewAllDialog = () => {
+    setViewAllDialogOpen(false);
+  };
   return (
     <>
       <IconButton color={open ? 'primary' : 'default'} onClick={handleOpen} sx={{ width: 40, height: 40 }}>
@@ -165,17 +185,20 @@ export default function NotificationsPopover() {
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         <Box sx={{ p: 1 }}>
-          <Button fullWidth disableRipple>
-            Coi tất cả
-          </Button>
-        </Box>
-      </Popover>
-      {selectedNotification && (
-        <NotificationDetail
-          notification={selectedNotification}
-          onClose={() => setSelectedNotification(null)}
-        />
-      )}
+        <Button fullWidth disableRipple  onClick={() => setViewAllDialogOpen(true)}>
+          Coi tất cả
+        </Button>
+      </Box>
+      <Dialog fullWidth maxWidth="sm" open={viewAllDialogOpen}>
+        <DialogTitle>
+          Coi tất cả thông báo
+          <IconButton style={{ float: 'right' }} onClick={handleCloseViewAllDialog}>
+              <CloseIcon color="primary" />
+              </IconButton>{' '}
+        </DialogTitle>
+        <NotificationAll notifications={notifications} open={viewAllDialogOpen}/>
+      </Dialog>
+    </Popover>
     </>
   );
 }
@@ -250,7 +273,8 @@ function renderContent(notification) {
           &nbsp; {notification.type === "XAC_NHAN_NHAP_KHO" ? 'Xác nhận nhập kho'  : 
           notification.type === "YEU_CAU_NHAP_KHO" ? 'Yêu cầu nhập kho' :
           notification.type === "DANG_TIEN_HANH_NHAP_KHO" ? 'Đang tiến hành nhập kho' 
-          : ''}
+          : notification.type === "YEU_CAU_XUAT_KHO" ? 'Yêu cầu xuất kho' :
+          ''}
         </Typography>
       )}
     </Typography>
@@ -266,6 +290,14 @@ function renderContent(notification) {
     };
   }
   if (notification.type === "YEU_CAU_NHAP_KHO") {
+    return {
+      avatar: (
+        <img alt={notification.title} src="/assets/icons/ic_notification_shipping.svg" />
+      ),
+      title,
+    };
+  }
+  if (notification.type === "YEU_CAU_XUAT_KHO") {
     return {
       avatar: (
         <img alt={notification.title} src="/assets/icons/ic_notification_shipping.svg" />

@@ -14,8 +14,6 @@ import {
     TableBody,
     TableRow,
     TableCell,
-    Dialog,
-    DialogTitle,
 } from '@mui/material';
 // icons
 // import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
@@ -32,21 +30,19 @@ import SnackbarError from '~/components/alert/SnackbarError';
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 
 const InventoryCheckDetail = ({ inventoryCheckData, inventoryCheckId, onClose, isOpen, mode }) => {
-    const [tab1Data, setTab1Data] = useState({ categories_id: [] });
-    const [tab2Data, setTab2Data] = useState({});
+    // const [tab1Data, setTab1Data] = useState({ categories_id: [] });
+    // const [tab2Data, setTab2Data] = useState({});
 
     // const [expandedItem, setExpandedItem] = useState(subCategoryId);
     const [formHeight, setFormHeight] = useState(0);
     const [currentTab, setCurrentTab] = useState(0);
     //props
     const [editedImportReceipt, setEditedImportReceipt] = useState(null);
-    const [editSubCategoryMeta, setEditSubCategoryMeta] = useState(null);
     const [currentStatus, setCurrentStatus] = useState('');
     const [importReceiptData, setImportReceiptData] = useState([]);
     // const [positionedSnackbarOpen, setPositionedSnackbarOpen] = useState(false);
     // const [positionedSnackbarError, setPositionedSnackbarError] = useState(false);
     // form
-    const [openAddSubCategoryMetaForm, setOpenAddSubCategoryMetaForm] = useState(false);
 
     const [iventoryCheckParams, setInventoryCheckParams] = useState({
         warehouseId: null,
@@ -101,15 +97,15 @@ const InventoryCheckDetail = ({ inventoryCheckData, inventoryCheckId, onClose, i
 
     //========================== Hàm notification của trang ==================================
 
-    const handleTab1DataChange = (event) => {
-        // Cập nhật dữ liệu cho tab 1 tại đây
-        setTab1Data({ ...tab1Data, [event.target.name]: event.target.value });
-    };
+    // const handleTab1DataChange = (event) => {
+    //     // Cập nhật dữ liệu cho tab 1 tại đây
+    //     setTab1Data({ ...tab1Data, [event.target.name]: event.target.value });
+    // };
 
-    const handleTab2DataChange = (event) => {
-        // Cập nhật dữ liệu cho tab 2 tại đây
-        setTab2Data({ ...tab2Data, [event.target.name]: event.target.value });
-    };
+    // const handleTab2DataChange = (event) => {
+    //     // Cập nhật dữ liệu cho tab 2 tại đây
+    //     setTab2Data({ ...tab2Data, [event.target.name]: event.target.value });
+    // };
     const handleChangeTab = (event, newValue) => {
         setCurrentTab(newValue);
     };
@@ -166,29 +162,7 @@ const InventoryCheckDetail = ({ inventoryCheckData, inventoryCheckId, onClose, i
         }
     }, [inventoryCheckData, inventoryCheckId, mode]);
 
-    // useEffect(() => {
 
-    // }, []);
-
-    // useEffect(() => {
-    //     if (mode === 'create') {
-
-    //         setEditSubCategoryMeta({
-    //             key: '',
-    //             description: '',
-
-    //         });
-    //     } else {
-    //         if (subCategoryMeta) {
-
-    //             const editedSubCategoryMeta = {
-    //                 key: subCategoryMeta.key,
-    //                 description: subCategoryMeta.description,
-    //             };
-    //             setEditSubCategoryMeta(editedSubCategoryMeta);
-    //         }
-    //     }
-    // }, []);
     //===================================================== Những hàm update thay đổi data =====================================================
     const checkInventory = inventoryCheckData.find((o) => o.id === inventoryCheckId);
 
@@ -196,145 +170,22 @@ const InventoryCheckDetail = ({ inventoryCheckData, inventoryCheckId, onClose, i
         return null;
     }
 
-    // const updateImportReceipt = async () => {
-    //     if (!editedImportReceipt) {
-    //         return;
-    //     }
-    //     try {
-    //         const response = await editImportReceipt(importReceiptId, editedImportReceipt);
-
-    //         if (response.status === '200 OK') {
-    //         }
-    //         updateImportReceiptInList(response.data);
-    //         console.log('Product updated:', response);
-    //     } catch (error) {
-    //         console.error('An error occurred while updating the product:', error);
-    //     }
-    // };
-
-    // const updateImportReceiptConfirm = async () => {
-    //     try {
-    //         // if (currentStatus !== 'Pending_Approval') {
-    //         //     const errorMessage = 'Không thể xác nhận. Phiếu này không ở trạng thái Chờ phê duyệt !';
-    //         //     handleErrorMessage(errorMessage);
-    //         //     return;
-    //         // }
-
-    //         const newStatus = 'Approved'; // Set the desired status
-
-    //         const response = await editImportReceiptConfirm(importReceiptId, newStatus);
-
-    //         if (response.status === '200 OK') {
-    //             // Handle success if needed
-    //             handleSuccessMessage(response.message);
-    //         }
-
-    //         updateImportReceiptConfirmInList(importReceiptId, newStatus);
-    //         setCurrentStatus(newStatus);
-
-    //         console.log('Product status updated:', response);
-    //     } catch (error) {
-    //         console.error('Error updating category status:', error);
-    //         handleErrorMessage(error.response?.data?.message || 'An error occurred.');
-    //     }
-    // };
-
-    // const updateReceiptStartImport = async () => {
-    //     try {
-    //         // if (currentStatus !== 'Approved') {
-    //         //     const errorMessage = 'Không thể Tiến hành nhập kho. Phiếu này không ở trạng thái Đã xác nhận !';
-    //         //     handleErrorMessage(errorMessage);
-    //         //     return;
-    //         // }
-
-    //         const newStatus = 'IN_PROGRESS';
-
-    //         const response = await editReceiptStartImport(importReceiptId, newStatus);
-
-    //         if (response.status === '200 OK') {
-    //             handleSuccessMessage(response.message);
-    //         }
-
-    //         updateImportReceiptConfirmInList(importReceiptId, newStatus);
-    //         setCurrentStatus(newStatus);
-
-    //         console.log('Product status updated:', response);
-    //     } catch (error) {
-    //         console.error('Error updating category status:', error);
-    //     }
-    // };
-    // const handleOpenForm = () => {
-    //     const validImportReceipst = importReceipt.find((o) => o.id === importReceiptId);
-
-    //     if (validImportReceipst && validImportReceipst.status === 'IN_PROGRESS') {
-    //         setIsOpenImportForm(true);
-
-    //         setImportReceipstData({
-    //             id: validImportReceipst.id,
-    //             code: validImportReceipst.code,
-    //             description: validImportReceipst.description,
-    //             createdBy: validImportReceipst.createdBy,
-    //             details: validImportReceipst.details || [],
-    //             lastModifiedBy: validImportReceipst.lastModifiedBy || '',
-    //             status: validImportReceipst.status || '',
-    //             totalPrice: validImportReceipst.totalPrice || 0,
-    //             totalQuantity: validImportReceipst.totalQuantity || 0,
-    //             type: validImportReceipst.type || '',
-    //             updatedAt: validImportReceipst.updatedAt || '',
-    //             warehouseId: validImportReceipst.warehouseId || 0,
-    //         });
-
-    //         console.log(validImportReceipst);
-    //     } else {
-    //         console.error('Không tìm thấy dữ liệu hợp lệ cho importReceiptId: ', importReceiptId);
-    //         const errorMessage = 'Tiến hành nhập kho để tạo phiếu !';
-    //         handleErrorMessage(errorMessage);
-    //     }
-    // };
-    // const handleCloseForm = () => {
-    //     setIsOpenImportForm(false);
-    // };
     //==========================================================================================================
 
-    // const handleEdit = (field, value) => {
-    //     console.log(`Field: ${field}, Value: ${value}`);
-    //     if (field === 'categories_id') {
-    //         const categoryIds = value.map(Number).filter(Boolean);
-    //         setEditedImportReceipt((prevProduct) => ({
-    //             ...prevProduct,
-    //             [field]: categoryIds,
-    //         }));
-    //     } else if (field === 'unit_id' || field === 'unit_mea_id') {
-    //         const id = parseInt(value);
-    //         setEditedImportReceipt((prevProduct) => ({
-    //             ...prevProduct,
-    //             [field]: id,
-    //         }));
-    //     } else {
-    //         setEditedImportReceipt((prevProduct) => ({
-    //             ...prevProduct,
-    //             [field]: value,
-    //         }));
-    //     }
+    // const handleDataReload = () => {
+    //     getAllImportReceipt()
+    //         .then((response) => {
+    //             const data = response.data;
+    //             if (Array.isArray(data)) {
+    //                 setImportReceiptData(data);
+    //             } else {
+    //                 console.error('API response is not an array:', data);
+    //             }
+    //         })
+    //         .catch((error) => {
+    //             console.error('Error fetching import receipts:', error);
+    //         });
     // };
-
-    const handleDelete = () => {
-        // Xử lý xóa
-    };
-    const handleDataReload = () => {
-        getAllImportReceipt()
-            .then((response) => {
-                const data = response.data;
-                if (Array.isArray(data)) {
-                    setImportReceiptData(data);
-                } else {
-                    console.error('API response is not an array:', data);
-                }
-            })
-            .catch((error) => {
-                console.error('Error fetching import receipts:', error);
-            });
-    };
 
     return editedImportReceipt ? (
         <div
@@ -424,12 +275,12 @@ const InventoryCheckDetail = ({ inventoryCheckData, inventoryCheckId, onClose, i
                                                 currentStatus === 'Pending_Approval'
                                                     ? 'Chờ phê duyệt'
                                                     : currentStatus === 'Approved'
-                                                    ? 'Đã xác nhận'
-                                                    : currentStatus === 'IN_PROGRESS'
-                                                    ? 'Đang tiến hành'
-                                                    : currentStatus === 'Completed'
-                                                    ? 'Hoàn thành'
-                                                    : 'Ngừng hoạt động'
+                                                        ? 'Đã xác nhận'
+                                                        : currentStatus === 'IN_PROGRESS'
+                                                            ? 'Đang tiến hành'
+                                                            : currentStatus === 'Completed'
+                                                                ? 'Hoàn thành'
+                                                                : 'Ngừng hoạt động'
                                             }
                                         />
                                     </Grid>
@@ -500,20 +351,33 @@ const InventoryCheckDetail = ({ inventoryCheckData, inventoryCheckId, onClose, i
                                                     fontFamily: 'bold',
                                                     padding: '10px 0 0 20px',
                                                 }}
+
                                             >
                                                 <TableCell>Mã sản phẩm</TableCell>
-
                                                 <TableCell>Tên sản phẩm</TableCell>
-                                                <TableCell>Số lượng</TableCell>
-                                                {/* <TableCell>Đơn vị</TableCell> */}
+                                                <TableCell>Số lượng ban đầu</TableCell>
+                                                <TableCell>Số lượng thực tế</TableCell>
+                                                <TableCell>Chênh lệch số lượng</TableCell>
+                                                <TableCell>Giá trị chênh lệch</TableCell>
+                                                <TableCell>Ghi chú</TableCell>
                                             </TableRow>
                                             {checkInventory.details.map((items) => {
                                                 return (
-                                                    <TableRow key={items.id}>
+                                                    <TableRow key={items.id}
+                                                        title={
+                                                            [items.locations.map(
+                                                                (location) =>
+                                                                    `${location.shelfNumber} - ${location.binNumber} - Số lượng: ${location.quantity}`,
+                                                            ),
+                                                            ].join('\n')}
+                                                    >
                                                         <TableCell>{items.codeItem}</TableCell>
                                                         <TableCell>{items.itemName}</TableCell>
                                                         <TableCell>{items.expectedQuantity}</TableCell>
-                                                        {/* <TableCell>{items.unitName}</TableCell> */}
+                                                        <TableCell>{items.actualQuantity}</TableCell>
+                                                        <TableCell>{items.discrepancyQuantity}</TableCell>
+                                                        <TableCell>{items.discrepancyValue}</TableCell>
+                                                        <TableCell>{items.note}</TableCell>
                                                     </TableRow>
                                                 );
                                             })}
@@ -526,9 +390,9 @@ const InventoryCheckDetail = ({ inventoryCheckData, inventoryCheckId, onClose, i
                                             <TableCell>{checkInventory.totalQuantity}</TableCell>
                                         </TableRow>
                                     </TableBody> */}
-                                    <Button variant="contained" color="primary" sx={{marginTop: 2}}>
+                                    {/* <Button variant="contained" color="primary" sx={{ marginTop: 2 }}>
                                         Xác Nhận
-                                    </Button>
+                                    </Button> */}
                                 </TableContainer>
                             </CardContent>
                         </Card>

@@ -175,7 +175,7 @@ const OriginPage = () => {
         setOpenCreateOriginForm(false);
         setOriginData((prevOriginData) => [...prevOriginData, newOrigin]);
         // Show success message
-        setSnackbarSuccessMessage(successMessage === 'Create origin successfully' ? 'Tạo thể loại thành công!' : 'Thành công');
+        setSnackbarSuccessMessage(successMessage === 'Create origin successfully' ? 'Tạo xuất xứ thành công!' : 'Thành công');
         setSnackbarSuccessOpen(true);
 
         setTimeout(() => {

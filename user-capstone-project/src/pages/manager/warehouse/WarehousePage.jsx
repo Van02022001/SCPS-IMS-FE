@@ -1,6 +1,5 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
-import { sentenceCase } from 'change-case';
 import React, { useEffect, useState } from 'react';
 
 // @mui
@@ -9,12 +8,8 @@ import {
     Table,
     Stack,
     Paper,
-    Avatar,
     Button,
-    Popover,
-    Checkbox,
     TableRow,
-    MenuItem,
     TableBody,
     TableCell,
     Container,
@@ -104,7 +99,7 @@ const WarehousePage = () => {
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
     const [warehouseData, setWarehouseData] = useState([]);
-    const [warehouseStatus, setWarehouseStatus] = useState('');
+    // const [warehouseStatus, setWarehouseStatus] = useState('');
     const startIndex = page * rowsPerPage;
     const endIndex = startIndex + rowsPerPage;
 
@@ -138,7 +133,7 @@ const WarehousePage = () => {
         setOpenOderForm(false);
         setWarehouseData((prevWarehouseData) => [...prevWarehouseData, newWarehouse]);
 
-        setSnackbarSuccessMessage(successMessage === 'Create warehouse successfully' ? 'Tạo đơn vị thành công!' : 'Thành công');
+        setSnackbarSuccessMessage(successMessage === 'Create warehouse successfully' ? 'Tạo kho chứa thành công!' : 'Thành công');
         setSnackbarSuccessOpen(true);
 
         setTimeout(() => {
@@ -147,13 +142,13 @@ const WarehousePage = () => {
         }, 3000);
     };
     //----------------------------------------------------------------
-    const handleOpenMenu = (event) => {
-        setOpen(event.currentTarget);
-    };
+    // const handleOpenMenu = (event) => {
+    //     setOpen(event.currentTarget);
+    // };
 
-    const handleCloseMenu = () => {
-        setOpen(null);
-    };
+    // const handleCloseMenu = () => {
+    //     setOpen(null);
+    // };
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -170,20 +165,20 @@ const WarehousePage = () => {
         setSelected([]);
     };
 
-    const handleClick = (event, name) => {
-        const selectedIndex = selected.indexOf(name);
-        let newSelected = [];
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, name);
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-        }
-        setSelected(newSelected);
-    };
+    // const handleClick = (event, name) => {
+    //     const selectedIndex = selected.indexOf(name);
+    //     let newSelected = [];
+    //     if (selectedIndex === -1) {
+    //         newSelected = newSelected.concat(selected, name);
+    //     } else if (selectedIndex === 0) {
+    //         newSelected = newSelected.concat(selected.slice(1));
+    //     } else if (selectedIndex === selected.length - 1) {
+    //         newSelected = newSelected.concat(selected.slice(0, -1));
+    //     } else if (selectedIndex > 0) {
+    //         newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
+    //     }
+    //     setSelected(newSelected);
+    // };
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);

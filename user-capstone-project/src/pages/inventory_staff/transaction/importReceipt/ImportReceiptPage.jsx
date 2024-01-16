@@ -172,7 +172,7 @@ const ImportReceiptPage = () => {
         const match = importReceipt.description.match(/#(\d+)/);
         if (match) {
             const requestId = match[1];
-            return `Nhập thực tế dựa trên Yêu cầu Nhận #${requestId}`;
+            return `Nhập thực tế dựa trên Yêu cầu Nhận `;
         }
         return importReceipt.description;
     };
@@ -457,12 +457,12 @@ const ImportReceiptPage = () => {
                                                         {importReceipt.status === 'Pending_Approval'
                                                             ? 'Chờ phê duyệt'
                                                             : importReceipt.status === 'Approved'
-                                                            ? 'Đã xác nhận'
-                                                            : importReceipt.status === 'NOT_COMPLETED'
-                                                            ? 'Chưa hoàn thành'
-                                                            : importReceipt.status === 'Completed'
-                                                            ? 'Hoàn thành'
-                                                            : 'Ngừng hoạt động'}
+                                                                ? 'Đã xác nhận'
+                                                                : importReceipt.status === 'NOT_COMPLETED'
+                                                                    ? 'Chưa hoàn thành'
+                                                                    : importReceipt.status === 'Completed'
+                                                                        ? 'Hoàn thành'
+                                                                        : 'Ngừng hoạt động'}
                                                     </Label>
                                                 </TableCell>
                                             </TableRow>

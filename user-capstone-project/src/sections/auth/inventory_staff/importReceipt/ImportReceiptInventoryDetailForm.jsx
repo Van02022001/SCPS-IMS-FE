@@ -15,7 +15,6 @@ import {
     TableRow,
     TableCell,
     Dialog,
-    DialogTitle,
 } from '@mui/material';
 
 //notification
@@ -195,72 +194,72 @@ const ImportReceiptInventoryDetailForm = ({
         return null;
     }
 
-    const updateImportReceipt = async () => {
-        if (!editedImportReceipt) {
-            return;
-        }
-        try {
-            const response = await editImportReceipt(importReceiptId, editedImportReceipt);
+    // const updateImportReceipt = async () => {
+    //     if (!editedImportReceipt) {
+    //         return;
+    //     }
+    //     try {
+    //         const response = await editImportReceipt(importReceiptId, editedImportReceipt);
 
-            if (response.status === '200 OK') {
-                setSuccessMessage(response.message);
-                handleMessage(response.message);
-            }
-            updateImportReceiptInList(response.data);
-            console.log('Product updated:', response);
-        } catch (error) {
-            console.error('An error occurred while updating the product:', error);
-            if (error.response?.data?.message === 'Invalid request') {
-                setErrorMessage('Yêu cầu không hợp lệ');
-            }
-            if (error.response?.data?.error === '404 NOT_FOUND') {
-                setErrorMessage('Mô tả quá dài');
-            }
-        }
-    };
+    //         if (response.status === '200 OK') {
+    //             setSuccessMessage(response.message);
+    //             handleMessage(response.message);
+    //         }
+    //         updateImportReceiptInList(response.data);
+    //         console.log('Product updated:', response);
+    //     } catch (error) {
+    //         console.error('An error occurred while updating the product:', error);
+    //         if (error.response?.data?.message === 'Invalid request') {
+    //             setErrorMessage('Yêu cầu không hợp lệ');
+    //         }
+    //         if (error.response?.data?.error === '404 NOT_FOUND') {
+    //             setErrorMessage('Mô tả quá dài');
+    //         }
+    //     }
+    // };
 
-    const updateImportReceiptConfirm = async () => {
-        try {
-            let newStatus = currentStatus === 'Pending_Approval' ? 'Inactive' : 'Approved';
+    // const updateImportReceiptConfirm = async () => {
+    //     try {
+    //         let newStatus = currentStatus === 'Pending_Approval' ? 'Inactive' : 'Approved';
 
-            const response = await editImportReceiptConfirm(importReceiptId, newStatus);
+    //         const response = await editImportReceiptConfirm(importReceiptId, newStatus);
 
-            if (response.status === '200 OK') {
-                setSuccessMessage(response.message);
-                handleMessage(response.message);
-            }
+    //         if (response.status === '200 OK') {
+    //             setSuccessMessage(response.message);
+    //             handleMessage(response.message);
+    //         }
 
-            updateImportReceiptConfirmInList(importReceiptId, newStatus);
-            setCurrentStatus(newStatus);
+    //         updateImportReceiptConfirmInList(importReceiptId, newStatus);
+    //         setCurrentStatus(newStatus);
 
-            console.log('Product status updated:', response);
-        } catch (error) {
-            //handleErrorMessage(error.response.data.message);
-        }
-    };
-    const updateReceiptStartImport = async () => {
-        try {
-            let newStatus = currentStatus === 'Approved' ? 'Inactive' : 'Completed';
+    //         console.log('Product status updated:', response);
+    //     } catch (error) {
+    //         //handleErrorMessage(error.response.data.message);
+    //     }
+    // };
+    // const updateReceiptStartImport = async () => {
+    //     try {
+    //         let newStatus = currentStatus === 'Approved' ? 'Inactive' : 'Completed';
 
-            const response = await editReceiptStartImport(importReceiptId, newStatus);
+    //         const response = await editReceiptStartImport(importReceiptId, newStatus);
 
-            if (response.status === '200 OK') {
-                setSuccessMessage(response.message);
-                handleMessage(response.message);
-            }
+    //         if (response.status === '200 OK') {
+    //             setSuccessMessage(response.message);
+    //             handleMessage(response.message);
+    //         }
 
-            updateImportReceiptConfirmInList(importReceiptId, newStatus);
-            setCurrentStatus(newStatus);
+    //         updateImportReceiptConfirmInList(importReceiptId, newStatus);
+    //         setCurrentStatus(newStatus);
 
-            console.log('Product status updated:', response);
-        } catch (error) {
-            console.error('Error updating category status:', error);
-            setErrorMessage(error.response.data.message);
-            if (error.response) {
-                console.log('Error response:', error.response);
-            }
-        }
-    };
+    //         console.log('Product status updated:', response);
+    //     } catch (error) {
+    //         console.error('Error updating category status:', error);
+    //         setErrorMessage(error.response.data.message);
+    //         if (error.response) {
+    //             console.log('Error response:', error.response);
+    //         }
+    //     }
+    // };
     const handleOpenForm = () => {
         const validImportReceipst = importReceipt.find((o) => o.id === importReceiptId);
 
@@ -401,12 +400,12 @@ const ImportReceiptInventoryDetailForm = ({
                                                 currentStatus === 'Pending_Approval'
                                                     ? 'Chờ phê duyệt'
                                                     : currentStatus === 'Approved'
-                                                    ? 'Đã xác nhận'
-                                                    : currentStatus === 'NOT_COMPLETED'
-                                                    ? 'Chưa hoàn thành'
-                                                    : currentStatus === 'Completed'
-                                                    ? 'Hoàn thành'
-                                                    : 'Ngừng hoạt động'
+                                                        ? 'Đã xác nhận'
+                                                        : currentStatus === 'NOT_COMPLETED'
+                                                            ? 'Chưa hoàn thành'
+                                                            : currentStatus === 'Completed'
+                                                                ? 'Hoàn thành'
+                                                                : 'Ngừng hoạt động'
                                             }
                                         />
                                     </Grid>
@@ -416,7 +415,7 @@ const ImportReceiptInventoryDetailForm = ({
                                         direction="row"
                                         justifyContent="space-between"
                                         alignItems="center"
-                                        sx={{ marginBottom: 4, gap: 5, marginLeft: 0.1}}
+                                        sx={{ marginBottom: 4, gap: 5, marginLeft: 0.1 }}
                                     >
                                         <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
                                             Người tạo:{' '}
@@ -473,6 +472,7 @@ const ImportReceiptInventoryDetailForm = ({
                                                     padding: '10px 0 0 20px',
                                                 }}
                                             >
+                                                <TableCell>Mã sản phẩm</TableCell>
                                                 <TableCell>Tên sản phẩm</TableCell>
                                                 <TableCell>Số lượng</TableCell>
                                                 <TableCell>Giá sản phẩm</TableCell>
@@ -482,7 +482,8 @@ const ImportReceiptInventoryDetailForm = ({
                                             {importReceipst.details.map((items) => {
                                                 return (
                                                     <TableRow key={items.id}>
-                                                        <TableCell>{items.itemName}</TableCell>
+                                                        <TableCell>{items.item.code}</TableCell>
+                                                        <TableCell>{items.item.subcategoryName}</TableCell>
                                                         <TableCell>{items.quantity}</TableCell>
                                                         <TableCell>{items.price?.toLocaleString('vi-VN')}</TableCell>
                                                         <TableCell>{items.totalPrice?.toLocaleString('vi-VN')}</TableCell>

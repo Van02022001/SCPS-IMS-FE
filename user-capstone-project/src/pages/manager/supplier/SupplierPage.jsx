@@ -206,7 +206,7 @@ const SupplierPage = () => {
         setOpenOderForm(false);
         setSupplierData((prevSupplierData) => [...prevSupplierData, newSupplier]);
 
-        setSnackbarSuccessMessage(successMessage === 'Updated supplier successfully!' ? 'Tạo thể loại thành công!' : 'Thành công');
+        setSnackbarSuccessMessage(successMessage === 'Create supplier successfully!' ? 'Tạo nhà cung cấp thành công!' : 'Thành công');
         setSnackbarSuccessOpen(true);
 
         setTimeout(() => {

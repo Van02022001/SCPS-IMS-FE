@@ -9,7 +9,7 @@ import SnackbarError from '~/components/alert/SnackbarError';
 import CloseIcon from '@mui/icons-material/Close';
 
 
-const CreateWarehouseForm = ({ onSave, props }) => {
+const CreateWarehouseForm = (props) => {
     const [warehouseName, setWarehouseName] = useState('');
     const [warehouseAddress, setWarehouseAddress] = useState('');
     const [warehouseNameError, setWarehouseNameError] = useState('');
@@ -103,7 +103,6 @@ const CreateWarehouseForm = ({ onSave, props }) => {
 
             if (response.status === '200 OK') {
                 handleSuccessMessage(response.message);
-                handleCloseSnackbar();
                 props.onClose(response.data, response.message);
             }
         } catch (error) {
