@@ -125,11 +125,11 @@ const LocationInventoryPage = () => {
     }, [locationData]);
     //===========================================================================================
 
-    const handleCreateLocationSuccess = (successMessage, newLocation) => {
+    const handleCreateLocationSuccess = (newLocation, successMessage) => {
         console.log(newLocation);
 
         setOpenOderForm(false);
-        setLocationData((prevLocationData) => [...prevLocationData, [newLocation]]);
+        setLocationData((prevLocationData) => [...prevLocationData, newLocation]);
 
         setSnackbarSuccessMessage(
             successMessage === 'Create location successfully' ? 'Tạo vị trí thành công!' : 'Thành công',
@@ -143,6 +143,16 @@ const LocationInventoryPage = () => {
     };
     const handleCloseOdersForm = () => {
         setOpenOderForm(false);
+    };
+    const updateLocationInList = (updatedLocation) => {
+        const locationIndex = locationData.findIndex((location) => location.id === updatedLocation.id);
+
+        if (locationIndex !== -1) {
+            const UpdatedLocation = [...locationData];
+            UpdatedLocation[locationIndex] = updatedLocation;
+
+            setLocationData(UpdatedLocation);
+        }
     };
     //===========================================================================================
 
@@ -257,7 +267,7 @@ const LocationInventoryPage = () => {
                         numSelected={selected.length}
                         filterName={filterName}
                         onFilterName={handleFilterByName}
-                        // onDataSearch={handleDataSearch}
+                    // onDataSearch={handleDataSearch}
                     />
 
                     <Scrollbar>
@@ -322,9 +332,8 @@ const LocationInventoryPage = () => {
                                                                         </Typography>
                                                                     ))
                                                                 ) : (
-                                                                    // Handle the case when tags is null or not an array
                                                                     <Typography variant="subtitle2" noWrap>
-                                                                        No tags available
+
                                                                     </Typography>
                                                                 )}
                                                             </Stack>
@@ -338,6 +347,7 @@ const LocationInventoryPage = () => {
                                                                 locations={locationData}
                                                                 locationsId={selectedLocationId}
                                                                 onClose={handleCloseLocationDetails}
+                                                                updateLocationInList={updateLocationInList}
                                                             />
                                                         </TableCell>
                                                     </TableRow>

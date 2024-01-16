@@ -89,8 +89,6 @@ const CreateInventoryCheck = ({
             setErrorMessage('Hãy chọn kho và nhân viên !');
         } else if (message === 'An error occurred while creating the inventory check receipt') {
             setErrorMessage('Hãy nhập số lượng thực tế !');
-        } else if (message === 'An error occurred while creating the inventory check receipt') {
-            setErrorMessage('Hãy nhập số lượng thực tế !');
         }
     };
     const handleClose = (event, reason) => {
