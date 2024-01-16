@@ -177,6 +177,11 @@ const OriginPage = () => {
         // Show success message
         setSnackbarSuccessMessage(successMessage === 'Create origin successfully' ? 'Tạo thể loại thành công!' : 'Thành công');
         setSnackbarSuccessOpen(true);
+
+        setTimeout(() => {
+            setSnackbarSuccessOpen(false);
+            setSnackbarSuccessMessage('');
+        }, 3000);
     };
     //=========================Phân trang số lượng==========================
     const handleChangeRowsPerPage = (event) => {

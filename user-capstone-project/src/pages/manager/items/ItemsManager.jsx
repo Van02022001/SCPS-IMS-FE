@@ -283,6 +283,11 @@ const ItemsManagerPage = () => {
         // Show success message
         setSnackbarSuccessMessage(successMessage === 'Create item successfully' ? 'Tạo thể loại thành công!' : 'Thành công');
         setSnackbarSuccessOpen(true);
+
+        setTimeout(() => {
+            setSnackbarSuccessOpen(false);
+            setSnackbarSuccessMessage('');
+        }, 3000);
     };
     //===========================================================================================
 

@@ -133,8 +133,15 @@ const CategoryPage = () => {
         setCategoryData((prevCategoryData) => [...prevCategoryData, newCategory]);
 
         // Show success message
-        setSnackbarSuccessMessage(successMessage === 'Create category successfully' ? 'Tạo thể loại thành công!' : 'Thành công');
+        setSnackbarSuccessMessage(
+            successMessage === 'Create category successfully' ? 'Tạo thể loại thành công!' : 'Thành công',
+        );
         setSnackbarSuccessOpen(true);
+
+        setTimeout(() => {
+            setSnackbarSuccessOpen(false);
+            setSnackbarSuccessMessage('');
+        }, 3000);
     };
     //===========================================================================================
 

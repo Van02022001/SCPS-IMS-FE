@@ -140,6 +140,11 @@ const WarehousePage = () => {
 
         setSnackbarSuccessMessage(successMessage === 'Create warehouse successfully' ? 'Tạo đơn vị thành công!' : 'Thành công');
         setSnackbarSuccessOpen(true);
+
+        setTimeout(() => {
+            setSnackbarSuccessOpen(false);
+            setSnackbarSuccessMessage('');
+        }, 3000);
     };
     //----------------------------------------------------------------
     const handleOpenMenu = (event) => {

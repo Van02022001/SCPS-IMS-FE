@@ -208,6 +208,11 @@ const SupplierPage = () => {
 
         setSnackbarSuccessMessage(successMessage === 'Updated supplier successfully!' ? 'Tạo thể loại thành công!' : 'Thành công');
         setSnackbarSuccessOpen(true);
+
+        setTimeout(() => {
+            setSnackbarSuccessOpen(false);
+            setSnackbarSuccessMessage('');
+        }, 3000);
     };
     //==========================================================================================================
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;

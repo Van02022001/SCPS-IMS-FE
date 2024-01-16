@@ -119,14 +119,27 @@ const LocationInventoryPage = () => {
                 console.error('Error fetching users:', error);
             });
     }, []);
+
+    useEffect(() => {
+        console.log(locationData);
+    }, [locationData]);
     //===========================================================================================
 
     const handleCreateLocationSuccess = (successMessage, newLocation) => {
-        setOpenOderForm(false);
-        setLocationData((prevLocationData) => [...prevLocationData, newLocation]);
+        console.log(newLocation);
 
-        setSnackbarSuccessMessage(successMessage === 'Create location successfully' ? 'Tạo vị trí thành công!' : 'Thành công',);
-        setSnackbarSuccessOpen(true)
+        setOpenOderForm(false);
+        setLocationData((prevLocationData) => [...prevLocationData, [newLocation]]);
+
+        setSnackbarSuccessMessage(
+            successMessage === 'Create location successfully' ? 'Tạo vị trí thành công!' : 'Thành công',
+        );
+        setSnackbarSuccessOpen(true);
+
+        setTimeout(() => {
+            setSnackbarSuccessOpen(false);
+            setSnackbarSuccessMessage('');
+        }, 3000);
     };
     const handleCloseOdersForm = () => {
         setOpenOderForm(false);
@@ -198,8 +211,6 @@ const LocationInventoryPage = () => {
         setFilterName(event.target.value);
     };
 
-
-
     // const handleDataSearch = (searchResult) => {
     //     // Cập nhật state của trang chính với dữ liệu từ tìm kiếm
     //     setBrandData(searchResult);
@@ -246,7 +257,7 @@ const LocationInventoryPage = () => {
                         numSelected={selected.length}
                         filterName={filterName}
                         onFilterName={handleFilterByName}
-                    // onDataSearch={handleDataSearch}
+                        // onDataSearch={handleDataSearch}
                     />
 
                     <Scrollbar>
@@ -274,12 +285,6 @@ const LocationInventoryPage = () => {
                                                     onClick={() => handleLocationClick(location)}
                                                     style={{ height: 52 }}
                                                 >
-                                                    {/* <TableCell padding="checkbox">
-                                                        <Checkbox
-                                                            onChange={(event) => handleClick(event, brand.name)}
-                                                        />
-                                                    </TableCell> */}
-
                                                     {/* tên  */}
                                                     <TableCell align="left">
                                                         <Stack direction="row" alignItems="center" spacing={2}>
@@ -299,17 +304,30 @@ const LocationInventoryPage = () => {
                                                     <TableCell align="left">
                                                         <Stack direction="row" alignItems="center" spacing={2}>
                                                             <Typography variant="subtitle2" noWrap>
-                                                                {location.warehouse.name}
+                                                                {location?.warehouse?.name || ''}
                                                             </Typography>
                                                         </Stack>
                                                     </TableCell>
                                                     <TableCell align="left">
                                                         <Stack direction="row" alignItems="center" spacing={2}>
-                                                            {location.tags.map((tag, index) => (
-                                                                <Typography key={index} variant="subtitle2" noWrap>
-                                                                    {tag.name}
-                                                                </Typography>
-                                                            ))}
+                                                            <Stack direction="row" alignItems="center" spacing={2}>
+                                                                {location.tags && Array.isArray(location.tags) ? (
+                                                                    location.tags.map((tag, index) => (
+                                                                        <Typography
+                                                                            key={index}
+                                                                            variant="subtitle2"
+                                                                            noWrap
+                                                                        >
+                                                                            {tag.name || ''}
+                                                                        </Typography>
+                                                                    ))
+                                                                ) : (
+                                                                    // Handle the case when tags is null or not an array
+                                                                    <Typography variant="subtitle2" noWrap>
+                                                                        No tags available
+                                                                    </Typography>
+                                                                )}
+                                                            </Stack>
                                                         </Stack>
                                                     </TableCell>
                                                 </TableRow>

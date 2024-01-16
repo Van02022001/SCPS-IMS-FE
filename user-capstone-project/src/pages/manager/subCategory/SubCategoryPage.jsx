@@ -209,6 +209,11 @@ const SubCategoryPage = () => {
                 : successMessage,
         );
         setSnackbarSuccessOpen(true);
+
+        setTimeout(() => {
+            setSnackbarSuccessOpen(false);
+            setSnackbarSuccessMessage('');
+        }, 3000);
     };
 
     //===========================================================================================
