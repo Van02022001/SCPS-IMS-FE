@@ -232,7 +232,7 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
         >
             <Tabs value={selectedTab} onChange={(event, newValue) => setSelectedTab(newValue)}>
                 <Tab label="Thông tin" />
-                <Tab label="Lịch sử giá mua" />
+                {/* <Tab label="Lịch sử giá mua" /> */}
                 <Tab label="Lịch sử vận chuyển" />
                 <Tab label="Vị trí sản phẩm" />
             </Tabs>
@@ -587,7 +587,7 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                     </div>
                 </div>
             )}
-            {selectedTab === 1 && (
+            {/* {selectedTab === 1 && (
                 <div style={{ marginLeft: 50 }}>
                     <Stack spacing={4} margin={2}>
                         <div>
@@ -647,7 +647,7 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                         {isError && <ErrorAlerts errorMessage={errorMessage} />}
                     </div>
                 </div>
-            )}
+            )} */}
             {selectedTab === 2 && (
                 <div style={{ marginLeft: 50 }}>
                     <Stack spacing={4} margin={2}>
