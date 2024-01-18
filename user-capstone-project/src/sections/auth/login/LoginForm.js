@@ -50,7 +50,7 @@ export default function LoginForm() {
                         if (localStorage.getItem('role') === 'ADMIN') {
                             navigate('/dashboard', { replace: true });
                         } else if (localStorage.getItem('role') === 'MANAGER') {
-                            navigate('/dashboard/products/production', { replace: true });
+                            navigate('/dashboard', { replace: true });
                         } else if (localStorage.getItem('role') === 'INVENTORY_STAFF') {
                             navigate('/inventory-staff/itemsInventory', { replace: true });
                         } else if (localStorage.getItem('role') === 'SALE_STAFF') {
