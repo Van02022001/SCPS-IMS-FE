@@ -129,6 +129,7 @@ const InventoryReportPage = () => {
     const [selectedInventoryReport, setSelectedInventoryReport] = React.useState([]);
     const [inventoryReportData, setInventoryReportData] = useState([]);
     const [warehouseData, setWarehouseData] = useState([]);
+    const filterWarehouses = warehouseData.map((warehouse) => warehouse.name);
     const startIndex = page * rowsPerPage;
     const endIndex = startIndex + rowsPerPage;
     // Hàm để thay đổi data mỗi khi Edit xong api-------------------------------------------------------------
@@ -195,16 +196,21 @@ const InventoryReportPage = () => {
     };
     //==============================* filter *==============================
     const applyFilters = (inventoryReport) => {
-        const isInventoryReportMatch =
+        const isWarehouseMatch =
             !selectedInventoryReport ||
             selectedInventoryReport.length === 0 ||
-            (Array.isArray(inventoryReport) &&
-                inventoryReport.some((inventories) => selectedInventoryReport.includes(inventories.itemName))) ||
-            (!Array.isArray(inventoryReport) && selectedInventoryReport.includes(inventoryReport.itemName));
-        return isInventoryReportMatch;
+            selectedInventoryReport.some((warehouse) => warehouse === inventoryReport.warehouseDTO?.name);
+
+        const isInventoryReportMatch = filterName
+            ? inventoryReport.itemName.toLowerCase().includes(filterName.toLowerCase())
+            : true;
+
+        return isWarehouseMatch && isInventoryReportMatch;
     };
 
     const filteredInventoryReport = inventoryReportData.filter(applyFilters);
+
+    console.log(selectedInventoryReport);
 
     //==============================* filter *==============================
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - PRODUCTSLIST.length) : 0;
@@ -240,32 +246,32 @@ const InventoryReportPage = () => {
             });
     }, []);
     console.log(inventoryReportData);
-    useEffect(() => {
-        if (selectedInventoryReport.length > 0) {
-            const warehouseId = selectedInventoryReport[0];
-            getAllInventoryByWarehouse(warehouseId)
-                .then((response) => {
-                    const data = response.data;
-                    if (Array.isArray(data)) {
-                        console.log('Inventory data:', data);
-                        const sortedData = data.sort((a, b) => {
-                            return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(
-                                dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
-                            );
-                        });
-                        setInventoryReportData(sortedData);
+    // useEffect(() => {
+    //     if (selectedInventoryReport.length > 0) {
+    //         const warehouseId = selectedInventoryReport[0];
+    //         getAllInventoryByWarehouse(warehouseId)
+    //             .then((response) => {
+    //                 const data = response.data;
+    //                 if (Array.isArray(data)) {
+    //                     console.log('Inventory data:', data);
+    //                     const sortedData = data.sort((a, b) => {
+    //                         return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(
+    //                             dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
+    //                         );
+    //                     });
+    //                     setInventoryReportData(sortedData);
 
-                        const selectedWarehouse = warehouseData.find((warehouse) => warehouse.id === warehouseId);
-                        setSelectedWarehouse(selectedWarehouse);
-                    } else {
-                        console.error('API response is not an array:', data);
-                    }
-                })
-                .catch((error) => {
-                    console.error('Error fetching inventory data:', error);
-                });
-        }
-    }, [selectedInventoryReport, warehouseData]);
+    //                     const selectedWarehouse = warehouseData.find((warehouse) => warehouse.id === warehouseId);
+    //                     setSelectedWarehouse(selectedWarehouse);
+    //                 } else {
+    //                     console.error('API response is not an array:', data);
+    //                 }
+    //             })
+    //             .catch((error) => {
+    //                 console.error('Error fetching inventory data:', error);
+    //             });
+    //     }
+    // }, [selectedInventoryReport, warehouseData]);
 
     return (
         <>
@@ -298,10 +304,10 @@ const InventoryReportPage = () => {
                     renderValue={(selected) => selected.join(', ')}
                     MenuProps={MenuProps}
                 >
-                    {warehouseData.map((warehouse) => (
-                        <MenuItem key={warehouse.id} value={warehouse.id}>
-                            <Checkbox checked={selectedInventoryReport.indexOf(warehouse.id) > -1} />
-                            <ListItemText primary={warehouse.name} />
+                    {filterWarehouses.map((name) => (
+                        <MenuItem key={name} value={name}>
+                            <Checkbox checked={selectedInventoryReport.indexOf(name) > -1} />
+                            <ListItemText primary={name} />
                         </MenuItem>
                     ))}
                 </Select>

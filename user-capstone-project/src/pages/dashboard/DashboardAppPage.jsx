@@ -40,9 +40,9 @@ const DashboardInventoryPage = () => {
     const [selectedDate, setSelectedDate] = useState(null);
     const [age, setAge] = React.useState('');
     const [saveData, setSaveData] = useState(null);
-    
 
     const [chartData, setChartData] = useState([]);
+    const [chartCircleData, setChartCircleData] = useState([]);
 
     const handleChange = (event) => {
         setAge(event.target.value);
@@ -92,7 +92,25 @@ const DashboardInventoryPage = () => {
                         label: 'Tổng giá trị tồn kho',
                         value: data?.subcategoryReportResponse?.totalInventoryValue ?? 0,
                     },
-                ])
+                ]);
+                setChartCircleData([
+                    {
+                        label: 'Tổng số sản phẩm nhập',
+                        value: data?.subcategoryReportResponse?.totalItemImportQuantity ?? 0,
+                    },
+                    {
+                        label: 'Tổng số sản phẩm xuất',
+                        value: data?.subcategoryReportResponse?.totalItemExportQuantity ?? 0,
+                    },
+                    {
+                        label: 'Tổng sản phẩm hỏng',
+                        value: data?.subcategoryReportResponse?.totalDefectiveItemQuantity ?? 0,
+                    },
+                    {
+                        label: 'Tổng sản phẩm bị mất',
+                        value: data?.subcategoryReportResponse?.totalLostItemQuantity ?? 0,
+                    },
+                ]);
             })
             .catch((error) => {
                 console.error('Error fetching reports:', error);
@@ -132,25 +150,46 @@ const DashboardInventoryPage = () => {
         try {
             const response = await createReports(reportsParams);
             // Handle the response as needed
-          
+
             console.log(response);
 
             const newChartData = [
                 {
-                    label: 'Tổng giá trị nhập',
+                    label: 'Giá trị sản phẩm nhập',
                     value: response.data?.importedItemValue ?? 0,
                 },
                 {
-                    label: 'Tổng giá trị xuất',
+                    label: 'Giá trị sản phẩm xuất',
                     value: response.data?.exportedItemValue ?? 0,
                 },
-                {
-                    label: 'Tổng giá trị tồn kho',
-                    value: reportData?.subcategoryReportResponse?.totalInventoryValue ?? 0,
-                },
+                // {
+                //     label: 'Tổng giá trị tồn kho',
+                //     value: reportData?.subcategoryReportResponse?.totalInventoryValue ?? 0,
+                // },
             ];
 
             setChartData(newChartData);
+
+            const newChartCircleData = [
+                {
+                    label: 'Số sản phẩm nhập',
+                    value: response.data?.numberImportItem ?? 0,
+                },
+                {
+                    label: 'Số sản phẩm xuất',
+                    value: response.data?.numberExportItem ?? 0,
+                },
+                // {
+                //     label: 'Tổng sản phẩm hỏng',
+                //     value: reportData?.subcategoryReportResponse?.totalDefectiveItemQuantity ?? 0,
+                // },
+                // {
+                //     label: 'Tổng sản phẩm bị mất',
+                //     value: reportData?.subcategoryReportResponse?.totalLostItemQuantity ?? 0,
+                // },
+            ];
+
+            setChartCircleData(newChartCircleData);
 
             // You might want to perform additional actions here after saving the report.
         } catch (error) {
@@ -158,9 +197,9 @@ const DashboardInventoryPage = () => {
         }
     };
 
-    console.log(reportData, "REPORT");
-    console.log(saveData, "SAVE DATA");
-    console.log(chartData, "CHART DATA");
+    console.log(reportData, 'REPORT');
+    console.log(saveData, 'SAVE DATA');
+    console.log(chartData, 'CHART DATA');
     return (
         <>
             <Helmet>
@@ -283,24 +322,7 @@ const DashboardInventoryPage = () => {
                     <Grid item xs={12} md={6} lg={4}>
                         <AppCurrentVisits
                             title="Thống kê nhập xuất"
-                            chartData={[
-                                {
-                                    label: 'Tổng số sản phẩm nhập',
-                                    value: reportData?.subcategoryReportResponse?.totalItemImportQuantity ?? 0,
-                                },
-                                {
-                                    label: 'Tổng số sản phẩm xuất',
-                                    value: reportData?.subcategoryReportResponse?.totalItemExportQuantity ?? 0,
-                                },
-                                {
-                                    label: 'Tổng sản phẩm hỏng',
-                                    value: reportData?.subcategoryReportResponse?.totalDefectiveItemQuantity ?? 0,
-                                },
-                                {
-                                    label: 'Tổng sản phẩm bị mất',
-                                    value: reportData?.subcategoryReportResponse?.totalLostItemQuantity ?? 0,
-                                },
-                            ]}
+                            chartData={chartCircleData}
                             chartColors={[
                                 theme.palette.primary.main,
                                 theme.palette.info.main,

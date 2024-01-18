@@ -35,16 +35,41 @@ function NotificationAll({ notifications, onClose }) {
                 return type;
         }
     };
+
+    const renderAvatar = (type) => {
+        switch (type) {
+            case 'XAC_NHAN_NHAP_KHO':
+                return <img src="/assets/icons/ic_notification_package.svg" />;
+            case 'DANG_TIEN_HANH_NHAP_KHO':
+                return <img src="/assets/icons/ic_notification_mail.svg" />;
+            case 'CANH_BAO_HET_HANG':
+                return (
+                    <img
+                        src="/assets/icons/exclamation-mark-svgrepo-com.svg"
+                        style={{ width: '20px', height: '20px' }}
+                    />
+                );
+            case 'CANH_BAO_THUA_HANG':
+                return (
+                    <img
+                        src="/assets/icons/exclamation-mark-svgrepo-com.svg"
+                        style={{ width: '20px', height: '20px' }}
+                    />
+                );
+            default:
+                return null;
+        }
+    };
+
     const handleDeleteNotification = async (notificationId) => {
         try {
-            const response = await deleteNotificationDetail(notificationId)
+            const response = await deleteNotificationDetail(notificationId);
             if (response.status === 200) {
                 console.log(response);
             }
         } catch (error) {
             console.log(`Delete notification with ID: ${notificationId}`);
         }
-
     };
     return (
         <>
@@ -55,9 +80,14 @@ function NotificationAll({ notifications, onClose }) {
                             <DialogTitle>{notification.title}</DialogTitle>
                             <DialogContent>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    {renderAvatar(notification.type)}
                                     {notification.content && (
-                                        <Typography variant="body2" color="black">
-                                            {translateContentToVietnamese(notification.type, notification.content, notification.sourceId)}
+                                        <Typography variant="body2" color="black" sx={{ marginRight: 20 }}>
+                                            {translateContentToVietnamese(
+                                                notification.type,
+                                                notification.content,
+                                                notification.sourceId,
+                                            )}
                                         </Typography>
                                     )}
                                     {/* Delete button */}
@@ -65,7 +95,7 @@ function NotificationAll({ notifications, onClose }) {
                                         <CloseIcon />
                                     </IconButton>
                                 </div>
-                                <Typography variant="caption" color="text.disabled">
+                                <Typography variant="caption" color="text.disabled" sx={{ marginLeft: 7 }}>
                                     {`Loại thông báo: ${translateTypeToVietnamese(notification.type)}`}
                                 </Typography>
                                 {/* {notification.createdAt && (
@@ -80,7 +110,7 @@ function NotificationAll({ notifications, onClose }) {
             </div>
         </>
     );
-};
+}
 
 NotificationAll.propTypes = {
     notifications: PropTypes.arrayOf(
@@ -90,7 +120,7 @@ NotificationAll.propTypes = {
             createdAt: PropTypes.string, // Assuming createdAt is a string for simplicity
             content: PropTypes.string,
             type: PropTypes.string,
-        })
+        }),
     ),
     onClose: PropTypes.func.isRequired,
 };

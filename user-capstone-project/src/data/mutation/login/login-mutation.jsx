@@ -23,3 +23,8 @@ export const refreshTokenNew = async (schemaParams) => {
     const response = await axiosInstance.post("/auth/accessToken", schemaParams);
     return response;
 }
+
+export const authenForget = async (forgetParams) => {
+    const response = await axiosInstance.post("/auth/forget-password", forgetParams);
+    return response;
+}

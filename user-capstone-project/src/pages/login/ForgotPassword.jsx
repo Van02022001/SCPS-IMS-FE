@@ -1,5 +1,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useNavigate } from 'react-router-dom';
 // @mui
 import { styled } from '@mui/material/styles';
 import { Link, Container, Typography, Divider, Stack, Button, Card } from '@mui/material';
@@ -10,6 +11,7 @@ import Logo from '../../components/logo';
 import Iconify from '../../components/iconify';
 // sections
 import ForgotPWForm from '~/sections/auth/login/ForgotPWForm';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 // ----------------------------------------------------------------------
 
@@ -43,7 +45,11 @@ const StyledContent = styled('div')(({ theme }) => ({
 
 const ForgotPassword = () => {
     const mdUp = useResponsive('up', 'md');
+    const navigate = useNavigate();
 
+    const handleNavigate = () => {
+        navigate('/login');
+    };
     return (
         <>
             <Helmet>
@@ -61,8 +67,15 @@ const ForgotPassword = () => {
 
                 <Container maxWidth="sm">
                     <Card>
+                        <Button sx={{position: 'absolute', top: 150, left: 20 }} onClick={handleNavigate}>
+                            <ArrowBackIcon fontSize="large" color="action" />
+                        </Button>
                         <StyledContent>
-                            <Typography style={{ width: '100%', alignItems: 'center', textAlign: 'center' }} variant="h4" gutterBottom>
+                            <Typography
+                                style={{ width: '100%', alignItems: 'center', textAlign: 'center' }}
+                                variant="h4"
+                                gutterBottom
+                            >
                                 Khôi phục tài khoản
                             </Typography>
 

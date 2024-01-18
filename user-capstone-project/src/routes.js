@@ -109,6 +109,10 @@ const Router = () => {
             element: <LoginPage />,
         },
         {
+            path: 'forgetPassword',
+            element: <ForgotPassword />,
+        },
+        {
             path: '/sale-staff/',
             element: <DashboardLayout />,
             children: [
