@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Dialog, DialogContent, DialogTitle, Typography } from '@mui/material';
+import { Dialog, DialogContent, DialogTitle, IconButton, Typography } from '@mui/material';
 import { format } from 'date-fns';
-
+import CloseIcon from '@mui/icons-material/Close';
+import { deleteNotificationDetail } from '~/data/mutation/notification/notification-mutation';
 function NotificationAll({ notifications, onClose }) {
     console.log(notifications, 'AAAAA');
     const translateContentToVietnamese = (type, content, sourceId) => {
@@ -34,6 +35,17 @@ function NotificationAll({ notifications, onClose }) {
                 return type;
         }
     };
+    const handleDeleteNotification = async (notificationId) => {
+        try {
+            const response = await deleteNotificationDetail(notificationId)
+            if (response.status === 200) {
+                console.log(response);
+            }
+        } catch (error) {
+            console.log(`Delete notification with ID: ${notificationId}`);
+        }
+
+    };
     return (
         <>
             <div>
@@ -42,19 +54,25 @@ function NotificationAll({ notifications, onClose }) {
                         <div key={notification.id}>
                             <DialogTitle>{notification.title}</DialogTitle>
                             <DialogContent>
-                                {notification.content && (
-                                    <Typography variant="body2" color="black">
-                                        {translateContentToVietnamese(notification.type, notification.content, notification.sourceId)}
-                                    </Typography>
-                                )}
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    {notification.content && (
+                                        <Typography variant="body2" color="black">
+                                            {translateContentToVietnamese(notification.type, notification.content, notification.sourceId)}
+                                        </Typography>
+                                    )}
+                                    {/* Delete button */}
+                                    <IconButton onClick={() => handleDeleteNotification(notification.id)}>
+                                        <CloseIcon />
+                                    </IconButton>
+                                </div>
                                 <Typography variant="caption" color="text.disabled">
                                     {`Loại thông báo: ${translateTypeToVietnamese(notification.type)}`}
                                 </Typography>
                                 {/* {notification.createdAt && (
-                            <Typography variant="caption" color="text.disabled">
-                                {`Type: ${translateTypeToVietnamese(notification.type)}`}
-                            </Typography>
-                        )} */}
+                      <Typography variant="caption" color="text.disabled">
+                        {`Type: ${translateTypeToVietnamese(notification.type)}`}
+                      </Typography>
+                    )} */}
                             </DialogContent>
                         </div>
                     ))}
@@ -62,7 +80,7 @@ function NotificationAll({ notifications, onClose }) {
             </div>
         </>
     );
-}
+};
 
 NotificationAll.propTypes = {
     notifications: PropTypes.arrayOf(

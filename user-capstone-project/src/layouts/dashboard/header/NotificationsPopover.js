@@ -94,12 +94,16 @@ export default function NotificationsPopover() {
     }else if (userRole === 'INVENTORY_STAFF') {
      
       if (notification.type === 'XAC_NHAN_NHAP_KHO' || notification.type === 'YEU_CAU_NHAP_KHO') {
-        navigate(`/inventory-staff/notfication-to-import-request-receipt`, {state: {receiptId: notification.sourceId, isExportFormOpen: setIsExportFormOpen}});
+        navigate(`/inventory-staff/notfication-to-import-request-receipt`, {state: {receiptId: notification.sourceId}});
       }
       if (notification.type === 'YEU_CAU_XUAT_KHO') {
-        navigate(`/inventory-staff/notfication-to-export-request-receipt`, {state: {receiptId: notification.sourceId, isExportFormOpen: setIsExportFormOpen}});
+        navigate(`/inventory-staff/notfication-to-export-request-receipt`, {state: {receiptId: notification.sourceId}});
       }
-    } 
+    } else if (userRole === 'INVENTORY_STAFF') {
+      if (notification.type === 'DANG_TIEN_HANH_XUAT_KHO') {
+        navigate(`/sale-staff/notfication-to-export-request-receipt`, {state: {receiptId: notification.sourceId}});
+      }
+    }
     else {
       console.log('User does not have the MANAGER role');
     }
@@ -164,7 +168,7 @@ export default function NotificationsPopover() {
               </ListSubheader>
             }
           >
-            {notifications.slice(0, 2).map((notification) => (
+            {notifications.slice(0, 5).map((notification) => (
               <NotificationItem key={notification.id} notification={notification}  onClick={() => handleNotificationClick(notification)}/>
             ))}
           </List>
@@ -177,7 +181,7 @@ export default function NotificationsPopover() {
               </ListSubheader>
             }
           >
-            {notifications.slice(2, 5).map((notification) => (
+            {notifications.slice(5, 8).map((notification) => (
               <NotificationItem key={notification.id} notification={notification}   onClick={() => handleNotificationClick(notification)}/>
             ))}
           </List>
@@ -273,9 +277,13 @@ function renderContent(notification) {
         <Typography component="span" variant="body3" sx={{ color: 'text.secondary' }}>
           &nbsp; {notification.type === "XAC_NHAN_NHAP_KHO" ? 'Xác nhận nhập kho'  : 
           notification.type === "YEU_CAU_NHAP_KHO" ? 'Yêu cầu nhập kho' :
-          notification.type === "DANG_TIEN_HANH_NHAP_KHO" ? 'Đang tiến hành nhập kho' 
-          : notification.type === "YEU_CAU_XUAT_KHO" ? 'Yêu cầu xuất kho' :
-          ''}
+          notification.type === "DANG_TIEN_HANH_NHAP_KHO" ? 'Đang tiến hành nhập kho' : 
+          notification.type === "YEU_CAU_XUAT_KHO" ? 'Yêu cầu xuất kho' : 
+          notification.type === "DANG_TIEN_HANH_XUAT_KHO" ? 'Đang tiến hành xuất kho' :
+          notification.type === "XAC_NHAN_KIEM_KHO" ? 'Xác nhận kiểm kho' : 
+          notification.type === "CANH_BAO_HET_HANG" ? 'Cảnh báo hết hàng' : 
+          notification.type === "CANH_BAO_THUA_HANG" ? 'Cảnh báo thừa hàng' : 
+          '' }
         </Typography>
       )}
     </Typography>

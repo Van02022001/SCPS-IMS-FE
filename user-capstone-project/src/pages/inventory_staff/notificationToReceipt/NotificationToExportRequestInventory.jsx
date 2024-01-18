@@ -58,7 +58,6 @@ const NotificationToExportRequestInventory = ({
     const location = useLocation();
     const { state } = location;
     const receiptId = state?.receiptId;
-    const setIsExportFormOpen = state?.isExportFormOpen;
 
     const [tab1Data, setTab1Data] = useState({ categories_id: [] });
     const [tab2Data, setTab2Data] = useState({});
