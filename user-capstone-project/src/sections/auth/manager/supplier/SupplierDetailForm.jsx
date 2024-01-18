@@ -43,7 +43,7 @@ const SupplierDetailForm = ({ suppliers, suppliersId, onClose, isOpen, mode, upd
     const handleSuccessMessage = (message) => {
         setOpen(true);
         if (message === 'Updated supplier successfully!') {
-            setSuccessMessage('Cập nhập nguồn gốc thành công !');
+            setSuccessMessage('Cập nhập Nhà cung cấp thành công !');
         } else if (message === 'Update supplier status successfully!') {
             setSuccessMessage('Cập nhập trạng thái thành công !');
         }
@@ -393,9 +393,9 @@ const SupplierDetailForm = ({ suppliers, suppliersId, onClose, isOpen, mode, upd
                                 onConfirm={handleConfirmUpdate1}
                                 confirmText="Xác nhận"
                             />
-                            <Button variant="contained" color="error" onClick={handleConfirm2}>
+                            {/* <Button variant="contained" color="error" onClick={handleConfirm2}>
                                 Thay đổi trạng thái
-                            </Button>
+                            </Button> */}
                             {/* Thông báo confirm */}
                             <CustomDialog
                                 open={confirmOpen2}

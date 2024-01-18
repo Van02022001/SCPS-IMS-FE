@@ -54,16 +54,15 @@ import dayjs from 'dayjs';
 const TABLE_HEAD = [
     // { id: 'id', label: 'Mã hàng', alignRight: false },
     { id: 'itemName', label: 'Tên hàng', alignRight: false },
-    { id: 'openingStockQuantity', label: 'Số lượng tồn kho đầu', alignRight: false },
-    { id: 'openingStockValue', label: 'Giá trị tồn kho đầu', alignRight: false },
-    { id: 'closingStockQuantity', label: 'Số lượng tồn kho cuối', alignRight: false },
-    { id: 'closingStockValue', label: 'Giá trị tồn kho cuối', alignRight: false },
+    // { id: 'openingStockQuantity', label: 'Số lượng tồn kho đầu', alignRight: false },
+    // { id: 'openingStockValue', label: 'Giá trị tồn kho đầu', alignRight: false },
+    // { id: 'closingStockQuantity', label: 'Số lượng tồn kho cuối', alignRight: false },
+    // { id: 'closingStockValue', label: 'Giá trị tồn kho cuối', alignRight: false },
     { id: 'inboundQuantity', label: 'Số lượng đầu vào', alignRight: false },
     { id: 'inboundValue', label: 'Giá trị đầu vào', alignRight: false },
     { id: 'outboundQuantity', label: 'Số lượng xuất kho', alignRight: false },
     { id: 'outboundValue', label: 'Giá trị xuất kho', alignRight: false },
     { id: 'totalValue', label: 'Tổng giá trị', alignRight: false },
-    { id: '' },
 ];
 
 // ----------------------------------------------------------------------
@@ -143,20 +142,20 @@ const InventoryReportPage = () => {
         setSelected([]);
     };
 
-    const handleClick = (event, name) => {
-        const selectedIndex = selected.indexOf(name);
-        let newSelected = [];
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, name);
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-        }
-        setSelected(newSelected);
-    };
+    // const handleClick = (event, name) => {
+    //     const selectedIndex = selected.indexOf(name);
+    //     let newSelected = [];
+    //     if (selectedIndex === -1) {
+    //         newSelected = newSelected.concat(selected, name);
+    //     } else if (selectedIndex === 0) {
+    //         newSelected = newSelected.concat(selected.slice(1));
+    //     } else if (selectedIndex === selected.length - 1) {
+    //         newSelected = newSelected.concat(selected.slice(0, -1));
+    //     } else if (selectedIndex > 0) {
+    //         newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
+    //     }
+    //     setSelected(newSelected);
+    // };
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -333,12 +332,11 @@ const InventoryReportPage = () => {
                                     return (
                                         <React.Fragment key={inventoryReport.itemId}>
                                             <TableRow key={inventoryReport.itemId}>
-                                                <TableCell>{inventoryReport.itemId}</TableCell>
                                                 <TableCell>{inventoryReport.itemName}</TableCell>
-                                                <TableCell>{inventoryReport.openingStockQuantity}</TableCell>
+                                                {/* <TableCell>{inventoryReport.openingStockQuantity}</TableCell>
                                                 <TableCell>{inventoryReport.openingStockValue}</TableCell>
                                                 <TableCell>{inventoryReport.closingStockQuantity}</TableCell>
-                                                <TableCell>{inventoryReport.closingStockValue}</TableCell>
+                                                <TableCell>{inventoryReport.closingStockValue}</TableCell> */}
                                                 <TableCell>{inventoryReport.inboundQuantity}</TableCell>
                                                 <TableCell>{inventoryReport.inboundValue}</TableCell>
                                                 <TableCell>{inventoryReport.outboundQuantity}</TableCell>

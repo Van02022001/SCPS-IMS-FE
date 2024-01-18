@@ -40,6 +40,7 @@ export default function NotificationsPopover() {
   const [notifications, setNotifications] = useState([]);
   const [totalUnRead, setTotalUnRead] = useState(0);
   const [selectedNotification, setSelectedNotification] = useState(null);
+  const [isExportFormOpen, setIsExportFormOpen] = useState(false);
   const navigate = useNavigate();
   // const totalUnRead = notifications.filter((item) => item.isUnRead === true).length;
 
@@ -88,15 +89,15 @@ export default function NotificationsPopover() {
     if (userRole === 'MANAGER') {
      
       if (notification.type === 'DANG_TIEN_HANH_NHAP_KHO' || notification.type === 'XAC_NHAN_NHAP_KHO') {
-        navigate(`/dashboard/request-import-receipt`);
+        navigate(`/dashboard/notfication-to-request-receipt`, {state: {receiptId: notification.sourceId}});
       }
     }else if (userRole === 'INVENTORY_STAFF') {
      
       if (notification.type === 'XAC_NHAN_NHAP_KHO' || notification.type === 'YEU_CAU_NHAP_KHO') {
-        navigate(`/inventory-staff/requests-import-receipt`);
+        navigate(`/inventory-staff/notfication-to-import-request-receipt`, {state: {receiptId: notification.sourceId, isExportFormOpen: setIsExportFormOpen}});
       }
       if (notification.type === 'YEU_CAU_XUAT_KHO') {
-        navigate(`/inventory-staff/requests-export-receipt`);
+        navigate(`/inventory-staff/notfication-to-export-request-receipt`, {state: {receiptId: notification.sourceId, isExportFormOpen: setIsExportFormOpen}});
       }
     } 
     else {

@@ -49,6 +49,10 @@ import CreateInventoryCheck from './pages/inventory_staff/inventoryCheck/CreateI
 import DashboardInventoryPage from './pages/dashboard/DashboardInventoryPage';
 import SubCategoryPage from './pages/manager/subCategory/SubCategoryPage';
 import InventoryCheckManagerPage from './pages/manager/inventoryCheck/InventoryCheckManagerPage';
+import NotificationToImportRequest from './pages/manager/notificationToReceipt/NotificationToImportRequest';
+import NotificationToExportRequest from './pages/manager/notificationToReceipt/NotificationToExportRequest';
+import NotificationToImportRequestInventory from './pages/inventory_staff/notificationToReceipt/NotificationToImportRequestInventory';
+import NotificationToExportRequestInventory from './pages/inventory_staff/notificationToReceipt/NotificationToExportRequestInventory';
 
 // ----------------------------------------------------------------------
 
@@ -88,6 +92,7 @@ const Router = () => {
                 { path: 'export-receipt', element: <ExportReceiptManagerPage/> },
                 { path: 'products-check', element: <InventoryReportPage/> },
                 { path: 'inventory-check-manager', element: <InventoryCheckManagerPage/> },
+                { path: 'notfication-to-request-receipt', element: <NotificationToImportRequest/> },
                 {
                     path: 'report',
                     children: [
@@ -135,6 +140,8 @@ const Router = () => {
               
                 { path: 'inventory-check-item', element: <InventoryCheckPage/> },
                 { path: 'create-inventory-check', element: <CreateInventoryCheck/> },
+                { path: 'notfication-to-import-request-receipt', element: <NotificationToImportRequestInventory/> },
+                { path: 'notfication-to-export-request-receipt', element: <NotificationToExportRequestInventory/> },
             ],
         },
         {

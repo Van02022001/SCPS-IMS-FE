@@ -183,7 +183,7 @@ const managerNavConfig = [
         children: [
             {
                 title: 'Phiếu kiểm kho',
-                path: '/dashboard/request-export-receipt',
+                path: '/dashboard/inventory-check-manager',
                 icon: <ReceiptLong />,
             },
             {

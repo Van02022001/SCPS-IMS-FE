@@ -32,6 +32,7 @@ import dayjs from 'dayjs';
 import { getAllInventoryCheck } from '~/data/mutation/inventoryCheck/InventoryCheck-mutation';
 
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
+import InventoryCheckDetailManager from '~/sections/auth/manager/inventoryCheck/InventoryCheckDetailManager';
 
 // ----------------------------------------------------------------------
 
@@ -99,7 +100,7 @@ const InventoryCheckManagerPage = () => {
     const [order, setOrder] = useState('asc');
     const [sortBy, setSortBy] = useState('createdAt');
     const [sortedProduct, setSortedProduct] = useState([]);
-    const [openOderForm, setOpenOderForm] = useState(false);
+    // const [openOderForm, setOpenOderForm] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
     const navigate = useNavigate();
@@ -112,8 +113,8 @@ const InventoryCheckManagerPage = () => {
     const startIndex = page * rowsPerPage;
     const endIndex = startIndex + rowsPerPage;
 
-    const [selectedProduct, setSelectedProduct] = useState(null);
-    const [inventoryCheckDetailOpen, setInventoryCheckDetailOpen] = useState(false);
+    // const [selectedProduct, setSelectedProduct] = useState(null);
+    // const [inventoryCheckDetailOpen, setInventoryCheckDetailOpen] = useState(false);
 
     const location = useLocation();
     const { state } = location;
@@ -121,11 +122,10 @@ const InventoryCheckManagerPage = () => {
     const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
     const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
 
-
-    const handleProductClick = (product) => {
-        setSelectedProduct(product);
-        setInventoryCheckDetailOpen(true);
-    };
+    // const handleProductClick = (product) => {
+    //     setSelectedProduct(product);
+    //     setInventoryCheckDetailOpen(true);
+    // };
     const handleItemClick = (item) => {
         console.log(item);
         if (selectedItemCheckId === item.id) {
@@ -181,11 +181,21 @@ const InventoryCheckManagerPage = () => {
         const filteredUsers = applySortFilter(sortedProduct, getComparator(order, sortBy), query);
         setSortedProduct(filteredUsers);
     };
-    const handleCloseOdersForm = () => {
-        setOpenOderForm(false);
-    };
+    // const handleCloseOdersForm = () => {
+    //     setOpenOderForm(false);
+    // };
     const handleCloseOrderDetails = () => {
         setSelectedOrder(null);
+    };
+    const updateInventoryReceiptConfirmInList = (inventoryCheckId, newStatus) => {
+        const inventoryReceiptIndex = inventoryCheckData.findIndex((inventory) => inventory.id === inventoryCheckId);
+
+        if (inventoryReceiptIndex !== -1) {
+            const updatedInventoryReceiptData = [...inventoryCheckData];
+            updatedInventoryReceiptData[inventoryReceiptIndex].status = newStatus;
+
+            setInventoryCheckData(updatedInventoryReceiptData);
+        }
     };
     //==============================* filter *==============================
 
@@ -308,11 +318,12 @@ const InventoryCheckManagerPage = () => {
                                             {selectedItemCheckId === item.id && (
                                                 <TableRow>
                                                     <TableCell colSpan={8}>
-                                                        {/* <InventoryCheckDetail
+                                                        <InventoryCheckDetailManager
                                                             inventoryCheckData={inventoryCheckData}
                                                             inventoryCheckId={selectedItemCheckId}
                                                             onClose={handleCloseOrderDetails}
-                                                        /> */}
+                                                            updateInventoryReceiptConfirmInList={updateInventoryReceiptConfirmInList}
+                                                        />
                                                     </TableCell>
                                                 </TableRow>
                                             )}

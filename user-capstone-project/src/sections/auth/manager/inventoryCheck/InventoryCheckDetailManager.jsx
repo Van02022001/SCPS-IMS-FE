@@ -27,9 +27,10 @@ import CloseIcon from '@mui/icons-material/Close';
 
 import SnackbarError from '~/components/alert/SnackbarError';
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
+import { confirmInventoryCheck } from '~/data/mutation/inventoryCheck/InventoryCheck-mutation';
 
+const InventoryCheckDetailManager = ({ inventoryCheckData, inventoryCheckId, updateInventoryReceiptConfirmInList, onClose, isOpen, mode }) => {
 
-const InventoryCheckDetail = ({ inventoryCheckData, inventoryCheckId, onClose, isOpen, mode }) => {
     // const [tab1Data, setTab1Data] = useState({ categories_id: [] });
     // const [tab2Data, setTab2Data] = useState({});
 
@@ -39,7 +40,6 @@ const InventoryCheckDetail = ({ inventoryCheckData, inventoryCheckId, onClose, i
     //props
     const [editedImportReceipt, setEditedImportReceipt] = useState(null);
     const [currentStatus, setCurrentStatus] = useState('');
-
     // const [positionedSnackbarOpen, setPositionedSnackbarOpen] = useState(false);
     // const [positionedSnackbarError, setPositionedSnackbarError] = useState(false);
     // form
@@ -59,8 +59,8 @@ const InventoryCheckDetail = ({ inventoryCheckData, inventoryCheckId, onClose, i
 
     const handleSuccessMessage = (message) => {
         setOpen(true);
-        if (message === 'Import request receipt confirmed successfully') {
-            setSuccessMessage('Thành công');
+        if (message === 'Checking Inventory receipt confirmed successfully') {
+            setSuccessMessage('Xác nhận thành công');
         } else if (message === 'Import process started successfully') {
             setSuccessMessage('Thành công');
         }
@@ -162,6 +162,32 @@ const InventoryCheckDetail = ({ inventoryCheckData, inventoryCheckId, onClose, i
         }
     }, [inventoryCheckData, inventoryCheckId, mode]);
 
+    const updateInventoryReceiptConfirm = async () => {
+        try {
+            // if (currentStatus !== 'Pending_Approval') {
+            //     const errorMessage = 'Không thể xác nhận. Phiếu này không ở trạng thái Chờ phê duyệt !';
+            //     handleErrorMessage(errorMessage);
+            //     return;
+            // }
+
+            const newStatus = 'Approved';
+
+            const response = await confirmInventoryCheck(inventoryCheckId);
+
+            if (response.status === '200 OK') {
+                // Handle success if needed
+                handleSuccessMessage('Checking Inventory receipt confirmed successfully');
+            }
+
+            updateInventoryReceiptConfirmInList(inventoryCheckId, newStatus);
+            setCurrentStatus(newStatus);
+
+            console.log('Product status updated:', response);
+        } catch (error) {
+            console.error('Error updating category status:', error);
+            handleErrorMessage(error.response?.data?.message || 'An error occurred.');
+        }
+    };
 
     //===================================================== Những hàm update thay đổi data =====================================================
     const checkInventory = inventoryCheckData.find((o) => o.id === inventoryCheckId);
@@ -397,8 +423,18 @@ const InventoryCheckDetail = ({ inventoryCheckData, inventoryCheckId, onClose, i
                             </CardContent>
                         </Card>
                     </div>
+
+                    {/* {isSuccess && <SuccessAlerts message={successMessage} />}
+                    {isError && <ErrorAlerts errorMessage={errorMessage} />} */}
                     <Stack spacing={4} margin={2}>
                         <Grid container spacing={1} sx={{ gap: '10px' }}>
+                            {currentStatus === 'Pending_Approval' && (
+                                <div>
+                                    <Button variant="contained" color="primary" onClick={updateInventoryReceiptConfirm}>
+                                        Xác nhận phiếu
+                                    </Button>
+                                </div>
+                            )}
                             <SnackbarSuccess
                                 open={open}
                                 handleClose={handleClose}
@@ -421,4 +457,4 @@ const InventoryCheckDetail = ({ inventoryCheckData, inventoryCheckId, onClose, i
     ) : null;
 };
 
-export default InventoryCheckDetail;
+export default InventoryCheckDetailManager;
