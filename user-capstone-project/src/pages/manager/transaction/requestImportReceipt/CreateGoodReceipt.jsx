@@ -152,6 +152,7 @@ const CreateGoodReceipt = () => {
         { id: 'code', label: 'Mã sản phẩm', alignRight: false },
         { id: 'name', label: 'Tên sản phẩm', alignRight: false },
         { id: 'quality', label: 'Số lượng', alignRight: false },
+
         { id: '' },
     ];
     useEffect(() => {
@@ -604,12 +605,13 @@ const CreateGoodReceipt = () => {
                                                     borderRadius: '8px',
                                                     boxShadow: '4px 4px 10px rgba(0, 0, 0, 0.1)',
                                                     alignItems: 'center',
-                                                    width: '230px',
+                                                    width: '240px',
                                                 }}
                                                 title={[
                                                     `Tên thương hiệu:  ${items.brand.name}`,
                                                     `Nguồn gốc: ${items.origin.name}`,
                                                     `Nhà cung cấp: ${items.supplier.name}`,
+                                                    // `Giá nhập: ${items.purchasePrice.price}`,
                                                 ].join('\n')}
                                                 onClick={() => handleAddToCart(items)}
                                                 titleStyle={{

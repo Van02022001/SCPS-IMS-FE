@@ -47,11 +47,12 @@ import dayjs from 'dayjs';
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 import { getAllInternalImportRequest } from '~/data/mutation/internalImportRequest/internalImportRequest-mutation';
 import CreateInternalImportRequest from './CreateInternalImportRequest';
+import ImportInternalRequestDetail from '~/sections/auth/manager/transaction/importInternalRequest/ImportInternalRequestDetail';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-    { id: 'image', label: '', alignRight: false },
+    // { id: 'image', label: '', alignRight: false },
     { id: 'id', label: 'Mã phiếu', alignRight: false },
     { id: 'description', label: 'Mô tả', alignRight: false },
     { id: 'createdBy', label: 'Người tạo', alignRight: false },
@@ -344,12 +345,13 @@ const InternalImportRequestPage = () => {
     const uniqueStatusArray = Array.from(new Set(statusArray));
 
     // Chỉ chọn những giá trị mà bạn quan tâm
-    const filteredStatusArray = uniqueStatusArray.filter(status => (
-        status === "Pending_Approval" ||
-        status === "Approved" ||
-        status === "IN_PROGRESS" ||
-        status === "Completed"
-    ));
+    const filteredStatusArray = uniqueStatusArray.filter(
+        (status) =>
+            status === 'Pending_Approval' ||
+            status === 'Approved' ||
+            status === 'IN_PROGRESS' ||
+            status === 'Completed',
+    );
     //==============================* filter *==============================
     const filteredItems = allItems.filter((item) =>
         selectedStatus.length === 0 ? true : selectedStatus.includes(item.status),
@@ -468,11 +470,21 @@ const InternalImportRequestPage = () => {
                                                     />
                                                 </TableCell> */}
 
-                                                <TableCell component="th" scope="row" padding="none">
-                                                    <Stack direction="row" alignItems="center" spacing={2}>
-                                                        {/* <Avatar alt={name} src={avatarUrl} /> */}
+                                                {/* <TableCell component="th" scope="row" padding="none">
+                                                    <Stack direction="row" alignItems="center" sx={{ marginLeft: 1 }}>
+                                                        {importRequest.details.length > 0 &&
+                                                        importRequest.details[0].item.imageUrl ? (
+                                                            <img
+                                                                src={importRequest.details[0].item.imageUrl}
+                                                                alt={`Item ${importRequest.details[0].item.code}`}
+                                                                width="48"
+                                                                height="48"
+                                                            />
+                                                        ) : (
+                                                            <span></span>
+                                                        )}
                                                     </Stack>
-                                                </TableCell>
+                                                </TableCell> */}
 
                                                 <TableCell align="left">
                                                     <Typography variant="subtitle2" noWrap>
@@ -504,14 +516,14 @@ const InternalImportRequestPage = () => {
                                                         }
                                                     >
                                                         {importRequest.status === 'Pending_Approval'
-                                                            ? 'Chờ phê duyệt'
+                                                            ? 'Chờ xác nhận'
                                                             : importRequest.status === 'Approved'
-                                                                ? 'Đã xác nhận'
-                                                                : importRequest.status === 'IN_PROGRESS'
-                                                                    ? 'Đang tiến hành'
-                                                                    : importRequest.status === 'Completed'
-                                                                        ? 'Hoàn thành'
-                                                                        : 'Ngừng hoạt động'}
+                                                            ? 'Đã xác nhận'
+                                                            : importRequest.status === 'IN_PROGRESS'
+                                                            ? 'Đang tiến hành'
+                                                            : importRequest.status === 'Completed'
+                                                            ? 'Hoàn thành'
+                                                            : 'Ngừng hoạt động'}
                                                     </Label>
                                                 </TableCell>
                                             </TableRow>
@@ -519,7 +531,7 @@ const InternalImportRequestPage = () => {
                                             {selectedGoodReceiptId === importRequest.id && (
                                                 <TableRow>
                                                     <TableCell colSpan={8}>
-                                                        <ImportRequestReceiptDetailManagerForm
+                                                        <ImportInternalRequestDetail
                                                             importRequestReceipt={importRequestData}
                                                             importRequestReceiptStatus={importRequestStatus}
                                                             importRequestReceiptId={selectedGoodReceiptId}

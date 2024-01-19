@@ -20,6 +20,11 @@ export const editInternalImportReceiptConfirm = async (importReceiptId) => {
     return response.data;
 }
 
+export const getAllInternalImportWarehouse = async () => {
+    const response = await axiosInstance.get(`/transfer-warehouses/internal-import/warehouse`);
+    return response.data;
+}
+
 export const editReceiptStartInternalImport = async (importReceiptId) => {
     const response = await axiosInstance.put(`/transfer-warehouses/internal-import/processing/${importReceiptId}`);
     return response.data;

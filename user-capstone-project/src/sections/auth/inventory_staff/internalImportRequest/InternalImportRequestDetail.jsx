@@ -35,7 +35,10 @@ import {
 import { getAllImportReceipt } from '~/data/mutation/importReceipt/ImportReceipt-mutation';
 import SnackbarError from '~/components/alert/SnackbarError';
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
-import { editInternalImportReceiptConfirm, editReceiptStartInternalImport } from '~/data/mutation/internalImportRequest/internalImportRequest-mutation';
+import {
+    editInternalImportReceiptConfirm,
+    editReceiptStartInternalImport,
+} from '~/data/mutation/internalImportRequest/internalImportRequest-mutation';
 import CreateInternalImportReceiptForm from './CreateInternalImportReceiptForm';
 
 const InternalImportRequestDetail = ({
@@ -374,13 +377,13 @@ const InternalImportRequestDetail = ({
                         {currentStatus === 'IN_PROGRESS' && (
                             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                                 <Button variant="contained" color="primary" onClick={handleOpenForm}>
-                                    Tạo phiếu nhập kho
+                                    Tạo phiếu nhập kho nội bộ
                                 </Button>
                             </div>
                         )}
                         <Dialog maxWidth="lg" fullWidth open={isOpenImportForm}>
                             <DialogTitle style={{ textAlign: 'center' }}>
-                                Phiếu Nhập Kho
+                                Phiếu Nhập Kho Nội Bộ
                                 <IconButton style={{ float: 'right' }} onClick={handleCloseForm}>
                                     <CloseIcon color="primary" />
                                 </IconButton>{' '}
@@ -462,12 +465,12 @@ const InternalImportRequestDetail = ({
                                                 currentStatus === 'Pending_Approval'
                                                     ? 'Chờ phê duyệt'
                                                     : currentStatus === 'Approved'
-                                                        ? 'Đã xác nhận'
-                                                        : currentStatus === 'IN_PROGRESS'
-                                                            ? 'Đang tiến hành'
-                                                            : currentStatus === 'Completed'
-                                                                ? 'Hoàn thành'
-                                                                : 'Ngừng hoạt động'
+                                                    ? 'Đã xác nhận'
+                                                    : currentStatus === 'IN_PROGRESS'
+                                                    ? 'Đang tiến hành'
+                                                    : currentStatus === 'Completed'
+                                                    ? 'Hoàn thành'
+                                                    : 'Ngừng hoạt động'
                                             }
                                         />
                                     </Grid>
@@ -539,22 +542,37 @@ const InternalImportRequestDetail = ({
                                                     padding: '10px 0 0 20px',
                                                 }}
                                             >
+                                                <TableCell></TableCell>
                                                 <TableCell>Mã sản phẩm</TableCell>
                                                 <TableCell>Tên sản phẩm</TableCell>
                                                 <TableCell>Số lượng</TableCell>
                                                 <TableCell>Giá sản phẩm</TableCell>
                                                 <TableCell>Tổng</TableCell>
                                                 <TableCell>Đơn vị</TableCell>
+                                                <TableCell>Thương hiệu</TableCell>
+                                                <TableCell>Xuất xứ</TableCell>
+                                                <TableCell>Nhà cung cấp</TableCell>
                                             </TableRow>
                                             {importReceipst.details.map((items) => {
                                                 return (
                                                     <TableRow key={items.id}>
+                                                        <TableCell>
+                                                            <img
+                                                                src={items.item.imageUrl}
+                                                                alt={`Item ${items.code}`}
+                                                                width="48"
+                                                                height="48"
+                                                            />
+                                                        </TableCell>
                                                         <TableCell>{items.item.code}</TableCell>
                                                         <TableCell>{items.item.subcategoryName}</TableCell>
                                                         <TableCell>{items.quantity}</TableCell>
                                                         <TableCell>{items.price}</TableCell>
                                                         <TableCell>{items.totalPrice}</TableCell>
                                                         <TableCell>{items.unitName}</TableCell>
+                                                        <TableCell>{items.item.brandName}</TableCell>
+                                                        <TableCell>{items.item.originName}</TableCell>
+                                                        <TableCell>{items.item.supplierName}</TableCell>
                                                     </TableRow>
                                                 );
                                             })}

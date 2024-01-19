@@ -37,13 +37,11 @@ import PRODUCTSLIST from '../../../../_mock/products';
 // api
 import { getAllImportReceiptByWarehouse } from '~/data/mutation/importReceipt/ImportReceipt-mutation';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import ImportReaceiptDetailForm from '~/sections/auth/inventory_staff/importRequestReceipt/ImportRequestReceiptDetailForm';
 // import EditCategoryForm from '~/sections/auth/manager/categories/EditCategoryForm';
-// import GoodsReceiptPage from '../GoodsReceiptPage';
 import { useLocation, useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import ImportReceiptInventoryDetailForm from '~/sections/auth/inventory_staff/importReceipt/ImportReceiptInventoryDetailForm';
-import { getAllInternalImportRequestOfWarehouse } from '~/data/mutation/internalImportRequest/internalImportRequest-mutation';
+import { getAllInternalImportRequestOfWarehouse, getAllInternalImportWarehouse } from '~/data/mutation/internalImportRequest/internalImportRequest-mutation';
 
 // ----------------------------------------------------------------------
 
@@ -281,7 +279,7 @@ const InternalImportReceiptPage = () => {
     const isNotFound = !filteredUsers.length && !!filterName;
 
     useEffect(() => {
-        getAllInternalImportRequestOfWarehouse()
+        getAllInternalImportWarehouse()
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
@@ -344,13 +342,13 @@ const InternalImportReceiptPage = () => {
     return (
         <>
             <Helmet>
-                <title> Nhập kho | Minimal UI </title>
+                <title> Nhập kho nội bộ | Minimal UI </title>
             </Helmet>
 
             {/* <Container> */}
             <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                 <Typography variant="h4" gutterBottom>
-                    Phiếu nhập kho
+                    Phiếu nhập kho nội bộ
                 </Typography>
             </Stack>
             {/* ===========================================filter=========================================== */}

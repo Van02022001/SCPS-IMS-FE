@@ -99,7 +99,7 @@ const Router = () => {
                 { path: 'request-export-receipt', element: <ExportRequestReceiptManagerPage /> },
                 { path: 'create-export-receipt', element: <CreateExportReceipt/> },
                 { path: 'export-receipt', element: <ExportReceiptManagerPage/> },
-//Chuyển kho
+                //Chuyển kho
                 { path: 'internal-import-request', element: <InternalImportRequestPage /> }, 
                 { path: 'create-internal-import-request', element: <CreateInternalImportRequest/> },
                 { path: 'internal-import', element: <InternalImportPage/> },
@@ -166,7 +166,7 @@ const Router = () => {
                 { path: 'notfication-to-import-request-receipt', element: <NotificationToImportRequestInventory/> },
                 { path: 'notfication-to-export-request-receipt', element: <NotificationToExportRequestInventory/> },
 
-//Chuyển kho
+                //Chuyển kho nội bộ
                 { path: 'requests-internal-import', element: <ViewInternalImport/> },
                 { path: 'internal-import-receipt', element: <InternalImportReceiptPage/> },
               

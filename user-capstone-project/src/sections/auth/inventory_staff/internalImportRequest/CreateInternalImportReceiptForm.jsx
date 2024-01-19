@@ -66,7 +66,7 @@ const CreateInternalImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, 
             setErrorMessage('Phiếu không ở trạng thái được phê duyệt để xử lý !');
         } else if (message === 'Các sản phẩm chưa được cập nhật hết vị trí.') {
             setErrorMessage('Các sản phẩm chưa được cập nhật hết vị trí !');
-        } else if (message === 'An error occurred while creating the actual import receipt') {
+        } else if (message === 'An error occurred while creating the actual internal import receipt') {
             setErrorMessage('Vui lòng nhập số lượng thực tế !');
         }
     };
@@ -154,7 +154,7 @@ const CreateInternalImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, 
                 onSave && onSave(response.message, 'Completed');
                 // Đóng form
                 onClose && onClose();
-                navigate('/inventory-staff/requests-import-receipt', {
+                navigate('/inventory-staff/requests-internal-import', {
                     state: { successMessage: response.message },
                 });
                 handleSuccessMessage(response.message);
@@ -251,16 +251,26 @@ const CreateInternalImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, 
                                             padding: '10px 0 0 20px',
                                         }}
                                     >
+                                        <TableCell></TableCell>
                                         <TableCell>Mã sản phẩm</TableCell>
                                         <TableCell>Tên sản phẩm</TableCell>
                                         <TableCell>Số lượng yêu cầu</TableCell>
                                         <TableCell>Đơn vị</TableCell>
                                         <TableCell>Số lượng thực tế</TableCell>
+                                        <TableCell>Tổng giá</TableCell>
                                         <TableCell></TableCell>
                                     </TableRow>
                                     {dataReceiptDetail !== null
                                         ? dataReceiptDetail.details.map((detail) => (
                                               <TableRow key={detail.id}>
+                                                  <TableCell>
+                                                      <img
+                                                          src={detail.item.imageUrl}
+                                                          alt={`Item ${detail.item.code}`}
+                                                          width="48"
+                                                          height="48"
+                                                      />
+                                                  </TableCell>
                                                   <TableCell>{detail.item.code}</TableCell>
                                                   <TableCell>{detail.item.subcategoryName}</TableCell>
                                                   <TableCell>
@@ -272,6 +282,8 @@ const CreateInternalImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, 
                                                   <TableCell>{detail.unitName}</TableCell>
 
                                                   <TableCell>{detail.quantity}</TableCell>
+
+                                                  <TableCell>{detail.totalPrice}</TableCell>
 
                                                   <TableCell>
                                                       {!locationQuantities[detail.id] > 0 &&
@@ -294,10 +306,19 @@ const CreateInternalImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, 
                                         : importReceipst.details.map((items) => (
                                               <TableRow key={items.id}>
                                                   {console.log(quantities[items.id])}
+                                                  <TableCell>
+                                                      <img
+                                                          src={items.item.imageUrl}
+                                                          alt={`Item ${items.item.code}`}
+                                                          width="48"
+                                                          height="48"
+                                                      />
+                                                  </TableCell>
                                                   <TableCell>{items.item.code}</TableCell>
                                                   <TableCell>{items.item.subcategoryName}</TableCell>
                                                   <TableCell>{items.quantity}</TableCell>
                                                   <TableCell>{items.unitName}</TableCell>
+
                                                   <TableCell>
                                                       <TextField
                                                           type="text"
@@ -330,6 +351,10 @@ const CreateInternalImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, 
                                             <TableRow>
                                                 <TableCell>Tổng số lượng:</TableCell>
                                                 <TableCell>{importReceipst.totalQuantity}</TableCell>
+                                            </TableRow>
+                                            <TableRow>
+                                                <TableCell>Tổng giá:</TableCell>
+                                                <TableCell>{importReceipst.totalPrice}</TableCell>
                                             </TableRow>
                                         </TableBody>
                                     </div>
