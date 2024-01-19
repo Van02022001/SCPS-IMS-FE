@@ -27,15 +27,14 @@ import { useNavigate } from 'react-router-dom';
 import { createInternalExportRequest } from '~/data/mutation/internalExportRequest/internalExportRequest-mutation';
 // mock
 import USERLIST from '~/_mock/user';
-import Scrollbar from '~/components/scrollbar/Scrollbar';
+// import Scrollbar from '~/components/scrollbar/Scrollbar';
 // icons
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditIcon from '@mui/icons-material/Edit';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 //api
-import { getAllItem, getItemByWarehouseId } from '~/data/mutation/items/item-mutation';
-import { getAllUnit } from '~/data/mutation/unit/unit-mutation';
+import { getItemByWarehouseId } from '~/data/mutation/items/item-mutation';
 import { getAllWarehouse, getInventoryStaffByWarehouseId } from '~/data/mutation/warehouse/warehouse-mutation';
 
 import SnackbarError from '~/components/alert/SnackbarError';
@@ -55,19 +54,14 @@ const CreateInternalExportRequest = () => {
     const [selected, setSelected] = useState([]);
     // state form create==============================================
     const [descriptionReceipt, setDescriptionReceipt] = useState('');
-    const [itemId, setItemId] = useState([]);
-    const [quantity, setQuantity] = useState(null);
-    const [unitPrice, setUnitPrice] = useState(null);
-    const [unitId, setUnitId] = useState([]);
-    const [descriptionItems, setDescriptionItems] = useState('');
 
     // ===============================================
 
     const [itemsData, setItemsData] = useState([]);
     const [selectedItems, setSelectedItems] = useState([]);
-    const [selectedUnitId, setSelectedUnitId] = useState('');
     // warehouse
-    const [selectedWarehouse, setSelectedWarehouse] = useState(null);
+    const [selectedExportWarehouse, setSelectedExportWarehouse] = useState(null);
+    const [selectedImportWarehouse, setSelectedImportWarehouse] = useState(null);
     // const [selectedWarehouseId, setSelectedWarehouseId] = useState(null);
     const [selectedInventoryStaff, setSelectedInventoryStaff] = useState(null);
     const [warehouseList, setWarehouseList] = useState([]);
@@ -111,6 +105,8 @@ const CreateInternalExportRequest = () => {
             setErrorMessage('Hãy nhập số lượng !');
         } else if (message === 'Hãy chọn ít nhất 1 sản phẩm') {
             setErrorMessage('Hãy chọn ít nhất 1 sản phẩm !');
+        } else if (message === 'Số lượng không đủ') {
+            setErrorMessage('Số lượng trong kho không đủ so với yêu cầu !');
         }
     };
 
@@ -153,7 +149,7 @@ const CreateInternalExportRequest = () => {
         { id: '' },
         { id: 'code', label: 'Mã sản phẩm', alignRight: false },
         { id: 'name', label: 'Tên sản phẩm', alignRight: false },
-        { id: 'quality', label: 'Số lượng', alignRight: false },
+        { id: 'quality', label: 'Số lượng chuyển', alignRight: false },
         { id: '' },
     ];
     useEffect(() => {
@@ -172,8 +168,8 @@ const CreateInternalExportRequest = () => {
     useEffect(() => {
         const fetchInventoryStaff = async () => {
             try {
-                if (selectedWarehouse) {
-                    const inventoryStaffList = await getInventoryStaffByWarehouseId(selectedWarehouse.id);
+                if (selectedExportWarehouse) {
+                    const inventoryStaffList = await getInventoryStaffByWarehouseId(selectedExportWarehouse.id);
                     setInventoryStaffList(inventoryStaffList.data);
                 }
             } catch (error) {
@@ -182,7 +178,7 @@ const CreateInternalExportRequest = () => {
         };
 
         fetchInventoryStaff();
-    }, [selectedWarehouse, selectedInventoryStaff]);
+    }, [selectedExportWarehouse, selectedInventoryStaff]);
 
     const handleCreateImportReceipt = async () => {
         try {
@@ -194,7 +190,16 @@ const CreateInternalExportRequest = () => {
                 handleErrorMessage('Hãy chọn ít nhất 1 sản phẩm');
                 return;
             }
+            const isQuantityValid = selectedItems.every((item) => {
+                const selectedItemQuantity = parseInt(item.quantity, 10);
+                const availableQuantity = itemsData.find((itemData) => itemData.id === item.id)?.quantity || 0;
+                return selectedItemQuantity <= availableQuantity;
+            });
 
+            if (!isQuantityValid) {
+                handleErrorMessage('Số lượng không đủ');
+                return;
+            }
             // Create an array of details from selectedItems with necessary properties
             const details = selectedItems.map((item) => ({
                 itemId: item.itemId,
@@ -206,7 +211,7 @@ const CreateInternalExportRequest = () => {
 
             // Prepare the request body
             const requestParams = {
-                warehouseId: selectedWarehouse.id,
+                warehouseId: selectedExportWarehouse.id,
                 inventoryStaffId: selectedInventoryStaff,
                 description: descriptionReceipt,
                 details: details,
@@ -227,17 +232,6 @@ const CreateInternalExportRequest = () => {
         }
     };
 
-    // const handleSearch = (selectedWarehouseId, selectedInventoryStaffId) => {
-    //     setWarehouseId(selectedWarehouseId);
-    //     setInventoryStaffId(selectedInventoryStaffId);
-    //     console.log('Warehouse ID:', selectedWarehouseId);
-    //     console.log('Inventory Staff ID:', selectedInventoryStaffId);
-    // };
-
-    // const handleUnitChange = (newUnitId) => {
-    //     setSelectedUnitId(newUnitId);
-    //     setUnitId((prevUnitId) => [...prevUnitId, newUnitId]);
-    // };
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
@@ -259,8 +253,8 @@ const CreateInternalExportRequest = () => {
     useEffect(() => {
         const fetchItemsByWarehouse = async () => {
             try {
-                if (selectedWarehouse) {
-                    const response = await getItemByWarehouseId(selectedWarehouse.id);
+                if (selectedImportWarehouse) {
+                    const response = await getItemByWarehouseId(selectedImportWarehouse.id);
                     const data = response.data;
 
                     if (Array.isArray(data)) {
@@ -275,15 +269,7 @@ const CreateInternalExportRequest = () => {
         };
 
         fetchItemsByWarehouse();
-    }, [selectedWarehouse]);
-    useEffect(() => {
-        getAllUnit()
-            .then((respone) => {
-                const data = respone.data;
-                setUnitId(data);
-            })
-            .catch((error) => console.error('Error fetching units:', error));
-    }, []);
+    }, [selectedImportWarehouse]);
 
     const handleAddToCart = (selectedProduct) => {
         const updatedSelectedItems = [
@@ -299,7 +285,7 @@ const CreateInternalExportRequest = () => {
         ];
 
         const newRecieptParams = {
-            warehouseId: selectedWarehouse.id,
+            warehouseId: selectedExportWarehouse.id,
             inventoryStaffId: selectedInventoryStaff,
             description: descriptionReceipt,
             details: [
@@ -338,45 +324,6 @@ const CreateInternalExportRequest = () => {
         setRecieptParams(updatedRecieptParams);
     };
 
-    // const handleUnitPriceChange = (index, value) => {
-    //     const updatedItems = [...selectedItems];
-    //     updatedItems[index].unitPrice = value;
-    //     setSelectedItems(updatedItems);
-
-    //     // Update recieptParams
-    //     const updatedRecieptParams = {
-    //         ...recieptParams,
-    //         details: updatedItems.map((item) => ({
-    //             itemId: item.itemId,
-    //             quantity: item.quantity,
-    //             unitPrice: item.unitPrice,
-    //             unitId: item.unitId,
-    //             description: item.description,
-    //         })),
-    //     };
-
-    //     setRecieptParams(updatedRecieptParams);
-    // };
-
-    // const handleUnitIdChange = (index, value) => {
-    //     const updatedItems = [...selectedItems];
-    //     updatedItems[index].unitId = value;
-    //     setSelectedItems(updatedItems);
-
-    //     // Update recieptParams
-    //     const updatedRecieptParams = {
-    //         ...recieptParams,
-    //         details: updatedItems.map((item) => ({
-    //             itemId: item.itemId,
-    //             quantity: item.quantity,
-    //             unitPrice: item.unitPrice,
-    //             unitId: item.unitId,
-    //             description: item.description,
-    //         })),
-    //     };
-
-    //     setRecieptParams(updatedRecieptParams);
-    // };
 
     const handleRemoveFromCart = (index) => {
         const updatedItems = [...selectedItems];
@@ -439,19 +386,20 @@ const CreateInternalExportRequest = () => {
                 <Grid container spacing={2}>
                     <Grid item xs={7}>
                         <FormControl sx={{ minWidth: 200, marginRight: 5, marginBottom: 2, marginTop: 3 }}>
-                            <InputLabel id="warehouse-label">Chọn kho hàng...</InputLabel>
+                            <InputLabel id="warehouse-label">Chọn kho xuất...</InputLabel>
                             <Select
+                                disabled={selectedItems.length > 0}
                                 size="large"
                                 labelId="warehouse-label"
                                 id="warehouse"
-                                value={selectedWarehouse ? selectedWarehouse.id : ''}
+                                value={selectedExportWarehouse ? selectedExportWarehouse.id : ''}
                                 onChange={(e) =>
-                                    setSelectedWarehouse(
+                                    setSelectedExportWarehouse(
                                         warehouseList.find((warehouse) => warehouse.id === e.target.value),
                                     )
                                 }
                             >
-                                {warehouseList.map((warehouse) => (
+                                {warehouseList.filter((warehouse) => warehouse.id !== selectedImportWarehouse?.id).map((warehouse) => (
                                     <MenuItem key={warehouse.id} value={warehouse.id}>
                                         {warehouse.name}
                                     </MenuItem>
@@ -459,7 +407,7 @@ const CreateInternalExportRequest = () => {
                             </Select>
                         </FormControl>
 
-                        {selectedWarehouse && (
+                        {selectedExportWarehouse && (
                             <FormControl sx={{ minWidth: 200, marginTop: 3 }}>
                                 <InputLabel id="inventory-staff-label">Chọn Nhân Viên</InputLabel>
                                 <Select
@@ -477,6 +425,7 @@ const CreateInternalExportRequest = () => {
                                 </Select>
                             </FormControl>
                         )}
+
 
                         <TableContainer sx={{ minWidth: 800 }}>
                             <Table>
@@ -516,11 +465,11 @@ const CreateInternalExportRequest = () => {
                                             <ListItemText sx={{ flexBasis: '22%' }}>
                                                 <Typography variant="body1">{selectedItem.subCategory.name}</Typography>
                                             </ListItemText>
-                                            <ListItemText sx={{ flexBasis: '16%' }}>
+                                            <ListItemText sx={{ flexBasis: '22%' }}>
                                                 <TextField
                                                     type="text"
                                                     label="Số lượng"
-                                                    sx={{ width: '60%' }}
+                                                    sx={{ width: '40%' }}
                                                     value={selectedItem.quantity}
                                                     onChange={(e) => {
                                                         const inputValue = e.target.value;
@@ -583,11 +532,28 @@ const CreateInternalExportRequest = () => {
                     {/* Danh sách sản phẩm bên phải */}
                     <Grid item xs={5}>
                         <Stack direction="row" alignItems="center">
-                            <CreateRequestReceiptToolbar
-                                numSelected={selected.length}
-                                onDataSearch={handleDataSearch}
-                            />
-                            <Dropdown data={dropdownData} />
+                            <FormControl sx={{ minWidth: 200, marginRight: 5, marginBottom: 2, marginTop: 3 }}>
+                                <InputLabel id="warehouse-label">Chọn kho nhập...</InputLabel>
+                                <Select
+                                    disabled={selectedItems.length > 0}
+                                    size="large"
+                                    labelId="warehouse-label"
+                                    id="warehouse"
+                                    value={selectedImportWarehouse ? selectedImportWarehouse.id : ''}
+                                    onChange={(e) =>
+                                        setSelectedImportWarehouse(
+                                            warehouseList.find((warehouse) => warehouse.id === e.target.value),
+                                        )
+                                    }
+                                >
+                                    {warehouseList.filter((warehouse) => warehouse.id !== selectedExportWarehouse?.id)
+                                        .map((warehouse) => (
+                                            <MenuItem key={warehouse.id} value={warehouse.id}>
+                                                {warehouse.name}
+                                            </MenuItem>
+                                        ))}
+                                </Select>
+                            </FormControl>
                         </Stack>
                         <div style={{ textAlign: 'center' }}>
                             <DialogContent
@@ -603,7 +569,7 @@ const CreateInternalExportRequest = () => {
                                 }}
                             >
                                 <List>
-                                    {selectedWarehouse ? (
+                                    {selectedImportWarehouse ? (
                                         itemsData.map((items, index) => (
                                             <ListItem
                                                 key={items.id}
@@ -635,20 +601,31 @@ const CreateInternalExportRequest = () => {
                                                 <div style={{ display: 'flex' }}>
                                                     {items.subCategory.images &&
                                                         items.subCategory.images.length > 0 && (
-                                                            <img
-                                                                src={items.subCategory.images[0].url}
-                                                                style={{
-                                                                    width: '40%',
-                                                                    height: '70px',
-                                                                    objectFit: 'cover',
-                                                                }}
-                                                            />
+                                                            <div style={{
+                                                                width: '100px',
+                                                                height: '100px',
+                                                                overflow: 'hidden',
+                                                                borderRadius: 5,
+                                                            }}>
+                                                                <img
+                                                                    src={items.subCategory.images[0].url}
+                                                                    style={{
+                                                                        width: '100%',
+                                                                        height: '100%',
+                                                                        objectFit: 'cover',
+                                                                    }}
+                                                                    alt={items.subCategory.name}
+                                                                />
+                                                            </div>
                                                         )}
                                                     <div style={{ padding: '8px' }}>
-                                                        <Typography variant="body1">
+                                                        <Typography variant="body1" sx={{ fontWeight: "bold" }}>
                                                             {items.subCategory.name}
                                                         </Typography>
-                                                        <Typography variant="body1">{items.code}</Typography>
+                                                        <Typography variant="body1" >
+                                                            Số lượng: {items.quantity}
+                                                        </Typography>
+                                                        <Typography variant="body2">{items.code}</Typography>
                                                     </div>
                                                 </div>
                                             </ListItem>

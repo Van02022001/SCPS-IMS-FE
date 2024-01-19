@@ -8,36 +8,41 @@ import {
     Stack,
     Paper,
     Avatar,
-    Checkbox,
     TableRow,
     TableBody,
     TableCell,
-    OutlinedInput,
     Typography,
     TableContainer,
     TablePagination,
     FormControl,
     InputLabel,
     Select,
+    OutlinedInput,
     MenuItem,
     ListItemText,
 } from '@mui/material';
 // components
-import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import Label from '~/components/label/Label';
-// import Iconify from '~/components/iconify/Iconify';
+import Iconify from '~/components/iconify/Iconify';
 import Scrollbar from '~/components/scrollbar/Scrollbar';
-import { useLocation, useNavigate } from 'react-router-dom';
+import CloseIcon from '@mui/icons-material/Close';
+
 // sections
-import { ProductsListHead, ProductsListToolbar } from '~/sections/@dashboard/products';
+import {
+    ImportReceiptInventoryListHead,
+    ImportReceiptInventoryToolbar,
+} from '~/sections/@dashboard/inventoryStaff/transaction/importReceipt';
 // mock
+import PRODUCTSLIST from '../../../../_mock/products';
 // api
-import { getAllImportRequestOfWarehouse } from '~/data/mutation/importRequestReceipt/ImportRequestReceipt-mutation';
 
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
+// import EditCategoryForm from '~/sections/auth/manager/categories/EditCategoryForm';
+import { useLocation, useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
-import { getAllInternalImportRequestOfWarehouse } from '~/data/mutation/internalImportRequest/internalImportRequest-mutation';
-import InternalImportRequestDetail from '~/sections/auth/inventory_staff/internalImportRequest/InternalImportRequestDetail';
-
+import ImportReceiptInventoryDetailForm from '~/sections/auth/inventory_staff/importReceipt/ImportReceiptInventoryDetailForm';
+import { getAllInternalImportWarehouse } from '~/data/mutation/internalImportRequest/internalImportRequest-mutation';
+import { getAllInternalExportWarehouse } from '~/data/mutation/internalExportRequest/internalExportRequest-mutation';
 
 // ----------------------------------------------------------------------
 
@@ -81,6 +86,15 @@ function applySortFilter(array, comparator, query) {
     }
     return stabilizedThis.map((el) => el[0]);
 }
+
+// function formatDate(dateString) {
+//     const date = new Date(dateString);
+//     const day = date.getDate();
+//     const month = date.getMonth() + 1;
+//     const year = date.getFullYear();
+
+//     return `${day}/${month}/${year}`;
+// }
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -91,24 +105,20 @@ const MenuProps = {
         },
     },
 };
-// function formatDate(dateString) {
-//     const date = new Date(dateString);
-//     const day = date.getDate();
-//     const month = date.getMonth() + 1;
-//     const year = date.getFullYear();
 
-//     return `${day}/${month}/${year}`;
-// }
-
-const ViewInternalImport = () => {
+const InternalExportReceiptPage = () => {
     const location = useLocation();
     const { state } = location;
     const successMessage = state?.successMessage;
     // State mở các form----------------------------------------------------------------
+    const [open, setOpen] = useState(null);
     const [openOderForm, setOpenOderForm] = useState(false);
+    const [openEditForm, setOpenEditForm] = useState(false);
 
     const [selected, setSelected] = useState([]);
     const [selectedImportReceiptId, setSelectedImportReceiptId] = useState([]);
+    const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
+    const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
 
     // State cho phần soft theo name-------------------------------------------------------
     const [filterName, setFilterName] = useState('');
@@ -121,46 +131,50 @@ const ViewInternalImport = () => {
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
     const navigate = useNavigate();
-    const startIndex = page * rowsPerPage;
-    const endIndex = startIndex + rowsPerPage;
+
     // State data và xử lý data
-    const [importRequestData, setImportRequestData] = useState([]);
-    // const [productStatus, setProductStatus] = useState('');
+    const [importReceiptData, setImportReceiptData] = useState([]);
+    const [productStatus, setProductStatus] = useState('');
 
     const [selectedStatus, setSelectedStatus] = React.useState([]);
-    const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
-    const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
-
-    const [isExportFormOpen, setIsExportFormOpen] = useState(false);
-
     const [selectedStatusInVietnamese, setSelectedStatusInVietnamese] = React.useState([]);
+    const startIndex = page * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
     // Hàm để thay đổi data mỗi khi Edit xong api-------------------------------------------------------------
     const updateImportReceiptInList = (updatedImportReceipt) => {
-        const importReceiptIndex = importRequestData.findIndex((product) => product.id === updatedImportReceipt.id);
+        const importReceiptIndex = importReceiptData.findIndex((product) => product.id === updatedImportReceipt.id);
 
         if (importReceiptIndex !== -1) {
-            const updatedImportReceiptData = [...importRequestData];
+            const updatedImportReceiptData = [...importReceiptData];
             updatedImportReceiptData[importReceiptIndex] = updatedImportReceipt;
 
-            setImportRequestData(updatedImportReceiptData);
+            setImportReceiptData(updatedImportReceiptData);
         }
     };
 
     const updateImportReceiptConfirmInList = (importReceiptId, newStatus) => {
-        const importReceiptIndex = importRequestData.findIndex((product) => product.id === importReceiptId);
+        const importReceiptIndex = importReceiptData.findIndex((product) => product.id === importReceiptId);
 
         if (importReceiptIndex !== -1) {
-            const updatedImportReceiptData = [...importRequestData];
+            const updatedImportReceiptData = [...importReceiptData];
             updatedImportReceiptData[importReceiptIndex].status = newStatus;
 
-            setImportRequestData(updatedImportReceiptData);
+            setImportReceiptData(updatedImportReceiptData);
         }
     };
 
     const handleCreateImportReceiptSuccess = (newImportReceipt) => {
         // Close the form
         setOpenOderForm(false);
-        setImportRequestData((prevImportReceiptData) => [...prevImportReceiptData, newImportReceipt]);
+        setImportReceiptData((prevImportReceiptData) => [...prevImportReceiptData, newImportReceipt]);
+    };
+    const getDescription = (importReceipt) => {
+        const match = importReceipt.description.match(/#(\d+)/);
+        if (match) {
+            const requestId = match[1];
+            return `Nhập thực tế dựa trên Yêu cầu Nhận `;
+        }
+        return importReceipt.description;
     };
 
     //----------------------------------------------------------------
@@ -175,14 +189,27 @@ const ViewInternalImport = () => {
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelecteds = importRequestData.map((n) => n.name);
+            const newSelecteds = importReceiptData.map((n) => n.name);
             setSelected(newSelecteds);
             return;
         }
         setSelected([]);
     };
 
-
+    const handleClick = (event, name) => {
+        const selectedIndex = selected.indexOf(name);
+        let newSelected = [];
+        if (selectedIndex === -1) {
+            newSelected = newSelected.concat(selected, name);
+        } else if (selectedIndex === 0) {
+            newSelected = newSelected.concat(selected.slice(1));
+        } else if (selectedIndex === selected.length - 1) {
+            newSelected = newSelected.concat(selected.slice(0, -1));
+        } else if (selectedIndex > 0) {
+            newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
+        }
+        setSelected(newSelected);
+    };
 
     const handleProductClick = (importReceipt) => {
         if (selectedImportReceiptId === importReceipt.id) {
@@ -205,21 +232,21 @@ const ViewInternalImport = () => {
         setRowsPerPage(parseInt(event.target.value, 10));
     };
     // Các hàm xử lý soft theo name--------------------------------------------------------------------------------------------------------------------------------
-    // const handleCheckboxChange = (event, productId) => {
-    //     if (event.target.checked) {
-    //         // Nếu người dùng chọn checkbox, thêm sản phẩm vào danh sách đã chọn.
-    //         setSelectedImportReceiptId([...selectedImportReceiptId, productId]);
-    //     } else {
-    //         // Nếu người dùng bỏ chọn checkbox, loại bỏ sản phẩm khỏi danh sách đã chọn.
-    //         setSelectedImportReceiptId(selectedImportReceiptId.filter((id) => id !== productId));
-    //     }
-    // };
+    const handleCheckboxChange = (event, productId) => {
+        if (event.target.checked) {
+            // Nếu người dùng chọn checkbox, thêm sản phẩm vào danh sách đã chọn.
+            setSelectedImportReceiptId([...selectedImportReceiptId, productId]);
+        } else {
+            // Nếu người dùng bỏ chọn checkbox, loại bỏ sản phẩm khỏi danh sách đã chọn.
+            setSelectedImportReceiptId(selectedImportReceiptId.filter((id) => id !== productId));
+        }
+    };
     const handleRequestSort = (property) => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
         setOrderBy(property);
         // Sắp xếp danh sách sản phẩm dựa trên trường và hướng đã chọn
-        const sortedProduct = [...importRequestData].sort((a, b) => {
+        const sortedProduct = [...importReceiptData].sort((a, b) => {
             const valueA = a[property];
             const valueB = b[property];
             if (valueA < valueB) {
@@ -242,14 +269,18 @@ const ViewInternalImport = () => {
         setSortedProduct(filteredUsers);
     };
 
-    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - importRequestData.length) : 0;
+    // const handleCloseEditsForm = () => {
+    //     setOpenEditForm(false);
+    // };
 
-    const filteredUsers = applySortFilter(importRequestData, getComparator(order, orderBy), filterName);
+    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - PRODUCTSLIST.length) : 0;
+
+    const filteredUsers = applySortFilter(PRODUCTSLIST, getComparator(order, orderBy), filterName);
 
     const isNotFound = !filteredUsers.length && !!filterName;
 
     useEffect(() => {
-        getAllInternalImportRequestOfWarehouse()
+        getAllInternalExportWarehouse()
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
@@ -258,7 +289,7 @@ const ViewInternalImport = () => {
                             dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
                         );
                     });
-                    setImportRequestData(sortedData);
+                    setImportReceiptData(sortedData);
                 } else {
                     console.error('API response is not an array:', data);
                 }
@@ -266,42 +297,33 @@ const ViewInternalImport = () => {
             .catch((error) => {
                 console.error('Error fetching users:', error);
             });
-    }, [successMessage, isExportFormOpen]);
+    }, [successMessage]);
+    console.log(importReceiptData);
 
-    console.log(importRequestData);
     useEffect(() => {
         if (successMessage) {
-
             setSnackbarSuccessOpen(true);
             setSnackbarSuccessMessage(successMessage);
         }
     }, [successMessage]);
     //==============================* filter *==============================
-    const pendingApprovalItems = importRequestData.filter(
-        (importRequest) => importRequest.status === 'Pending_Approval',
-    );
+    const pendingApprovalItems = importReceiptData.filter((importRequest) => importRequest.status === 'NOT_COMPLETED');
 
-    const otherItems = importRequestData.filter((importRequest) => importRequest.status !== 'Pending_Approval');
+    const otherItems = importReceiptData.filter((importRequest) => importRequest.status !== 'NOT_COMPLETED');
 
     const allItems = [...pendingApprovalItems, ...otherItems];
-
     const statusArray = allItems.map((item) => item.status);
     const uniqueStatusArray = Array.from(new Set(statusArray));
 
     // Chỉ chọn những giá trị mà bạn quan tâm
-    const filteredStatusArray = uniqueStatusArray.filter(status => (
-        status === "Pending_Approval" ||
-        status === "Approved" ||
-        status === "IN_PROGRESS" ||
-        status === "Completed"
-    ));
+    const filteredStatusArray = uniqueStatusArray.filter(
+        (status) => status === 'NOT_COMPLETED' || status === 'Completed',
+    );
 
     const translateStatusToVietnamese = (status) => {
         const vietnameseStatusMap = {
-            "Pending_Approval": 'Chờ xác nhận',
-            "Approved": 'Đã xác nhận',
-            "IN_PROGRESS": 'Đang tiến hành',
-            "Completed": 'Hoàn thành',
+            NOT_COMPLETED: 'Chưa hoàn thành',
+            Completed: 'Hoàn thành',
         };
 
         return vietnameseStatusMap[status] || status;
@@ -311,7 +333,9 @@ const ViewInternalImport = () => {
         setSelectedStatus(selectedValue);
         setSelectedStatusInVietnamese(translateStatusToVietnamese(selectedValue));
     };
+
     //==============================* filter *==============================
+
     const filteredItems = allItems.filter((item) =>
         selectedStatus.length === 0 ? true : selectedStatus.includes(item.status),
     );
@@ -325,7 +349,7 @@ const ViewInternalImport = () => {
             {/* <Container> */}
             <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                 <Typography variant="h4" gutterBottom>
-                    Yêu cầu nhập kho nội bộ
+                    Phiếu xuất kho nội bộ
                 </Typography>
             </Stack>
             {/* ===========================================filter=========================================== */}
@@ -356,7 +380,7 @@ const ViewInternalImport = () => {
 
             {/* ===========================================filter=========================================== */}
             <Card>
-                <ProductsListToolbar
+                <ImportReceiptInventoryToolbar
                     numSelected={selected.length}
                     filterName={filterName}
                     onFilterName={handleFilterByName}
@@ -365,11 +389,11 @@ const ViewInternalImport = () => {
                 <Scrollbar>
                     <TableContainer sx={{ minWidth: 800 }}>
                         <Table>
-                            <ProductsListHead
+                            <ImportReceiptInventoryListHead
                                 order={order}
                                 orderBy={orderBy}
                                 headLabel={TABLE_HEAD}
-                                rowCount={importRequestData.length}
+                                rowCount={importReceiptData.length}
                                 numSelected={selected.length}
                                 onRequestSort={handleRequestSort}
                                 onSelectAllClick={handleSelectAllClick}
@@ -386,6 +410,14 @@ const ViewInternalImport = () => {
                                                 selected={selectedImportReceiptId === importReceipt.id}
                                                 onClick={() => handleProductClick(importReceipt)}
                                             >
+                                                {/* <TableCell padding="checkbox">
+                                                    <Checkbox
+                                                        checked={selectedImportReceiptId === importReceipt.id}
+                                                        // onChange={(event) => handleCheckboxChange(event, importReceipt.id)}
+                                                        // checked={selectedUser}
+                                                        onChange={(event) => handleClick(event, importReceipt.name)}
+                                                    />
+                                                </TableCell> */}
 
                                                 <TableCell component="th" scope="row" padding="none">
                                                     <Stack direction="row" alignItems="center" spacing={2}>
@@ -403,7 +435,7 @@ const ViewInternalImport = () => {
                                                     <Stack direction="row" alignItems="center" spacing={2}>
                                                         {/* <Avatar alt={name} src={avatarUrl} /> */}
                                                         <Typography variant="subtitle2" noWrap>
-                                                            {importReceipt.description}
+                                                            {getDescription(importReceipt)}
                                                         </Typography>
                                                     </Stack>
                                                 </TableCell>
@@ -415,19 +447,19 @@ const ViewInternalImport = () => {
                                                         color={
                                                             (importReceipt.status === 'Pending_Approval' &&
                                                                 'warning') ||
-                                                            (importReceipt.status === 'Approved' && 'success') ||
-                                                            (importReceipt.status === 'IN_PROGRESS' && 'primary') ||
-                                                            (importReceipt.status === 'Complete' && 'primary') ||
+                                                            (importReceipt.status === 'Approved' && 'primary') ||
+                                                            (importReceipt.status === ' IN_PROGRESS' && 'warning') ||
+                                                            (importReceipt.status === 'Completed' && 'success') ||
                                                             (importReceipt.status === 'Inactive' && 'error') ||
                                                             'default'
                                                         }
                                                     >
                                                         {importReceipt.status === 'Pending_Approval'
-                                                            ? 'Chờ xác nhận'
+                                                            ? 'Chờ phê duyệt'
                                                             : importReceipt.status === 'Approved'
                                                                 ? 'Đã xác nhận'
-                                                                : importReceipt.status === 'IN_PROGRESS'
-                                                                    ? 'Đang tiến hành'
+                                                                : importReceipt.status === 'NOT_COMPLETED'
+                                                                    ? 'Chưa hoàn thành'
                                                                     : importReceipt.status === 'Completed'
                                                                         ? 'Hoàn thành'
                                                                         : 'Ngừng hoạt động'}
@@ -438,15 +470,15 @@ const ViewInternalImport = () => {
                                             {selectedImportReceiptId === importReceipt.id && (
                                                 <TableRow>
                                                     <TableCell colSpan={8}>
-                                                        <InternalImportRequestDetail
-                                                            importReceipt={importRequestData}
+                                                        <ImportReceiptInventoryDetailForm
+                                                            importReceipt={importReceiptData}
+                                                            // productStatus={productStatus}
                                                             importReceiptId={selectedImportReceiptId}
                                                             updateImportReceiptInList={updateImportReceiptInList}
                                                             updateImportReceiptConfirmInList={
                                                                 updateImportReceiptConfirmInList
                                                             }
                                                             onClose={handleCloseProductDetails}
-                                                            setIsExportFormOpen={setIsExportFormOpen}
                                                         />
                                                     </TableCell>
                                                 </TableRow>
@@ -454,11 +486,11 @@ const ViewInternalImport = () => {
                                         </React.Fragment>
                                     );
                                 })}
-                                {/* {emptyRows > 0 && (
+                                {emptyRows > 0 && (
                                     <TableRow style={{ height: 53 * emptyRows }}>
                                         <TableCell colSpan={6} />
                                     </TableRow>
-                                )} */}
+                                )}
                             </TableBody>
 
                             {isNotFound && (
@@ -491,14 +523,15 @@ const ViewInternalImport = () => {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={allItems.length}
+                    count={importReceiptData.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </Card>
+            {/* </Container> */}
         </>
     );
 };
-export default ViewInternalImport;
+export default InternalExportReceiptPage;

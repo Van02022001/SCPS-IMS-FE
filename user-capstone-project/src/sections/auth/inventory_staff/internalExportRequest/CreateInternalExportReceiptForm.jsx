@@ -14,17 +14,17 @@ import {
     IconButton,
 } from '@mui/material';
 
-
 import CloseIcon from '@mui/icons-material/Close';
 import SnackbarError from '~/components/alert/SnackbarError';
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
-import UpdateLocationsForm from '../itemInventory/UpdateLocationsForm';
+import UpdateLocationToExportForm from '../exportReceipt/UpdateLocationToExportForm';
 import { getAllLocation } from '~/data/mutation/location/location-mutation';
 import { getExaminationItem } from '~/data/mutation/items/item-mutation';
 import { useNavigate } from 'react-router-dom';
-import { createInternalImportReceipt } from '~/data/mutation/internalImport/internalImport-mutation';
+import { createInternalExportReceipt } from '~/data/mutation/internalExport/internalExport-mutation';
 
-const CreateInternalImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose, onSave }) => {
+
+const CreateInternalExportReceiptForm = ({ isOpen, onCloseForm, exportReceipst, onClose, onSave }) => {
     const [quantities, setQuantities] = useState({});
     const [openAddCategoryDialog, setOpenAddCategoryDialog] = useState(false);
     const [dataReceiptDetail, setDataReceiptDetail] = useState(null);
@@ -125,7 +125,7 @@ const CreateInternalImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, 
 
     const handleSendToManager = async () => {
         try {
-            const response = await createInternalImportReceipt(importReceipst.id, quantities);
+            const response = await createInternalExportReceipt(exportReceipst.id, quantities);
 
             // Handle success
             console.log('Response:', response);
@@ -209,24 +209,24 @@ const CreateInternalImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, 
                                 <TableBody>
                                     <TableRow>
                                         <TableCell>Mã code:</TableCell>
-                                        <TableCell>{importReceipst.code}</TableCell>
+                                        <TableCell>{exportReceipst.code}</TableCell>
                                     </TableRow>
                                     <TableRow>
                                         <TableCell>Mô tả:</TableCell>
-                                        <TableCell>{importReceipst.description}</TableCell>
+                                        <TableCell>{exportReceipst.description}</TableCell>
                                     </TableRow>
                                     <TableRow>
                                         <TableCell>Người tạo phiếu:</TableCell>
-                                        <TableCell>{importReceipst.createdBy}</TableCell>
+                                        <TableCell>{exportReceipst.createdBy}</TableCell>
                                     </TableRow>
                                     <TableRow>
                                         <TableCell>Ngày tạo phiếu:</TableCell>
-                                        <TableCell>{importReceipst.createdAt}</TableCell>
+                                        <TableCell>{exportReceipst.createdAt}</TableCell>
                                     </TableRow>
                                     <TableRow>
                                         <TableCell>Loại phiếu:</TableCell>
                                         <TableCell>
-                                            {importReceipst.type === 'PHIEU_YEU_CAU_NHAP_KHO'
+                                            {exportReceipst.type === 'PHIEU_YEU_CAU_NHAP_KHO'
                                                 ? 'Phiếu Yêu Cầu Nhập Kho'
                                                 : 'Phiếu khác'}
                                         </TableCell>
@@ -257,7 +257,6 @@ const CreateInternalImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, 
                                         <TableCell>Số lượng yêu cầu</TableCell>
                                         <TableCell>Đơn vị</TableCell>
                                         <TableCell>Số lượng thực tế</TableCell>
-                                        <TableCell>Giá</TableCell>
                                         <TableCell>Tổng giá</TableCell>
                                         <TableCell></TableCell>
                                     </TableRow>
@@ -284,9 +283,7 @@ const CreateInternalImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, 
 
                                                 <TableCell>{detail.quantity}</TableCell>
 
-                                                  <TableCell>{detail.price}</TableCell>
-
-                                                  <TableCell>{detail.totalPrice}</TableCell>
+                                                <TableCell>{detail.totalPrice}</TableCell>
 
                                                 <TableCell>
                                                     {!locationQuantities[detail.id] > 0 &&
@@ -306,7 +303,7 @@ const CreateInternalImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, 
                                                 </TableCell>
                                             </TableRow>
                                         ))
-                                        : importReceipst.details.map((items) => (
+                                        : exportReceipst.details.map((items) => (
                                             <TableRow key={items.id}>
                                                 {console.log(quantities[items.id])}
                                                 <TableCell>
@@ -322,29 +319,26 @@ const CreateInternalImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, 
                                                 <TableCell>{items.quantity}</TableCell>
                                                 <TableCell>{items.unitName}</TableCell>
 
-                                                  <TableCell>
-                                                      <TextField
-                                                          type="text"
-                                                          label="Số lượng nhập thực tế"
-                                                          style={{ width: '50%' }}
-                                                          value={quantities[items.id] || ''}
-                                                          onChange={(e) => {
-                                                              const inputValue = e.target.value;
-                                                              if (/^\d*$/.test(inputValue)) {
-                                                                  handleQuantityChange(items.id, e.target.value);
-                                                              }
-                                                          }}
-                                                          inputProps={{
-                                                              inputMode: 'numeric',
-                                                              pattern: '[0-9]*',
-                                                          }}
-                                                      />
-                                                  </TableCell>
-                                                  <TableCell>{items.price}</TableCell>
-                                                  <TableCell>{items.totalPrice}</TableCell>
-
-                                              </TableRow>
-                                          ))}
+                                                <TableCell>
+                                                    <TextField
+                                                        type="text"
+                                                        label="Số lượng nhập thực tế"
+                                                        style={{ width: '50%' }}
+                                                        value={quantities[items.id] || ''}
+                                                        onChange={(e) => {
+                                                            const inputValue = e.target.value;
+                                                            if (/^\d*$/.test(inputValue)) {
+                                                                handleQuantityChange(items.id, e.target.value);
+                                                            }
+                                                        }}
+                                                        inputProps={{
+                                                            inputMode: 'numeric',
+                                                            pattern: '[0-9]*',
+                                                        }}
+                                                    />
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
                                     <div
                                         style={{
                                             display: 'flex',
@@ -356,11 +350,11 @@ const CreateInternalImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, 
                                             <Typography variant="h6">Thông tin phiếu</Typography>
                                             <TableRow>
                                                 <TableCell>Tổng số lượng:</TableCell>
-                                                <TableCell>{importReceipst.totalQuantity}</TableCell>
+                                                <TableCell>{exportReceipst.totalQuantity}</TableCell>
                                             </TableRow>
                                             <TableRow>
                                                 <TableCell>Tổng giá:</TableCell>
-                                                <TableCell>{importReceipst.totalPrice}</TableCell>
+                                                <TableCell>{exportReceipst.totalPrice}</TableCell>
                                             </TableRow>
                                         </TableBody>
                                     </div>
@@ -377,7 +371,7 @@ const CreateInternalImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, 
                                     Gửi Phiếu
                                 </Button>
                             )}
-                            <UpdateLocationsForm
+                            <UpdateLocationToExportForm
                                 open={openAddCategoryDialog}
                                 onClose={handleCloseAddCategoryDialog}
                                 dataReceiptDetail={dataReceiptDetail}
@@ -427,4 +421,4 @@ const CreateInternalImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, 
     );
 };
 
-export default CreateInternalImportReceiptForm;
+export default CreateInternalExportReceiptForm;

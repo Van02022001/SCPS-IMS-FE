@@ -5,7 +5,7 @@ export const getAllInternalExport = async () => {
     return response.data;
 }
 
-// export const createInternalImportReceipt = async (receiptId, recieptParams) => {
-//     const response = await axiosInstance.post(`/transfer-warehouses/internal-import/${receiptId}`, recieptParams);
-//     return response.data;
-// }
+export const createInternalExportReceipt = async (receiptId, recieptParams) => {
+    const response = await axiosInstance.post(`/transfer-warehouses/internal-export/${receiptId}`, recieptParams);
+    return response.data;
+}

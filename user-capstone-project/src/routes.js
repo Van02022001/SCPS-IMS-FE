@@ -56,12 +56,13 @@ import NotificationToExportRequestInventory from './pages/inventory_staff/notifi
 import InternalImportRequestPage from './pages/manager/transaction/internalImportRequest/InternalImportRequestPage';
 import CreateInternalImportRequest from './pages/manager/transaction/internalImportRequest/CreateInternalImportRequest';
 import InternalImportPage from './pages/manager/transaction/internalImport/InternalImportPage';
-import ViewInternalImport from './pages/inventory_staff/transaction/internalImport/ViewInternalImport';
+import ViewInternalImport from './pages/inventory_staff/transaction/internalImportRequest/ViewInternalImport';
 import InternalImportReceiptPage from './pages/inventory_staff/transaction/internalImport/InternalImportReceiptPage';
 import InternalExportRequestpage from './pages/manager/transaction/internalExportRequest/InternalExportRequestpage';
 import CreateInternalExportRequest from './pages/manager/transaction/internalExportRequest/CreateInternalExportRequest';
 import InternalExportRequestInventory from './pages/inventory_staff/transaction/internalExportRequest/InternalExportRequestInventory';
 import InternalExportPage from './pages/manager/transaction/internalExport/InternalExportPage';
+import InternalExportReceiptPage from './pages/inventory_staff/transaction/internalExport/InternalExportReceiptPage';
 
 // ----------------------------------------------------------------------
 
@@ -172,7 +173,7 @@ const Router = () => {
               
 
                 { path: 'internal-export-request-staff', element: <InternalExportRequestInventory /> }, 
-                { path: 'internal-export-staff', element: <InternalExportPage /> }, 
+                { path: 'internal-export-staff', element: <InternalExportReceiptPage /> }, 
             ],
         },
         {

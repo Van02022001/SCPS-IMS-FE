@@ -344,7 +344,7 @@ const inventoryNavConfig = [
                 },
                 {
                     title: 'Phiếu xuất kho nội bộ',
-                    path: '/inventory-staff/internal-import-receipt',
+                    path: '/inventory-staff/internal-export-staff',
                     icon: <Receipt />,
                 }
             ],

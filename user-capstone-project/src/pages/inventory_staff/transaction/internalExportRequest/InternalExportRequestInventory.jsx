@@ -7,18 +7,13 @@ import {
     Table,
     Stack,
     Paper,
-    Avatar,
-    Button,
     Checkbox,
     TableRow,
     TableBody,
     TableCell,
     Typography,
-    IconButton,
     TableContainer,
     TablePagination,
-    Dialog,
-    DialogTitle,
     Select,
     FormControl,
     InputLabel,
@@ -28,9 +23,7 @@ import {
 } from '@mui/material';
 // components
 import Label from '~/components/label/Label';
-import Iconify from '~/components/iconify/Iconify';
 import Scrollbar from '~/components/scrollbar/Scrollbar';
-import CloseIcon from '@mui/icons-material/Close';
 
 // sections
 import { SubCategoryListHead, SubCategoryToolbar } from '~/sections/@dashboard/manager/subCategory';
@@ -41,11 +34,11 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import InternalExportRequestDetail from '~/sections/auth/inventory_staff/internalExportRequest/InternalExportRequestDetail';
 //icons
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import { getAllImportRequest } from '~/data/mutation/importRequestReceipt/ImportRequestReceipt-mutation';
+
 import dayjs from 'dayjs';
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 
-import { getAllInternalExportRequest } from '~/data/mutation/internalExportRequest/internalExportRequest-mutation';
+import { getInternalExportRequestForInventory } from '~/data/mutation/internalExportRequest/internalExportRequest-mutation';
 
 
 
@@ -183,10 +176,8 @@ const InternalExportRequestInventory = () => {
         }
     };
 
-    const updateGoodReceiptStatusInList = (goodReceiptId, newStatus) => {
-        const importRquestReceiptIndex = exportRequestData.findIndex(
-            (good_receipt) => good_receipt.id === goodReceiptId,
-        );
+    const updateExportReceiptConfirmInList = (goodReceiptId, newStatus) => {
+        const importRquestReceiptIndex = exportRequestData.findIndex((good_receipt) => good_receipt.id === goodReceiptId,);
 
         if (importRquestReceiptIndex !== -1) {
             const UpdatedGoodReceipt = [...exportRequestData];
@@ -217,7 +208,7 @@ const InternalExportRequestInventory = () => {
         }
     };
 
-    const handleCloseSubCategoryDetails = () => {
+    const handleCloseInternalExportDetails = () => {
         setSelectedGoodReceiptId(null);
     };
 
@@ -278,7 +269,7 @@ const InternalExportRequestInventory = () => {
 
     const isNotFound = !filteredUsers.length && !!filterName;
     useEffect(() => {
-        getAllInternalExportRequest()
+        getInternalExportRequestForInventory()
             .then((response) => {
                 const data = response.data;
                 console.log(data);
@@ -507,13 +498,11 @@ const InternalExportRequestInventory = () => {
                                                     <TableCell colSpan={8}>
                                                         <InternalExportRequestDetail
                                                             exportRequestReceipt={exportRequestData}
-                                                            importRequestReceiptStatus={importRequestStatus}
+                                                            // importRequestReceiptStatus={importRequestStatus}
                                                             importRequestReceiptId={selectedGoodReceiptId}
                                                             updateGoodReceiptInList={updateGoodReceiptInList}
-                                                            updateGoodReceiptStatusInList={
-                                                                updateGoodReceiptStatusInList
-                                                            }
-                                                            onClose={handleCloseSubCategoryDetails}
+                                                            updateExportReceiptConfirmInList={updateExportReceiptConfirmInList}
+                                                            onClose={handleCloseInternalExportDetails}
                                                         />
                                                     </TableCell>
                                                 </TableRow>
