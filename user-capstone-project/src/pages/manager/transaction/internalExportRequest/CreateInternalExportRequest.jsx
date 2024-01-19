@@ -24,7 +24,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 // sections
 
-
+import { createInternalExportRequest } from '~/data/mutation/internalExportRequest/internalExportRequest-mutation';
 // mock
 import USERLIST from '~/_mock/user';
 import Scrollbar from '~/components/scrollbar/Scrollbar';
@@ -44,9 +44,10 @@ import {
     CreateRequestReceiptToolbar,
 } from '~/sections/@dashboard/manager/transaction/createRequestReceipt';
 import { Dropdown } from '~/components/dropdown';
-import { createInternalImportRequest } from '~/data/mutation/internalImportRequest/internalImportRequest-mutation';
 
-const CreateInternalImportRequest = () => {
+
+
+const CreateInternalExportRequest = () => {
     const [order, setOrder] = useState('asc');
 
     const [orderBy, setOrderBy] = useState('name');
@@ -212,7 +213,7 @@ const CreateInternalImportRequest = () => {
             };
 
             // Gọi API và xử lý thành công
-            const response = await createInternalImportRequest(requestParams);
+            const response = await createInternalExportRequest(requestParams);
             if (response.status === '201 CREATED') {
                 handleSuccessMessage(response.message);
                 // Chuyển hướng và truyền thông báo
@@ -667,4 +668,4 @@ const CreateInternalImportRequest = () => {
     );
 };
 
-export default CreateInternalImportRequest;
+export default CreateInternalExportRequest;

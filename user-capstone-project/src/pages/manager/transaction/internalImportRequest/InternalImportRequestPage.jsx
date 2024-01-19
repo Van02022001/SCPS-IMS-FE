@@ -45,7 +45,7 @@ import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import { getAllImportRequest } from '~/data/mutation/importRequestReceipt/ImportRequestReceipt-mutation';
 import dayjs from 'dayjs';
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
-import { getAllInternalImportRequest } from '~/data/mutation/internalImportRequest/nternalImportRequest-mutation';
+import { getAllInternalImportRequest } from '~/data/mutation/internalImportRequest/internalImportRequest-mutation';
 import CreateInternalImportRequest from './CreateInternalImportRequest';
 
 // ----------------------------------------------------------------------

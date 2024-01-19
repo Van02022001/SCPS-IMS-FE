@@ -71,9 +71,25 @@ function NavItem({ item, isReportMenuOpen }) {
         ...(item.title === 'Xuất kho' && !isReportMenuOpen && {
           marginBottom: open ? '50px' : 0,
         }),
+        ...(item.title === 'Chuyển kho' && !isReportMenuOpen && {
+          marginBottom: open ? '200px' : 0,
+        }),
+        ...(item.title === 'Nhập kho nội bộ' && !isReportMenuOpen && {
+          marginBottom: open ? '97px' : 0,
+        }),
+        ...(item.title === 'Xuất kho nội bộ' && !isReportMenuOpen && {
+          marginBottom: open ? '97px' : 0,
+        }),
         ...(item.title === 'Quản lý kho' && !isReportMenuOpen && {
           marginBottom: open ? '150px' : 0,
         }),
+        ...(item.title === 'Kiểm kho' && !isReportMenuOpen && {
+          marginBottom: open ? '50px' : 0,
+        }),
+        '&:hover': {
+          backgroundColor: '#7ABBEF', // Change to the desired color
+          color: 'black', // Change to the desired color
+        },
       }}
     >
       <StyledNavItemIcon>{icon && icon}</StyledNavItemIcon>
@@ -101,15 +117,15 @@ function NavItem({ item, isReportMenuOpen }) {
           sx={{
             position: 'absolute',
             top: '100%',
-            left: 0,
+            left: 3,
             backgroundColor: 'white',
             zIndex: 1,
-            width: 260
+            width: 240
           }}
         >
           <List disablePadding>
             {children.map((child) => (
-              <NavItem key={child.title} item={child} />
+              <NavItem  key={child.title} item={child} />
             ))}
           </List>
         </Collapse>

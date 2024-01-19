@@ -36,7 +36,7 @@ import ImportRequestReceiptDetailForm from '~/sections/auth/inventory_staff/impo
 import { getAllImportRequestOfWarehouse } from '~/data/mutation/importRequestReceipt/ImportRequestReceipt-mutation';
 
 import dayjs from 'dayjs';
-import { getAllInternalImportRequestOfWarehouse } from '~/data/mutation/internalImportRequest/nternalImportRequest-mutation';
+import { getAllInternalImportRequestOfWarehouse } from '~/data/mutation/internalImportRequest/internalImportRequest-mutation';
 import InternalImportRequestDetail from '~/sections/auth/inventory_staff/internalImportRequest/InternalImportRequestDetail';
 
 
@@ -419,7 +419,7 @@ const ViewInternalImport = () => {
                                                             (importReceipt.status === 'Approved' && 'success') ||
                                                             (importReceipt.status === 'IN_PROGRESS' && 'primary') ||
                                                             (importReceipt.status === 'Complete' && 'primary') ||
-                                                            (importReceipt.status === 'Inactive' && 'error') || 
+                                                            (importReceipt.status === 'Inactive' && 'error') ||
                                                             'default'
                                                         }
                                                     >

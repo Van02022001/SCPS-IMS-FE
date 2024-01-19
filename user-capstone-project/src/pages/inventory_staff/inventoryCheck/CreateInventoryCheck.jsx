@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { filter } from 'lodash';
 import {
     DialogTitle,
     DialogActions,
@@ -15,11 +14,13 @@ import {
     Card,
     TableHead,
     TableBody,
+    Select,
+    MenuItem,
+    Input,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import EditIcon from '@mui/icons-material/Edit';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 //api
@@ -34,6 +35,7 @@ const TABLE_HEAD = [
     { id: 'itemName', label: 'Mã sản phẩm', alignRight: false },
     { id: 'quantity', label: 'Số lượng', alignRight: false },
     { id: 'actualQuantity', label: 'Số lượng thực tế', alignRight: false },
+    { id: 'statusQuantity', label: 'Số lượng chênh lệch', alignRight: false },
     { id: 'description', label: 'Ghi chú', alignRight: false },
 ];
 
@@ -44,13 +46,14 @@ const CreateInventoryCheck = ({
     onClose,
 }) => {
     const [filterName, setFilterName] = useState('');
-
     const [itemsCheckData, setItemsCheckData] = useState([]);
     const [selectedItemCheckDetailId, setSelectedItemCheckDetailId] = useState([]);
     const [description, setDescription] = useState('');
     const [actualQuantities, setActualQuantities] = useState({});
     const [productDescriptions, setProductDescriptions] = useState({});
     const [locationQuantities, setLocationQuantities] = useState({});
+
+    const [statusQuantities, setStatusQuantities] = useState([]);
     // total
     const [totalQuantities, setTotalQuantities] = useState({
         totalQuantity: 0,
@@ -65,6 +68,7 @@ const CreateInventoryCheck = ({
     const [open1, setOpen1] = React.useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+
 
     //State sử lý quanity bên detail
     const navigate = useNavigate();
@@ -162,6 +166,17 @@ const CreateInventoryCheck = ({
         });
     };
 
+    // const handleUpdateStatusQuantities = (locationId, value) => {
+    //     console.log('value', value, locationId);
+    //     const newStatusQuantity = value;
+    // }
+
+    const handleUpdateStatusQuantities = (itemId, value) => {
+        setStatusQuantities((prevStatusQuantities) => ({
+            ...prevStatusQuantities,
+            [itemId]: value,
+        }));
+    };
 
     const handleLocationQuantityChange = (locationId, event) => {
         const newQuantity = event.target.value;
@@ -218,6 +233,7 @@ const CreateInventoryCheck = ({
                     locationId: location.id,
                     quantity: locationQuantities[location.id] || 0,
                 })),
+                statusQuantities: statusQuantities[item.id] || {},
             }));
 
             const checkInventoryParams = {
@@ -238,6 +254,7 @@ const CreateInventoryCheck = ({
             handleErrorMessage(error.response?.data?.message);
         }
     };
+
 
     useEffect(() => {
         getItemByWarehouse()
@@ -320,6 +337,10 @@ const CreateInventoryCheck = ({
                                                 onChange={(event) => handleActualQuantityChange(item.id, event)}
                                             />
                                         </TableCell>
+                                        <TableCell sx={{ width: '30%' }}>
+                                            <StatusQuality onChange={(e) => { handleUpdateStatusQuantities(item.id, e) }} />
+                                        </TableCell>
+
                                         <TableCell>
                                             <TextField
                                                 label="Ghi chú"
@@ -363,6 +384,7 @@ const CreateInventoryCheck = ({
                                                                     }
                                                                 />
                                                             </TableCell>
+
                                                         </TableRow>
                                                     ))}
                                                     <TableRow>
@@ -403,5 +425,54 @@ const CreateInventoryCheck = ({
         </>
     );
 };
+
+
+const StatusQuality = ({ onChange }) => {
+    const [statusQuantities, setStatusQuantities] = useState('LOST');
+    const [lostAmount, setLostAmount] = useState(0);
+    const [defectiveAmount, setDefectiveAmount] = useState(0);
+    const [redundantAmount, setRedundantAmount] = useState(0);
+
+    const IStatusQuantity = {
+        LOST: 'LOST',
+        DEFECTIVE: 'DEFECTIVE',
+        REDUNDANT: 'REDUNDANT',
+    };
+
+    let StatusValue = {
+        LOST: {
+            value: lostAmount,
+            onChange: setLostAmount
+        },
+        DEFECTIVE: {
+            value: defectiveAmount,
+            onChange: setDefectiveAmount
+        },
+        REDUNDANT: {
+            value: redundantAmount,
+            onChange: setRedundantAmount
+        },
+    }
+
+    const handleOnChange = (value) => {
+        StatusValue[statusQuantities].onChange(value)
+
+        onChange({
+            LOST: lostAmount,
+            DEFECTIVE: defectiveAmount,
+            REDUNDANT: redundantAmount,
+        })
+    }
+
+
+    return <>
+        <Select value={statusQuantities} onChange={(e) => { setStatusQuantities(e.target.value) }}>
+            <MenuItem value={IStatusQuantity.LOST}>Sản phẩm bị mất</MenuItem>
+            <MenuItem value={IStatusQuantity.DEFECTIVE}>Sản phẩm bị hư</MenuItem>
+            <MenuItem value={IStatusQuantity.REDUNDANT}>Sản phẩm thừa</MenuItem>
+        </Select>
+        <Input type={'number'} placeHolder={'Nhập số lượng'} value={StatusValue[statusQuantities].value} onChange={(e) => { handleOnChange(e.target.value) }} />
+    </>
+}
 
 export default CreateInventoryCheck;

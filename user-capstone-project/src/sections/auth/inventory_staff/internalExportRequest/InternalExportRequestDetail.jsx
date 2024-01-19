@@ -35,10 +35,8 @@ import {
 import { getAllImportReceipt } from '~/data/mutation/importReceipt/ImportReceipt-mutation';
 import SnackbarError from '~/components/alert/SnackbarError';
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
-import { editInternalImportReceiptConfirm, editReceiptStartInternalImport } from '~/data/mutation/internalImportRequest/internalImportRequest-mutation';
-import CreateInternalImportReceiptForm from './CreateInternalImportReceiptForm';
 
-const InternalImportRequestDetail = ({
+const InternalExportRequestDetail = ({
     importReceipt,
     importReceiptId,
     updateImportReceiptInList,
@@ -244,7 +242,7 @@ const InternalImportRequestDetail = ({
 
             const newStatus = 'Approved'; // Set the desired status
 
-            const response = await editInternalImportReceiptConfirm(importReceiptId, newStatus);
+            const response = await editImportReceiptConfirm(importReceiptId, newStatus);
 
             if (response.status === '200 OK') {
                 // Handle success if needed
@@ -271,7 +269,7 @@ const InternalImportRequestDetail = ({
 
             const newStatus = 'IN_PROGRESS';
 
-            const response = await editReceiptStartInternalImport(importReceiptId, newStatus);
+            const response = await editReceiptStartImport(importReceiptId, newStatus);
 
             if (response.status === '200 OK') {
                 handleSuccessMessage(response.message);
@@ -378,7 +376,7 @@ const InternalImportRequestDetail = ({
                                 </Button>
                             </div>
                         )}
-                        <Dialog maxWidth="lg" fullWidth open={isOpenImportForm}>
+                        {/* <Dialog maxWidth="lg" fullWidth open={isOpenImportForm}>
                             <DialogTitle style={{ textAlign: 'center' }}>
                                 Phiếu Nhập Kho
                                 <IconButton style={{ float: 'right' }} onClick={handleCloseForm}>
@@ -386,14 +384,14 @@ const InternalImportRequestDetail = ({
                                 </IconButton>{' '}
                             </DialogTitle>
 
-                            <CreateInternalImportReceiptForm
+                            <CreateImportReceiptForm
                                 isOpen={isOpenImportForm}
                                 onClose={handleCloseAddCategoryDialog}
                                 importReceipst={importReceipst}
                                 onSave={handleSaveLocation}
                                 onCloseForm={handleCloseCreateImportRequestForm}
                             />
-                        </Dialog>
+                        </Dialog> */}
                     </div>
                     <Stack spacing={4} margin={2}>
                         <Grid container spacing={2}>
@@ -634,4 +632,4 @@ const InternalImportRequestDetail = ({
     ) : null;
 };
 
-export default InternalImportRequestDetail;
+export default InternalExportRequestDetail;

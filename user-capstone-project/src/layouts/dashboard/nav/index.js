@@ -196,8 +196,19 @@ const managerNavConfig = [
             },
             {
                 title: 'Xuất kho nội bộ',
-                path: '/dashboard/',
                 icon: <Receipt />,
+                children: [
+                    {
+                        title: 'Yêu cầu xuất kho nội bộ',
+                        path: '/dashboard/internal-exprot-request',
+                        icon: <ReceiptLong />,
+                    },
+                    {
+                        title: 'Phiếu xuất kho nội bộ',
+                        // path: '/dashboard/internal-import',
+                        icon: <Receipt />,
+                    },
+                ]
             },
         ],
     },
@@ -307,8 +318,14 @@ const inventoryNavConfig = [
             },
             {
                 title: 'Xuất kho nội bộ',
-                path: '/dashboard/',
-                icon: <Receipt />,
+               icon: <Receipt />,
+               children: [
+                {
+                    title: 'Yêu cầu xuất kho nội bộ',
+                    path: '/inventory-staff/internal-export-request-staff',
+                    icon: <ReceiptLong />,
+                },
+            ],
             },
         ],
     },

@@ -58,6 +58,10 @@ import CreateInternalImportRequest from './pages/manager/transaction/internalImp
 import InternalImportPage from './pages/manager/transaction/internalImport/InternalImportPage';
 import ViewInternalImport from './pages/inventory_staff/transaction/internalImport/ViewInternalImport';
 import InternalImportReceiptPage from './pages/inventory_staff/transaction/internalImport/InternalImportReceiptPage';
+import InternalExportRequestpage from './pages/manager/transaction/internalExportRequest/InternalExportRequestpage';
+import CreateInternalExportRequest from './pages/manager/transaction/internalExportRequest/CreateInternalExportRequest';
+
+import InternalExportRequestInventory from './pages/inventory_staff/transaction/internalExportRequest/InternalExportRequestInventory';
 
 // ----------------------------------------------------------------------
 
@@ -95,11 +99,15 @@ const Router = () => {
                 { path: 'request-export-receipt', element: <ExportRequestReceiptManagerPage /> },
                 { path: 'create-export-receipt', element: <CreateExportReceipt/> },
                 { path: 'export-receipt', element: <ExportReceiptManagerPage/> },
-
+//Chuyển kho
                 { path: 'internal-import-request', element: <InternalImportRequestPage /> }, 
                 { path: 'create-internal-import-request', element: <CreateInternalImportRequest/> },
                 { path: 'internal-import', element: <InternalImportPage/> },
 
+                { path: 'create-internal-export-request', element: <CreateInternalExportRequest/> },
+                { path: 'internal-exprot-request', element: <InternalExportRequestpage /> }, 
+                { path: 'internal-export', element: <InternalImportPage/> },
+//Kiểm khoc
                 { path: 'products-check', element: <InventoryReportPage/> },
                 { path: 'inventory-check-manager', element: <InventoryCheckManagerPage/> },
                 { path: 'notfication-to-request-receipt', element: <NotificationToImportRequest/> },
@@ -152,13 +160,18 @@ const Router = () => {
                 { path: 'requests-export-receipt', element: <CustomerRequestPage/> },
                 { path: 'export-receipt', element: <ExportReceiptPage /> },
 
-                { path: 'requests-internal-import', element: <ViewInternalImport/> },
-                { path: 'internal-import-receipt', element: <InternalImportReceiptPage/> },
-              
+                
                 { path: 'inventory-check-item', element: <InventoryCheckPage/> },
                 { path: 'create-inventory-check', element: <CreateInventoryCheck/> },
                 { path: 'notfication-to-import-request-receipt', element: <NotificationToImportRequestInventory/> },
                 { path: 'notfication-to-export-request-receipt', element: <NotificationToExportRequestInventory/> },
+
+//Chuyển kho
+                { path: 'requests-internal-import', element: <ViewInternalImport/> },
+                { path: 'internal-import-receipt', element: <InternalImportReceiptPage/> },
+              
+
+                { path: 'internal-export-request-staff', element: <InternalExportRequestInventory /> }, 
             ],
         },
         {
