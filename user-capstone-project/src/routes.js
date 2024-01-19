@@ -53,6 +53,9 @@ import NotificationToImportRequest from './pages/manager/notificationToReceipt/N
 import NotificationToExportRequest from './pages/manager/notificationToReceipt/NotificationToExportRequest';
 import NotificationToImportRequestInventory from './pages/inventory_staff/notificationToReceipt/NotificationToImportRequestInventory';
 import NotificationToExportRequestInventory from './pages/inventory_staff/notificationToReceipt/NotificationToExportRequestInventory';
+import InternalImportRequestPage from './pages/manager/transaction/internalImportRequest/InternalImportRequestPage';
+import CreateInternalImportRequest from './pages/manager/transaction/internalImportRequest/CreateInternalImportRequest';
+import InternalImportPage from './pages/manager/transaction/internalImport/InternalImportPage';
 
 // ----------------------------------------------------------------------
 
@@ -90,6 +93,11 @@ const Router = () => {
                 { path: 'request-export-receipt', element: <ExportRequestReceiptManagerPage /> },
                 { path: 'create-export-receipt', element: <CreateExportReceipt/> },
                 { path: 'export-receipt', element: <ExportReceiptManagerPage/> },
+
+                { path: 'internal-import-request', element: <InternalImportRequestPage /> }, 
+                { path: 'create-internal-import-request', element: <CreateInternalImportRequest/> },
+                { path: 'internal-import', element: <InternalImportPage/> },
+
                 { path: 'products-check', element: <InventoryReportPage/> },
                 { path: 'inventory-check-manager', element: <InventoryCheckManagerPage/> },
                 { path: 'notfication-to-request-receipt', element: <NotificationToImportRequest/> },

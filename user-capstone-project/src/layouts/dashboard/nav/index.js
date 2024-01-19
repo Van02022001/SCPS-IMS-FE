@@ -143,7 +143,7 @@ const managerNavConfig = [
     // },
 
     {
-        title: 'Nhập hàng',
+        title: 'Nhập kho',
         icon: <Warehouse />,
         children: [
             {
@@ -170,6 +170,33 @@ const managerNavConfig = [
             {
                 title: 'Phiếu xuất kho',
                 path: '/dashboard/export-receipt',
+                icon: <Receipt />,
+            },
+        ],
+    },
+    {
+        title: 'Chuyển kho',
+        icon: <Warehouse />,
+        children: [
+            {
+                title: 'Nhập kho nội bộ',
+                icon: <ReceiptLong />,
+                children: [
+                    {
+                        title: 'Yêu cầu nhập kho nội bộ',
+                        path: '/dashboard/internal-import-request',
+                        icon: <ReceiptLong />,
+                    },
+                    {
+                        title: 'Phiếu nhập kho nội bộ',
+                        path: '/dashboard/internal-import',
+                        icon: <Receipt />,
+                    },
+                ],
+            },
+            {
+                title: 'Xuất kho nội bộ',
+                path: '/dashboard/',
                 icon: <Receipt />,
             },
         ],
@@ -272,9 +299,9 @@ const inventoryNavConfig = [
                 icon: <ReceiptLong />,
                 path: '/inventory-staff/inventory-check-item',
             },
-        ]
+        ],
     },
-    
+
     // {
     //     title: 'login',
     //     path: '/login',
