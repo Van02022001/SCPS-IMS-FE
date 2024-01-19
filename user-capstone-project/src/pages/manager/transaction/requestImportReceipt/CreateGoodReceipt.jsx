@@ -429,7 +429,7 @@ const CreateGoodReceipt = () => {
 
                 <Grid container spacing={2}>
                     <Grid item xs={7}>
-                        <FormControl sx={{ minWidth: 200, marginRight: 5, marginBottom: 2, marginTop: 3 }}>
+                        <FormControl sx={{ minWidth: 200, marginRight: 5, marginBottom: 2 }}>
                             <InputLabel id="warehouse-label">Chọn kho hàng...</InputLabel>
                             <Select
                                 size="large"
@@ -452,7 +452,7 @@ const CreateGoodReceipt = () => {
                         </FormControl>
 
                         {selectedWarehouse && (
-                            <FormControl sx={{ minWidth: 200, marginTop: 3 }}>
+                            <FormControl sx={{ minWidth: 200 }}>
                                 <InputLabel id="inventory-staff-label">Chọn Nhân Viên</InputLabel>
                                 <Select
                                     size="large"
@@ -575,13 +575,13 @@ const CreateGoodReceipt = () => {
 
                     {/* Danh sách sản phẩm bên phải */}
                     <Grid item xs={5}>
-                        <Stack direction="row" alignItems="center">
+                        {/* <Stack direction="row" alignItems="center">
                             <CreateRequestReceiptToolbar
                                 numSelected={selected.length}
                                 onDataSearch={handleDataSearch}
                             />
                             <Dropdown data={dropdownData} />
-                        </Stack>
+                        </Stack> */}
                         <div style={{ textAlign: 'center' }}>
                             <DialogContent
                                 style={{

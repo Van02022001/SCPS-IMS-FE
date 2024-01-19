@@ -480,6 +480,7 @@ const CreateRequestCustomerPage = () => {
                                                     labelId="warehouse-label"
                                                     id="warehouse"
                                                     value={selectedCustomerId ? selectedCustomerId.customerId : ''}
+                                                    disabled={selectedItems.length > 0}
                                                     onChange={(e) =>
                                                         setSelectedCustomerId(
                                                             customerData.find(
@@ -531,6 +532,7 @@ const CreateRequestCustomerPage = () => {
                                                         labelId="inventory-staff-label"
                                                         id="inventory-staff"
                                                         value={selectedInventoryStaff}
+                                                        disabled={selectedItems.length > 0}
                                                         onChange={(e) => setSelectedInventoryStaff(e.target.value)}
                                                     >
                                                         {inventoryStaffList.map((staff) => (

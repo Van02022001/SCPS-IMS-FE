@@ -101,7 +101,7 @@ const InternalImportRequestDetail = ({
         if (message === 'Invalid request') {
             setErrorMessage('Yêu cầu không hợp lệ !');
         } else if (message === 'Receipt is not in the approved state for processing') {
-            setErrorMessage('Phiếu không ở trạng thái được phê duyệt để xử lý !');
+            setErrorMessage('Phiếu không ở trạng thái được xác nhận để xử lý !');
         }
     };
 
@@ -240,7 +240,7 @@ const InternalImportRequestDetail = ({
     const updateImportReceiptConfirm = async () => {
         try {
             // if (currentStatus !== 'Pending_Approval') {
-            //     const errorMessage = 'Không thể xác nhận. Phiếu này không ở trạng thái Chờ phê duyệt !';
+            //     const errorMessage = 'Không thể xác nhận. Phiếu này không ở trạng thái Chờ xác nhận !';
             //     handleErrorMessage(errorMessage);
             //     return;
             // }
@@ -463,7 +463,7 @@ const InternalImportRequestDetail = ({
                                             sx={{ width: '70%', pointerEvents: 'none' }}
                                             value={
                                                 currentStatus === 'Pending_Approval'
-                                                    ? 'Chờ phê duyệt'
+                                                    ? 'Chờ xác nhận'
                                                     : currentStatus === 'Approved'
                                                     ? 'Đã xác nhận'
                                                     : currentStatus === 'IN_PROGRESS'

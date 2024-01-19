@@ -257,6 +257,7 @@ const CreateInternalImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, 
                                         <TableCell>Số lượng yêu cầu</TableCell>
                                         <TableCell>Đơn vị</TableCell>
                                         <TableCell>Số lượng thực tế</TableCell>
+                                        <TableCell>Giá</TableCell>
                                         <TableCell>Tổng giá</TableCell>
                                         <TableCell></TableCell>
                                     </TableRow>
@@ -282,6 +283,8 @@ const CreateInternalImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, 
                                                   <TableCell>{detail.unitName}</TableCell>
 
                                                   <TableCell>{detail.quantity}</TableCell>
+
+                                                  <TableCell>{detail.price}</TableCell>
 
                                                   <TableCell>{detail.totalPrice}</TableCell>
 
@@ -337,6 +340,9 @@ const CreateInternalImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, 
                                                           }}
                                                       />
                                                   </TableCell>
+                                                  <TableCell>{items.price}</TableCell>
+                                                  <TableCell>{items.totalPrice}</TableCell>
+
                                               </TableRow>
                                           ))}
                                     <div

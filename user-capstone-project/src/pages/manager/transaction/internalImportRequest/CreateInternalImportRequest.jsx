@@ -65,7 +65,9 @@ const CreateInternalImportRequest = () => {
     const [selectedItems, setSelectedItems] = useState([]);
     const [selectedUnitId, setSelectedUnitId] = useState('');
     // warehouse
-    const [selectedWarehouse, setSelectedWarehouse] = useState(null);
+    const [selectedImportWarehouse, setSelectedImportWarehouse] = useState(null);
+    const [selectedExportWarehouse, setSelectedExportWarehouse] = useState(null);
+
     // const [selectedWarehouseId, setSelectedWarehouseId] = useState(null);
     const [selectedInventoryStaff, setSelectedInventoryStaff] = useState(null);
     const [warehouseList, setWarehouseList] = useState([]);
@@ -109,6 +111,8 @@ const CreateInternalImportRequest = () => {
             setErrorMessage('Hãy nhập số lượng !');
         } else if (message === 'Hãy chọn ít nhất 1 sản phẩm') {
             setErrorMessage('Hãy chọn ít nhất 1 sản phẩm !');
+        } else if (message === 'Số lượng không đủ') {
+            setErrorMessage('Số lượng trong kho không đủ so với yêu cầu !');
         }
     };
 
@@ -170,8 +174,8 @@ const CreateInternalImportRequest = () => {
     useEffect(() => {
         const fetchInventoryStaff = async () => {
             try {
-                if (selectedWarehouse) {
-                    const inventoryStaffList = await getInventoryStaffByWarehouseId(selectedWarehouse.id);
+                if (selectedImportWarehouse) {
+                    const inventoryStaffList = await getInventoryStaffByWarehouseId(selectedImportWarehouse.id);
                     setInventoryStaffList(inventoryStaffList.data);
                 }
             } catch (error) {
@@ -180,7 +184,7 @@ const CreateInternalImportRequest = () => {
         };
 
         fetchInventoryStaff();
-    }, [selectedWarehouse, selectedInventoryStaff]);
+    }, [selectedImportWarehouse, selectedInventoryStaff]);
 
     const handleCreateImportReceipt = async () => {
         try {
@@ -190,6 +194,18 @@ const CreateInternalImportRequest = () => {
                 return;
             } else if (selectedItems.length === 0) {
                 handleErrorMessage('Hãy chọn ít nhất 1 sản phẩm');
+                return;
+            }
+
+            const isQuantityValid = selectedItems.every((item) => {
+                const selectedItemQuantity = parseInt(item.quantity, 10);
+                const availableQuantity = itemsData.find((itemData) => itemData.id === item.id)?.quantity || 0;
+                return selectedItemQuantity <= availableQuantity;
+            });
+
+            if (!isQuantityValid) {
+                // If quantity is not valid, show an error notification
+                handleErrorMessage('Số lượng không đủ');
                 return;
             }
 
@@ -204,7 +220,7 @@ const CreateInternalImportRequest = () => {
 
             // Prepare the request body
             const requestParams = {
-                warehouseId: selectedWarehouse.id,
+                warehouseId: selectedImportWarehouse.id,
                 inventoryStaffId: selectedInventoryStaff,
                 description: descriptionReceipt,
                 details: details,
@@ -258,8 +274,8 @@ const CreateInternalImportRequest = () => {
     useEffect(() => {
         const fetchItemsByWarehouse = async () => {
             try {
-                if (selectedWarehouse) {
-                    const response = await getItemByWarehouseId(selectedWarehouse.id);
+                if (selectedExportWarehouse) {
+                    const response = await getItemByWarehouseId(selectedExportWarehouse.id);
                     const data = response.data;
 
                     if (Array.isArray(data)) {
@@ -274,7 +290,7 @@ const CreateInternalImportRequest = () => {
         };
 
         fetchItemsByWarehouse();
-    }, [selectedWarehouse]);
+    }, [selectedExportWarehouse]);
 
     useEffect(() => {
         getAllUnit()
@@ -301,7 +317,7 @@ const CreateInternalImportRequest = () => {
         ];
 
         const newRecieptParams = {
-            warehouseId: selectedWarehouse.id,
+            warehouseId: selectedImportWarehouse.id,
             inventoryStaffId: selectedInventoryStaff,
             description: descriptionReceipt,
             details: [
@@ -339,46 +355,6 @@ const CreateInternalImportRequest = () => {
 
         setRecieptParams(updatedRecieptParams);
     };
-
-    // const handleUnitPriceChange = (index, value) => {
-    //     const updatedItems = [...selectedItems];
-    //     updatedItems[index].unitPrice = value;
-    //     setSelectedItems(updatedItems);
-
-    //     // Update recieptParams
-    //     const updatedRecieptParams = {
-    //         ...recieptParams,
-    //         details: updatedItems.map((item) => ({
-    //             itemId: item.itemId,
-    //             quantity: item.quantity,
-    //             unitPrice: item.unitPrice,
-    //             unitId: item.unitId,
-    //             description: item.description,
-    //         })),
-    //     };
-
-    //     setRecieptParams(updatedRecieptParams);
-    // };
-
-    // const handleUnitIdChange = (index, value) => {
-    //     const updatedItems = [...selectedItems];
-    //     updatedItems[index].unitId = value;
-    //     setSelectedItems(updatedItems);
-
-    //     // Update recieptParams
-    //     const updatedRecieptParams = {
-    //         ...recieptParams,
-    //         details: updatedItems.map((item) => ({
-    //             itemId: item.itemId,
-    //             quantity: item.quantity,
-    //             unitPrice: item.unitPrice,
-    //             unitId: item.unitId,
-    //             description: item.description,
-    //         })),
-    //     };
-
-    //     setRecieptParams(updatedRecieptParams);
-    // };
 
     const handleRemoveFromCart = (index) => {
         const updatedItems = [...selectedItems];
@@ -441,27 +417,30 @@ const CreateInternalImportRequest = () => {
                 <Grid container spacing={2}>
                     <Grid item xs={7}>
                         <FormControl sx={{ minWidth: 200, marginRight: 5, marginBottom: 2, marginTop: 3 }}>
-                            <InputLabel id="warehouse-label">Chọn kho nguồn...</InputLabel>
+                            <InputLabel id="warehouse-label">Chọn kho nhập...</InputLabel>
                             <Select
                                 size="large"
                                 labelId="warehouse-label"
                                 id="warehouse"
-                                value={selectedWarehouse ? selectedWarehouse.id : ''}
+                                value={selectedImportWarehouse ? selectedImportWarehouse.id : ''}
+                                disabled={selectedItems.length > 0}
                                 onChange={(e) =>
-                                    setSelectedWarehouse(
+                                    setSelectedImportWarehouse(
                                         warehouseList.find((warehouse) => warehouse.id === e.target.value),
                                     )
                                 }
                             >
-                                {warehouseList.map((warehouse) => (
-                                    <MenuItem key={warehouse.id} value={warehouse.id}>
-                                        {warehouse.name}
-                                    </MenuItem>
-                                ))}
+                                {warehouseList
+                                    .filter((warehouse) => warehouse.id !== selectedExportWarehouse?.id)
+                                    .map((warehouse) => (
+                                        <MenuItem key={warehouse.id} value={warehouse.id}>
+                                            {warehouse.name}
+                                        </MenuItem>
+                                    ))}
                             </Select>
                         </FormControl>
 
-                        {selectedWarehouse && (
+                        {selectedImportWarehouse && (
                             <FormControl sx={{ minWidth: 200, marginTop: 3 }}>
                                 <InputLabel id="inventory-staff-label">Chọn Nhân Viên</InputLabel>
                                 <Select
@@ -469,6 +448,7 @@ const CreateInternalImportRequest = () => {
                                     labelId="inventory-staff-label"
                                     id="inventory-staff"
                                     value={selectedInventoryStaff}
+                                    disabled={selectedItems.length > 0}
                                     onChange={(e) => setSelectedInventoryStaff(e.target.value)}
                                 >
                                     {inventoryStaffList.map((staff) => (
@@ -585,11 +565,29 @@ const CreateInternalImportRequest = () => {
                     {/* Danh sách sản phẩm bên phải */}
                     <Grid item xs={5}>
                         <Stack direction="row" alignItems="center">
-                            <CreateRequestReceiptToolbar
-                                numSelected={selected.length}
-                                onDataSearch={handleDataSearch}
-                            />
-                            <Dropdown data={dropdownData} />
+                            <FormControl sx={{ minWidth: 200, marginRight: 5, marginBottom: 2, marginTop: 3 }}>
+                                <InputLabel id="warehouse-label">Chọn kho xuất...</InputLabel>
+                                <Select
+                                    size="large"
+                                    labelId="warehouse-label"
+                                    id="warehouse"
+                                    value={selectedExportWarehouse ? selectedExportWarehouse.id : ''}
+                                    disabled={selectedItems.length > 0}
+                                    onChange={(e) =>
+                                        setSelectedExportWarehouse(
+                                            warehouseList.find((warehouse) => warehouse.id === e.target.value),
+                                        )
+                                    }
+                                >
+                                    {warehouseList
+                                        .filter((warehouse) => warehouse.id !== selectedImportWarehouse?.id)
+                                        .map((warehouse) => (
+                                            <MenuItem key={warehouse.id} value={warehouse.id}>
+                                                {warehouse.name}
+                                            </MenuItem>
+                                        ))}
+                                </Select>
+                            </FormControl>
                         </Stack>
                         <div style={{ textAlign: 'center' }}>
                             <DialogContent
@@ -605,7 +603,7 @@ const CreateInternalImportRequest = () => {
                                 }}
                             >
                                 <List>
-                                    {selectedWarehouse ? (
+                                    {selectedExportWarehouse ? (
                                         itemsData.map((items, index) => (
                                             <ListItem
                                                 key={items.id}
@@ -653,7 +651,7 @@ const CreateInternalImportRequest = () => {
                                                         <Typography variant="body1">
                                                             Số lượng: {items.quantity}
                                                         </Typography>
-                                                        <Typography variant="body1">{items.code}</Typography>
+                                                        <Typography variant="body2">{items.code}</Typography>
                                                     </div>
                                                 </div>
                                             </ListItem>
