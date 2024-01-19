@@ -56,6 +56,8 @@ import NotificationToExportRequestInventory from './pages/inventory_staff/notifi
 import InternalImportRequestPage from './pages/manager/transaction/internalImportRequest/InternalImportRequestPage';
 import CreateInternalImportRequest from './pages/manager/transaction/internalImportRequest/CreateInternalImportRequest';
 import InternalImportPage from './pages/manager/transaction/internalImport/InternalImportPage';
+import ViewInternalImport from './pages/inventory_staff/transaction/internalImport/ViewInternalImport';
+import InternalImportReceiptPage from './pages/inventory_staff/transaction/internalImport/InternalImportReceiptPage';
 
 // ----------------------------------------------------------------------
 
@@ -149,6 +151,9 @@ const Router = () => {
 
                 { path: 'requests-export-receipt', element: <CustomerRequestPage/> },
                 { path: 'export-receipt', element: <ExportReceiptPage /> },
+
+                { path: 'requests-internal-import', element: <ViewInternalImport/> },
+                { path: 'internal-import-receipt', element: <InternalImportReceiptPage/> },
               
                 { path: 'inventory-check-item', element: <InventoryCheckPage/> },
                 { path: 'create-inventory-check', element: <CreateInventoryCheck/> },

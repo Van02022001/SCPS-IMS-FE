@@ -286,6 +286,33 @@ const inventoryNavConfig = [
         ],
     },
     {
+        title: 'Chuyển kho',
+        icon: <Warehouse />,
+        children: [
+            {
+                title: 'Nhập kho nội bộ',
+                icon: <ReceiptLong />,
+                children: [
+                    {
+                        title: 'Yêu cầu nhập kho nội bộ',
+                        path: '/inventory-staff/requests-internal-import',
+                        icon: <ReceiptLong />,
+                    },
+                    {
+                        title: 'Phiếu nhập kho nội bộ',
+                        path: '/inventory-staff/internal-import-receipt',
+                        icon: <Receipt />,
+                    },
+                ],
+            },
+            {
+                title: 'Xuất kho nội bộ',
+                path: '/dashboard/',
+                icon: <Receipt />,
+            },
+        ],
+    },
+    {
         title: 'Kiểm kho',
         icon: <Assessment />,
         children: [
