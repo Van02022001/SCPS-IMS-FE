@@ -34,7 +34,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 //api
-import { getAllItem } from '~/data/mutation/items/item-mutation';
+import { getAllItem, getItemByWarehouseId } from '~/data/mutation/items/item-mutation';
 import { getAllUnit } from '~/data/mutation/unit/unit-mutation';
 import { getAllWarehouse, getInventoryStaffByWarehouseId } from '~/data/mutation/warehouse/warehouse-mutation';
 
@@ -199,8 +199,8 @@ const CreateInternalExportRequest = () => {
             const details = selectedItems.map((item) => ({
                 itemId: item.itemId,
                 quantity: item.quantity,
-                unitPrice: item.unitPrice,
-                unitId: item.unitId,
+                // unitPrice: item.unitPrice,
+                // unitId: item.unitId,
                 description: item.description,
             }));
 
@@ -217,7 +217,7 @@ const CreateInternalExportRequest = () => {
             if (response.status === '201 CREATED') {
                 handleSuccessMessage(response.message);
                 // Chuyển hướng và truyền thông báo
-                navigate('/dashboard/request-import-receipt', {
+                navigate('/dashboard/internal-exprot-request', {
                     state: { successMessage: response.message },
                 });
             }
@@ -254,21 +254,29 @@ const CreateInternalExportRequest = () => {
     };
 
     const handleNavigate = () => {
-        navigate('/dashboard/request-import-receipt');
+        navigate('/dashboard/internal-exprot-request');
     };
     useEffect(() => {
-        getAllItem()
-            .then((respone) => {
-                const data = respone.data;
-                if (Array.isArray(data)) {
-                    setItemsData(data);
-                } else {
-                    console.error('API response is not an array:', data);
+        const fetchItemsByWarehouse = async () => {
+            try {
+                if (selectedWarehouse) {
+                    const response = await getItemByWarehouseId(selectedWarehouse.id);
+                    const data = response.data;
+
+                    if (Array.isArray(data)) {
+                        setItemsData(data);
+                    } else {
+                        console.error('API response is not an array:', data);
+                    }
                 }
-            })
-            .catch((error) => {
-                console.error('Error fetching users:', error);
-            });
+            } catch (error) {
+                console.error('Error fetching items by warehouse:', error);
+            }
+        };
+
+        fetchItemsByWarehouse();
+    }, [selectedWarehouse]);
+    useEffect(() => {
         getAllUnit()
             .then((respone) => {
                 const data = respone.data;
@@ -424,7 +432,7 @@ const CreateInternalExportRequest = () => {
                         <ArrowBackIcon fontSize="large" color="action" />
                     </Button>
                     <Typography variant="h4" gutterBottom>
-                        Tạo yêu cầu nhập kho
+                        Tạo yêu cầu xuất kho nội bộ
                     </Typography>
                 </Stack>
 

@@ -60,8 +60,8 @@ import ViewInternalImport from './pages/inventory_staff/transaction/internalImpo
 import InternalImportReceiptPage from './pages/inventory_staff/transaction/internalImport/InternalImportReceiptPage';
 import InternalExportRequestpage from './pages/manager/transaction/internalExportRequest/InternalExportRequestpage';
 import CreateInternalExportRequest from './pages/manager/transaction/internalExportRequest/CreateInternalExportRequest';
-
 import InternalExportRequestInventory from './pages/inventory_staff/transaction/internalExportRequest/InternalExportRequestInventory';
+import InternalExportPage from './pages/manager/transaction/internalExport/InternalExportPage';
 
 // ----------------------------------------------------------------------
 
@@ -172,6 +172,7 @@ const Router = () => {
               
 
                 { path: 'internal-export-request-staff', element: <InternalExportRequestInventory /> }, 
+                { path: 'internal-export-staff', element: <InternalExportPage /> }, 
             ],
         },
         {

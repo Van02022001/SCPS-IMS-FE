@@ -53,7 +53,7 @@ const CreateInventoryCheck = ({
     const [productDescriptions, setProductDescriptions] = useState({});
     const [locationQuantities, setLocationQuantities] = useState({});
 
-    const [statusQuantities, setStatusQuantities] = useState([]);
+    const [statusQuantities, setStatusQuantities] = useState({});
     // total
     const [totalQuantities, setTotalQuantities] = useState({
         totalQuantity: 0,
@@ -172,6 +172,7 @@ const CreateInventoryCheck = ({
     // }
 
     const handleUpdateStatusQuantities = (itemId, value) => {
+        console.log("Lúc nhập số lượng vào", itemId, value);
         setStatusQuantities((prevStatusQuantities) => ({
             ...prevStatusQuantities,
             [itemId]: value,
@@ -233,7 +234,7 @@ const CreateInventoryCheck = ({
                     locationId: location.id,
                     quantity: locationQuantities[location.id] || 0,
                 })),
-                statusQuantities: statusQuantities[item.id] || {},
+                statusQuantities: statusQuantities[item.id] || 0,
             }));
 
             const checkInventoryParams = {
@@ -428,7 +429,7 @@ const CreateInventoryCheck = ({
 
 
 const StatusQuality = ({ onChange }) => {
-    const [statusQuantities, setStatusQuantities] = useState('LOST');
+    const [statusQuantities, setStatusQuantities] = useState('');
     const [lostAmount, setLostAmount] = useState(0);
     const [defectiveAmount, setDefectiveAmount] = useState(0);
     const [redundantAmount, setRedundantAmount] = useState(0);
@@ -439,40 +440,81 @@ const StatusQuality = ({ onChange }) => {
         REDUNDANT: 'REDUNDANT',
     };
 
-    let StatusValue = {
-        LOST: {
-            value: lostAmount,
-            onChange: setLostAmount
-        },
-        DEFECTIVE: {
-            value: defectiveAmount,
-            onChange: setDefectiveAmount
-        },
-        REDUNDANT: {
-            value: redundantAmount,
-            onChange: setRedundantAmount
-        },
-    }
-
+    const hasLostData = lostAmount > 0;
+    const hasRedundantData = redundantAmount > 0;
     const handleOnChange = (value) => {
-        StatusValue[statusQuantities].onChange(value)
+        const numericValue = parseInt(value, 10);
 
-        onChange({
-            LOST: lostAmount,
-            DEFECTIVE: defectiveAmount,
-            REDUNDANT: redundantAmount,
-        })
-    }
+        switch (statusQuantities) {
+            case IStatusQuantity.LOST:
+                setLostAmount((prevLostAmount) => {
+                    onChange({
+                        LOST: numericValue,
+                        DEFECTIVE: defectiveAmount,
+                        REDUNDANT: redundantAmount,
+                    });
+                    return numericValue;
+                });
+                break;
+            case IStatusQuantity.DEFECTIVE:
+                setDefectiveAmount((prevDefectiveAmount) => {
+                    onChange({
+                        LOST: lostAmount,
+                        DEFECTIVE: numericValue,
+                        REDUNDANT: redundantAmount,
+                    });
+                    return numericValue;
+                });
+                break;
+            case IStatusQuantity.REDUNDANT:
+                setRedundantAmount((prevRedundantAmount) => {
+                    onChange({
+                        LOST: lostAmount,
+                        DEFECTIVE: defectiveAmount,
+                        REDUNDANT: numericValue,
+                    });
+                    return numericValue;
+                });
+                break;
+            default:
+                break;
+        }
+    };
 
 
-    return <>
-        <Select value={statusQuantities} onChange={(e) => { setStatusQuantities(e.target.value) }}>
-            <MenuItem value={IStatusQuantity.LOST}>Sản phẩm bị mất</MenuItem>
-            <MenuItem value={IStatusQuantity.DEFECTIVE}>Sản phẩm bị hư</MenuItem>
-            <MenuItem value={IStatusQuantity.REDUNDANT}>Sản phẩm thừa</MenuItem>
-        </Select>
-        <Input type={'number'} placeHolder={'Nhập số lượng'} value={StatusValue[statusQuantities].value} onChange={(e) => { handleOnChange(e.target.value) }} />
-    </>
-}
+    return (
+        <>
+            <Select
+                value={statusQuantities}
+                onChange={(e) => {
+                    setStatusQuantities(e.target.value);
+                }}
+            >
+                {!hasRedundantData && (
+                    <MenuItem value={IStatusQuantity.LOST}>Sản phẩm bị mất</MenuItem>
+                )}
+                <MenuItem value={IStatusQuantity.DEFECTIVE}>Sản phẩm bị hư</MenuItem>
+                {!hasLostData && (
+                    <MenuItem value={IStatusQuantity.REDUNDANT}>Sản phẩm thừa</MenuItem>
+                )}
+            </Select>
+            <Input
+                type={'number'}
+                placeHolder={'Nhập số lượng'}
+                value={
+                    statusQuantities === IStatusQuantity.LOST
+                        ? lostAmount
+                        : statusQuantities === IStatusQuantity.DEFECTIVE
+                            ? defectiveAmount
+                            : redundantAmount
+                }
+                onChange={(e) => {
+                    handleOnChange(e.target.value);
+                }}
+            />
+        </>
+    );
+};
+
 
 export default CreateInventoryCheck;

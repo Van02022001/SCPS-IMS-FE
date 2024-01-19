@@ -108,7 +108,7 @@ const managerNavConfig = [
                 icon: <AddHome />,
             },
             {
-                title: 'Quản lý kho',
+                title: 'Kho',
                 path: '/dashboard/warehouse',
                 icon: <Inventory2Outlined />,
             },
@@ -175,6 +175,22 @@ const managerNavConfig = [
         ],
     },
     {
+        title: 'Kiểm kho',
+        icon: <Assessment />,
+        children: [
+            {
+                title: 'Phiếu kiểm kho',
+                path: '/dashboard/inventory-check-manager',
+                icon: <ReceiptLong />,
+            },
+        ],
+    },
+    {
+        title: 'Nhập tồn kho',
+        path: '/dashboard/products-check',
+        icon: <DomainVerification />,
+    },
+    {
         title: 'Chuyển kho',
         icon: <Warehouse />,
         children: [
@@ -212,22 +228,7 @@ const managerNavConfig = [
             },
         ],
     },
-    {
-        title: 'Kiểm kho',
-        icon: <Assessment />,
-        children: [
-            {
-                title: 'Phiếu kiểm kho',
-                path: '/dashboard/inventory-check-manager',
-                icon: <ReceiptLong />,
-            },
-            {
-                title: 'Nhập tồn kho',
-                path: '/dashboard/products-check',
-                icon: <DomainVerification />,
-            },
-        ],
-    },
+    
 ];
 
 // Cấu hình navbar cho vai trò INVENTORY
@@ -297,6 +298,22 @@ const inventoryNavConfig = [
         ],
     },
     {
+        title: 'Kiểm kho',
+        icon: <Assessment />,
+        children: [
+            {
+                title: 'Kiểm kho',
+                icon: <ReceiptLong />,
+                path: '/inventory-staff/inventory-check-item',
+            },
+        ],
+    },
+    {
+        title: 'Nhập tồn kho',
+        path: '/inventory-staff/inventory-check',
+        icon: <DomainVerification />,
+    },
+    {
         title: 'Chuyển kho',
         icon: <Warehouse />,
         children: [
@@ -313,7 +330,7 @@ const inventoryNavConfig = [
                         title: 'Phiếu nhập kho nội bộ',
                         path: '/inventory-staff/internal-import-receipt',
                         icon: <Receipt />,
-                    },
+                    }
                 ],
             },
             {
@@ -325,26 +342,15 @@ const inventoryNavConfig = [
                     path: '/inventory-staff/internal-export-request-staff',
                     icon: <ReceiptLong />,
                 },
+                {
+                    title: 'Phiếu xuất kho nội bộ',
+                    path: '/inventory-staff/internal-import-receipt',
+                    icon: <Receipt />,
+                }
             ],
             },
         ],
-    },
-    {
-        title: 'Kiểm kho',
-        icon: <Assessment />,
-        children: [
-            {
-                title: 'Nhập tồn kho',
-                path: '/inventory-staff/inventory-check',
-                icon: <DomainVerification />,
-            },
-            {
-                title: 'Kiểm kho',
-                icon: <ReceiptLong />,
-                path: '/inventory-staff/inventory-check-item',
-            },
-        ],
-    },
+    }
 
     // {
     //     title: 'login',
@@ -371,8 +377,6 @@ const saleNavConfig = [
         path: '/sale-staff/request-customer',
         icon: <ReceiptLong />,
     },
-
-    // ...
 ];
 export default function Nav({ openNav, onCloseNav }) {
     const { pathname } = useLocation();
