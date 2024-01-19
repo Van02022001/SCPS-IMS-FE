@@ -81,7 +81,7 @@ function NavItem({ item, isReportMenuOpen }) {
           marginBottom: open ? '97px' : 0,
         }),
         ...(item.title === 'Quản lý kho' && !isReportMenuOpen && {
-          marginBottom: open ? '150px' : 0,
+          marginBottom: open ? '100px' : 0,
         }),
         ...(item.title === 'Kiểm kho' && !isReportMenuOpen && {
           marginBottom: open ? '50px' : 0,

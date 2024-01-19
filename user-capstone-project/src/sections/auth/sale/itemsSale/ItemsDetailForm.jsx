@@ -17,10 +17,11 @@ import {
     Select,
     MenuItem,
     FormControl,
+    TablePagination,
 } from '@mui/material';
 
 // import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import { editItem, editStatusItem, getItemsByPriceHistory } from '~/data/mutation/items/item-mutation';
+import { editItem, editStatusItem, getItemsByPriceHistory, getItemsByPricingHistory } from '~/data/mutation/items/item-mutation';
 
 import { getAllSubCategory } from '~/data/mutation/subCategory/subCategory-mutation';
 import { getAllBrands } from '~/data/mutation/brand/brands-mutation';
@@ -33,6 +34,7 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 import SnackbarError from '~/components/alert/SnackbarError';
+import dayjs from 'dayjs';
 
 const ItemsDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode, updateItemStatusInList }) => {
     const [expandedItem, setExpandedItem] = useState(itemId);
@@ -49,7 +51,12 @@ const ItemsDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mod
     const [itemPriceData, setItemPriceData] = useState([]);
     const [currentStatus, setCurrentStatus] = useState('');
     const [openAddCategoryDialog, setOpenAddCategoryDialog] = useState(false);
+    const [itemPricingData, setItemPricingData] = useState([]);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [page, setPage] = useState(0);
 
+    const startIndex = page * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
     //thông báo
     //========================== Hàm notification của trang ==================================
     const [open, setOpen] = React.useState(false);
@@ -98,6 +105,15 @@ const ItemsDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mod
     );
 
     //========================== Hàm notification của trang ==================================
+
+    const handleChangePage = (event, newPage) => {
+        setPage(newPage);
+    };
+
+    const handleChangeRowsPerPage = (event) => {
+        setPage(0);
+        setRowsPerPage(parseInt(event.target.value, 10));
+    };
 
     useEffect(() => {
         if (isOpen) {
@@ -167,6 +183,21 @@ const ItemsDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mod
             .then((respone) => {
                 const data = respone.data;
                 setItemPriceData(data);
+            })
+            .catch((error) => console.error('Error fetching Items:', error));
+        getItemsByPricingHistory(itemId)
+            .then((respone) => {
+                const data = respone.data;
+                if (Array.isArray(data)) {
+                    const sortedData = data.sort((a, b) => {
+                        return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(
+                            dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
+                        );
+                    });
+                    setItemPricingData(sortedData);
+                } else {
+                    console.error('API response is not an array:', data);
+                }
             })
             .catch((error) => console.error('Error fetching Items:', error));
     }, []);
@@ -282,6 +313,7 @@ const ItemsDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mod
             >
                 <Tab label="Thông tin" />
                 <Tab label="Lịch sử giá mua" />
+                <Tab label="Lịch sử giá bán" />
             </Tabs>
 
             {selectedTab === 0 && (
@@ -742,6 +774,63 @@ const ItemsDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mod
                         action={action}
                         style={{ bottom: '16px', right: '16px' }}
                     />
+                </div>
+            )}
+            {selectedTab === 2 && (
+                <div style={{ marginLeft: 50 }}>
+                    <Stack spacing={4} margin={2}>
+                        <div>
+                            <Typography variant="h4">Bảng Giá Bán</Typography>
+                            <Card>
+                                <CardContent>
+                                    <TableContainer>
+                                        <Table>
+                                            <TableBody>
+                                                <TableRow
+                                                    variant="subtitle1"
+                                                    sx={{
+                                                        fontSize: '20px',
+                                                        backgroundColor: '#f0f1f3',
+                                                        height: 50,
+                                                        textAlign: 'start',
+                                                        fontFamily: 'bold',
+                                                        padding: '10px 0 0 20px',
+                                                    }}
+                                                >
+                                                    <TableCell>Tên sản phẩm</TableCell>
+                                                    <TableCell>Người thay đổi</TableCell>
+                                                    <TableCell>Ngày thay đổi</TableCell>
+                                                    <TableCell>Giá cũ</TableCell>
+                                                    <TableCell>Giá mới</TableCell>
+                                                </TableRow>
+                                                {itemPricingData.slice(startIndex, endIndex).map((items) => {
+                                                    return (
+                                                        <TableRow key={items.id}>
+                                                            <TableCell>{items.itemName}</TableCell>
+                                                            <TableCell>{items.changedBy}</TableCell>
+                                                            <TableCell>{items.changeDate}</TableCell>
+                                                            <TableCell>{items.oldPrice}</TableCell>
+                                                            <TableCell>{items.newPrice}</TableCell>
+                                                        </TableRow>
+                                                    );
+                                                })}
+                                            </TableBody>
+                                        </Table>
+                                    </TableContainer>
+                                </CardContent>
+                                <TablePagination
+                                    rowsPerPageOptions={[5, 10, 25]}
+                                    component="div"
+                                    count={itemPriceData.length}
+                                    rowsPerPage={rowsPerPage}
+                                    page={page}
+                                    onPageChange={handleChangePage}
+                                    onRowsPerPageChange={handleChangeRowsPerPage}
+                                    labelRowsPerPage="Số lượng giá bán mỗi trang:"
+                                />
+                            </Card>
+                        </div>
+                    </Stack>
                 </div>
             )}
         </div>

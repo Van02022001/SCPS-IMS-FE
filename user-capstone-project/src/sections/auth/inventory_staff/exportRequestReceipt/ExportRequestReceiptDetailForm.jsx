@@ -32,7 +32,6 @@ import {
     editReceiptStartImport,
 } from '~/data/mutation/importRequestReceipt/ImportRequestReceipt-mutation';
 
-
 import { getAllImportReceipt } from '~/data/mutation/importReceipt/ImportReceipt-mutation';
 import SnackbarError from '~/components/alert/SnackbarError';
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
@@ -436,12 +435,12 @@ const ExportRequestReceiptDetailForm = ({
                                                 currentStatus === 'Pending_Approval'
                                                     ? 'Chờ phê duyệt'
                                                     : currentStatus === 'Approved'
-                                                        ? 'Đã xác nhận'
-                                                        : currentStatus === 'IN_PROGRESS'
-                                                            ? 'Đang tiến hành'
-                                                            : currentStatus === 'Completed'
-                                                                ? 'Hoàn thành'
-                                                                : 'Ngừng hoạt động'
+                                                    ? 'Đã xác nhận'
+                                                    : currentStatus === 'IN_PROGRESS'
+                                                    ? 'Đang tiến hành'
+                                                    : currentStatus === 'Completed'
+                                                    ? 'Hoàn thành'
+                                                    : 'Ngừng hoạt động'
                                             }
                                         />
                                     </Grid>
@@ -513,22 +512,37 @@ const ExportRequestReceiptDetailForm = ({
                                                     padding: '10px 0 0 20px',
                                                 }}
                                             >
+                                                <TableCell></TableCell>
                                                 <TableCell>Mã sản phẩm</TableCell>
                                                 <TableCell>Tên sản phẩm</TableCell>
                                                 <TableCell>Số lượng</TableCell>
-                                                <TableCell>Giá sản phẩm</TableCell>
-                                                <TableCell>Tổng</TableCell>
                                                 <TableCell>Đơn vị</TableCell>
+                                                <TableCell>Tổng Giá</TableCell>
+                                                <TableCell>Thương hiệu</TableCell>
+                                                <TableCell>Xuất xứ</TableCell>
+                                                <TableCell>Nhà cung cấp</TableCell>
                                             </TableRow>
                                             {importReceipst.details.map((items) => {
                                                 return (
                                                     <TableRow key={items.id}>
+                                                        <TableCell>
+                                                            <img
+                                                                src={items.item.imageUrl}
+                                                                alt={`Item ${items.code}`}
+                                                                width="48"
+                                                                height="48"
+                                                            />
+                                                        </TableCell>
                                                         <TableCell>{items.item.code}</TableCell>
                                                         <TableCell>{items.item.subcategoryName}</TableCell>
                                                         <TableCell>{items.quantity}</TableCell>
-                                                        <TableCell>{items.price}</TableCell>
-                                                        <TableCell>{items.totalPrice}</TableCell>
                                                         <TableCell>{items.unitName}</TableCell>
+                                                        <TableCell>
+                                                            {items.totalPrice?.toLocaleString('vi-VN')}
+                                                        </TableCell>
+                                                        <TableCell>{items.item.brandName}</TableCell>
+                                                        <TableCell>{items.item.originName}</TableCell>
+                                                        <TableCell>{items.item.supplierName}</TableCell>
                                                     </TableRow>
                                                 );
                                             })}
@@ -538,7 +552,9 @@ const ExportRequestReceiptDetailForm = ({
                                         <Typography variant="h6">Thông tin phiếu</Typography>
                                         <TableRow>
                                             <TableCell>Tổng số lượng:</TableCell>
-                                            <TableCell>{importReceipst.totalQuantity?.toLocaleString('vi-VN')}</TableCell>
+                                            <TableCell>
+                                                {importReceipst.totalQuantity?.toLocaleString('vi-VN')}
+                                            </TableCell>
                                         </TableRow>
                                     </TableBody>
                                 </TableContainer>

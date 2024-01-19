@@ -503,7 +503,7 @@ const RequestReceiptManagerPage = () => {
                                                         }
                                                     >
                                                         {importRequest.status === 'Pending_Approval'
-                                                            ? 'Chờ phê duyệt'
+                                                            ? 'Chờ xác nhận'
                                                             : importRequest.status === 'Approved'
                                                                 ? 'Đã xác nhận'
                                                                 : importRequest.status === 'IN_PROGRESS'

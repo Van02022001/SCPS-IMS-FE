@@ -67,7 +67,6 @@ const ImportRequestReceiptDetailManagerForm = ({
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
-
     const handleMessage = (message) => {
         setOpen(true);
         // Đặt logic hiển thị nội dung thông báo từ API ở đây
@@ -326,8 +325,7 @@ const ImportRequestReceiptDetailManagerForm = ({
 
             {currentTab === 0 && (
                 <div>
-                    <div>
-                    </div>
+                    <div></div>
                     <Stack spacing={4} margin={2}>
                         <Grid container spacing={2}>
                             <Grid item xs={6}>
@@ -393,14 +391,14 @@ const ImportRequestReceiptDetailManagerForm = ({
                                             sx={{ width: '70%', pointerEvents: 'none' }}
                                             value={
                                                 currentStatus === 'Pending_Approval'
-                                                    ? 'Chờ phê duyệt'
+                                                    ? 'Chờ xác nhận'
                                                     : currentStatus === 'Approved'
-                                                        ? 'Đã xác nhận'
-                                                        : currentStatus === 'IN_PROGRESS'
-                                                            ? 'Đang tiến hành'
-                                                            : currentStatus === 'Completed'
-                                                                ? 'Hoàn thành'
-                                                                : 'Ngừng hoạt động'
+                                                    ? 'Đã xác nhận'
+                                                    : currentStatus === 'IN_PROGRESS'
+                                                    ? 'Đang tiến hành'
+                                                    : currentStatus === 'Completed'
+                                                    ? 'Hoàn thành'
+                                                    : 'Ngừng hoạt động'
                                             }
                                         />
                                     </Grid>
@@ -472,18 +470,35 @@ const ImportRequestReceiptDetailManagerForm = ({
                                                     padding: '10px 0 0 20px',
                                                 }}
                                             >
+                                                <TableCell></TableCell>
                                                 <TableCell>Mã sản phẩm</TableCell>
                                                 <TableCell>Tên sản phẩm</TableCell>
                                                 <TableCell>Số lượng</TableCell>
                                                 <TableCell>Đơn vị</TableCell>
+                                                <TableCell>Giá</TableCell>
+                                                <TableCell>Thương hiệu</TableCell>
+                                                <TableCell>Xuất xứ</TableCell>
+                                                <TableCell>Nhà cung cấp</TableCell>
                                             </TableRow>
                                             {importReceipst.details.map((items) => {
                                                 return (
                                                     <TableRow key={items.id}>
+                                                        <TableCell>
+                                                            <img
+                                                                src={items.item.imageUrl}
+                                                                alt={`Item ${items.code}`}
+                                                                width="48"
+                                                                height="48"
+                                                            />
+                                                        </TableCell>
                                                         <TableCell>{items.item.code}</TableCell>
                                                         <TableCell>{items.item.subcategoryName}</TableCell>
                                                         <TableCell>{items.quantity}</TableCell>
                                                         <TableCell>{items.unitName}</TableCell>
+                                                        <TableCell>{items.price?.toLocaleString('vi-VN')}</TableCell>
+                                                        <TableCell>{items.item.brandName}</TableCell>
+                                                        <TableCell>{items.item.originName}</TableCell>
+                                                        <TableCell>{items.item.supplierName}</TableCell>
                                                     </TableRow>
                                                 );
                                             })}
@@ -499,7 +514,9 @@ const ImportRequestReceiptDetailManagerForm = ({
                                         </TableRow>
                                         <TableRow>
                                             <TableCell>Tổng tiền:</TableCell>
-                                            <TableCell>{importReceipst.totalPrice?.toLocaleString('vi-VN')} VND</TableCell>
+                                            <TableCell>
+                                                {importReceipst.totalPrice?.toLocaleString('vi-VN')} VND
+                                            </TableCell>
                                         </TableRow>
                                     </TableBody>
                                 </TableContainer>
@@ -507,9 +524,7 @@ const ImportRequestReceiptDetailManagerForm = ({
                         </Card>
                     </div>
                     <Stack spacing={4} margin={2}>
-                        <Grid container spacing={1} sx={{ gap: '10px' }}>
-
-                        </Grid>
+                        <Grid container spacing={1} sx={{ gap: '10px' }}></Grid>
                     </Stack>
                 </div>
             )}

@@ -415,7 +415,7 @@ const ViewReceiptPage = () => {
                                                             (importReceipt.status === 'Pending_Approval' &&
                                                                 'warning') ||
                                                             (importReceipt.status === 'Approved' && 'success') ||
-                                                            (importReceipt.status === 'IN_PROGRESS' && 'warning') ||
+                                                            (importReceipt.status === 'IN_PROGRESS' && 'primary') ||
                                                             (importReceipt.status === 'Complete' && 'primary') ||
                                                             (importReceipt.status === 'Inactive' && 'error') ||
                                                             'default'

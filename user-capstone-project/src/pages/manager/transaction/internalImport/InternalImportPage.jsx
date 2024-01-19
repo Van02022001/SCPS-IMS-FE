@@ -281,13 +281,13 @@ const InternalImportPage = () => {
     return (
         <>
             <Helmet>
-                <title> Nhập kho | Minimal UI </title>
+                <title> Nhập kho nội bộ | Minimal UI </title>
             </Helmet>
 
             {/* <Container> */}
             <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                 <Typography variant="h4" gutterBottom>
-                    Phiếu nhập kho
+                    Phiếu nhập kho nội bộ
                 </Typography>
                 {/* <Button
                     variant="contained"

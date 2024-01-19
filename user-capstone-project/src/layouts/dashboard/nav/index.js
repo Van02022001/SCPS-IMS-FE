@@ -257,11 +257,11 @@ const inventoryNavConfig = [
                 path: '/inventory-staff/locationsInventory',
                 icon: <PlaceIcon />,
             },
-            {
-                title: 'Chuyển kho',
-                path: '/inventory-staff/warehousesInventory',
-                icon: <WarehouseIcon />,
-            },
+            // {
+            //     title: 'Chuyển kho',
+            //     path: '/inventory-staff/warehousesInventory',
+            //     icon: <WarehouseIcon />,
+            // },
         ],
     },
     {

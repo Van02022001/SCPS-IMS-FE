@@ -474,20 +474,6 @@ const CreateRequestCustomerPage = () => {
                                 >
                                     <Grid container spacing={2} padding={2} alignItems="center">
                                         <Grid item xs={4}>
-                                            {/* <FormControl style={{ border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#f0f0f0', margin: '10px' }}>
-                                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                    <span style={{ padding: '0 8px' }}>
-                                                        <Search />
-                                                    </span>
-                                                    <Input
-                                                        placeholder="Tìm kiếm khách hàng..."
-                                                        value={searchText}
-                                                        onChange={handleSearchChange}
-                                                        disableUnderline
-                                                        fullWidth
-                                                    />
-                                                </div>
-                                            </FormControl> */}
                                             <FormControl size="small" variant="outlined" sx={{ width: '100%' }}>
                                                 <InputLabel id="warehouse-label">Chọn khách hàng...</InputLabel>
                                                 <Select
@@ -520,6 +506,7 @@ const CreateRequestCustomerPage = () => {
                                                     labelId="warehouse-label"
                                                     id="warehouse"
                                                     value={selectedWarehouse ? selectedWarehouse.id : ''}
+                                                    disabled={selectedItems.length > 0}
                                                     onChange={(e) =>
                                                         setSelectedWarehouse(
                                                             warehouseList.find(

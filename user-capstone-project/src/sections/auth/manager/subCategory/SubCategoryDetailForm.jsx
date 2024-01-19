@@ -419,7 +419,7 @@ const SubCategoryDetailForm = ({
         >
             <Tabs value={currentTab} onChange={handleChangeTab} indicatorColor="primary" textColor="primary">
                 <Tab label="Thông tin" />
-                <Tab label="Thông tin thêm" />
+                {/* <Tab label="Thông tin thêm" /> */}
                 {/* <Tab label="Tồn kho" /> */}
             </Tabs>
 
@@ -835,7 +835,7 @@ const SubCategoryDetailForm = ({
                 </div>
             )}
 
-            {currentTab === 1 && (
+            {/* {currentTab === 1 && (
                 <div style={{ flex: 1 }}>
                     <Card sx={{ minWidth: 275, marginTop: 5 }} spacing={2}>
                         <Typography
@@ -912,7 +912,7 @@ const SubCategoryDetailForm = ({
                         </Grid>
                     </Stack>
                 </div>
-            )}
+            )} */}
         </div>
     ) : null;
 };

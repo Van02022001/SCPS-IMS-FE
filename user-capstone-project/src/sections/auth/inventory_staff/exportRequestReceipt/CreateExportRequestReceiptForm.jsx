@@ -243,10 +243,14 @@ const CreateExportRequestReceiptForm = ({ isOpen, onCloseForm, importReceipst, o
                                             padding: '10px 0 0 20px',
                                         }}
                                     >
+                                        <TableCell></TableCell>
                                         <TableCell>Mã sản phẩm</TableCell>
                                         <TableCell>Tên sản phẩm</TableCell>
-                                        <TableCell>Số lượng yêu cầu</TableCell>
+                                        <TableCell>Số lượng</TableCell>
                                         <TableCell>Đơn vị</TableCell>
+                                        <TableCell>Thương hiệu</TableCell>
+                                        <TableCell>Xuất xứ</TableCell>
+                                        <TableCell>Nhà cung cấp</TableCell>
                                         <TableCell>Giá bán</TableCell>
                                         <TableCell>Tổng giá</TableCell>
                                         <TableCell></TableCell>
@@ -254,13 +258,21 @@ const CreateExportRequestReceiptForm = ({ isOpen, onCloseForm, importReceipst, o
                                     {dataReceiptDetail.details
                                         ? dataReceiptDetail.details.map((detail) => (
                                               <TableRow key={detail.id}>
+                                                  <TableCell>
+                                                      <img
+                                                          src={detail.item.imageUrl}
+                                                          alt={`Item ${detail.code}`}
+                                                          width="48"
+                                                          height="48"
+                                                      />
+                                                  </TableCell>
                                                   <TableCell>{detail.item.code}</TableCell>
-
                                                   <TableCell>{detail.item.subcategoryName}</TableCell>
-
                                                   <TableCell>{detail.quantity}</TableCell>
-
                                                   <TableCell>{detail.unitName}</TableCell>
+                                                  <TableCell>{detail.item.brandName}</TableCell>
+                                                  <TableCell>{detail.item.originName}</TableCell>
+                                                  <TableCell>{detail.item.supplierName}</TableCell>
 
                                                   <TableCell>{detail.price} VNĐ</TableCell>
 
@@ -287,10 +299,21 @@ const CreateExportRequestReceiptForm = ({ isOpen, onCloseForm, importReceipst, o
                                         : importReceipst.details.map((items) => (
                                               <TableRow key={items.id}>
                                                   {console.log(quantities[items.id])}
+                                                  <TableCell>
+                                                      <img
+                                                          src={items.item.imageUrl}
+                                                          alt={`Item ${items.code}`}
+                                                          width="48"
+                                                          height="48"
+                                                      />
+                                                  </TableCell>
                                                   <TableCell>{items.item.code}</TableCell>
                                                   <TableCell>{items.item.subcategoryName}</TableCell>
                                                   <TableCell>{items.quantity}</TableCell>
                                                   <TableCell>{items.unitName}</TableCell>
+                                                  <TableCell>{items.item.brandName}</TableCell>
+                                                  <TableCell>{items.item.originName}</TableCell>
+                                                  <TableCell>{items.item.supplierName}</TableCell>
                                                   {/* <TableCell>
                                                     <TextField
                                                         style={{ width: '50%' }}

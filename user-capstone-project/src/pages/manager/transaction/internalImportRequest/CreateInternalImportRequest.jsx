@@ -441,7 +441,7 @@ const CreateInternalImportRequest = () => {
                 <Grid container spacing={2}>
                     <Grid item xs={7}>
                         <FormControl sx={{ minWidth: 200, marginRight: 5, marginBottom: 2, marginTop: 3 }}>
-                            <InputLabel id="warehouse-label">Chọn kho hàng...</InputLabel>
+                            <InputLabel id="warehouse-label">Chọn kho nguồn...</InputLabel>
                             <Select
                                 size="large"
                                 labelId="warehouse-label"

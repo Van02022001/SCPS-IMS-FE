@@ -474,20 +474,37 @@ const ExportReceiptDetailForm = ({
                                                     padding: '10px 0 0 20px',
                                                 }}
                                             >
+                                                <TableCell></TableCell>
                                                 <TableCell>Mã sản phẩm</TableCell>
                                                 <TableCell>Tên sản phẩm</TableCell>
                                                 <TableCell>Số lượng</TableCell>
-                                                <TableCell>Tổng giá phiếu</TableCell>
                                                 <TableCell>Đơn vị</TableCell>
+                                                <TableCell>Tổng Giá</TableCell>
+                                                <TableCell>Thương hiệu</TableCell>
+                                                <TableCell>Xuất xứ</TableCell>
+                                                <TableCell>Nhà cung cấp</TableCell>
                                             </TableRow>
                                             {importReceipst.details.map((items) => {
                                                 return (
                                                     <TableRow key={items.id}>
+                                                        <TableCell>
+                                                            <img
+                                                                src={items.item.imageUrl}
+                                                                alt={`Item ${items.code}`}
+                                                                width="48"
+                                                                height="48"
+                                                            />
+                                                        </TableCell>
                                                         <TableCell>{items.item.code}</TableCell>
                                                         <TableCell>{items.item.subcategoryName}</TableCell>
                                                         <TableCell>{items.quantity}</TableCell>
-                                                        <TableCell>{items.totalPrice?.toLocaleString('vi-VN')}</TableCell>
                                                         <TableCell>{items.unitName}</TableCell>
+                                                        <TableCell>
+                                                            {items.totalPrice?.toLocaleString('vi-VN')}
+                                                        </TableCell>
+                                                        <TableCell>{items.item.brandName}</TableCell>
+                                                        <TableCell>{items.item.originName}</TableCell>
+                                                        <TableCell>{items.item.supplierName}</TableCell>
                                                     </TableRow>
                                                 );
                                             })}
@@ -497,7 +514,11 @@ const ExportReceiptDetailForm = ({
                                         <Typography variant="h6">Thông tin phiếu</Typography>
                                         <TableRow>
                                             <TableCell>Tổng số lượng:</TableCell>
-                                            <TableCell>{importReceipst.totalQuantity?.toLocaleString('vi-VN')}</TableCell>
+                                            <TableCell>{importReceipst.totalQuantity}</TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell>Tổng giá:</TableCell>
+                                            <TableCell>{importReceipst.totalPrice?.toLocaleString('vi-VN')}</TableCell>
                                         </TableRow>
                                     </TableBody>
                                 </TableContainer>

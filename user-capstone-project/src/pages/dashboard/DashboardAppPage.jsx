@@ -44,6 +44,8 @@ const DashboardInventoryPage = () => {
     const [chartData, setChartData] = useState([]);
     const [chartCircleData, setChartCircleData] = useState([]);
 
+    const roleUser = localStorage.getItem('role');
+
     const handleChange = (event) => {
         setAge(event.target.value);
     };
@@ -270,43 +272,47 @@ const DashboardInventoryPage = () => {
                             icon={'grommet-icons:money'}
                         />
                     </Grid>
+                    {roleUser !== 'MANAGER' ||
+                        roleUser !== 'INVENTORY_STAFF' ||
+                        (roleUser !== 'SALE_STAFF' && (
+                            <>
+                                <Grid item xs={12} sm={6} md={3}>
+                                    <AppWidgetSummary
+                                        title="Tổng số nhân viên"
+                                        total={reportData?.staffReportResponse?.totalStaff || 0}
+                                        color="success"
+                                        icon={'mdi:human-male'}
+                                    />
+                                </Grid>
 
-                    <Grid item xs={12} sm={6} md={3}>
-                        <AppWidgetSummary
-                            title="Tổng số nhân viên"
-                            total={reportData?.staffReportResponse?.totalStaff || 0}
-                            color="success"
-                            icon={'mdi:human-male'}
-                        />
-                    </Grid>
+                                <Grid item xs={12} sm={6} md={3}>
+                                    <AppWidgetSummary
+                                        title="Tổng số quản lý"
+                                        total={reportData?.staffReportResponse?.totalManager || 0}
+                                        color="success"
+                                        icon={'mdi:human-male'}
+                                    />
+                                </Grid>
 
-                    <Grid item xs={12} sm={6} md={3}>
-                        <AppWidgetSummary
-                            title="Tổng số quản lý"
-                            total={reportData?.staffReportResponse?.totalManager || 0}
-                            color="success"
-                            icon={'mdi:human-male'}
-                        />
-                    </Grid>
+                                <Grid item xs={12} sm={6} md={3}>
+                                    <AppWidgetSummary
+                                        title="Tổng số nhân viên quản kho"
+                                        total={reportData?.staffReportResponse?.totalInventoryStaff || 0}
+                                        color="error"
+                                        icon={'mdi:human-male'}
+                                    />
+                                </Grid>
 
-                    <Grid item xs={12} sm={6} md={3}>
-                        <AppWidgetSummary
-                            title="Tổng số nhân viên quản kho"
-                            total={reportData?.staffReportResponse?.totalInventoryStaff || 0}
-                            color="error"
-                            icon={'mdi:human-male'}
-                        />
-                    </Grid>
-
-                    <Grid item xs={12} sm={6} md={3}>
-                        <AppWidgetSummary
-                            title="Tổng số nhân viên bán hàng"
-                            total={reportData?.staffReportResponse?.totalSaleStaff || 0}
-                            color="error"
-                            icon={'mdi:human-male'}
-                        />
-                    </Grid>
-
+                                <Grid item xs={12} sm={6} md={3}>
+                                    <AppWidgetSummary
+                                        title="Tổng số nhân viên bán hàng"
+                                        total={reportData?.staffReportResponse?.totalSaleStaff || 0}
+                                        color="error"
+                                        icon={'mdi:human-male'}
+                                    />
+                                </Grid>
+                            </>
+                        ))}
                     {/* <Grid item xs={12} sm={6} md={3}>
                         <AppWidgetSummary title="Bug Reports" total={234} color="error" icon={'ant-design:bug-filled'} />
                     </Grid> */}

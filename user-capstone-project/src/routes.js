@@ -148,7 +148,7 @@ const Router = () => {
                 { path: 'product', element: <SubCategoryInventoryPage /> },
                 { path: 'itemsInventory', element: <ItemsInventoryPage /> },
                 { path: 'locationsInventory', element: <LocationInventoryPage /> },
-                {path: 'warehousesInventory', element: <WarehouseInventoryPage />},
+                // {path: 'warehousesInventory', element: <WarehouseInventoryPage />},
                 { path: 'warehouse-transfer', element: <CreateTransferForm/> },
                 
                 // { path: 'order-sale', element: <OrderSalePage /> },

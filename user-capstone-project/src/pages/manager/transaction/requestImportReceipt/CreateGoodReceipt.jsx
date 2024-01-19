@@ -436,6 +436,7 @@ const CreateGoodReceipt = () => {
                                 labelId="warehouse-label"
                                 id="warehouse"
                                 value={selectedWarehouse ? selectedWarehouse.id : ''}
+                                disabled={selectedItems.length > 0}
                                 onChange={(e) =>
                                     setSelectedWarehouse(
                                         warehouseList.find((warehouse) => warehouse.id === e.target.value),
@@ -458,6 +459,7 @@ const CreateGoodReceipt = () => {
                                     labelId="inventory-staff-label"
                                     id="inventory-staff"
                                     value={selectedInventoryStaff}
+                                    disabled={selectedItems.length > 0}
                                     onChange={(e) => setSelectedInventoryStaff(e.target.value)}
                                 >
                                     {inventoryStaffList.map((staff) => (
