@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { filter } from 'lodash';
 import {
     DialogTitle,
     DialogActions,
@@ -15,11 +14,13 @@ import {
     Card,
     TableHead,
     TableBody,
+    Select,
+    MenuItem,
+    Input,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import EditIcon from '@mui/icons-material/Edit';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 //api
@@ -32,9 +33,10 @@ import Scrollbar from '~/components/scrollbar/Scrollbar';
 
 const TABLE_HEAD = [
     { id: 'itemName', label: 'Mã sản phẩm', alignRight: false },
-    { id: 'quantity', label: 'Số lượng hiện tại', alignRight: false },
+    { id: 'quantity', label: 'Số lượng', alignRight: false },
     { id: 'actualQuantity', label: 'Số lượng thực tế', alignRight: false },
-    { id: 'description', alignRight: false },
+    { id: 'statusQuantity', label: 'Số lượng chênh lệch', alignRight: false },
+    { id: 'description', label: 'Ghi chú', alignRight: false },
 ];
 
 const CreateInventoryCheck = ({
@@ -44,10 +46,6 @@ const CreateInventoryCheck = ({
     onClose,
 }) => {
     const [filterName, setFilterName] = useState('');
-    const [page, setPage] = useState(0);
-    const [orderBy, setOrderBy] = useState('name');
-    const [order, setOrder] = useState('asc');
-
     const [itemsCheckData, setItemsCheckData] = useState([]);
     const [selectedItemCheckDetailId, setSelectedItemCheckDetailId] = useState([]);
     const [description, setDescription] = useState('');
@@ -55,16 +53,23 @@ const CreateInventoryCheck = ({
     const [productDescriptions, setProductDescriptions] = useState({});
     const [locationQuantities, setLocationQuantities] = useState({});
 
+    const [statusQuantities, setStatusQuantities] = useState({});
+    // total
     const [totalQuantities, setTotalQuantities] = useState({
         totalQuantity: 0,
         totalActualQuantity: 0,
         totalLocations: 0,
     });
-    //Thông bao
+    //Thông báo
+    const [actualQuantityError, setActualQuantityError] = useState(null);
+    const [locationQuantityError, setLocationQuantityError] = useState(null);
+
     const [open, setOpen] = React.useState(false);
     const [open1, setOpen1] = React.useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+
+
     //State sử lý quanity bên detail
     const navigate = useNavigate();
     const handleSuccessMessage = (message) => {
@@ -88,8 +93,6 @@ const CreateInventoryCheck = ({
             setErrorMessage('Hãy chọn kho và nhân viên !');
         } else if (message === 'An error occurred while creating the inventory check receipt') {
             setErrorMessage('Hãy nhập số lượng thực tế !');
-        } else if (message === 'An error occurred while creating the inventory check receipt') {
-            setErrorMessage('Hãy nhập số lượng thực tế !');
         }
     };
     const handleClose = (event, reason) => {
@@ -110,6 +113,95 @@ const CreateInventoryCheck = ({
         </React.Fragment>
     );
 
+    const validateActualQuantity = (value) => {
+        if (value === '0') {
+            return 'Số lượng thực tế không được phép là 0.';
+        } else if (isNaN(value) || value === '') {
+            return 'Số lượng thực tế không được để trống và phải là một số.';
+        } else if (Number(value) < 0) {
+            return 'Số lượng thực tế không được là số âm.';
+        }
+        return null;
+    };
+    const validateLocationQuantity = (value) => {
+        if (Number(value) < 0) {
+            return 'Số lượng thực tế không được là số âm.';
+        }
+        return null;
+    };
+
+
+    const handleActualQuantityChange = (itemId, event) => {
+        const newActualQuantity = event.target.value;
+
+        // Perform validation
+        const validationError = validateActualQuantity(newActualQuantity);
+        setActualQuantityError(validationError);
+
+        // Allow deletion if the input is empty
+
+        setActualQuantities((prevQuantities) => {
+            const newQuantities = { ...prevQuantities };
+            delete newQuantities[itemId];
+
+            const newTotalActualQuantity = Object.values(newQuantities).reduce((acc, val) => acc + Number(val), 0);
+            setTotalQuantities((prevTotal) => ({
+                ...prevTotal,
+                totalActualQuantity: newTotalActualQuantity,
+            }));
+
+            return newQuantities;
+        });
+
+        setActualQuantities((prevQuantities) => {
+            const newQuantities = { ...prevQuantities, [itemId]: newActualQuantity };
+
+            const newTotalActualQuantity = Object.values(newQuantities).reduce((acc, val) => acc + Number(val), 0);
+            setTotalQuantities((prevTotal) => ({
+                ...prevTotal,
+                totalActualQuantity: newTotalActualQuantity,
+            }));
+
+            return newQuantities;
+        });
+    };
+
+    // const handleUpdateStatusQuantities = (locationId, value) => {
+    //     console.log('value', value, locationId);
+    //     const newStatusQuantity = value;
+    // }
+
+    const handleUpdateStatusQuantities = (itemId, value) => {
+        console.log("Lúc nhập số lượng vào", itemId, value);
+        setStatusQuantities((prevStatusQuantities) => ({
+            ...prevStatusQuantities,
+            [itemId]: value,
+        }));
+    };
+    console.log(statusQuantities);
+    const handleLocationQuantityChange = (locationId, event) => {
+        const newQuantity = event.target.value;
+
+        const validationError = validateLocationQuantity(newQuantity);
+        setLocationQuantityError(validationError);
+
+        setLocationQuantities((prevQuantities) => ({
+            ...prevQuantities,
+            [locationId]: newQuantity,
+        }));
+        const newTotalQuantity = Object.values({ ...locationQuantities, [locationId]: newQuantity }).reduce(
+            (acc, val) => acc + (parseInt(val, 10) || 0),
+            0
+        );
+        const newTotalLocations = Object.keys({ ...locationQuantities, [locationId]: newQuantity }).length;
+
+        setTotalQuantities((prevTotal) => ({
+            ...prevTotal,
+            totalQuantity: newTotalQuantity,
+            totalLocations: newTotalLocations,
+        }));
+    };
+    //=================================================================
     const handleItemClickDetail = (item) => {
         setSelectedItemCheckDetailId(item.id === selectedItemCheckDetailId ? null : item.id);
     };
@@ -125,48 +217,13 @@ const CreateInventoryCheck = ({
         }));
     };
 
-    const handleActualQuantityChange = (itemId, event) => {
-        const newActualQuantity = parseInt(event.target.value, 10) || 0;
-        setActualQuantities((prevQuantities) => {
-            const newQuantities = { ...prevQuantities, [itemId]: newActualQuantity };
 
-            // Calculate and update total actual quantities
-            const newTotalActualQuantity = Object.values(newQuantities).reduce((acc, val) => acc + val, 0);
-            setTotalQuantities((prevTotal) => ({
-                ...prevTotal,
-                totalActualQuantity: newTotalActualQuantity,
-            }));
-
-            return newQuantities;
-        });
-    };
-
-    const handleLocationQuantityChange = (locationId, event) => {
-        const newQuantity = event.target.value; // Allow 0 as well
-        setLocationQuantities((prevQuantities) => ({
-            ...prevQuantities,
-            [locationId]: newQuantity,
-        }));
-
-        // Calculate and update total quantities and total locations
-        const newTotalQuantity = Object.values({ ...locationQuantities, [locationId]: newQuantity }).reduce(
-            (acc, val) => acc + parseInt(val, 10) || 0,
-            0,
-        );
-        const newTotalLocations = Object.keys({ ...locationQuantities, [locationId]: newQuantity }).length;
-
-        setTotalQuantities((prevTotal) => ({
-            ...prevTotal,
-            totalQuantity: newTotalQuantity,
-            totalLocations: newTotalLocations,
-        }));
-    };
 
     const handleUpdateQuantities = async () => {
-        if (itemsCheckData.some((item) => !item.actualQuantities || parseInt(item.actualQuantities, 10) <= 0)) {
-            handleErrorMessage('Hãy nhập số lượng');
-            return;
-        }
+        // if (itemsCheckData.some((item) => !item.actualQuantities || parseInt(item.actualQuantities, 10) <= 0)) {
+        //     handleErrorMessage('Hãy nhập số lượng');
+        //     return;
+        // }
 
         try {
             const details = itemsCheckData.map((item) => ({
@@ -177,6 +234,7 @@ const CreateInventoryCheck = ({
                     locationId: location.id,
                     quantity: locationQuantities[location.id] || 0,
                 })),
+                statusQuantities: statusQuantities[item.id] || 0,
             }));
 
             const checkInventoryParams = {
@@ -197,6 +255,7 @@ const CreateInventoryCheck = ({
             handleErrorMessage(error.response?.data?.message);
         }
     };
+
 
     useEffect(() => {
         getItemByWarehouse()
@@ -255,7 +314,7 @@ const CreateInventoryCheck = ({
                                 // orderBy={orderBy}
                                 headLabel={TABLE_HEAD}
                                 rowCount={itemsCheckData.length}
-                                // numSelected={selected.length}
+                            // numSelected={selected.length}
                             />
                             {itemsCheckData.map((item) => (
                                 <React.Fragment key={item.id}>
@@ -271,12 +330,18 @@ const CreateInventoryCheck = ({
                                         <TableCell align="left">{item.quantity}</TableCell>
                                         <TableCell>
                                             <TextField
+                                                helperText={actualQuantityError}
+                                                error={Boolean(actualQuantityError)}
                                                 label="Số lượng thực tế"
                                                 type="number"
                                                 value={actualQuantities[item.id] || ''}
                                                 onChange={(event) => handleActualQuantityChange(item.id, event)}
                                             />
                                         </TableCell>
+                                        <TableCell sx={{ width: '30%' }}>
+                                            <StatusQuality onChange={(e) => { handleUpdateStatusQuantities(item.id, e) }} />
+                                        </TableCell>
+
                                         <TableCell>
                                             <TextField
                                                 label="Ghi chú"
@@ -295,7 +360,7 @@ const CreateInventoryCheck = ({
                                                 <TableHead>
                                                     <TableRow>
                                                         <TableCell>Vị trí</TableCell>
-                                                        <TableCell>Số lượng hiện tại</TableCell>
+                                                        <TableCell>Số lượng</TableCell>
                                                         <TableCell>Số lượng thực tế</TableCell>
                                                     </TableRow>
                                                 </TableHead>
@@ -310,7 +375,9 @@ const CreateInventoryCheck = ({
                                                             </TableCell>
                                                             <TableCell sx={{ width: '40%' }}>
                                                                 <TextField
-                                                                    label="Số lượng"
+                                                                    helperText={locationQuantityError}
+                                                                    error={Boolean(locationQuantityError)}
+                                                                    label="Số lượng thực tế tại vị trí"
                                                                     type="number"
                                                                     value={locationQuantities[location.id] || ''}
                                                                     onChange={(event) =>
@@ -318,6 +385,7 @@ const CreateInventoryCheck = ({
                                                                     }
                                                                 />
                                                             </TableCell>
+
                                                         </TableRow>
                                                     ))}
                                                     <TableRow>
@@ -325,11 +393,21 @@ const CreateInventoryCheck = ({
                                                             Tổng số vị trí: {totalQuantities.totalLocations}
                                                         </TableCell>
                                                         <TableCell sx={{ fontWeight: 'bold' }}>
-                                                            Tổng số lượng hiện tại:{' '}
+                                                            Tổng số lượng thực tế:{' '}
                                                             {totalQuantities.totalActualQuantity}
+                                                            {statusQuantities[item.id]?.LOST > 0 && (
+                                                                <span> (Mất: {statusQuantities[item.id].LOST})</span>
+                                                            )}
+                                                            {statusQuantities[item.id]?.DEFECTIVE > 0 && (
+                                                                <span> (Hư: {statusQuantities[item.id].DEFECTIVE})</span>
+                                                            )}
+                                                            {statusQuantities[item.id]?.REDUNDANT > 0 && (
+                                                                <span> (Thừa: {statusQuantities[item.id].REDUNDANT})</span>
+                                                            )}
                                                         </TableCell>
+
                                                         <TableCell sx={{ fontWeight: 'bold' }}>
-                                                            Tổng số lượng thực tế: {totalQuantities.totalQuantity}
+                                                            Tổng số lượng tại vị trí: {totalQuantities.totalQuantity}
                                                         </TableCell>
                                                     </TableRow>
                                                 </TableBody>
@@ -358,5 +436,97 @@ const CreateInventoryCheck = ({
         </>
     );
 };
+
+
+const StatusQuality = ({ onChange }) => {
+    const [statusQuantities, setStatusQuantities] = useState('');
+    const [lostAmount, setLostAmount] = useState(0);
+    const [defectiveAmount, setDefectiveAmount] = useState(0);
+    const [redundantAmount, setRedundantAmount] = useState(0);
+
+    const IStatusQuantity = {
+        LOST: 'LOST',
+        DEFECTIVE: 'DEFECTIVE',
+        REDUNDANT: 'REDUNDANT',
+    };
+
+    const hasLostData = lostAmount > 0;
+    const hasRedundantData = redundantAmount > 0;
+    const handleOnChange = (value) => {
+        const numericValue = parseInt(value, 10);
+
+        switch (statusQuantities) {
+            case IStatusQuantity.LOST:
+                setLostAmount((prevLostAmount) => {
+                    onChange({
+                        LOST: numericValue,
+                        DEFECTIVE: defectiveAmount,
+                        REDUNDANT: redundantAmount,
+                    });
+                    return numericValue;
+                });
+                break;
+            case IStatusQuantity.DEFECTIVE:
+                setDefectiveAmount((prevDefectiveAmount) => {
+                    onChange({
+                        LOST: lostAmount,
+                        DEFECTIVE: numericValue,
+                        REDUNDANT: redundantAmount,
+                    });
+                    return numericValue;
+                });
+                break;
+            case IStatusQuantity.REDUNDANT:
+                setRedundantAmount((prevRedundantAmount) => {
+                    onChange({
+                        LOST: lostAmount,
+                        DEFECTIVE: defectiveAmount,
+                        REDUNDANT: numericValue,
+                    });
+                    return numericValue;
+                });
+                break;
+            default:
+                break;
+        }
+    };
+
+
+    return (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <Select
+                value={statusQuantities}
+                onChange={(e) => {
+                    setStatusQuantities(e.target.value);
+                }}
+                style={{ width: '200px' }}
+            >
+                {!hasRedundantData && (
+                    <MenuItem value={IStatusQuantity.LOST}>Sản phẩm bị mất</MenuItem>
+                )}
+                <MenuItem value={IStatusQuantity.DEFECTIVE}>Sản phẩm bị hư</MenuItem>
+                {!hasLostData && (
+                    <MenuItem value={IStatusQuantity.REDUNDANT}>Sản phẩm thừa</MenuItem>
+                )}
+            </Select>
+            <Input
+                type={'number'}
+                placeholder={'Nhập số lượng'}
+                value={
+                    statusQuantities === IStatusQuantity.LOST
+                        ? lostAmount
+                        : statusQuantities === IStatusQuantity.DEFECTIVE
+                            ? defectiveAmount
+                            : redundantAmount
+                }
+                onChange={(e) => {
+                    handleOnChange(e.target.value);
+                }}
+                style={{ width: '200px' }}
+            />
+        </div>
+    );
+};
+
 
 export default CreateInventoryCheck;

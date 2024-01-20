@@ -10,8 +10,6 @@ import {
     Tabs,
     TextField,
     Typography,
-    Card,
-    CardContent,
     IconButton,
     FormHelperText,
 } from '@mui/material';
@@ -25,11 +23,8 @@ import ClearIcon from '@mui/icons-material/Clear';
 import SaveIcon from '@mui/icons-material/Save';
 
 //components
-import BoxComponent from '~/components/box/BoxComponent';
+// import BoxComponent from '~/components/box/BoxComponent';
 
-//ckeditor
-import { CKEditor } from '@ckeditor/ckeditor5-react';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 // form popup
 import AddCategoryForm from './AddCategoryForm';
 import AddUnitForm from './AddUnitForm';
@@ -52,7 +47,7 @@ const CreateSubCategoryForm = (props) => {
 
     // mở popup form
     const [openAddCategoryDialog, setOpenAddCategoryDialog] = useState(false);
-    const [openAddOriginForm, setOpenAddOriginForm] = useState(false);
+    // const [openAddOriginForm, setOpenAddOriginForm] = useState(false);
     const [openAddUnitForm, setOpenAddUnitForm] = useState(false);
 
     // form để call api
@@ -175,10 +170,10 @@ const CreateSubCategoryForm = (props) => {
         }
     };
 
-    const handleTab2DataChange = (event) => {
-        // Cập nhật dữ liệu cho tab 2 tại đây
-        setTab2Data({ ...tab2Data, [event.target.name]: event.target.value });
-    };
+    // const handleTab2DataChange = (event) => {
+    //     // Cập nhật dữ liệu cho tab 2 tại đây
+    //     setTab2Data({ ...tab2Data, [event.target.name]: event.target.value });
+    // };
 
     const handleChangeTab = (event, newValue) => {
         setCurrentTab(newValue);
@@ -255,7 +250,7 @@ const CreateSubCategoryForm = (props) => {
             const response = await createSubCategory(productParams);
             if (response.status === '200 OK') {
                 handleMessage(response.message);
-                props.onClose(response.data); // Call the callback function
+                props.onClose(response.data, response.message); // Call the callback function
             }
         } catch (error) {
             console.error('Error creating product:', error.response);

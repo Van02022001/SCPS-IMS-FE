@@ -6,20 +6,22 @@ import { styled, alpha } from '@mui/material/styles';
 import { Box, Link, Drawer, Typography, Avatar } from '@mui/material';
 import SvgColor from '../../../components/svg-color';
 import {
-    ShoppingCart,
     Person,
     Payments,
     CategoryOutlined,
     LocalOfferOutlined,
-    ClassOutlined,
     Inventory2Outlined,
-    PriceChangeOutlined,
     DomainVerification,
     Receipt,
     Warehouse,
     ReceiptLong,
+    Category,
+    Assessment,
+    Description,
+    AddHome,
+    Class,
 } from '@mui/icons-material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Inventory2Icon from '@mui/icons-material/Inventory2';
 // mock
 import account from '../../../_mock/account';
 // hooks
@@ -61,22 +63,17 @@ function getUserRole() {
 const managerNavConfig = [
     {
         title: 'Hàng hóa',
-        icon: <ShoppingCart />,
+        icon: <Inventory2Icon />,
         children: [
             {
                 title: 'Danh mục',
                 path: '/dashboard/products/production',
-                icon: <ClassOutlined />,
+                icon: <Category />,
             },
             // {
             //     title: 'Thiết lập giá',
             //     path: '/dashboard/products/products-price',
             //     icon: <PriceChangeOutlined />,
-            // },
-            // {
-            //     title: 'Kiểm kho  ',
-            //     path: '/dashboard/products/products-check',
-            //     icon: <DomainVerification />,
             // },
         ],
     },
@@ -88,7 +85,7 @@ const managerNavConfig = [
             {
                 title: 'Quản lý sản phẩm',
                 path: '/dashboard/itemsManager',
-                icon: <Payments />,
+                icon: <Description />,
             },
             {
                 title: 'Quản lý thể loại',
@@ -98,7 +95,7 @@ const managerNavConfig = [
             {
                 title: 'Quản lý xuất xứ',
                 path: '/dashboard/origin',
-                icon: <LocalOfferOutlined />,
+                icon: <Class />,
             },
             {
                 title: 'Quản lý thương hiệu',
@@ -108,17 +105,17 @@ const managerNavConfig = [
             {
                 title: 'Quản lý nhà cung cấp',
                 path: '/dashboard/supplier',
-                icon: <LocalOfferOutlined />,
+                icon: <AddHome />,
             },
             {
-                title: 'Quản lý kho',
+                title: 'Kho',
                 path: '/dashboard/warehouse',
                 icon: <Inventory2Outlined />,
             },
             {
                 title: 'Quản lý đơn vị',
                 path: '/dashboard/unit',
-                icon: <Inventory2Outlined />,
+                icon: <Class />,
             },
         ],
     },
@@ -146,8 +143,8 @@ const managerNavConfig = [
     // },
 
     {
-        title: 'Nhập hàng',
-        icon: <ClassOutlined />,
+        title: 'Nhập kho',
+        icon: <Warehouse />,
         children: [
             {
                 title: 'Yêu cầu nhập kho',
@@ -163,7 +160,7 @@ const managerNavConfig = [
     },
     {
         title: 'Xuất kho',
-        icon: <PriceChangeOutlined />,
+        icon: <Warehouse />,
         children: [
             // {
             //     title: 'Yêu cầu xuất kho',
@@ -178,21 +175,60 @@ const managerNavConfig = [
         ],
     },
     {
+        title: 'Kiểm kho',
+        icon: <Assessment />,
+        children: [
+            {
+                title: 'Phiếu kiểm kho',
+                path: '/dashboard/inventory-check-manager',
+                icon: <ReceiptLong />,
+            },
+        ],
+    },
+    {
         title: 'Nhập tồn kho',
         path: '/dashboard/products-check',
         icon: <DomainVerification />,
     },
-
-    // {
-    //   title: 'login',
-    //   path: '/login',
-    //   icon: icon('ic_lock'),
-    // },
-    // {
-    //   title: 'Not found',
-    //   path: '/404',
-    //   icon: icon('ic_disabled'),
-    // },
+    {
+        title: 'Chuyển kho',
+        icon: <Warehouse />,
+        children: [
+            {
+                title: 'Nhập kho nội bộ',
+                icon: <ReceiptLong />,
+                children: [
+                    {
+                        title: 'Yêu cầu nhập kho nội bộ',
+                        path: '/dashboard/internal-import-request',
+                        icon: <ReceiptLong />,
+                    },
+                    {
+                        title: 'Phiếu nhập kho nội bộ',
+                        path: '/dashboard/internal-import',
+                        icon: <Receipt />,
+                    },
+                ],
+            },
+            {
+                title: 'Xuất kho nội bộ',
+                icon: <Receipt />,
+                children: [
+                    {
+                        title: 'Yêu cầu xuất kho nội bộ',
+                        path: '/dashboard/internal-exprot-request',
+                        icon: <ReceiptLong />,
+                    },
+                    {
+                        title: 'Phiếu xuất kho nội bộ',
+                        // path: '/dashboard/internal-import',
+                        icon: <Receipt />,
+                    },
+                ]
+            },
+        ],
+    },
+    
 ];
 
 // Cấu hình navbar cho vai trò INVENTORY
@@ -215,18 +251,18 @@ const inventoryNavConfig = [
             {
                 title: 'Quản lý sản phẩm',
                 path: '/inventory-staff/itemsInventory',
-                icon: <Payments />,
+                icon: <Class />,
             },
             {
                 title: 'Quản lý vị trí',
                 path: '/inventory-staff/locationsInventory',
                 icon: <PlaceIcon />,
             },
-            {
-                title: 'Chuyển kho',
-                path: '/inventory-staff/warehousesInventory',
-                icon: <WarehouseIcon />,
-            },
+            // {
+            //     title: 'Chuyển kho',
+            //     path: '/inventory-staff/warehousesInventory',
+            //     icon: <WarehouseIcon />,
+            // },
         ],
     },
     {
@@ -262,16 +298,60 @@ const inventoryNavConfig = [
         ],
     },
     {
+        title: 'Kiểm kho',
+        icon: <Assessment />,
+        children: [
+            {
+                title: 'Kiểm kho',
+                icon: <ReceiptLong />,
+                path: '/inventory-staff/inventory-check-item',
+            },
+        ],
+    },
+    {
         title: 'Nhập tồn kho',
         path: '/inventory-staff/inventory-check',
         icon: <DomainVerification />,
     },
-
     {
-        title: 'Kiểm kho',
-        icon: <ShoppingCart />,
-        path: '/inventory-staff/inventory-check-item',
-    },
+        title: 'Chuyển kho',
+        icon: <Warehouse />,
+        children: [
+            {
+                title: 'Nhập kho nội bộ',
+                icon: <ReceiptLong />,
+                children: [
+                    {
+                        title: 'Yêu cầu nhập kho nội bộ',
+                        path: '/inventory-staff/requests-internal-import',
+                        icon: <ReceiptLong />,
+                    },
+                    {
+                        title: 'Phiếu nhập kho nội bộ',
+                        path: '/inventory-staff/internal-import-receipt',
+                        icon: <Receipt />,
+                    }
+                ],
+            },
+            {
+                title: 'Xuất kho nội bộ',
+               icon: <Receipt />,
+               children: [
+                {
+                    title: 'Yêu cầu xuất kho nội bộ',
+                    path: '/inventory-staff/internal-export-request-staff',
+                    icon: <ReceiptLong />,
+                },
+                {
+                    title: 'Phiếu xuất kho nội bộ',
+                    path: '/inventory-staff/internal-export-staff',
+                    icon: <Receipt />,
+                }
+            ],
+            },
+        ],
+    }
+
     // {
     //     title: 'login',
     //     path: '/login',
@@ -285,7 +365,7 @@ const saleNavConfig = [
     {
         title: 'Sản phẩm',
         path: '/sale-staff/items-sale',
-        icon: <Payments />,
+        icon: <Person />,
     },
     {
         title: 'Quản lý khách hàng',
@@ -295,10 +375,8 @@ const saleNavConfig = [
     {
         title: 'Quản lý phiếu xuất kho',
         path: '/sale-staff/request-customer',
-        icon: <Payments />,
+        icon: <ReceiptLong />,
     },
-
-    // ...
 ];
 export default function Nav({ openNav, onCloseNav }) {
     const { pathname } = useLocation();

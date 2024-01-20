@@ -9,9 +9,7 @@ import {
     Table,
     Stack,
     Paper,
-    Avatar,
     Button,
-    Checkbox,
     TableRow,
     TableBody,
     TableCell,
@@ -133,8 +131,15 @@ const CategoryPage = () => {
         setCategoryData((prevCategoryData) => [...prevCategoryData, newCategory]);
 
         // Show success message
-        setSnackbarSuccessMessage(successMessage === 'Create category successfully' ? 'Tạo thể loại thành công!' : 'Thành công');
+        setSnackbarSuccessMessage(
+            successMessage === 'Create category successfully' ? 'Tạo thể loại thành công!' : 'Thành công',
+        );
         setSnackbarSuccessOpen(true);
+
+        setTimeout(() => {
+            setSnackbarSuccessOpen(false);
+            setSnackbarSuccessMessage('');
+        }, 3000);
     };
     //===========================================================================================
 
@@ -153,20 +158,6 @@ const CategoryPage = () => {
         setSelected([]);
     };
 
-    const handleClick = (event, name) => {
-        const selectedIndex = selected.indexOf(name);
-        let newSelected = [];
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, name);
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-        }
-        setSelected(newSelected);
-    };
 
     const handleFilterByName = (event) => {
         setPage(0);

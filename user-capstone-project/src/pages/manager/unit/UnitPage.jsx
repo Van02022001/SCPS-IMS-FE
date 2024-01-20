@@ -146,6 +146,11 @@ const UnitPage = () => {
 
         setSnackbarSuccessMessage(successMessage === 'Create unit successfully' ? 'Tạo đơn vị thành công!' : 'Thành công');
         setSnackbarSuccessOpen(true);
+
+        setTimeout(() => {
+            setSnackbarSuccessOpen(false);
+            setSnackbarSuccessMessage('');
+        }, 3000);
     };
     //=========================================================================================================
 

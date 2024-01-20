@@ -123,7 +123,7 @@ const CreateSupplierForm = (props) => {
             if (response.status === '201 CREATED') {
                 handleMessage(response.message);
 
-                props.onClose(response.data);
+                props.onClose(response.data, response.message);
                 // // Clear the form fields after a successful creation
 
                 console.log(response.data.message);

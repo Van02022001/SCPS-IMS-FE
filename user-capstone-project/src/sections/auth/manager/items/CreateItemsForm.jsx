@@ -21,7 +21,7 @@ import Snackbar from '@mui/material/Snackbar';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 //components
-import BoxComponent from '~/components/box/BoxComponent';
+// import BoxComponent from '~/components/box/BoxComponent';
 // form popup
 import AddBrandItemForm from './AddBrandItemForm';
 import AddOriginItemForm from './AddOriginItemForm';
@@ -36,17 +36,18 @@ import { getAllSuppliers } from '~/data/mutation/supplier/suppliers-mutation';
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 import SnackbarError from '~/components/alert/SnackbarError';
 //datepicker
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import dayjs from 'dayjs';
+// import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+// import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+// import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
+// import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+// import dayjs from 'dayjs';
 
 const CreateItemsForm = (props) => {
     const [open, setOpen] = React.useState(false);
+    const [open1, setOpen1] = React.useState(false);
     const [currentTab, setCurrentTab] = useState(0);
     const [tab1Data, setTab1Data] = useState({ sub_category_id: [], brand_id: [], supplier_id: [], origin_id: [] });
-    const [tab2Data, setTab2Data] = useState({});
+    // const [tab2Data, setTab2Data] = useState({});
 
     //=====================================mở popup form
     const [openAddSuplierForm, setOpenAddSuplierForm] = useState(false);
@@ -188,14 +189,16 @@ const CreateItemsForm = (props) => {
     const handleMessage = (message) => {
         setOpen(true);
         // Đặt logic hiển thị nội dung thông báo từ API ở đây
-        if (message === 'Update SubCategory status successfully.') {
-            setMessage('Cập nhập trạng thái danh mục thành công');
-        } else if (message === 'Update SubCategory successfully.') {
-            setMessage('Cập nhập danh mục thành công');
-            console.error('Error message:', errorMessage);
+        if (message === 'Create item successfully.') {
+            setMessage('Tạo mới sản phẩm thành công !');
         }
     };
-
+    const handleErrorMessage = (message) => {
+        setOpen1(true);
+        if (message === 'Invalid request') {
+            setErrorMessage('Yêu cầu không hợp lệ !');
+        }
+    };
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') {
             return;
@@ -264,9 +267,9 @@ const CreateItemsForm = (props) => {
                 props.onClose(response.data, response.message);
             }
         } catch (error) {
-            console.error('Error creating product:', error.response.status);
             if (error.response?.data?.message === 'Min stock cannot be greater than max stock') {
                 setErrorMessage('Số lượng tồn kho tối thiểu không thể lớn hơn lượng hàng tồn kho tối đa');
+                handleErrorMessage(error.response.data.message)
             }
         }
     };
@@ -589,20 +592,20 @@ const CreateItemsForm = (props) => {
                                         style={{ bottom: '16px', right: '16px' }}
                                     />
                                     <SnackbarError
-                                        open={open}
+                                        open={open1}
                                         handleClose={handleCloseSnackbar}
                                         message={errorMessage}
                                         action={action}
                                         style={{ bottom: '16px', right: '16px' }}
                                     />
-                                    <Button
+                                    {/* <Button
                                         color="error"
                                         variant="outlined"
                                         startIcon={<ClearIcon />}
                                         onClick={handleClear}
                                     >
                                         Hủy
-                                    </Button>
+                                    </Button> */}
                                 </Grid>
                             </Stack>
                         </div>
@@ -618,6 +621,7 @@ const CreateItemsForm = (props) => {
                 message={snackbarSuccessMessage}
                 style={{ bottom: '16px', right: '16px' }}
             />
+
         </>
     );
 };

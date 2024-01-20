@@ -8,7 +8,6 @@ import {
     Table,
     Stack,
     Paper,
-    Avatar,
     Button,
     Checkbox,
     TableRow,
@@ -120,9 +119,8 @@ const CustomerRequestSalePage = () => {
     const { state } = location;
     const successMessage = state?.successMessage;
     // State mở các form----------------------------------------------------------------
-    const [open, setOpen] = useState(null);
     const [openOderForm, setOpenOderForm] = useState(false);
-    const [openEditForm, setOpenEditForm] = useState(false);
+
 
     const [selected, setSelected] = useState([]);
     const [selectedGoodReceiptId, setSelectedGoodReceiptId] = useState([]);
@@ -142,24 +140,17 @@ const CustomerRequestSalePage = () => {
     const [importRequestData, setImportRequestData] = useState([]);
     const [importRequestStatus, setImportRequestStatus] = useState('');
 
-    const [filteredCategory, setFilteredCategory] = useState(null);
-
-    // const [anchorElOptions, setAnchorElOptions] = useState(null);
-
-    const [selectedFilterOptions, setSelectedFilterOptions] = useState(null);
-
-    const [personName, setPersonName] = React.useState([]);
     const navigate = useNavigate();
 
     const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
     const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
     const [selectedStatus, setSelectedStatus] = React.useState([]);
-    const handleChange = (event) => {
-        setPersonName(event.target.value);
-        const selectedValues = event.target.value.length > 0 ? event.target.value : null;
-        setFilteredCategory(selectedValues);
-        setSelectedFilterOptions(selectedValues);
-    };
+    // const handleChange = (event) => {
+    //     setPersonName(event.target.value);
+    //     const selectedValues = event.target.value.length > 0 ? event.target.value : null;
+    //     setFilteredCategory(selectedValues);
+    //     setSelectedFilterOptions(selectedValues);
+    // };
 
     // ========================== Hàm để thay đổi data mỗi khi Edit xong api=======================================
     const updateGoodReceiptInList = (updatedGoodReceipt) => {
@@ -184,11 +175,11 @@ const CustomerRequestSalePage = () => {
         }
     };
 
-    const handleCreateGoodReceiptSuccess = (newGoodReceipt) => {
-        // Close the form
-        setOpenOderForm(false);
-        setImportRequestData((prevGoodReceiptData) => [...prevGoodReceiptData, newGoodReceipt]);
-    };
+    // const handleCreateGoodReceiptSuccess = (newGoodReceipt) => {
+    //     // Close the form
+    //     setOpenOderForm(false);
+    //     setImportRequestData((prevGoodReceiptData) => [...prevGoodReceiptData, newGoodReceipt]);
+    // };
 
     const handleDataSearch = (searchResult) => {
         // Cập nhật state của trang chính với dữ liệu từ tìm kiếm
@@ -198,29 +189,6 @@ const CustomerRequestSalePage = () => {
     };
 
     //===========================================================================================
-    // const handleOpenMenu = (event, subCategory) => {
-    //     setSelectedProduct(subCategory);
-    //     setOpen(event.currentTarget);
-    // };
-
-    const handleCloseMenu = () => {
-        setOpen(null);
-    };
-
-    const handleClick = (event, name) => {
-        const selectedIndex = selected.indexOf(name);
-        let newSelected = [];
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, name);
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-        }
-        setSelected(newSelected);
-    };
 
     const handleSubCategoryClick = (subCategory) => {
         if (selectedGoodReceiptId === subCategory.id) {
@@ -253,15 +221,7 @@ const CustomerRequestSalePage = () => {
         setSelected([]);
     };
 
-    const handleCheckboxChange = (event, subCategoryId) => {
-        if (event.target.checked) {
-            // Nếu người dùng chọn checkbox, thêm sản phẩm vào danh sách đã chọn.
-            setSelectedGoodReceiptId([...selectedGoodReceiptId, subCategoryId]);
-        } else {
-            // Nếu người dùng bỏ chọn checkbox, loại bỏ sản phẩm khỏi danh sách đã chọn.
-            setSelectedGoodReceiptId(selectedGoodReceiptId.filter((id) => id !== subCategoryId));
-        }
-    };
+
     const handleRequestSort = (property) => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
@@ -293,11 +253,6 @@ const CustomerRequestSalePage = () => {
     const handleCloseOdersForm = () => {
         setOpenOderForm(false);
     };
-
-    const handleCloseEditsForm = () => {
-        setOpenEditForm(false);
-    };
-
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - PRODUCTSLIST.length) : 0;
 
     const filteredUsers = applySortFilter(PRODUCTSLIST, getComparator(order, orderBy), filterName);
@@ -452,14 +407,6 @@ const CustomerRequestSalePage = () => {
                                                 selected={selectedGoodReceiptId === importRequest.id}
                                                 onClick={() => handleSubCategoryClick(importRequest)}
                                             >
-                                                {/* <TableCell padding="checkbox">
-                                                    <Checkbox
-                                                        checked={selectedGoodReceiptId === importRequest.id}
-                                                        // onChange={(event) => handleCheckboxChange(event, importRequest.id)}
-                                                        // checked={selectedUser}
-                                                        onChange={(event) => handleClick(event, importRequest.name)}
-                                                    />
-                                                </TableCell> */}
 
                                                 <TableCell component="th" scope="row" padding="none">
                                                     <Stack direction="row" alignItems="center" spacing={2}>

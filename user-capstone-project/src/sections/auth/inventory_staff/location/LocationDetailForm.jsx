@@ -20,7 +20,7 @@ import CustomDialog from '~/components/alert/ConfirmDialog';
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 import SnackbarError from '~/components/alert/SnackbarError';
 
-const LocationDetailForm = ({ locations, locationsId, onClose, isOpen, mode }) => {
+const LocationDetailForm = ({ locations, locationsId, onClose, isOpen, mode, updateLocationInList }) => {
     const [formHeight, setFormHeight] = useState(0);
     const [selectedTab, setSelectedTab] = useState(0);
     const [tags_id, setTags_id] = useState([]);
@@ -150,6 +150,7 @@ const LocationDetailForm = ({ locations, locationsId, onClose, isOpen, mode }) =
                 const response = await editLocations(locationsId, updateData);
                 if (response.status === '200 OK') {
                     handleSuccessMessage(response.message);
+                    updateLocationInList(response.data)
                 }
                 // Handle the response as needed
                 console.log('Location updated:', response);

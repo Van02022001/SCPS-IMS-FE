@@ -54,16 +54,15 @@ import dayjs from 'dayjs';
 const TABLE_HEAD = [
     // { id: 'id', label: 'Mã hàng', alignRight: false },
     { id: 'itemName', label: 'Tên hàng', alignRight: false },
-    { id: 'openingStockQuantity', label: 'Số lượng tồn kho đầu', alignRight: false },
-    { id: 'openingStockValue', label: 'Giá trị tồn kho đầu', alignRight: false },
-    { id: 'closingStockQuantity', label: 'Số lượng tồn kho cuối', alignRight: false },
-    { id: 'closingStockValue', label: 'Giá trị tồn kho cuối', alignRight: false },
+    // { id: 'openingStockQuantity', label: 'Số lượng tồn kho đầu', alignRight: false },
+    // { id: 'openingStockValue', label: 'Giá trị tồn kho đầu', alignRight: false },
+    // { id: 'closingStockQuantity', label: 'Số lượng tồn kho cuối', alignRight: false },
+    // { id: 'closingStockValue', label: 'Giá trị tồn kho cuối', alignRight: false },
     { id: 'inboundQuantity', label: 'Số lượng đầu vào', alignRight: false },
     { id: 'inboundValue', label: 'Giá trị đầu vào', alignRight: false },
     { id: 'outboundQuantity', label: 'Số lượng xuất kho', alignRight: false },
     { id: 'outboundValue', label: 'Giá trị xuất kho', alignRight: false },
     { id: 'totalValue', label: 'Tổng giá trị', alignRight: false },
-    { id: '' },
 ];
 
 // ----------------------------------------------------------------------
@@ -130,6 +129,7 @@ const InventoryReportPage = () => {
     const [selectedInventoryReport, setSelectedInventoryReport] = React.useState([]);
     const [inventoryReportData, setInventoryReportData] = useState([]);
     const [warehouseData, setWarehouseData] = useState([]);
+    const filterWarehouses = warehouseData.map((warehouse) => warehouse.name);
     const startIndex = page * rowsPerPage;
     const endIndex = startIndex + rowsPerPage;
     // Hàm để thay đổi data mỗi khi Edit xong api-------------------------------------------------------------
@@ -143,20 +143,20 @@ const InventoryReportPage = () => {
         setSelected([]);
     };
 
-    const handleClick = (event, name) => {
-        const selectedIndex = selected.indexOf(name);
-        let newSelected = [];
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, name);
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-        }
-        setSelected(newSelected);
-    };
+    // const handleClick = (event, name) => {
+    //     const selectedIndex = selected.indexOf(name);
+    //     let newSelected = [];
+    //     if (selectedIndex === -1) {
+    //         newSelected = newSelected.concat(selected, name);
+    //     } else if (selectedIndex === 0) {
+    //         newSelected = newSelected.concat(selected.slice(1));
+    //     } else if (selectedIndex === selected.length - 1) {
+    //         newSelected = newSelected.concat(selected.slice(0, -1));
+    //     } else if (selectedIndex > 0) {
+    //         newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
+    //     }
+    //     setSelected(newSelected);
+    // };
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -196,16 +196,21 @@ const InventoryReportPage = () => {
     };
     //==============================* filter *==============================
     const applyFilters = (inventoryReport) => {
-        const isInventoryReportMatch =
+        const isWarehouseMatch =
             !selectedInventoryReport ||
             selectedInventoryReport.length === 0 ||
-            (Array.isArray(inventoryReport) &&
-                inventoryReport.some((inventories) => selectedInventoryReport.includes(inventories.itemName))) ||
-            (!Array.isArray(inventoryReport) && selectedInventoryReport.includes(inventoryReport.itemName));
-        return isInventoryReportMatch;
+            selectedInventoryReport.some((warehouse) => warehouse === inventoryReport.warehouseDTO?.name);
+
+        const isInventoryReportMatch = filterName
+            ? inventoryReport.itemName.toLowerCase().includes(filterName.toLowerCase())
+            : true;
+
+        return isWarehouseMatch && isInventoryReportMatch;
     };
 
     const filteredInventoryReport = inventoryReportData.filter(applyFilters);
+
+    console.log(selectedInventoryReport);
 
     //==============================* filter *==============================
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - PRODUCTSLIST.length) : 0;
@@ -241,32 +246,32 @@ const InventoryReportPage = () => {
             });
     }, []);
     console.log(inventoryReportData);
-    useEffect(() => {
-        if (selectedInventoryReport.length > 0) {
-            const warehouseId = selectedInventoryReport[0];
-            getAllInventoryByWarehouse(warehouseId)
-                .then((response) => {
-                    const data = response.data;
-                    if (Array.isArray(data)) {
-                        console.log('Inventory data:', data);
-                        const sortedData = data.sort((a, b) => {
-                            return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(
-                                dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
-                            );
-                        });
-                        setInventoryReportData(sortedData);
+    // useEffect(() => {
+    //     if (selectedInventoryReport.length > 0) {
+    //         const warehouseId = selectedInventoryReport[0];
+    //         getAllInventoryByWarehouse(warehouseId)
+    //             .then((response) => {
+    //                 const data = response.data;
+    //                 if (Array.isArray(data)) {
+    //                     console.log('Inventory data:', data);
+    //                     const sortedData = data.sort((a, b) => {
+    //                         return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(
+    //                             dayjs(a.createdAt, 'DD/MM/YYYY HH:mm:ss'),
+    //                         );
+    //                     });
+    //                     setInventoryReportData(sortedData);
 
-                        const selectedWarehouse = warehouseData.find((warehouse) => warehouse.id === warehouseId);
-                        setSelectedWarehouse(selectedWarehouse);
-                    } else {
-                        console.error('API response is not an array:', data);
-                    }
-                })
-                .catch((error) => {
-                    console.error('Error fetching inventory data:', error);
-                });
-        }
-    }, [selectedInventoryReport, warehouseData]);
+    //                     const selectedWarehouse = warehouseData.find((warehouse) => warehouse.id === warehouseId);
+    //                     setSelectedWarehouse(selectedWarehouse);
+    //                 } else {
+    //                     console.error('API response is not an array:', data);
+    //                 }
+    //             })
+    //             .catch((error) => {
+    //                 console.error('Error fetching inventory data:', error);
+    //             });
+    //     }
+    // }, [selectedInventoryReport, warehouseData]);
 
     return (
         <>
@@ -299,10 +304,10 @@ const InventoryReportPage = () => {
                     renderValue={(selected) => selected.join(', ')}
                     MenuProps={MenuProps}
                 >
-                    {warehouseData.map((warehouse) => (
-                        <MenuItem key={warehouse.id} value={warehouse.id}>
-                            <Checkbox checked={selectedInventoryReport.indexOf(warehouse.id) > -1} />
-                            <ListItemText primary={warehouse.name} />
+                    {filterWarehouses.map((name) => (
+                        <MenuItem key={name} value={name}>
+                            <Checkbox checked={selectedInventoryReport.indexOf(name) > -1} />
+                            <ListItemText primary={name} />
                         </MenuItem>
                     ))}
                 </Select>
@@ -333,12 +338,11 @@ const InventoryReportPage = () => {
                                     return (
                                         <React.Fragment key={inventoryReport.itemId}>
                                             <TableRow key={inventoryReport.itemId}>
-                                                <TableCell>{inventoryReport.itemId}</TableCell>
                                                 <TableCell>{inventoryReport.itemName}</TableCell>
-                                                <TableCell>{inventoryReport.openingStockQuantity}</TableCell>
+                                                {/* <TableCell>{inventoryReport.openingStockQuantity}</TableCell>
                                                 <TableCell>{inventoryReport.openingStockValue}</TableCell>
                                                 <TableCell>{inventoryReport.closingStockQuantity}</TableCell>
-                                                <TableCell>{inventoryReport.closingStockValue}</TableCell>
+                                                <TableCell>{inventoryReport.closingStockValue}</TableCell> */}
                                                 <TableCell>{inventoryReport.inboundQuantity}</TableCell>
                                                 <TableCell>{inventoryReport.inboundValue}</TableCell>
                                                 <TableCell>{inventoryReport.outboundQuantity}</TableCell>

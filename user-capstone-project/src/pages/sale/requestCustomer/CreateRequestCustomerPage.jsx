@@ -10,7 +10,6 @@ import {
     Typography,
     MenuItem,
     FormControl,
-    Input,
     Select,
     Stack,
     Box,
@@ -23,7 +22,7 @@ import {
 } from '@mui/material';
 
 import USERLIST from '~/_mock/user';
-import { Search, FilterList, Sort } from '@mui/icons-material';
+
 //compornent
 import { Helmet } from 'react-helmet-async';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -31,8 +30,8 @@ import Scrollbar from '~/components/scrollbar/Scrollbar';
 
 import { useNavigate } from 'react-router-dom';
 //api
-import { UserListHead } from '~/sections/@dashboard/user';
-import { getAllItem, getAllItemBySale } from '~/data/mutation/items/item-mutation';
+
+import { getAllItemBySale } from '~/data/mutation/items/item-mutation';
 import { getAllWarehouse, getInventoryStaffByWarehouseId } from '~/data/mutation/warehouse/warehouse-mutation';
 import { createRequestCustomer } from '~/data/mutation/customerRequest/CustomerRequest-mutation';
 import { getAllCustomer } from '~/data/mutation/customer/customer-mutation';
@@ -46,8 +45,6 @@ const CreateRequestCustomerPage = () => {
     const [orderBy, setOrderBy] = useState('name');
     const [selected, setSelected] = useState([]);
 
-    const [itemId, setItemId] = useState([]);
-    const [quantity, setQuantity] = useState(null);
     const [note, setNote] = useState(null);
     const [customerData, setCustomerData] = useState([]);
     const [itemsData, setItemsData] = useState([]);
@@ -474,26 +471,13 @@ const CreateRequestCustomerPage = () => {
                                 >
                                     <Grid container spacing={2} padding={2} alignItems="center">
                                         <Grid item xs={4}>
-                                            {/* <FormControl style={{ border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#f0f0f0', margin: '10px' }}>
-                                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                    <span style={{ padding: '0 8px' }}>
-                                                        <Search />
-                                                    </span>
-                                                    <Input
-                                                        placeholder="Tìm kiếm khách hàng..."
-                                                        value={searchText}
-                                                        onChange={handleSearchChange}
-                                                        disableUnderline
-                                                        fullWidth
-                                                    />
-                                                </div>
-                                            </FormControl> */}
                                             <FormControl size="small" variant="outlined" sx={{ width: '100%' }}>
                                                 <InputLabel id="warehouse-label">Chọn khách hàng...</InputLabel>
                                                 <Select
                                                     labelId="warehouse-label"
                                                     id="warehouse"
                                                     value={selectedCustomerId ? selectedCustomerId.customerId : ''}
+                                                    disabled={selectedItems.length > 0}
                                                     onChange={(e) =>
                                                         setSelectedCustomerId(
                                                             customerData.find(
@@ -520,6 +504,7 @@ const CreateRequestCustomerPage = () => {
                                                     labelId="warehouse-label"
                                                     id="warehouse"
                                                     value={selectedWarehouse ? selectedWarehouse.id : ''}
+                                                    disabled={selectedItems.length > 0}
                                                     onChange={(e) =>
                                                         setSelectedWarehouse(
                                                             warehouseList.find(
@@ -544,6 +529,7 @@ const CreateRequestCustomerPage = () => {
                                                         labelId="inventory-staff-label"
                                                         id="inventory-staff"
                                                         value={selectedInventoryStaff}
+                                                        disabled={selectedItems.length > 0}
                                                         onChange={(e) => setSelectedInventoryStaff(e.target.value)}
                                                     >
                                                         {inventoryStaffList.map((staff) => (

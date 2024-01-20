@@ -2,25 +2,13 @@ import React, { useEffect, useState } from 'react';
 import {
     Typography,
     Button,
-    Tab,
-    Tabs,
     Stack,
     Grid,
     TextField,
-    FormControl,
-    Select,
-    MenuItem,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogContentText,
-    DialogActions,
     IconButton,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
-import SuccessAlerts from '~/components/alert/SuccessAlert';
-import ErrorAlerts from '~/components/alert/ErrorAlert';
 import { editWarehouse } from '~/data/mutation/warehouse/warehouse-mutation';
 import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
 import CustomDialog from '~/components/alert/ConfirmDialog';
@@ -40,11 +28,11 @@ const WarehouseDetailForm = ({
     const [selectedTab, setSelectedTab] = useState(0);
     const [editedWarehouse, setEditedWarehouse] = useState(null);
     const [currentStatus, setCurrentStatus] = useState('');
+    console.log(currentStatus, formHeight, setSelectedTab);
     //========================== Hàm notification của trang ==================================
     const [open, setOpen] = React.useState(false);
     const [open1, setOpen1] = React.useState(false);
     const [confirmOpen1, setConfirmOpen1] = useState(false);
-    const [confirmOpen2, setConfirmOpen2] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
@@ -159,42 +147,8 @@ const WarehouseDetailForm = ({
             console.log(error.response.data.error);
         }
     };
-    // const updateWarehouseStatus = async () => {
-    //     try {
-    //         let newStatus = currentStatus === 'Active' ? 'Inactive' : 'Active';
 
-    //         const response = await editStatusWarehouse(warehouseId, newStatus);
 
-    //         if (response.status === '200 OK') {
-    //             setIsSuccess(true);
-    //             setIsError(false);
-    //             setSuccessMessage(response.message);
-    //         }
-
-    //         // Sử dụng hàm để cập nhật trạng thái trong danh sách categories trong CategoryPage
-    //         updateWarehouseStatusInList(warehouseId, newStatus);
-    //         setCurrentStatus(newStatus);
-
-    //         console.log('Product status updated:', response);
-    //     } catch (error) {
-    //         console.error('Error updating category status:', error);
-    //         setIsError(true);
-    //         setIsSuccess(false);
-    //         setErrorMessage(error.response.data.message);
-    //         if (error.response) {
-    //             console.log('Error response:', error.response);
-    //         }
-    //     }
-    // };
-
-    const deleteWarehouse = async () => {
-        try {
-            await deleteWarehouse(warehouseId);
-            onClose();
-        } catch (error) {
-            console.error('Error deleting brand:', error);
-        }
-    };
 
     const handleEdit = (field, value) => {
         setEditedWarehouse((prevBrand) => ({
@@ -202,13 +156,7 @@ const WarehouseDetailForm = ({
             [field]: value,
         }));
     };
-    const handleSave = () => {
-        // Xử lý lưu
-    };
 
-    const handleDelete = () => {
-        // Xử lý xóa
-    };
 
     return (
         <div

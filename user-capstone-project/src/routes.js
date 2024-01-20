@@ -9,13 +9,9 @@ import LoginPage from './pages/login/LoginPage';
 import Page404 from './pages/Page404';
 import DashboardAppPage from './pages/dashboard/DashboardAppPage';
 import CreateProduct from './sections/@dashboard/products/crudProducts/CreateProduct';
-import ProductDetail from './pages/manager/productDetail/ProductDetail';
 import ItemsManagerPage from './pages/manager/items/ItemsManager';
 import CategoryPage from './pages/manager/category/CategoryPage';
 import UpdateProduct from './sections/@dashboard/products/crudProducts/UpdateProduct';
-import ReportPage from './pages/manager/report/ReportPage';
-import ReportProductPage from './pages/manager/report/ReportProductPage';
-import ReportSalePage from './pages/manager/report/ReportSalePage';
 import ProductsPricePage from './pages/manager/subCategory/ProductPrice';
 import ForgotPassword from './pages/login/ForgotPassword';
 import WarehousePage from './pages/manager/warehouse/WarehousePage';
@@ -48,6 +44,21 @@ import InventoryCheckPage from './pages/inventory_staff/inventoryCheck/Inventory
 import CreateInventoryCheck from './pages/inventory_staff/inventoryCheck/CreateInventoryCheck';
 import DashboardInventoryPage from './pages/dashboard/DashboardInventoryPage';
 import SubCategoryPage from './pages/manager/subCategory/SubCategoryPage';
+import InventoryCheckManagerPage from './pages/manager/inventoryCheck/InventoryCheckManagerPage';
+import NotificationToImportRequest from './pages/manager/notificationToReceipt/NotificationToImportRequest';
+import NotificationToExportRequest from './pages/manager/notificationToReceipt/NotificationToExportRequest';
+import NotificationToImportRequestInventory from './pages/inventory_staff/notificationToReceipt/NotificationToImportRequestInventory';
+import NotificationToExportRequestInventory from './pages/inventory_staff/notificationToReceipt/NotificationToExportRequestInventory';
+import InternalImportRequestPage from './pages/manager/transaction/internalImportRequest/InternalImportRequestPage';
+import CreateInternalImportRequest from './pages/manager/transaction/internalImportRequest/CreateInternalImportRequest';
+import InternalImportPage from './pages/manager/transaction/internalImport/InternalImportPage';
+import ViewInternalImport from './pages/inventory_staff/transaction/internalImportRequest/ViewInternalImport';
+import InternalImportReceiptPage from './pages/inventory_staff/transaction/internalImport/InternalImportReceiptPage';
+import InternalExportRequestpage from './pages/manager/transaction/internalExportRequest/InternalExportRequestpage';
+import CreateInternalExportRequest from './pages/manager/transaction/internalExportRequest/CreateInternalExportRequest';
+import InternalExportRequestInventory from './pages/inventory_staff/transaction/internalExportRequest/InternalExportRequestInventory';
+import InternalExportPage from './pages/manager/transaction/internalExport/InternalExportPage';
+import InternalExportReceiptPage from './pages/inventory_staff/transaction/internalExport/InternalExportReceiptPage';
 
 // ----------------------------------------------------------------------
 
@@ -68,7 +79,6 @@ const Router = () => {
                         { path: 'products-price', element: <ProductsPricePage /> },
                     ],
                 },
-                { path: 'productsDetail', element: <ProductDetail /> },
                 { path: 'itemsManager', element: <ItemsManagerPage /> },
                 { path: 'category', element: <CategoryPage /> },
                 { path: 'origin', element: <OriginPage /> },
@@ -85,21 +95,27 @@ const Router = () => {
                 { path: 'request-export-receipt', element: <ExportRequestReceiptManagerPage /> },
                 { path: 'create-export-receipt', element: <CreateExportReceipt/> },
                 { path: 'export-receipt', element: <ExportReceiptManagerPage/> },
+                //Chuyển kho
+                { path: 'internal-import-request', element: <InternalImportRequestPage /> }, 
+                { path: 'create-internal-import-request', element: <CreateInternalImportRequest/> },
+                { path: 'internal-import', element: <InternalImportPage/> },
+
+                { path: 'create-internal-export-request', element: <CreateInternalExportRequest/> },
+                { path: 'internal-exprot-request', element: <InternalExportRequestpage /> }, 
+                { path: 'internal-export', element: <InternalImportPage/> },
+//Kiểm khoc
                 { path: 'products-check', element: <InventoryReportPage/> },
-                {
-                    path: 'report',
-                    children: [
-                        { element: <Navigate to="/dashboard/report" />, index: true },
-                        { path: 'report-end-day', element: <ReportPage /> },
-                        { path: 'report-sale', element: <ReportSalePage /> },
-                        { path: 'report-inventory', element: <ReportProductPage /> },
-                    ],
-                },
+                { path: 'inventory-check-manager', element: <InventoryCheckManagerPage/> },
+                { path: 'notfication-to-request-receipt', element: <NotificationToImportRequest/> },
             ],
         },
         {
             path: 'login',
             element: <LoginPage />,
+        },
+        {
+            path: 'forgetPassword',
+            element: <ForgotPassword />,
         },
         {
             path: '/sale-staff/',
@@ -119,7 +135,7 @@ const Router = () => {
                 { path: 'product', element: <SubCategoryInventoryPage /> },
                 { path: 'itemsInventory', element: <ItemsInventoryPage /> },
                 { path: 'locationsInventory', element: <LocationInventoryPage /> },
-                {path: 'warehousesInventory', element: <WarehouseInventoryPage />},
+                // {path: 'warehousesInventory', element: <WarehouseInventoryPage />},
                 { path: 'warehouse-transfer', element: <CreateTransferForm/> },
                 
                 // { path: 'order-sale', element: <OrderSalePage /> },
@@ -130,9 +146,20 @@ const Router = () => {
 
                 { path: 'requests-export-receipt', element: <CustomerRequestPage/> },
                 { path: 'export-receipt', element: <ExportReceiptPage /> },
-              
+
+                
                 { path: 'inventory-check-item', element: <InventoryCheckPage/> },
                 { path: 'create-inventory-check', element: <CreateInventoryCheck/> },
+                { path: 'notfication-to-import-request-receipt', element: <NotificationToImportRequestInventory/> },
+                { path: 'notfication-to-export-request-receipt', element: <NotificationToExportRequestInventory/> },
+
+                //Chuyển kho nội bộ
+                { path: 'requests-internal-import', element: <ViewInternalImport/> },
+                { path: 'internal-import-receipt', element: <InternalImportReceiptPage/> },
+              
+
+                { path: 'internal-export-request-staff', element: <InternalExportRequestInventory /> }, 
+                { path: 'internal-export-staff', element: <InternalExportReceiptPage /> }, 
             ],
         },
         {

@@ -2,17 +2,14 @@ import React, { useEffect, useState } from 'react';
 import {
     Typography,
     Button,
-    Tab,
-    Tabs,
     Stack,
     Grid,
     TextField,
     IconButton,
 } from '@mui/material';
-import { deleteOrigins, editOrigins } from '~/data/mutation/origins/origins-mutation';
+
 import capitalizeFirstLetter from '~/components/validation/capitalizeFirstLetter';
-import SuccessAlerts from '~/components/alert/SuccessAlert';
-import ErrorAlerts from '~/components/alert/ErrorAlert';
+
 import CustomDialog from '~/components/alert/ConfirmDialog';
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 import SnackbarError from '~/components/alert/SnackbarError';
@@ -21,7 +18,6 @@ import { editUnits } from '~/data/mutation/unit/unit-mutation';
 
 
 const UnitDetailForm = ({ units, unitsId, onClose, isOpen, mode }) => {
-    const [expandedItem, setExpandedItem] = useState(unitsId);
     const [formHeight, setFormHeight] = useState(0);
     const [selectedTab, setSelectedTab] = useState(0);
 
@@ -31,7 +27,6 @@ const UnitDetailForm = ({ units, unitsId, onClose, isOpen, mode }) => {
     const [open, setOpen] = React.useState(false);
     const [open1, setOpen1] = React.useState(false);
     const [confirmOpen1, setConfirmOpen1] = useState(false);
-    const [confirmOpen2, setConfirmOpen2] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
@@ -146,13 +141,7 @@ const UnitDetailForm = ({ units, unitsId, onClose, isOpen, mode }) => {
             [field]: value,
         }));
     };
-    const handleSave = () => {
-        // Xử lý lưu
-    };
 
-    const handleDelete = () => {
-        // Xử lý xóa
-    };
 
     return (
         <div

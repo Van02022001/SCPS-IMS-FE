@@ -7,9 +7,6 @@ import {
     Table,
     Stack,
     Paper,
-    Avatar,
-    Button,
-    Checkbox,
     TableRow,
     TableBody,
     TableCell,
@@ -29,7 +26,7 @@ import PRODUCTSLIST from '../../../../_mock/products';
 import ImportReceiptDetailManagerForm from '~/sections/auth/manager/transaction/importReceipt/ImportReceiptDetailManagerForm';
 // import EditCategoryForm from '~/sections/auth/manager/categories/EditCategoryForm';
 // import GoodsReceiptPage from '../GoodsReceiptPage';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { getAllImportReceipt } from '~/data/mutation/importReceipt/ImportReceipt-mutation';
 import dayjs from 'dayjs';
 
@@ -43,7 +40,6 @@ const TABLE_HEAD = [
     { id: 'createdAt', label: 'Ngày tạo', alignRight: false },
     // { id: 'type', label: 'Loại yêu cầu', alignRight: false },
     { id: 'status', label: 'Trạng thái', alignRight: false },
-    { id: '' },
 ];
 
 // ----------------------------------------------------------------------
@@ -88,8 +84,6 @@ function applySortFilter(array, comparator, query) {
 
 const ImportReceiptManagerPage = () => {
     // State mở các form----------------------------------------------------------------
-    const [open, setOpen] = useState(null);
-    const [openOderForm, setOpenOderForm] = useState(false);
 
     const [selected, setSelected] = useState([]);
     const [selectedImportReceiptId, setSelectedImportReceiptId] = useState([]);
@@ -104,14 +98,11 @@ const ImportReceiptManagerPage = () => {
 
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
-    const navigate = useNavigate();
     const location = useLocation();
 
     // State data và xử lý data
     const [importReceiptData, setImportReceiptData] = useState([]);
-    const [productStatus, setProductStatus] = useState('');
 
-    const [selectedProduct, setSelectedProduct] = useState(null);
     const startIndex = page * rowsPerPage;
     const endIndex = startIndex + rowsPerPage;
     // Hàm để thay đổi data mỗi khi Edit xong api-------------------------------------------------------------
@@ -137,11 +128,6 @@ const ImportReceiptManagerPage = () => {
         }
     };
 
-    const handleCreateImportReceiptSuccess = (newImportReceipt) => {
-        // Close the form
-        setOpenOderForm(false);
-        setImportReceiptData((prevImportReceiptData) => [...prevImportReceiptData, newImportReceipt]);
-    };
 
     //----------------------------------------------------------------
     // const handleOpenMenu = (event, product) => {
@@ -162,20 +148,6 @@ const ImportReceiptManagerPage = () => {
         setSelected([]);
     };
 
-    const handleClick = (event, name) => {
-        const selectedIndex = selected.indexOf(name);
-        let newSelected = [];
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, name);
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-        }
-        setSelected(newSelected);
-    };
 
     const handleProductClick = (importReceipt) => {
         if (selectedImportReceiptId === importReceipt.id) {
@@ -198,15 +170,7 @@ const ImportReceiptManagerPage = () => {
         setRowsPerPage(parseInt(event.target.value, 10));
     };
     // Các hàm xử lý soft theo name--------------------------------------------------------------------------------------------------------------------------------
-    const handleCheckboxChange = (event, productId) => {
-        if (event.target.checked) {
-            // Nếu người dùng chọn checkbox, thêm sản phẩm vào danh sách đã chọn.
-            setSelectedImportReceiptId([...selectedImportReceiptId, productId]);
-        } else {
-            // Nếu người dùng bỏ chọn checkbox, loại bỏ sản phẩm khỏi danh sách đã chọn.
-            setSelectedImportReceiptId(selectedImportReceiptId.filter((id) => id !== productId));
-        }
-    };
+
     const handleRequestSort = (property) => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
@@ -331,15 +295,6 @@ const ImportReceiptManagerPage = () => {
                                                 selected={selectedImportReceiptId === importReceipt.id}
                                                 onClick={() => handleProductClick(importReceipt)}
                                             >
-                                                {/* <TableCell padding="checkbox">
-                                                    <Checkbox
-                                                        checked={selectedImportReceiptId === importReceipt.id}
-                                                        // onChange={(event) => handleCheckboxChange(event, importReceipt.id)}
-                                                        // checked={selectedUser}
-                                                        onChange={(event) => handleClick(event, importReceipt.code)}
-                                                    />
-                                                </TableCell> */}
-
                                                 <TableCell component="th" scope="row" padding="none">
                                                     <Stack direction="row" alignItems="center" spacing={2}>
                                                         {/* <Avatar alt={name} src={avatarUrl} /> */}
@@ -378,14 +333,14 @@ const ImportReceiptManagerPage = () => {
                                                         {importReceipt.status === 'Pending_Approval'
                                                             ? 'Chờ phê duyệt'
                                                             : importReceipt.status === 'Approved'
-                                                            ? 'Đã xác nhận'
-                                                            : importReceipt.status === 'IN_PROGRESS'
-                                                            ? 'Đang tiến hành'
-                                                            : importReceipt.status === 'NOT_COMPLETED'
-                                                            ? 'Chưa hoàn thành'
-                                                            : importReceipt.status === 'Completed'
-                                                            ? 'Hoàn thành'
-                                                            : 'Ngừng hoạt động'}
+                                                                ? 'Đã xác nhận'
+                                                                : importReceipt.status === 'IN_PROGRESS'
+                                                                    ? 'Đang tiến hành'
+                                                                    : importReceipt.status === 'NOT_COMPLETED'
+                                                                        ? 'Chưa hoàn thành'
+                                                                        : importReceipt.status === 'Completed'
+                                                                            ? 'Hoàn thành'
+                                                                            : 'Ngừng hoạt động'}
                                                     </Label>
                                                 </TableCell>
                                             </TableRow>

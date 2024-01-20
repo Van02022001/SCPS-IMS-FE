@@ -1,6 +1,5 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
-import { sentenceCase } from 'change-case';
 import React, { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 
@@ -10,10 +9,7 @@ import {
     Table,
     Stack,
     Paper,
-    Avatar,
     Button,
-    Popover,
-    Checkbox,
     TableRow,
     TableBody,
     TableCell,
@@ -34,7 +30,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import { BrandListHead, BrandToolbar } from '~/sections/@dashboard/manager/brand';
 // mock
 import USERLIST from '../../../_mock/user';
-import { getAllOrigins } from '~/data/mutation/origins/origins-mutation';
 import { getAllBrands } from '~/data/mutation/brand/brands-mutation';
 import BrandForm from '~/sections/auth/manager/brand/CreateBrandForm';
 import BrandDetailForm from '~/sections/auth/manager/brand/BrandDetailForm';
@@ -81,8 +76,6 @@ function applySortFilter(array, comparator, query) {
 
 const BrandPage = () => {
     const [selectedBrandId, setSelectedBrandId] = useState(null);
-
-    const [open, setOpen] = useState(null);
 
     const [openOderForm, setOpenOderForm] = useState(false);
 
@@ -132,8 +125,13 @@ const BrandPage = () => {
         setOpenOderForm(false);
         setBrandData((prevBrandData) => [...prevBrandData, newBrand]);
 
-        setSnackbarSuccessMessage(successMessage === 'Create category successfully' ? 'Tạo thể loại thành công!' : 'Thành công');
+        setSnackbarSuccessMessage(successMessage === 'Create brand successfully' ? 'Tạo thương hiệu thành công!' : 'Thành công');
         setSnackbarSuccessOpen(true);
+
+        setTimeout(() => {
+            setSnackbarSuccessOpen(false);
+            setSnackbarSuccessMessage('');
+        }, 3000);
     };
     //===========================================================================================
 
@@ -150,21 +148,6 @@ const BrandPage = () => {
             return;
         }
         setSelected([]);
-    };
-
-    const handleClick = (event, name) => {
-        const selectedIndex = selected.indexOf(name);
-        let newSelected = [];
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, name);
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-        }
-        setSelected(newSelected);
     };
 
     const handleBrandClick = (brand) => {

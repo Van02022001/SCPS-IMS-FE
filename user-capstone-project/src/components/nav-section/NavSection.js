@@ -18,7 +18,7 @@ export default function NavSection({ data = [], isReportMenuOpen, ...other }) {
     <Box {...other}>
       <List disablePadding sx={{ p: 1 }}>
         {data.map((item) => (
-          <NavItem key={item.title} item={item} isReportMenuOpen={isReportMenuOpen} />
+          <NavItem key={item.title} item={item} isReportMenuOpen={isReportMenuOpen} depth={0}/>
         ))}
       </List>
     </Box>
@@ -29,9 +29,10 @@ export default function NavSection({ data = [], isReportMenuOpen, ...other }) {
 
 NavItem.propTypes = {
   item: PropTypes.object,
+  depth: PropTypes.number,
 };
 
-function NavItem({ item, isReportMenuOpen }) {
+function NavItem({ item, isReportMenuOpen, depth = 0 }) {
   // ...
   const { title, path, icon, info, children } = item;
   const [open, setOpen] = useState(false);
@@ -42,6 +43,7 @@ function NavItem({ item, isReportMenuOpen }) {
   };
 
   const isActive = path === pathname;
+  const fontSize = depth === 0 ? '16px' : '15px';
 
   return (
     <StyledNavItem
@@ -53,14 +55,17 @@ function NavItem({ item, isReportMenuOpen }) {
           bgcolor: 'action.selected',
           fontWeight: 'fontWeightBold',
         },
-        ...(item.title === 'Báo cáo' && !isReportMenuOpen && {
-          marginBottom: open ? '170px' : 0,
-        }),
         ...(item.title === 'Hàng hóa' && !isReportMenuOpen && {
           marginBottom: open ? '50px' : 0,
         }),
         ...(item.title === 'Quản lý mục' && !isReportMenuOpen && {
           marginBottom: open ? '350px' : 0,
+        }),
+        ...(item.title === 'Nhập kho' && !isReportMenuOpen && {
+          marginBottom: open ? '100px' : 0,
+        }),
+        ...(item.title === 'Xuất kho' && !isReportMenuOpen && {
+          marginBottom: open ? '55px' : 0,
         }),
         ...(item.title === 'Nhập hàng' && !isReportMenuOpen && {
           marginBottom: open ? '100px' : 0,
@@ -68,12 +73,25 @@ function NavItem({ item, isReportMenuOpen }) {
         ...(item.title === 'Xuất hàng' && !isReportMenuOpen && {
           marginBottom: open ? '100px' : 0,
         }),
-        ...(item.title === 'Xuất kho' && !isReportMenuOpen && {
-          marginBottom: open ? '50px' : 0,
+        ...(item.title === 'Chuyển kho' && !isReportMenuOpen && {
+          marginBottom: open ? '200px' : 0,
+        }),
+        ...(item.title === 'Nhập kho nội bộ' && !isReportMenuOpen && {
+          marginBottom: open ? '97px' : 0,
+        }),
+        ...(item.title === 'Xuất kho nội bộ' && !isReportMenuOpen && {
+          marginBottom: open ? '97px' : 0,
         }),
         ...(item.title === 'Quản lý kho' && !isReportMenuOpen && {
-          marginBottom: open ? '150px' : 0,
+          marginBottom: open ? '100px' : 0,
         }),
+        ...(item.title === 'Kiểm kho' && !isReportMenuOpen && {
+          marginBottom: open ? '50px' : 0,
+        }),
+        '&:hover': {
+          backgroundColor: '#7ABBEF', // Change to the desired color
+          color: 'black', // Change to the desired color
+        },
       }}
     >
       <StyledNavItemIcon>{icon && icon}</StyledNavItemIcon>
@@ -81,6 +99,7 @@ function NavItem({ item, isReportMenuOpen }) {
       <ListItemText disableTypography primary={title} 
         sx={{
           fontWeight: isActive ? 'bold' : 'normal',
+          fontSize: fontSize,
         }} 
       />
 
@@ -93,7 +112,7 @@ function NavItem({ item, isReportMenuOpen }) {
         </IconButton>
       ) : null}
 
-      {children && (
+{children && (
         <Collapse
           in={open}
           timeout="auto"
@@ -104,12 +123,14 @@ function NavItem({ item, isReportMenuOpen }) {
             left: 0,
             backgroundColor: 'white',
             zIndex: 1,
-            width: 260
+            width: '100%', // Use '100%' to expand to the full width
           }}
         >
           <List disablePadding>
             {children.map((child) => (
-              <NavItem key={child.title} item={child} />
+              <div style={{ paddingLeft: 10 }}>
+                <NavItem key={child.title} item={child} depth={depth + 1} />
+              </div>
             ))}
           </List>
         </Collapse>

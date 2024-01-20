@@ -55,16 +55,15 @@ import dayjs from 'dayjs';
 const TABLE_HEAD = [
     // { id: 'id', label: 'Mã hàng', alignRight: false },
     { id: 'itemName', label: 'Tên hàng', alignRight: false },
-    { id: 'openingStockQuantity', label: 'Số lượng tồn kho đầu', alignRight: false },
-    { id: 'openingStockValue', label: 'Giá trị tồn kho đầu', alignRight: false },
-    { id: 'closingStockQuantity', label: 'Số lượng tồn kho cuối', alignRight: false },
-    { id: 'closingStockValue', label: 'Giá trị tồn kho cuối', alignRight: false },
+    // { id: 'openingStockQuantity', label: 'Số lượng tồn kho đầu', alignRight: false },
+    // { id: 'openingStockValue', label: 'Giá trị tồn kho đầu', alignRight: false },
+    // { id: 'closingStockQuantity', label: 'Số lượng tồn kho cuối', alignRight: false },
+    // { id: 'closingStockValue', label: 'Giá trị tồn kho cuối', alignRight: false },
     { id: 'inboundQuantity', label: 'Số lượng đầu vào', alignRight: false },
     { id: 'inboundValue', label: 'Giá trị đầu vào', alignRight: false },
-    // { id: 'outboundQuantity', label: 'Số lượng gửi đi', alignRight: false },
-    // { id: 'outboundValue', label: 'Giá trị gửi đi', alignRight: false },
+    { id: 'outboundQuantity', label: 'Số lượng gửi đi', alignRight: false },
+    { id: 'outboundValue', label: 'Giá trị gửi đi', alignRight: false },
     { id: 'totalValue', label: 'Tổng giá trị', alignRight: false },
-    { id: '' },
 ];
 
 // ----------------------------------------------------------------------
@@ -336,14 +335,16 @@ const InventoryStaffReportPage = () => {
                                     return (
                                         <React.Fragment key={inventoryReport.itemId}>
                                             <TableRow key={inventoryReport.itemId}>
-                                                <TableCell>{inventoryReport.itemId}</TableCell>
+
                                                 <TableCell>{inventoryReport.itemName}</TableCell>
-                                                <TableCell>{inventoryReport.openingStockQuantity}</TableCell>
+                                                {/* <TableCell>{inventoryReport.openingStockQuantity}</TableCell>
                                                 <TableCell>{inventoryReport.openingStockValue}</TableCell>
                                                 <TableCell>{inventoryReport.closingStockQuantity}</TableCell>
-                                                <TableCell>{inventoryReport.closingStockValue}</TableCell>
+                                                <TableCell>{inventoryReport.closingStockValue}</TableCell> */}
                                                 <TableCell>{inventoryReport.inboundQuantity}</TableCell>
                                                 <TableCell>{inventoryReport.inboundValue}</TableCell>
+                                                <TableCell>{inventoryReport.outboundQuantity}</TableCell>
+                                                <TableCell>{inventoryReport.outboundValue}</TableCell>
                                                 <TableCell>{inventoryReport.totalValue}</TableCell>
                                             </TableRow>
                                         </React.Fragment>

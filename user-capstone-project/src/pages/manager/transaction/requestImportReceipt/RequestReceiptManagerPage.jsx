@@ -496,14 +496,14 @@ const RequestReceiptManagerPage = () => {
                                                             (importRequest.status === 'Pending_Approval' &&
                                                                 'warning') ||
                                                             (importRequest.status === 'Approved' && 'success') ||
-                                                            (importRequest.status === ' IN_PROGRESS' && 'warning') ||
+                                                            (importRequest.status === ' IN_PROGRESS' && 'primary') ||
                                                             (importRequest.status === 'Complete' && 'primary') ||
                                                             (importRequest.status === 'Inactive' && 'error') ||
                                                             'default'
                                                         }
                                                     >
                                                         {importRequest.status === 'Pending_Approval'
-                                                            ? 'Chờ phê duyệt'
+                                                            ? 'Chờ xác nhận'
                                                             : importRequest.status === 'Approved'
                                                                 ? 'Đã xác nhận'
                                                                 : importRequest.status === 'IN_PROGRESS'

@@ -9,3 +9,8 @@ export const getAllNotificationDetail = async (notificationId) => {
     const response = await axiosInstance.get(`/notifications/users/${notificationId}`);
     return response.data;
 }
+
+export const deleteNotificationDetail = async (notificationId) => {
+    const response = await axiosInstance.delete(`/notifications/${notificationId}`);
+    return response.data;
+}

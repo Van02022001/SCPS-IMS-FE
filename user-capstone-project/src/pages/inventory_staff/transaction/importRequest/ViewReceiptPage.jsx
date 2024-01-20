@@ -7,8 +7,6 @@ import {
     Table,
     Stack,
     Paper,
-    Avatar,
-    Checkbox,
     TableRow,
     TableBody,
     TableCell,
@@ -297,7 +295,7 @@ const ViewReceiptPage = () => {
 
     const translateStatusToVietnamese = (status) => {
         const vietnameseStatusMap = {
-            "Pending_Approval": 'Chờ phê duyệt',
+            "Pending_Approval": 'Chờ xác nhận',
             "Approved": 'Đã xác nhận',
             "IN_PROGRESS": 'Đang tiến hành',
             "Completed": 'Hoàn thành',
@@ -415,14 +413,14 @@ const ViewReceiptPage = () => {
                                                             (importReceipt.status === 'Pending_Approval' &&
                                                                 'warning') ||
                                                             (importReceipt.status === 'Approved' && 'success') ||
-                                                            (importReceipt.status === 'IN_PROGRESS' && 'warning') ||
+                                                            (importReceipt.status === 'IN_PROGRESS' && 'primary') ||
                                                             (importReceipt.status === 'Complete' && 'primary') ||
                                                             (importReceipt.status === 'Inactive' && 'error') ||
                                                             'default'
                                                         }
                                                     >
                                                         {importReceipt.status === 'Pending_Approval'
-                                                            ? 'Chờ phê duyệt'
+                                                            ? 'Chờ xác nhận'
                                                             : importReceipt.status === 'Approved'
                                                                 ? 'Đã xác nhận'
                                                                 : importReceipt.status === 'IN_PROGRESS'

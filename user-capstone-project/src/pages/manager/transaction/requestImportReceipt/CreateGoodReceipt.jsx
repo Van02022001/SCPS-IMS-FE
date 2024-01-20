@@ -27,7 +27,6 @@ import { useNavigate } from 'react-router-dom';
 import { createImportRequestReceipt } from '~/data/mutation/importRequestReceipt/ImportRequestReceipt-mutation';
 // mock
 import USERLIST from '~/_mock/user';
-import Scrollbar from '~/components/scrollbar/Scrollbar';
 // icons
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditIcon from '@mui/icons-material/Edit';
@@ -41,7 +40,6 @@ import { getAllWarehouse, getInventoryStaffByWarehouseId } from '~/data/mutation
 import SnackbarError from '~/components/alert/SnackbarError';
 import {
     CreateRequestReceiptHead,
-    CreateRequestReceiptToolbar,
 } from '~/sections/@dashboard/manager/transaction/createRequestReceipt';
 import { Dropdown } from '~/components/dropdown';
 
@@ -54,8 +52,6 @@ const CreateGoodReceipt = () => {
     // state form create==============================================
     const [descriptionReceipt, setDescriptionReceipt] = useState('');
     const [itemId, setItemId] = useState([]);
-    const [quantity, setQuantity] = useState(null);
-    const [unitPrice, setUnitPrice] = useState(null);
     const [unitId, setUnitId] = useState([]);
     const [descriptionItems, setDescriptionItems] = useState('');
 
@@ -63,7 +59,7 @@ const CreateGoodReceipt = () => {
 
     const [itemsData, setItemsData] = useState([]);
     const [selectedItems, setSelectedItems] = useState([]);
-    const [selectedUnitId, setSelectedUnitId] = useState('');
+
     // warehouse
     const [selectedWarehouse, setSelectedWarehouse] = useState(null);
     // const [selectedWarehouseId, setSelectedWarehouseId] = useState(null);
@@ -80,12 +76,10 @@ const CreateGoodReceipt = () => {
     //========================== Hàm notification của trang ==================================
     const [open, setOpen] = React.useState(false);
     const [open1, setOpen1] = React.useState(false);
-    const [confirmOpen1, setConfirmOpen1] = useState(false);
-    const [confirmOpen2, setConfirmOpen2] = useState(false);
+
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
-    const [dropdownData, setDropdownData] = useState([]);
     const handleSuccessMessage = (message) => {
         setOpen(true);
         if (message === 'Import request receipt created successfully') {
@@ -130,20 +124,20 @@ const CreateGoodReceipt = () => {
             </IconButton>
         </React.Fragment>
     );
-    const handleConfirmClose1 = () => {
-        setConfirmOpen1(false);
-    };
+    // const handleConfirmClose1 = () => {
+    //     setConfirmOpen1(false);
+    // };
 
-    const handleConfirmUpdate1 = () => {
-        setConfirmOpen1(false);
-        handleCreateImportReceipt();
-    };
+    // const handleConfirmUpdate1 = () => {
+    //     setConfirmOpen1(false);
+    //     handleCreateImportReceipt();
+    // };
 
-    const handleConfirm1 = () => {
-        setConfirmOpen1(true);
-    };
+    // const handleConfirm1 = () => {
+    //     setConfirmOpen1(true);
+    // };
 
-    //========================== Hàm notification của trang ==================================
+    // //========================== Hàm notification của trang ==================================
 
     const navigate = useNavigate();
 
@@ -152,6 +146,7 @@ const CreateGoodReceipt = () => {
         { id: 'code', label: 'Mã sản phẩm', alignRight: false },
         { id: 'name', label: 'Tên sản phẩm', alignRight: false },
         { id: 'quality', label: 'Số lượng', alignRight: false },
+
         { id: '' },
     ];
     useEffect(() => {
@@ -225,17 +220,6 @@ const CreateGoodReceipt = () => {
         }
     };
 
-    // const handleSearch = (selectedWarehouseId, selectedInventoryStaffId) => {
-    //     setWarehouseId(selectedWarehouseId);
-    //     setInventoryStaffId(selectedInventoryStaffId);
-    //     console.log('Warehouse ID:', selectedWarehouseId);
-    //     console.log('Inventory Staff ID:', selectedInventoryStaffId);
-    // };
-
-    // const handleUnitChange = (newUnitId) => {
-    //     setSelectedUnitId(newUnitId);
-    //     setUnitId((prevUnitId) => [...prevUnitId, newUnitId]);
-    // };
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
@@ -328,46 +312,6 @@ const CreateGoodReceipt = () => {
         setRecieptParams(updatedRecieptParams);
     };
 
-    // const handleUnitPriceChange = (index, value) => {
-    //     const updatedItems = [...selectedItems];
-    //     updatedItems[index].unitPrice = value;
-    //     setSelectedItems(updatedItems);
-
-    //     // Update recieptParams
-    //     const updatedRecieptParams = {
-    //         ...recieptParams,
-    //         details: updatedItems.map((item) => ({
-    //             itemId: item.itemId,
-    //             quantity: item.quantity,
-    //             unitPrice: item.unitPrice,
-    //             unitId: item.unitId,
-    //             description: item.description,
-    //         })),
-    //     };
-
-    //     setRecieptParams(updatedRecieptParams);
-    // };
-
-    // const handleUnitIdChange = (index, value) => {
-    //     const updatedItems = [...selectedItems];
-    //     updatedItems[index].unitId = value;
-    //     setSelectedItems(updatedItems);
-
-    //     // Update recieptParams
-    //     const updatedRecieptParams = {
-    //         ...recieptParams,
-    //         details: updatedItems.map((item) => ({
-    //             itemId: item.itemId,
-    //             quantity: item.quantity,
-    //             unitPrice: item.unitPrice,
-    //             unitId: item.unitId,
-    //             description: item.description,
-    //         })),
-    //     };
-
-    //     setRecieptParams(updatedRecieptParams);
-    // };
-
     const handleRemoveFromCart = (index) => {
         const updatedItems = [...selectedItems];
         updatedItems.splice(index, 1);
@@ -406,10 +350,10 @@ const CreateGoodReceipt = () => {
             return total;
         }, 0);
     };
-    const handleDataSearch = (searchResult) => {
-        // Cập nhật state của trang chính với dữ liệu từ tìm kiếm
-        setDropdownData(searchResult);
-    };
+    // const handleDataSearch = (searchResult) => {
+    //     // Cập nhật state của trang chính với dữ liệu từ tìm kiếm
+    //     setDropdownData(searchResult);
+    // };
     return (
         <>
             <Helmet>
@@ -428,13 +372,14 @@ const CreateGoodReceipt = () => {
 
                 <Grid container spacing={2}>
                     <Grid item xs={7}>
-                        <FormControl sx={{ minWidth: 200, marginRight: 5, marginBottom: 2, marginTop: 3 }}>
+                        <FormControl sx={{ minWidth: 200, marginRight: 5, marginBottom: 2 }}>
                             <InputLabel id="warehouse-label">Chọn kho hàng...</InputLabel>
                             <Select
                                 size="large"
                                 labelId="warehouse-label"
                                 id="warehouse"
                                 value={selectedWarehouse ? selectedWarehouse.id : ''}
+                                disabled={selectedItems.length > 0}
                                 onChange={(e) =>
                                     setSelectedWarehouse(
                                         warehouseList.find((warehouse) => warehouse.id === e.target.value),
@@ -450,13 +395,14 @@ const CreateGoodReceipt = () => {
                         </FormControl>
 
                         {selectedWarehouse && (
-                            <FormControl sx={{ minWidth: 200, marginTop: 3 }}>
+                            <FormControl sx={{ minWidth: 200 }}>
                                 <InputLabel id="inventory-staff-label">Chọn Nhân Viên</InputLabel>
                                 <Select
                                     size="large"
                                     labelId="inventory-staff-label"
                                     id="inventory-staff"
                                     value={selectedInventoryStaff}
+                                    disabled={selectedItems.length > 0}
                                     onChange={(e) => setSelectedInventoryStaff(e.target.value)}
                                 >
                                     {inventoryStaffList.map((staff) => (
@@ -572,13 +518,13 @@ const CreateGoodReceipt = () => {
 
                     {/* Danh sách sản phẩm bên phải */}
                     <Grid item xs={5}>
-                        <Stack direction="row" alignItems="center">
+                        {/* <Stack direction="row" alignItems="center">
                             <CreateRequestReceiptToolbar
                                 numSelected={selected.length}
                                 onDataSearch={handleDataSearch}
                             />
                             <Dropdown data={dropdownData} />
-                        </Stack>
+                        </Stack> */}
                         <div style={{ textAlign: 'center' }}>
                             <DialogContent
                                 style={{
@@ -604,12 +550,13 @@ const CreateGoodReceipt = () => {
                                                     borderRadius: '8px',
                                                     boxShadow: '4px 4px 10px rgba(0, 0, 0, 0.1)',
                                                     alignItems: 'center',
-                                                    width: '230px',
+                                                    width: '240px',
                                                 }}
                                                 title={[
                                                     `Tên thương hiệu:  ${items.brand.name}`,
                                                     `Nguồn gốc: ${items.origin.name}`,
                                                     `Nhà cung cấp: ${items.supplier.name}`,
+                                                    // `Giá nhập: ${items.purchasePrice.price}`,
                                                 ].join('\n')}
                                                 onClick={() => handleAddToCart(items)}
                                                 titleStyle={{

@@ -19,7 +19,7 @@ export const axiosInstance = axios.create({
 });
 
 export const imageInstance = axios.create({
-  baseURL: BaseURL,
+  baseURL: BaseURLWeb,
   timeout: 30000,
   headers: {
     common: {

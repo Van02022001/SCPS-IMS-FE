@@ -17,12 +17,7 @@ import {
     Dialog,
     DialogTitle,
 } from '@mui/material';
-// icons
-// import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import ClearIcon from '@mui/icons-material/Clear';
-import SaveIcon from '@mui/icons-material/Save';
 //notification
-import Snackbar from '@mui/material/Snackbar';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 // api
@@ -47,8 +42,8 @@ const ImportRequestReceiptDetailForm = ({
     mode,
     setIsExportFormOpen,
 }) => {
-    const [tab1Data, setTab1Data] = useState({ categories_id: [] });
-    const [tab2Data, setTab2Data] = useState({});
+    // const [tab1Data, setTab1Data] = useState({ categories_id: [] });
+    // const [tab2Data, setTab2Data] = useState({});
 
     // const [expandedItem, setExpandedItem] = useState(subCategoryId);
     const [formHeight, setFormHeight] = useState(0);
@@ -58,14 +53,14 @@ const ImportRequestReceiptDetailForm = ({
     const [importReceipstData, setImportReceipstData] = useState(null);
 
     const [editedImportReceipt, setEditedImportReceipt] = useState(null);
-    const [editSubCategoryMeta, setEditSubCategoryMeta] = useState(null);
+
     const [currentStatus, setCurrentStatus] = useState('');
     const [importReceiptData, setImportReceiptData] = useState([]);
-    const [openAddCategoryDialog, setOpenAddCategoryDialog] = useState(false);
+
     // const [positionedSnackbarOpen, setPositionedSnackbarOpen] = useState(false);
     // const [positionedSnackbarError, setPositionedSnackbarError] = useState(false);
     // form
-    const [openAddSubCategoryMetaForm, setOpenAddSubCategoryMetaForm] = useState(false);
+    // const [openAddSubCategoryMetaForm, setOpenAddSubCategoryMetaForm] = useState(false);
 
     const [importRecieptParams, setImportRecieptParams] = useState({
         warehouseId: null,
@@ -122,15 +117,15 @@ const ImportRequestReceiptDetailForm = ({
 
     //========================== Hàm notification của trang ==================================
 
-    const handleTab1DataChange = (event) => {
-        // Cập nhật dữ liệu cho tab 1 tại đây
-        setTab1Data({ ...tab1Data, [event.target.name]: event.target.value });
-    };
+    // const handleTab1DataChange = (event) => {
+    //     // Cập nhật dữ liệu cho tab 1 tại đây
+    //     setTab1Data({ ...tab1Data, [event.target.name]: event.target.value });
+    // };
 
-    const handleTab2DataChange = (event) => {
-        // Cập nhật dữ liệu cho tab 2 tại đây
-        setTab2Data({ ...tab2Data, [event.target.name]: event.target.value });
-    };
+    // const handleTab2DataChange = (event) => {
+    //     // Cập nhật dữ liệu cho tab 2 tại đây
+    //     setTab2Data({ ...tab2Data, [event.target.name]: event.target.value });
+    // };
     const handleChangeTab = (event, newValue) => {
         setCurrentTab(newValue);
     };
@@ -216,23 +211,6 @@ const ImportRequestReceiptDetailForm = ({
     if (!importReceipst) {
         return null;
     }
-
-    const updateImportReceipt = async () => {
-        if (!editedImportReceipt) {
-            return;
-        }
-        try {
-            const response = await editImportReceipt(importReceiptId, editedImportReceipt);
-
-            if (response.status === '200 OK') {
-            }
-            updateImportReceiptInList(response.data);
-            console.log('Product updated:', response);
-        } catch (error) {
-            console.error('An error occurred while updating the product:', error);
-        }
-    };
-
     const updateImportReceiptConfirm = async () => {
         try {
             // if (currentStatus !== 'Pending_Approval') {
@@ -335,21 +313,6 @@ const ImportRequestReceiptDetailForm = ({
     //==========================================================================================================
     const handleCloseCreateImportRequestForm = (isClosed) => {
         setIsExportFormOpen(isClosed);
-    };
-
-    const handleDataReload = () => {
-        getAllImportReceipt()
-            .then((response) => {
-                const data = response.data;
-                if (Array.isArray(data)) {
-                    setImportReceiptData(data);
-                } else {
-                    console.error('API response is not an array:', data);
-                }
-            })
-            .catch((error) => {
-                console.error('Error fetching import receipts:', error);
-            });
     };
 
     return editedImportReceipt ? (
@@ -461,12 +424,12 @@ const ImportRequestReceiptDetailForm = ({
                                                 currentStatus === 'Pending_Approval'
                                                     ? 'Chờ phê duyệt'
                                                     : currentStatus === 'Approved'
-                                                    ? 'Đã xác nhận'
-                                                    : currentStatus === 'IN_PROGRESS'
-                                                    ? 'Đang tiến hành'
-                                                    : currentStatus === 'Completed'
-                                                    ? 'Hoàn thành'
-                                                    : 'Ngừng hoạt động'
+                                                        ? 'Đã xác nhận'
+                                                        : currentStatus === 'IN_PROGRESS'
+                                                            ? 'Đang tiến hành'
+                                                            : currentStatus === 'Completed'
+                                                                ? 'Hoàn thành'
+                                                                : 'Ngừng hoạt động'
                                             }
                                         />
                                     </Grid>
@@ -538,22 +501,37 @@ const ImportRequestReceiptDetailForm = ({
                                                     padding: '10px 0 0 20px',
                                                 }}
                                             >
+                                                <TableCell></TableCell>
                                                 <TableCell>Mã sản phẩm</TableCell>
                                                 <TableCell>Tên sản phẩm</TableCell>
                                                 <TableCell>Số lượng</TableCell>
-                                                <TableCell>Giá sản phẩm</TableCell>
-                                                <TableCell>Tổng</TableCell>
                                                 <TableCell>Đơn vị</TableCell>
+                                                <TableCell>Tổng Giá</TableCell>
+                                                <TableCell>Thương hiệu</TableCell>
+                                                <TableCell>Xuất xứ</TableCell>
+                                                <TableCell>Nhà cung cấp</TableCell>
                                             </TableRow>
                                             {importReceipst.details.map((items) => {
                                                 return (
                                                     <TableRow key={items.id}>
+                                                        <TableCell>
+                                                            <img
+                                                                src={items.item.imageUrl}
+                                                                alt={`Item ${items.code}`}
+                                                                width="48"
+                                                                height="48"
+                                                            />
+                                                        </TableCell>
                                                         <TableCell>{items.item.code}</TableCell>
                                                         <TableCell>{items.item.subcategoryName}</TableCell>
                                                         <TableCell>{items.quantity}</TableCell>
-                                                        <TableCell>{items.price}</TableCell>
-                                                        <TableCell>{items.totalPrice}</TableCell>
                                                         <TableCell>{items.unitName}</TableCell>
+                                                        <TableCell>
+                                                            {items.totalPrice?.toLocaleString('vi-VN')}
+                                                        </TableCell>
+                                                        <TableCell>{items.item.brandName}</TableCell>
+                                                        <TableCell>{items.item.originName}</TableCell>
+                                                        <TableCell>{items.item.supplierName}</TableCell>
                                                     </TableRow>
                                                 );
                                             })}
@@ -622,9 +600,6 @@ const ImportRequestReceiptDetailForm = ({
                                 action={action}
                                 style={{ bottom: '16px', right: '16px' }}
                             />
-                            {/* <Button variant="outlined" color="error" onClick={handleClear}>
-                                Hủy bỏ
-                            </Button> */}
                         </Grid>
                     </Stack>
                 </div>

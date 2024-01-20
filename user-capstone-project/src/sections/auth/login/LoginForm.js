@@ -5,7 +5,7 @@ import { Link, Stack, IconButton, InputAdornment, TextField, Checkbox } from '@m
 import { LoadingButton } from '@mui/lab';
 // components
 import Iconify from '../../../components/iconify';
-import { authenLogin, authenValidation } from '../../../data/mutation/login/login-mutation';
+import { authenLogin } from '../../../data/mutation/login/login-mutation';
 
 // ----------------------------------------------------------------------
 
@@ -47,10 +47,11 @@ export default function LoginForm() {
                         localStorage.setItem('role', `${result.data.role.name}`);
                         localStorage.setItem('userName', `${result.data.lastName} ${result.data.firstName}`);
                         localStorage.setItem('id',  `${result.data.id}`);
+                        localStorage.setItem('avatar',  `${result.data.image}`);
                         if (localStorage.getItem('role') === 'ADMIN') {
                             navigate('/dashboard', { replace: true });
                         } else if (localStorage.getItem('role') === 'MANAGER') {
-                            navigate('/dashboard/products/production', { replace: true });
+                            navigate('/dashboard', { replace: true });
                         } else if (localStorage.getItem('role') === 'INVENTORY_STAFF') {
                             navigate('/inventory-staff/itemsInventory', { replace: true });
                         } else if (localStorage.getItem('role') === 'SALE_STAFF') {
@@ -66,9 +67,9 @@ export default function LoginForm() {
         }
     };
 
-    const handleRegister = () => {
-        navigate('/register');
-    };
+    // const handleRegister = () => {
+    //     navigate('/register');
+    // };
 
     return (
         <>
@@ -93,7 +94,7 @@ export default function LoginForm() {
             </Stack>
             <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 1 }}>
                 <Checkbox name="remember" label="Remember me" />
-                <Link variant="subtitle2" underline="hover">
+                <Link variant="subtitle2" underline="hover" href="forgetPassword">
                     Quên mật khẩu?
                 </Link>
             </Stack>

@@ -206,8 +206,13 @@ const SupplierPage = () => {
         setOpenOderForm(false);
         setSupplierData((prevSupplierData) => [...prevSupplierData, newSupplier]);
 
-        setSnackbarSuccessMessage(successMessage === 'Updated supplier successfully!' ? 'Tạo thể loại thành công!' : 'Thành công');
+        setSnackbarSuccessMessage(successMessage === 'Create supplier successfully!' ? 'Tạo nhà cung cấp thành công!' : 'Thành công');
         setSnackbarSuccessOpen(true);
+
+        setTimeout(() => {
+            setSnackbarSuccessOpen(false);
+            setSnackbarSuccessMessage('');
+        }, 3000);
     };
     //==========================================================================================================
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;

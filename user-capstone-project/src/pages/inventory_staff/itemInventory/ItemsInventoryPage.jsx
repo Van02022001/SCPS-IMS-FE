@@ -517,7 +517,7 @@ const ItemsInventoryPage = () => {
 
                                                 <TableCell align="left">{item.subCategory.name}</TableCell>
 
-                                                <TableCell align="left">{item.quantity}</TableCell>
+                                                <TableCell align="left">{item.available}</TableCell>
 
                                                 <TableCell align="left">{item.brand.name}</TableCell>
 

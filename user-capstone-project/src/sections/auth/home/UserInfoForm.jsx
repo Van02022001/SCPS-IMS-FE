@@ -97,7 +97,7 @@ export default function UserInfoForm({ profileData }) {
                     {/* Avatar */}
                     <Grid item xs={6} sm={6}>
                         <Box sx={{ textAlign: 'center', my: 1.5, px: 2.5 }} style={{ width: '90%' }}>
-                            <Avatar src={account.photoURL} alt="photoURL" style={{ height: 100, width: 100, margin: '0 auto' }} />
+                            <Avatar src={profileData.image} alt="photoURL" style={{ height: 100, width: 100, margin: '0 auto' }} />
                             <Typography variant="subtitle2" noWrap>
                                 Họ và tên: {profileData.firstName} {profileData.lastName}
                             </Typography>

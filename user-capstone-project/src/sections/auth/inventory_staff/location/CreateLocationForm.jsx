@@ -93,6 +93,8 @@ const CreateLocationForm = (props) => {
                 handleSuccessMessage(response.message);
                 handleCloseSnackbar();
                 props.onClose(response.data, response.message);
+
+                console.log(response.data);
             }
         } catch (error) {
             console.error('Error creating location:', error);

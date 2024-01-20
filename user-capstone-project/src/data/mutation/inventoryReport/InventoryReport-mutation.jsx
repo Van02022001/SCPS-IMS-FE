@@ -6,7 +6,7 @@ export const getAllInventoryReport = async () => {
 }
 
 export const getAllInventoryByItems = async () => {
-    const response = await axiosInstance.get(`/inventories/summary-by-item`);
+    const response = await axiosInstance.get(`/inventories/current-warehouse`);
     return response.data;
 }
 

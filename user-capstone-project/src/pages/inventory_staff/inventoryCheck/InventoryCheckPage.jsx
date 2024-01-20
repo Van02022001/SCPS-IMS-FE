@@ -46,7 +46,7 @@ import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 
 const TABLE_HEAD = [
     // { id: 'id', label: 'Mã hàng', alignRight: false },
-    { id: 'itemName', label: 'Tên hàng', alignRight: false },
+    { id: 'itemName', label: 'Mã hàng', alignRight: false },
     { id: 'itemName', label: 'Mô tả', alignRight: false },
     { id: 'itemName', label: 'Người tạo', alignRight: false },
     { id: 'itemName', label: 'Ngày tạo', alignRight: false },

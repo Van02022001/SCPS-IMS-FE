@@ -157,7 +157,12 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
         getItemsByMovementsHistory(itemId)
             .then((respone) => {
                 const data = respone.data;
-                setItemMovementsData(data);
+                const sortedData = data.sort((a, b) => {
+                    return dayjs(b.movedAt, 'DD/MM/YYYY HH:mm:ss').diff(
+                        dayjs(a.movedAt, 'DD/MM/YYYY HH:mm:ss'),
+                    );
+                });
+                setItemMovementsData(sortedData);
             })
             .catch((error) => console.error('Error fetching Items:', error));
     }, []);
@@ -232,7 +237,7 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
         >
             <Tabs value={selectedTab} onChange={(event, newValue) => setSelectedTab(newValue)}>
                 <Tab label="Thông tin" />
-                <Tab label="Lịch sử giá mua" />
+                {/* <Tab label="Lịch sử giá mua" /> */}
                 <Tab label="Lịch sử vận chuyển" />
                 <Tab label="Vị trí sản phẩm" />
             </Tabs>
@@ -587,7 +592,7 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                     </div>
                 </div>
             )}
-            {selectedTab === 1 && (
+            {/* {selectedTab === 1 && (
                 <div style={{ marginLeft: 50 }}>
                     <Stack spacing={4} margin={2}>
                         <div>
@@ -647,8 +652,8 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                         {isError && <ErrorAlerts errorMessage={errorMessage} />}
                     </div>
                 </div>
-            )}
-            {selectedTab === 2 && (
+            )} */}
+            {selectedTab === 1 && (
                 <div style={{ marginLeft: 50 }}>
                     <Stack spacing={4} margin={2}>
                         <div>
@@ -730,7 +735,7 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                     </div>
                 </div>
             )}
-            {selectedTab === 3 && (
+            {selectedTab === 2 && (
                 <div style={{ marginLeft: 50 }}>
                     <Stack spacing={4} margin={2}>
                         <div>

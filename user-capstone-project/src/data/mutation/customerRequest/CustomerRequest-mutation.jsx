@@ -18,3 +18,8 @@ export const getAllCustomerRequestOfWarehouse = async () => {
     const response = await axiosInstance.get(`/customer-request-receipts/warehouse`);
     return response.data;
 }
+
+export const getCustomerRequestById = async (id) => {
+    const response = await axiosInstance.get(`/customer-request-receipts/${id}`);
+    return response.data;
+}

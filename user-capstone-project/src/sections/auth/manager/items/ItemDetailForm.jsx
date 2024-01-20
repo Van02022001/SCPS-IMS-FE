@@ -62,6 +62,7 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
     const [currentStatus, setCurrentStatus] = useState('');
     const [openAddCategoryDialog, setOpenAddCategoryDialog] = useState(false);
 
+    const roleUser = localStorage.getItem('role');
     //thông báo
     //========================== Hàm notification của trang ==================================
     const [open, setOpen] = React.useState(false);
@@ -430,35 +431,38 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
                                     </Grid>
                                 </Grid>
 
-                                <Grid
-                                    container
-                                    spacing={1}
-                                    direction="row"
-                                    justifyContent="space-between"
-                                    alignItems="center"
-                                    sx={{ marginBottom: 4, gap: 5 }}
-                                >
-                                    <Typography variant="body1">Nhà cung cấp:</Typography>
-                                    <Grid xs={8.5}>
-                                        <Select
-                                            size="small"
-                                            labelId="group-label"
-                                            id="group-select"
-                                            label="Nhà cung cấp"
-                                            sx={{ width: '92%', fontSize: '16px' }}
-                                            value={editedItem.supplier_id ? editedItem.supplier_id : ''}
-                                            onChange={(e) => handleEdit('supplier_id', e.target.value)}
-                                            name="supplier_id"
+                                {roleUser !== 'SALE_STAFF' && (
+                                    <>
+                                        <Grid
+                                            container
+                                            spacing={1}
+                                            direction="row"
+                                            justifyContent="space-between"
+                                            alignItems="center"
+                                            sx={{ marginBottom: 4, gap: 5 }}
                                         >
-                                            {supplier_id.map((supplier) => (
-                                                <MenuItem key={supplier.id} value={supplier.id}>
-                                                    {supplier.name}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </Grid>
-                                </Grid>
-
+                                            <Typography variant="body1">Nhà cung cấp:</Typography>
+                                            <Grid xs={8.5}>
+                                                <Select
+                                                    size="small"
+                                                    labelId="group-label"
+                                                    id="group-select"
+                                                    label="Nhà cung cấp"
+                                                    sx={{ width: '92%', fontSize: '16px' }}
+                                                    value={editedItem.supplier_id ? editedItem.supplier_id : ''}
+                                                    onChange={(e) => handleEdit('supplier_id', e.target.value)}
+                                                    name="supplier_id"
+                                                >
+                                                    {supplier_id.map((supplier) => (
+                                                        <MenuItem key={supplier.id} value={supplier.id}>
+                                                            {supplier.name}
+                                                        </MenuItem>
+                                                    ))}
+                                                </Select>
+                                            </Grid>
+                                        </Grid>
+                                    </>
+                                )}
                                 <Grid
                                     container
                                     spacing={1}

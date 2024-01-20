@@ -8,8 +8,6 @@ import {
     Table,
     Stack,
     Paper,
-    Avatar,
-    Checkbox,
     TableRow,
     TableBody,
     TableCell,
@@ -19,21 +17,20 @@ import {
 } from '@mui/material';
 // components
 import Label from '~/components/label/Label';
-import Iconify from '~/components/iconify/Iconify';
+
 import Scrollbar from '~/components/scrollbar/Scrollbar';
-import CloseIcon from '@mui/icons-material/Close';
+
 
 // sections
 import { SubCategoryListHead, SubCategoryToolbar } from '~/sections/@dashboard/manager/subCategory';
 // mock
 import PRODUCTSLIST from '../../../../_mock/products';
-import { useNavigate } from 'react-router-dom';
+
 // api
 
 import SubCategoryDetailForm from '~/sections/auth/manager/subCategory/SubCategoryDetailForm';
 //icons
-import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import CreateExportReceipt from './CreateExportReceipt';
+
 import { getAllCustomerRequest } from '~/data/mutation/customerRequest/CustomerRequest-mutation';
 import dayjs from 'dayjs';
 
@@ -41,14 +38,12 @@ import dayjs from 'dayjs';
 
 const TABLE_HEAD = [
     { id: 'image', label: '', alignRight: false },
-    // { id: 'id', label: 'Mã hàng', alignRight: false },
     { id: 'name', label: 'Tên sản phẩm', alignRight: false },
     { id: 'description', label: 'Mô tả', alignRight: false },
     { id: 'createdAt', label: 'Ngày tạo', alignRight: false },
     { id: 'updatedAt', label: 'Ngày cập nhập', alignRight: false },
     { id: 'categories', label: 'Nhóm hàng', alignRight: false },
     { id: 'status', label: 'Trạng thái', alignRight: false },
-    { id: '' },
 ];
 
 // ----------------------------------------------------------------------
@@ -91,24 +86,9 @@ function applySortFilter(array, comparator, query) {
 //     return `${day}/${month}/${year}`;
 // }
 
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-    PaperProps: {
-        style: {
-            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-            width: 250,
-        },
-    },
-};
-
-const filterOptions = ['Ren', 'Ron', 'Abc', 'Test1', 'Test12', 'Test123'];
 
 const ExportRequestReceiptManagerPage = () => {
     // State mở các form----------------------------------------------------------------
-    const [open, setOpen] = useState(null);
-    const [openOderForm, setOpenOderForm] = useState(false);
-    const [openEditForm, setOpenEditForm] = useState(false);
 
     const [selected, setSelected] = useState([]);
     const [selectedExportReceiptId, setSelectedExportReceiptId] = useState([]);
@@ -128,25 +108,19 @@ const ExportRequestReceiptManagerPage = () => {
     const [exportReceiptData, setExportReceiptData] = useState([]);
     const [exportReceiptStatus, setExportReceiptStatus] = useState('');
 
-    const [selectedExportReceipt, setSelectedExportReceipt] = useState(null);
-
-    const [filteredCategory, setFilteredCategory] = useState(null);
-
     // const [anchorElOptions, setAnchorElOptions] = useState(null);
 
     const [selectedFilterOptions, setSelectedFilterOptions] = useState(null);
 
-    const [personName, setPersonName] = React.useState([]);
-    const navigate = useNavigate();
     const startIndex = page * rowsPerPage;
     const endIndex = startIndex + rowsPerPage;
 
-    const handleChange = (event) => {
-        setPersonName(event.target.value);
-        const selectedValues = event.target.value.length > 0 ? event.target.value : null;
-        setFilteredCategory(selectedValues);
-        setSelectedFilterOptions(selectedValues);
-    };
+    // const handleChange = (event) => {
+    //     setPersonName(event.target.value);
+    //     const selectedValues = event.target.value.length > 0 ? event.target.value : null;
+    //     setFilteredCategory(selectedValues);
+    //     setSelectedFilterOptions(selectedValues);
+    // };
 
     // ========================== Hàm để thay đổi data mỗi khi Edit xong api=======================================
     const updateExportReceiptInList = (updatedExportReceipt) => {
@@ -171,11 +145,6 @@ const ExportRequestReceiptManagerPage = () => {
         }
     };
 
-    const handleCreateGoodReceiptSuccess = (newExportReceipt) => {
-        // Close the form
-        setOpenOderForm(false);
-        setExportReceiptData((prevExportReceiptData) => [...prevExportReceiptData, newExportReceipt]);
-    };
 
     const handleDataSearch = (searchResult) => {
         // Cập nhật state của trang chính với dữ liệu từ tìm kiếm
@@ -185,30 +154,6 @@ const ExportRequestReceiptManagerPage = () => {
     };
 
     //===========================================================================================
-    // const handleOpenMenu = (event, subCategory) => {
-    //     setSelectedProduct(subCategory);
-    //     setOpen(event.currentTarget);
-    // };
-
-    const handleCloseMenu = () => {
-        setOpen(null);
-    };
-
-    const handleClick = (event, name) => {
-        const selectedIndex = selected.indexOf(name);
-        let newSelected = [];
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, name);
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-        }
-        setSelected(newSelected);
-    };
-
     const handleSubCategoryClick = (subCategory) => {
 
         if (selectedExportReceiptId === subCategory.id) {
@@ -240,16 +185,6 @@ const ExportRequestReceiptManagerPage = () => {
         }
         setSelected([]);
     };
-
-    const handleCheckboxChange = (event, subCategoryId) => {
-        if (event.target.checked) {
-            // Nếu người dùng chọn checkbox, thêm sản phẩm vào danh sách đã chọn.
-            setSelectedExportReceiptId([...selectedExportReceiptId, subCategoryId]);
-        } else {
-            // Nếu người dùng bỏ chọn checkbox, loại bỏ sản phẩm khỏi danh sách đã chọn.
-            setSelectedExportReceiptId(selectedExportReceiptId.filter((id) => id !== subCategoryId));
-        }
-    };
     const handleRequestSort = (property) => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
@@ -276,15 +211,6 @@ const ExportRequestReceiptManagerPage = () => {
 
         const filteredUsers = applySortFilter(sortedExportReceipt, getComparator(order, sortBy), query);
         setSortedExportReceipt(filteredUsers);
-    };
-
-
-    const handleCloseOdersForm = () => {
-        setOpenOderForm(false);
-    };
-
-    const handleCloseEditsForm = () => {
-        setOpenEditForm(false);
     };
 
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - PRODUCTSLIST.length) : 0;
@@ -333,51 +259,11 @@ const ExportRequestReceiptManagerPage = () => {
                 <Typography variant="h4" gutterBottom>
                     Quản lý phiếu yêu cầu xuất kho
                 </Typography>
-                {/* <Button
-                    variant="contained"
-                    startIcon={<Iconify icon="eva:plus-fill" />}
-                    onClick={() => navigate("/dashboard/create-export-receipt")}
-                >
-                    Thêm phiếu xuất kho
-                </Button>
-                <Dialog fullWidth maxWidth open={openOderForm}>
-                    <DialogTitle>
-                        Tạo Sản Phẩm{' '}
-                        <IconButton style={{ float: 'right' }} onClick={handleCloseOdersForm}>
-                            <CloseIcon color="primary" />
-                        </IconButton>{' '}
-                    </DialogTitle>
-                    <CreateExportReceipt onClose={handleCreateGoodReceiptSuccess} open={openOderForm} />
-                </Dialog> */}
+
             </Stack>
 
             {/* ===========================================filter=========================================== */}
-            {/* <div style={{ display: 'flex', alignItems: 'center' }}>
-                <FilterAltIcon color="action" />
-                <Typography gutterBottom variant="h6" color="text.secondary" component="div" sx={{ m: 1 }}>
-                    Bộ lọc tìm kiếm
-                </Typography>
-            </div>
-            <FormControl sx={{ m: 1, width: 300, mb: 2 }}>
-                <InputLabel id="demo-multiple-checkbox-label">Nhóm hàng</InputLabel>
-                <Select
-                    labelId="demo-multiple-checkbox-label"
-                    id="demo-multiple-checkbox"
-                    multiple
-                    value={personName}
-                    onChange={handleChange}
-                    input={<OutlinedInput label="Nhóm hàng" />}
-                    renderValue={(selected) => selected.join(', ')}
-                    MenuProps={MenuProps}
-                >
-                    {filterOptions.map((name) => (
-                        <MenuItem key={name} value={name}>
-                            <Checkbox checked={personName.indexOf(name) > -1} />
-                            <ListItemText primary={name} />
-                        </MenuItem>
-                    ))}
-                </Select>
-            </FormControl> */}
+
             {/* ===========================================filter=========================================== */}
             <Card>
                 <SubCategoryToolbar
@@ -411,16 +297,6 @@ const ExportRequestReceiptManagerPage = () => {
                                                 selected={selectedExportReceiptId === sub_category.id}
                                                 onClick={() => handleSubCategoryClick(sub_category)}
                                             >
-                                                {/* <TableCell padding="checkbox">
-                                                    <Checkbox
-                                                        checked={selectedExportReceiptId === sub_category.id}
-                                                        // onChange={(event) =>
-                                                        //     handleCheckboxChange(event, sub_category.id)
-                                                        // }
-                                                        // checked={selectedUser}
-                                                        onChange={(event) => handleClick(event, sub_category.name)}
-                                                    />
-                                                </TableCell> */}
 
                                                 <TableCell component="th" scope="row" padding="none">
                                                     <Stack direction="row" alignItems="center" spacing={2}>

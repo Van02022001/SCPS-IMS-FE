@@ -19,16 +19,19 @@ import {
   ListSubheader,
   ListItemAvatar,
   ListItemButton,
+  DialogContent,
+  DialogTitle,
+  Dialog,
 } from '@mui/material';
 // utils
 import { fToNow } from '../../../utils/formatTime';
-
+import CloseIcon from '@mui/icons-material/Close';
 // components
 import Iconify from '../../../components/iconify';
 import Scrollbar from '../../../components/scrollbar';
 import { getAllNotification } from '~/data/mutation/notification/notification-mutation';
-import NotificationDetail from '~/sections/auth/notification/NotificationDetail';
 import { useNavigate } from 'react-router-dom';
+import NotificationAll from '~/sections/auth/notification/NotificationAll';
 
 // ----------------------------------------------------------------------
 
@@ -37,11 +40,13 @@ export default function NotificationsPopover() {
   const [notifications, setNotifications] = useState([]);
   const [totalUnRead, setTotalUnRead] = useState(0);
   const [selectedNotification, setSelectedNotification] = useState(null);
+  const [isExportFormOpen, setIsExportFormOpen] = useState(false);
   const navigate = useNavigate();
   // const totalUnRead = notifications.filter((item) => item.isUnRead === true).length;
 
   const [open, setOpen] = useState(null);
 
+  const [viewAllDialogOpen, setViewAllDialogOpen] = useState(false);
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
   };
@@ -84,15 +89,35 @@ export default function NotificationsPopover() {
     if (userRole === 'MANAGER') {
      
       if (notification.type === 'DANG_TIEN_HANH_NHAP_KHO' || notification.type === 'XAC_NHAN_NHAP_KHO') {
-        navigate(`/dashboard/request-import-receipt`);
+        navigate(`/dashboard/notfication-to-request-receipt`, {state: {receiptId: notification.sourceId}});
       }
-    } else {
+    }else if (userRole === 'INVENTORY_STAFF') {
+     
+      if (notification.type === 'XAC_NHAN_NHAP_KHO' || notification.type === 'YEU_CAU_NHAP_KHO') {
+        navigate(`/inventory-staff/notfication-to-import-request-receipt`, {state: {receiptId: notification.sourceId}});
+      }
+      if (notification.type === 'YEU_CAU_XUAT_KHO') {
+        navigate(`/inventory-staff/notfication-to-export-request-receipt`, {state: {receiptId: notification.sourceId}});
+      }
+    } else if (userRole === 'INVENTORY_STAFF') {
+      if (notification.type === 'DANG_TIEN_HANH_XUAT_KHO') {
+        navigate(`/sale-staff/notfication-to-export-request-receipt`, {state: {receiptId: notification.sourceId}});
+      }
+    }
+    else {
       console.log('User does not have the MANAGER role');
     }
     // setSelectedNotification(notification);
     // setOpen(null);
   };
-  
+
+  const handleViewAllClick = () => {
+    setViewAllDialogOpen(true);
+  };
+
+  const handleCloseViewAllDialog = () => {
+    setViewAllDialogOpen(false);
+  };
   return (
     <>
       <IconButton color={open ? 'primary' : 'default'} onClick={handleOpen} sx={{ width: 40, height: 40 }}>
@@ -143,7 +168,7 @@ export default function NotificationsPopover() {
               </ListSubheader>
             }
           >
-            {notifications.slice(0, 2).map((notification) => (
+            {notifications.slice(0, 5).map((notification) => (
               <NotificationItem key={notification.id} notification={notification}  onClick={() => handleNotificationClick(notification)}/>
             ))}
           </List>
@@ -156,7 +181,7 @@ export default function NotificationsPopover() {
               </ListSubheader>
             }
           >
-            {notifications.slice(2, 5).map((notification) => (
+            {notifications.slice(5, 8).map((notification) => (
               <NotificationItem key={notification.id} notification={notification}   onClick={() => handleNotificationClick(notification)}/>
             ))}
           </List>
@@ -165,17 +190,20 @@ export default function NotificationsPopover() {
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         <Box sx={{ p: 1 }}>
-          <Button fullWidth disableRipple>
-            Coi tất cả
-          </Button>
-        </Box>
-      </Popover>
-      {selectedNotification && (
-        <NotificationDetail
-          notification={selectedNotification}
-          onClose={() => setSelectedNotification(null)}
-        />
-      )}
+        <Button fullWidth disableRipple  onClick={() => setViewAllDialogOpen(true)}>
+          Coi tất cả
+        </Button>
+      </Box>
+      <Dialog fullWidth maxWidth="sm" open={viewAllDialogOpen}>
+        <DialogTitle>
+          Coi tất cả thông báo
+          <IconButton style={{ float: 'right' }} onClick={handleCloseViewAllDialog}>
+              <CloseIcon color="primary" />
+              </IconButton>{' '}
+        </DialogTitle>
+        <NotificationAll notifications={notifications} open={viewAllDialogOpen}/>
+      </Dialog>
+    </Popover>
     </>
   );
 }
@@ -249,8 +277,16 @@ function renderContent(notification) {
         <Typography component="span" variant="body3" sx={{ color: 'text.secondary' }}>
           &nbsp; {notification.type === "XAC_NHAN_NHAP_KHO" ? 'Xác nhận nhập kho'  : 
           notification.type === "YEU_CAU_NHAP_KHO" ? 'Yêu cầu nhập kho' :
-          notification.type === "DANG_TIEN_HANH_NHAP_KHO" ? 'Đang tiến hành nhập kho' 
-          : ''}
+          notification.type === "DANG_TIEN_HANH_NHAP_KHO" ? 'Đang tiến hành nhập kho' : 
+          notification.type === "YEU_CAU_XUAT_KHO" ? 'Yêu cầu xuất kho' : 
+          notification.type === "DANG_TIEN_HANH_XUAT_KHO" ? 'Đang tiến hành xuất kho' :
+          notification.type === "XAC_NHAN_KIEM_KHO" ? 'Xác nhận kiểm kho' : 
+          notification.type === "CANH_BAO_HET_HANG" ? 'Cảnh báo hết hàng' : 
+          notification.type === "CANH_BAO_THUA_HANG" ? 'Cảnh báo thừa hàng' : 
+          notification.type === "YEU_CAU_NHAP_KHO_NOI_BO" ? 'Yêu cầu nhập kho nội bộ!' : 
+          notification.type === "YEU_CAU_XUAT_KHO_NOI_BO" ? 'Yêu cầu xuất kho nội bộ!' : 
+         
+          '' }
         </Typography>
       )}
     </Typography>
@@ -266,6 +302,14 @@ function renderContent(notification) {
     };
   }
   if (notification.type === "YEU_CAU_NHAP_KHO") {
+    return {
+      avatar: (
+        <img alt={notification.title} src="/assets/icons/ic_notification_shipping.svg" />
+      ),
+      title,
+    };
+  }
+  if (notification.type === "YEU_CAU_XUAT_KHO") {
     return {
       avatar: (
         <img alt={notification.title} src="/assets/icons/ic_notification_shipping.svg" />
