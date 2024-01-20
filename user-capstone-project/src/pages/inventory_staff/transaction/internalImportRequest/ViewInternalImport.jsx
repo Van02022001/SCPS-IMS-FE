@@ -298,7 +298,7 @@ const ViewInternalImport = () => {
 
     const translateStatusToVietnamese = (status) => {
         const vietnameseStatusMap = {
-            "Pending_Approval": 'Chờ phê duyệt',
+            "Pending_Approval": 'Chờ xác nhận',
             "Approved": 'Đã xác nhận',
             "IN_PROGRESS": 'Đang tiến hành',
             "Completed": 'Hoàn thành',
@@ -423,7 +423,7 @@ const ViewInternalImport = () => {
                                                         }
                                                     >
                                                         {importReceipt.status === 'Pending_Approval'
-                                                            ? 'Chờ phê duyệt'
+                                                            ? 'Chờ xác nhận'
                                                             : importReceipt.status === 'Approved'
                                                                 ? 'Đã xác nhận'
                                                                 : importReceipt.status === 'IN_PROGRESS'

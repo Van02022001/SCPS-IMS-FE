@@ -88,6 +88,8 @@ const CreateInternalExportRequest = () => {
             setSuccessMessage('Tạo phiếu thành công');
         } else if (message === 'Update sub category successfully.') {
             setSuccessMessage('Cập nhập danh mục thành công');
+        } else if (message === 'Internal export request receipt created successfully') {
+            setSuccessMessage('Thành công');
         }
     };
 
@@ -415,6 +417,7 @@ const CreateInternalExportRequest = () => {
                                     labelId="inventory-staff-label"
                                     id="inventory-staff"
                                     value={selectedInventoryStaff}
+                                    disabled={selectedItems.length > 0}
                                     onChange={(e) => setSelectedInventoryStaff(e.target.value)}
                                 >
                                     {inventoryStaffList.map((staff) => (

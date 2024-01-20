@@ -89,8 +89,8 @@ const InternalImportRequestDetail = ({
     const handleSuccessMessage = (message) => {
         setOpen(true);
         if (message === 'Import request receipt confirmed successfully') {
-            setSuccessMessage('Thành công');
-        } else if (message === 'Import process started successfully') {
+            setSuccessMessage('Thành công rồi');
+        } else if (message === 'Internal Import process started successfully') {
             setSuccessMessage('Thành công');
         }
     };
@@ -101,7 +101,7 @@ const InternalImportRequestDetail = ({
         if (message === 'Invalid request') {
             setErrorMessage('Yêu cầu không hợp lệ !');
         } else if (message === 'Receipt is not in the approved state for processing') {
-            setErrorMessage('Phiếu không ở trạng thái được xác nhận để xử lý !');
+            setErrorMessage('Phiếu không ở trạng thái được chờ xác nhận để xử lý !');
         }
     };
 

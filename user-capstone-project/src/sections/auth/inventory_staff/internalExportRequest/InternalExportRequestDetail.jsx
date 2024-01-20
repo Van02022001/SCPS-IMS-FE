@@ -85,9 +85,9 @@ const InternalExportRequestDetail = ({
 
     const handleSuccessMessage = (message) => {
         setOpen(true);
-        if (message === 'Import request receipt confirmed successfully') {
+        if (message === 'Internal Export process started successfully') {
             setSuccessMessage('Thành công');
-        } else if (message === 'Internal Export process started successfully') {
+        } else if (message === 'Internal export request receipt confirmed successfully') {
             setSuccessMessage('Thành công');
         }
     };
@@ -98,7 +98,7 @@ const InternalExportRequestDetail = ({
         if (message === 'Invalid request') {
             setErrorMessage('Yêu cầu không hợp lệ !');
         } else if (message === 'Receipt is not in the approved state for processing') {
-            setErrorMessage('Phiếu không ở trạng thái được phê duyệt để xử lý !');
+            setErrorMessage('Phiếu không ở trạng thái được chờ xác nhận để xử lý !');
         }
     };
 
@@ -227,7 +227,7 @@ const InternalExportRequestDetail = ({
     const updateImportReceiptConfirm = async () => {
         try {
             // if (currentStatus !== 'Pending_Approval') {
-            //     const errorMessage = 'Không thể xác nhận. Phiếu này không ở trạng thái Chờ phê duyệt !';
+            //     const errorMessage = 'Không thể xác nhận. Phiếu này không ở trạng thái Chờ xác nhận !';
             //     handleErrorMessage(errorMessage);
             //     return;
             // }
@@ -236,9 +236,11 @@ const InternalExportRequestDetail = ({
 
             const response = await editInternalExportReceiptConfirm(importRequestReceiptId, newStatus);
 
+            console.log(response.status);
             if (response.status === '200 OK') {
                 // Handle success if needed
-                handleSuccessMessage('Internal export request receipt confirmed successfully');
+                console.log(response.message);
+                handleSuccessMessage(response.message);
             }
 
             updateExportReceiptConfirmInList(importRequestReceiptId, newStatus);
@@ -446,7 +448,7 @@ const InternalExportRequestDetail = ({
                                             sx={{ width: '70%', pointerEvents: 'none' }}
                                             value={
                                                 currentStatus === 'Pending_Approval'
-                                                    ? 'Chờ phê duyệt'
+                                                    ? 'Chờ xác nhận'
                                                     : currentStatus === 'Approved'
                                                         ? 'Đã xác nhận'
                                                         : currentStatus === 'IN_PROGRESS'
@@ -551,6 +553,10 @@ const InternalExportRequestDetail = ({
                                         <TableRow>
                                             <TableCell>Tổng số lượng:</TableCell>
                                             <TableCell>{exportReceipst.totalQuantity}</TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell>Tổng giá:</TableCell>
+                                            <TableCell>{exportReceipst.totalPrice}</TableCell>
                                         </TableRow>
                                     </TableBody>
                                 </TableContainer>

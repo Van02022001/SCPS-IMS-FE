@@ -300,8 +300,8 @@ const InternalExportRequestpage = () => {
     }, []);
     const mapSuccessMessageToVietnamese = (englishMessage) => {
         switch (englishMessage) {
-            case 'Import request receipt created successfully':
-                return 'Tạo phiếu yêu cầu nhập kho nội bộ thành công';
+            case 'Internal export request receipt created successfully':
+                return 'Tạo phiếu yêu cầu xuất kho nội bộ thành công';
             // Thêm các trường hợp khác nếu cần
             default:
                 return englishMessage;
@@ -491,7 +491,7 @@ const InternalExportRequestpage = () => {
                                                         }
                                                     >
                                                         {importRequest.status === 'Pending_Approval'
-                                                            ? 'Chờ phê duyệt'
+                                                            ? 'Chờ xác nhận'
                                                             : importRequest.status === 'Approved'
                                                                 ? 'Đã xác nhận'
                                                                 : importRequest.status === 'IN_PROGRESS'

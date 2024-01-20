@@ -40,9 +40,6 @@ import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 
 import { getInternalExportRequestForInventory } from '~/data/mutation/internalExportRequest/internalExportRequest-mutation';
 
-
-
-
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -136,6 +133,9 @@ const InternalExportRequestInventory = () => {
 
     const [filteredCategory, setFilteredCategory] = useState(null);
 
+    const [selectedStatusInVietnamese, setSelectedStatusInVietnamese] = React.useState([]);
+
+    const [isExportFormOpen, setIsExportFormOpen] = useState(false);
     // const [anchorElOptions, setAnchorElOptions] = useState(null);
 
     const [selectedFilterOptions, setSelectedFilterOptions] = useState(null);
@@ -147,8 +147,21 @@ const InternalExportRequestInventory = () => {
 
     const [selectedStatus, setSelectedStatus] = React.useState([]);
 
+    const translateStatusToVietnamese = (status) => {
+        const vietnameseStatusMap = {
+            Pending_Approval: 'Chờ xác nhận',
+            Approved: 'Đã xác nhận',
+            IN_PROGRESS: 'Đang tiến hành',
+            Completed: 'Hoàn thành',
+        };
+
+        return vietnameseStatusMap[status] || status;
+    };
+
     const handleStatusChange = (event) => {
-        setSelectedStatus(event.target.value);
+        const selectedValue = event.target.value;
+        setSelectedStatus(selectedValue);
+        setSelectedStatusInVietnamese(translateStatusToVietnamese(selectedValue));
     };
 
     const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
@@ -177,7 +190,9 @@ const InternalExportRequestInventory = () => {
     };
 
     const updateExportReceiptConfirmInList = (goodReceiptId, newStatus) => {
-        const importRquestReceiptIndex = exportRequestData.findIndex((good_receipt) => good_receipt.id === goodReceiptId,);
+        const importRquestReceiptIndex = exportRequestData.findIndex(
+            (good_receipt) => good_receipt.id === goodReceiptId,
+        );
 
         if (importRquestReceiptIndex !== -1) {
             const UpdatedGoodReceipt = [...exportRequestData];
@@ -287,7 +302,7 @@ const InternalExportRequestInventory = () => {
             .catch((error) => {
                 console.error('Error fetching import requests:', error);
             });
-    }, []);
+    }, [successMessage, isExportFormOpen]);
     const mapSuccessMessageToVietnamese = (englishMessage) => {
         switch (englishMessage) {
             case 'Import request receipt created successfully':
@@ -321,12 +336,13 @@ const InternalExportRequestInventory = () => {
     const uniqueStatusArray = Array.from(new Set(statusArray));
 
     // Chỉ chọn những giá trị mà bạn quan tâm
-    const filteredStatusArray = uniqueStatusArray.filter(status => (
-        status === "Pending_Approval" ||
-        status === "Approved" ||
-        status === "IN_PROGRESS" ||
-        status === "Completed"
-    ));
+    const filteredStatusArray = uniqueStatusArray.filter(
+        (status) =>
+            status === 'Pending_Approval' ||
+            status === 'Approved' ||
+            status === 'IN_PROGRESS' ||
+            status === 'Completed',
+    );
     //==============================* filter *==============================
     const filteredItems = allItems.filter((item) =>
         selectedStatus.length === 0 ? true : selectedStatus.includes(item.status),
@@ -481,14 +497,14 @@ const InternalExportRequestInventory = () => {
                                                         }
                                                     >
                                                         {importRequest.status === 'Pending_Approval'
-                                                            ? 'Chờ phê duyệt'
+                                                            ? 'Chờ xác nhận'
                                                             : importRequest.status === 'Approved'
-                                                                ? 'Đã xác nhận'
-                                                                : importRequest.status === 'IN_PROGRESS'
-                                                                    ? 'Đang tiến hành'
-                                                                    : importRequest.status === 'Completed'
-                                                                        ? 'Hoàn thành'
-                                                                        : 'Ngừng hoạt động'}
+                                                            ? 'Đã xác nhận'
+                                                            : importRequest.status === 'IN_PROGRESS'
+                                                            ? 'Đang tiến hành'
+                                                            : importRequest.status === 'Completed'
+                                                            ? 'Hoàn thành'
+                                                            : 'Ngừng hoạt động'}
                                                     </Label>
                                                 </TableCell>
                                             </TableRow>
@@ -501,8 +517,11 @@ const InternalExportRequestInventory = () => {
                                                             // importRequestReceiptStatus={importRequestStatus}
                                                             importRequestReceiptId={selectedGoodReceiptId}
                                                             updateGoodReceiptInList={updateGoodReceiptInList}
-                                                            updateExportReceiptConfirmInList={updateExportReceiptConfirmInList}
+                                                            updateExportReceiptConfirmInList={
+                                                                updateExportReceiptConfirmInList
+                                                            }
                                                             onClose={handleCloseInternalExportDetails}
+                                                            setIsExportFormOpen={setIsExportFormOpen}
                                                         />
                                                     </TableCell>
                                                 </TableRow>
