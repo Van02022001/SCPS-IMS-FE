@@ -36,7 +36,7 @@ export default function LoginForm() {
                     headers: myHeaders,
                     redirect: 'follow',
                 };
-                fetch('http://localhost:8080/api/v1/auth/validation', requestOptions)
+                fetch('https://phu-tung-bom-be-tong-sg.azurewebsites.net/api/v1/auth/validation', requestOptions)
                     .then((response) => {
                         if (response.ok) {
                             return response.json();

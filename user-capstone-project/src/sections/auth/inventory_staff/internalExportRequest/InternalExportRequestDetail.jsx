@@ -207,21 +207,21 @@ const InternalExportRequestDetail = ({
         return null;
     }
 
-    const updateImportReceipt = async () => {
-        if (!editedImportReceipt) {
-            return;
-        }
-        try {
-            const response = await editImportReceipt(importRequestReceiptId, editedImportReceipt);
+    // const updateImportReceipt = async () => {
+    //     if (!editedImportReceipt) {
+    //         return;
+    //     }
+    //     try {
+    //         const response = await editImportReceipt(importRequestReceiptId, editedImportReceipt);
 
-            if (response.status === '200 OK') {
-            }
-            updateExportReceiptInList(response.data);
-            console.log('Product updated:', response);
-        } catch (error) {
-            console.error('An error occurred while updating the product:', error);
-        }
-    };
+    //         if (response.status === '200 OK') {
+    //         }
+    //         updateExportReceiptInList(response.data);
+    //         console.log('Product updated:', response);
+    //     } catch (error) {
+    //         console.error('An error occurred while updating the product:', error);
+    //     }
+    // };
 
     const updateExportReceiptConfirm = async () => {
         try {
@@ -447,12 +447,12 @@ const InternalExportRequestDetail = ({
                                                 currentStatus === 'Pending_Approval'
                                                     ? 'Chờ xác nhận'
                                                     : currentStatus === 'Approved'
-                                                    ? 'Đã xác nhận'
-                                                    : currentStatus === 'IN_PROGRESS'
-                                                    ? 'Đang tiến hành'
-                                                    : currentStatus === 'Completed'
-                                                    ? 'Hoàn thành'
-                                                    : 'Ngừng hoạt động'
+                                                        ? 'Đã xác nhận'
+                                                        : currentStatus === 'IN_PROGRESS'
+                                                            ? 'Đang tiến hành'
+                                                            : currentStatus === 'Completed'
+                                                                ? 'Hoàn thành'
+                                                                : 'Ngừng hoạt động'
                                             }
                                         />
                                     </Grid>
