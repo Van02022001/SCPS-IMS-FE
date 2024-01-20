@@ -34,7 +34,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 //api
-import { getItemByWarehouseId } from '~/data/mutation/items/item-mutation';
+import { getAllItemBySale, getItemByWarehouseId } from '~/data/mutation/items/item-mutation';
 import { getAllWarehouse, getInventoryStaffByWarehouseId } from '~/data/mutation/warehouse/warehouse-mutation';
 
 import SnackbarError from '~/components/alert/SnackbarError';
@@ -171,7 +171,7 @@ const CreateInternalExportRequest = () => {
     const handleCreateImportReceipt = async () => {
         try {
             // Validate if all quantities are provided
-            if (selectedItems.some((item) => !item.quantity || parseInt(item.quantity, 10) <= 0)) {
+            if (selectedItems.some((item) => !item.availableQuantity || parseInt(item.availableQuantity, 10) <= 0)) {
                 handleErrorMessage('Hãy nhập số lượng');
                 return;
             } else if (selectedItems.length === 0) {
@@ -179,8 +179,8 @@ const CreateInternalExportRequest = () => {
                 return;
             }
             const isQuantityValid = selectedItems.every((item) => {
-                const selectedItemQuantity = parseInt(item.quantity, 10);
-                const availableQuantity = itemsData.find((itemData) => itemData.id === item.id)?.quantity || 0;
+                const selectedItemQuantity = parseInt(item.availableQuantity, 10);
+                const availableQuantity = itemsData.find((itemData) => itemData.id === item.id)?.availableQuantity || 0;
                 return selectedItemQuantity <= availableQuantity;
             });
 
@@ -241,8 +241,8 @@ const CreateInternalExportRequest = () => {
     useEffect(() => {
         const fetchItemsByWarehouse = async () => {
             try {
-                if (selectedImportWarehouse) {
-                    const response = await getItemByWarehouseId(selectedImportWarehouse.id);
+                if (selectedExportWarehouse) {
+                    const response = await getAllItemBySale(selectedExportWarehouse.id);
                     const data = response.data;
 
                     if (Array.isArray(data)) {
@@ -257,7 +257,7 @@ const CreateInternalExportRequest = () => {
         };
 
         fetchItemsByWarehouse();
-    }, [selectedImportWarehouse]);
+    }, [selectedExportWarehouse]);
 
     const handleAddToCart = (selectedProduct) => {
         const updatedSelectedItems = [
@@ -438,11 +438,11 @@ const CreateInternalExportRequest = () => {
                                             sx={{ display: 'flex', alignItems: 'center' }}
                                         >
                                             <ListItemText sx={{ flexBasis: '0%' }}>
-                                                {selectedItem.subCategory.images &&
-                                                    selectedItem.subCategory.images.length > 0 && (
+                                                {selectedItem.imageUrl &&
+                                                    selectedItem.imageUrl.length > 0 && (
                                                         <img
-                                                            src={selectedItem.subCategory.images[0].url}
-                                                            alt={selectedItem.name}
+                                                            src={selectedItem.imageUrl}
+                                                            alt={selectedItem.subcategoryName}
                                                             width="48"
                                                             height="48"
                                                         />
@@ -452,7 +452,7 @@ const CreateInternalExportRequest = () => {
                                                 <Typography variant="body1">{selectedItem.code}</Typography>
                                             </ListItemText>
                                             <ListItemText sx={{ flexBasis: '22%' }}>
-                                                <Typography variant="body1">{selectedItem.subCategory.name}</Typography>
+                                                <Typography variant="body1">{selectedItem.subcategoryName}</Typography>
                                             </ListItemText>
                                             <ListItemText sx={{ flexBasis: '22%' }}>
                                                 <TextField
@@ -558,7 +558,7 @@ const CreateInternalExportRequest = () => {
                                 }}
                             >
                                 <List>
-                                    {selectedImportWarehouse ? (
+                                    {selectedExportWarehouse ? (
                                         itemsData.map((items, index) => (
                                             <ListItem
                                                 key={items.id}
@@ -572,9 +572,9 @@ const CreateInternalExportRequest = () => {
                                                     width: '230px',
                                                 }}
                                                 title={[
-                                                    `Tên thương hiệu:  ${items.brand.name}`,
-                                                    `Nguồn gốc: ${items.origin.name}`,
-                                                    `Nhà cung cấp: ${items.supplier.name}`,
+                                                    `Tên thương hiệu:  ${items.brandName}`,
+                                                    `Nguồn gốc: ${items.originName}`,
+                                                    `Nhà cung cấp: ${items.supplierName}`,
                                                 ].join('\n')}
                                                 onClick={() => handleAddToCart(items)}
                                                 titleStyle={{
@@ -588,8 +588,8 @@ const CreateInternalExportRequest = () => {
                                                 }}
                                             >
                                                 <div style={{ display: 'flex' }}>
-                                                    {items.subCategory.images &&
-                                                        items.subCategory.images.length > 0 && (
+                                                    {items.imageUrl &&
+                                                        items.imageUrl.length > 0 && (
                                                             <div style={{
                                                                 width: '100px',
                                                                 height: '100px',
@@ -597,22 +597,22 @@ const CreateInternalExportRequest = () => {
                                                                 borderRadius: 5,
                                                             }}>
                                                                 <img
-                                                                    src={items.subCategory.images[0].url}
+                                                                    src={items.imageUrl}
                                                                     style={{
                                                                         width: '100%',
                                                                         height: '100%',
                                                                         objectFit: 'cover',
                                                                     }}
-                                                                    alt={items.subCategory.name}
+                                                                    alt={items.subcategoryName}
                                                                 />
                                                             </div>
                                                         )}
                                                     <div style={{ padding: '8px' }}>
                                                         <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-                                                            {items.subCategory.name}
+                                                            {items.subcategoryName}
                                                         </Typography>
                                                         <Typography variant="body1" >
-                                                            Số lượng: {items.quantity}
+                                                            Số lượng: {items.availableQuantity}
                                                         </Typography>
                                                         <Typography variant="body2">{items.code}</Typography>
                                                     </div>
