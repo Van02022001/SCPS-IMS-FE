@@ -8,9 +8,7 @@ import {
     Table,
     Stack,
     Paper,
-    Avatar,
     Button,
-    Popover,
     Checkbox,
     TableRow,
     MenuItem,
@@ -37,12 +35,11 @@ import CloseIcon from '@mui/icons-material/Close';
 // sections
 import { SubCategoryListHead, SubCategoryToolbar } from '~/sections/@dashboard/manager/subCategory';
 // mock
-import PRODUCTSLIST from '../../../_mock/products';
+
 import CreateSubCategoryForm from '~/sections/auth/manager/subCategory/CreateSubCategoryForm';
 // api
 import { getAllSubCategory } from '~/data/mutation/subCategory/subCategory-mutation';
 
-import EditCategoryForm from '~/sections/auth/manager/categories/EditCategoryForm';
 import SubCategoryDetailForm from '~/sections/auth/manager/subCategory/SubCategoryDetailForm';
 //icons
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
@@ -125,7 +122,6 @@ const MenuProps = {
 
 const SubCategoryPage = () => {
     // State mở các form----------------------------------------------------------------
-    const [open, setOpen] = useState(null);
     const [openOderForm, setOpenOderForm] = useState(false);
     const [openEditForm, setOpenEditForm] = useState(false);
 
@@ -147,13 +143,8 @@ const SubCategoryPage = () => {
     const [subCategoryData, setSubCategoryData] = useState([]);
     const [subCategoryStatus, setSubCategoryStatus] = useState('');
 
-    const [filteredCategory, setFilteredCategory] = useState(null);
-
     // const [anchorElOptions, setAnchorElOptions] = useState(null);
 
-    const [selectedFilterOptions, setSelectedFilterOptions] = useState(null);
-
-    const [personName, setPersonName] = React.useState([]);
 
     const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
     const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
@@ -168,12 +159,6 @@ const SubCategoryPage = () => {
     const startIndex = page * rowsPerPage;
     const endIndex = startIndex + rowsPerPage;
 
-    const handleChange = (event) => {
-        setPersonName(event.target.value);
-        const selectedValues = event.target.value.length > 0 ? event.target.value : null;
-        setFilteredCategory(selectedValues);
-        setSelectedFilterOptions(selectedValues);
-    };
 
     // ========================== Hàm để thay đổi data mỗi khi Edit xong api=======================================
     const updateSubCategoryInList = (updatedSubCategory) => {
@@ -268,15 +253,7 @@ const SubCategoryPage = () => {
         setRowsPerPage(parseInt(event.target.value, 10));
     };
     // Các hàm xử lý soft theo name--------------------------------------------------------------------------------------------------------------------------------
-    const handleCheckboxChange = (event, subCategoryId) => {
-        if (event.target.checked) {
-            // Nếu người dùng chọn checkbox, thêm danh mục vào danh sách đã chọn.
-            setSelectedSubCategoryId([...selectedSubCategoryId, subCategoryId]);
-        } else {
-            // Nếu người dùng bỏ chọn checkbox, loại bỏ danh mục khỏi danh sách đã chọn.
-            setSelectedSubCategoryId(selectedSubCategoryId.filter((id) => id !== subCategoryId));
-        }
-    };
+
     const handleRequestSort = (property) => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
@@ -315,9 +292,6 @@ const SubCategoryPage = () => {
         setOpenOderForm(false);
     };
 
-    const handleCloseEditsForm = () => {
-        setOpenEditForm(false);
-    };
 
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - categoryData.length) : 0;
 
@@ -482,16 +456,6 @@ const SubCategoryPage = () => {
                                                 selected={selectedSubCategoryId === sub_category.id}
                                                 onClick={() => handleSubCategoryClick(sub_category)}
                                             >
-                                                {/* <TableCell padding="checkbox">
-                                                    <Checkbox
-                                                        checked={selectedSubCategoryId === sub_category.id}
-                                                        // onChange={(event) =>
-                                                        //     handleCheckboxChange(event, sub_category.id)
-                                                        // }
-                                                        // checked={selectedUser}
-                                                        onChange={(event) => handleClick(event, sub_category.name)}
-                                                    />
-                                                </TableCell> */}
 
                                                 <TableCell align="left">
                                                     <Stack direction="row" alignItems="center" spacing={2}>

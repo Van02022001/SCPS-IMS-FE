@@ -7,7 +7,6 @@ import {
     TableRow,
     Card,
     CardContent,
-    TextField,
     Button,
     Grid,
     Typography,
@@ -93,9 +92,9 @@ const CreateInternalImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, 
 
     //========================== Hàm notification của trang ==================================
 
-    const handleQuantityChange = (itemId, value) => {
-        setQuantities((prev) => ({ ...prev, [itemId]: value }));
-    };
+    // const handleQuantityChange = (itemId, value) => {
+    //     setQuantities((prev) => ({ ...prev, [itemId]: value }));
+    // };
 
     const handleOpenAddCategoryDialog = (detailId) => {
         setSelectedDetailId(detailId);
@@ -148,10 +147,6 @@ const CreateInternalImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, 
     };
 
     const handleConfirm = async () => {
-        const paramReceipt = {
-            receipt_id: dataReceiptDetail.id,
-        };
-
         try {
             const response = await getExaminationItem(dataReceiptDetail.id);
             console.log('API Response:', response);
@@ -181,10 +176,10 @@ const CreateInternalImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, 
         setSnackbarSuccessOpen(true);
     };
 
-    const handleClosePopup = () => {
-        setOpenAddCategoryDialog(false);
-        onCloseForm(); // Close the main popup
-    };
+    // const handleClosePopup = () => {
+    //     setOpenAddCategoryDialog(false);
+    //     onCloseForm(); // Close the main popup
+    // };
 
     const handleUpdateLocations = ({ detailId, locations }) => {
         console.log('Updating flag for detailId:', detailId);

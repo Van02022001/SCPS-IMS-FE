@@ -24,10 +24,7 @@ import { ProductsListHead, ProductsListToolbar } from '~/sections/@dashboard/pro
 import PRODUCTSLIST from '../../../../_mock/products';
 // api
 import ImportReceiptDetailManagerForm from '~/sections/auth/manager/transaction/importReceipt/ImportReceiptDetailManagerForm';
-// import EditCategoryForm from '~/sections/auth/manager/categories/EditCategoryForm';
-// import GoodsReceiptPage from '../GoodsReceiptPage';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { getAllImportReceipt } from '~/data/mutation/importReceipt/ImportReceipt-mutation';
+import { useLocation } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { getAllInternalImport } from '~/data/mutation/internalImport/internalImport-mutation';
 
@@ -86,7 +83,6 @@ function applySortFilter(array, comparator, query) {
 
 const InternalImportPage = () => {
     // State mở các form----------------------------------------------------------------
-    const [open, setOpen] = useState(null);
     const [openOderForm, setOpenOderForm] = useState(false);
 
     const [selected, setSelected] = useState([]);
@@ -101,15 +97,11 @@ const InternalImportPage = () => {
     const [sortedProduct, setSortedProduct] = useState([]);
 
     const [rowsPerPage, setRowsPerPage] = useState(5);
-
-    const navigate = useNavigate();
+    console.log(openOderForm, setSortBy);
     const location = useLocation();
-
     // State data và xử lý data
     const [importReceiptData, setImportReceiptData] = useState([]);
-    const [productStatus, setProductStatus] = useState('');
 
-    const [selectedProduct, setSelectedProduct] = useState(null);
     const startIndex = page * rowsPerPage;
     const endIndex = startIndex + rowsPerPage;
     // Hàm để thay đổi data mỗi khi Edit xong api-------------------------------------------------------------
@@ -135,21 +127,13 @@ const InternalImportPage = () => {
         }
     };
 
-    const handleCreateImportReceiptSuccess = (newImportReceipt) => {
-        // Close the form
-        setOpenOderForm(false);
-        setImportReceiptData((prevImportReceiptData) => [...prevImportReceiptData, newImportReceipt]);
-    };
-
-    //----------------------------------------------------------------
-    // const handleOpenMenu = (event, product) => {
-    //     setSelectedProduct(product);
-    //     setOpen(event.currentTarget);
+    // const handleCreateImportReceiptSuccess = (newImportReceipt) => {
+    //     // Close the form
+    //     setOpenOderForm(false);
+    //     setImportReceiptData((prevImportReceiptData) => [...prevImportReceiptData, newImportReceipt]);
     // };
 
-    // const handleCloseMenu = () => {
-    //     setOpen(null);
-    // };
+    //---------------------------------------------------------------
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
@@ -160,20 +144,6 @@ const InternalImportPage = () => {
         setSelected([]);
     };
 
-    const handleClick = (event, name) => {
-        const selectedIndex = selected.indexOf(name);
-        let newSelected = [];
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, name);
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-        }
-        setSelected(newSelected);
-    };
 
     const handleProductClick = (importReceipt) => {
         if (selectedImportReceiptId === importReceipt.id) {
@@ -196,15 +166,7 @@ const InternalImportPage = () => {
         setRowsPerPage(parseInt(event.target.value, 10));
     };
     // Các hàm xử lý soft theo name--------------------------------------------------------------------------------------------------------------------------------
-    const handleCheckboxChange = (event, productId) => {
-        if (event.target.checked) {
-            // Nếu người dùng chọn checkbox, thêm sản phẩm vào danh sách đã chọn.
-            setSelectedImportReceiptId([...selectedImportReceiptId, productId]);
-        } else {
-            // Nếu người dùng bỏ chọn checkbox, loại bỏ sản phẩm khỏi danh sách đã chọn.
-            setSelectedImportReceiptId(selectedImportReceiptId.filter((id) => id !== productId));
-        }
-    };
+
     const handleRequestSort = (property) => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
@@ -232,10 +194,6 @@ const InternalImportPage = () => {
         const filteredUsers = applySortFilter(sortedProduct, getComparator(order, sortBy), query);
         setSortedProduct(filteredUsers);
     };
-
-    // const handleCloseEditsForm = () => {
-    //     setOpenEditForm(false);
-    // };
 
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - PRODUCTSLIST.length) : 0;
 
@@ -329,14 +287,6 @@ const InternalImportPage = () => {
                                                 selected={selectedImportReceiptId === importReceipt.id}
                                                 onClick={() => handleProductClick(importReceipt)}
                                             >
-                                                {/* <TableCell padding="checkbox">
-                                                    <Checkbox
-                                                        checked={selectedImportReceiptId === importReceipt.id}
-                                                        // onChange={(event) => handleCheckboxChange(event, importReceipt.id)}
-                                                        // checked={selectedUser}
-                                                        onChange={(event) => handleClick(event, importReceipt.code)}
-                                                    />
-                                                </TableCell> */}
 
                                                 <TableCell component="th" scope="row" padding="none">
                                                     <Stack direction="row" alignItems="center" spacing={2}>

@@ -16,11 +16,9 @@ import {
     TableCell,
 } from '@mui/material';
 // icons
-// import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import ClearIcon from '@mui/icons-material/Clear';
-import SaveIcon from '@mui/icons-material/Save';
+
+
 //notification
-import Snackbar from '@mui/material/Snackbar';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 // api
@@ -42,11 +40,8 @@ const ImportRequestReceiptDetailManagerForm = ({
     const [formHeight, setFormHeight] = useState(0);
     const [currentTab, setCurrentTab] = useState(0);
     //props
-    const [isOpenImportForm, setIsOpenImportForm] = useState(false);
-    const [importReceipstData, setImportReceipstData] = useState(null);
 
     const [editedImportReceipt, setEditedImportReceipt] = useState(null);
-    const [editSubCategoryMeta, setEditSubCategoryMeta] = useState(null);
     const [currentStatus, setCurrentStatus] = useState('');
 
     // const [positionedSnackbarOpen, setPositionedSnackbarOpen] = useState(false);
@@ -173,141 +168,13 @@ const ImportRequestReceiptDetailManagerForm = ({
         }
     }, [importRequestReceiptId, importRequestReceipt, mode]);
 
-    // useEffect(() => {
 
-    // }, []);
-
-    // useEffect(() => {
-    //     if (mode === 'create') {
-
-    //         setEditSubCategoryMeta({
-    //             key: '',
-    //             description: '',
-
-    //         });
-    //     } else {
-    //         if (subCategoryMeta) {
-
-    //             const editedSubCategoryMeta = {
-    //                 key: subCategoryMeta.key,
-    //                 description: subCategoryMeta.description,
-    //             };
-    //             setEditSubCategoryMeta(editedSubCategoryMeta);
-    //         }
-    //     }
-    // }, []);
     //===================================================== Những hàm update thay đổi data =====================================================
     const importReceipst = importRequestReceipt.find((o) => o.id === importRequestReceiptId);
 
     if (!importReceipst) {
         return null;
     }
-
-    // const updateImportReceipt = async () => {
-    //     if (!editedImportReceipt) {
-    //         return;
-    //     }
-    //     try {
-    //         const response = await editImportReceipt(importRequestReceiptId, editedImportReceipt);
-
-    //         if (response.status === '200 OK') {
-    //             setIsSuccess(true);
-    //             setIsError(false);
-    //             setSuccessMessage(response.message);
-    //             handleMessage(response.message);
-    //         }
-    //         updateImportReceiptInList(response.data);
-    //         console.log('Product updated:', response);
-    //     } catch (error) {
-    //         console.error('An error occurred while updating the product:', error);
-    //         setIsError(true);
-    //         setIsSuccess(false);
-    //         if (error.response?.data?.message === 'Invalid request') {
-    //             setErrorMessage('Yêu cầu không hợp lệ');
-    //         }
-    //         if (error.response?.data?.error === '404 NOT_FOUND') {
-    //             setErrorMessage('Mô tả quá dài');
-    //         }
-    //     }
-    // };
-
-    // const updateImportReceiptConfirm = async () => {
-    //     try {
-    //         let newStatus = currentStatus === 'Pending_Approval' ? 'Inactive' : 'Approved';
-
-    //         const response = await editImportReceiptConfirm(importRequestReceiptId, newStatus);
-
-    //         if (response.status === '200 OK') {
-    //             setIsSuccess(true);
-    //             setIsError(false);
-    //             setSuccessMessage(response.message);
-    //             handleMessage(response.message);
-    //         }
-
-    //         updateImportReceiptConfirmInList(importRequestReceiptId, newStatus);
-    //         setCurrentStatus(newStatus);
-
-    //         console.log('Product status updated:', response);
-    //     } catch (error) {
-
-    //     }
-    // };
-    // const updateReceiptStartImport = async () => {
-    //     try {
-    //         let newStatus = currentStatus === 'Approved' ? 'Inactive' : 'Completed';
-
-    //         const response = await editReceiptStartImport(importRequestReceiptId, newStatus);
-
-    //         if (response.status === '200 OK') {
-    //             setIsSuccess(true);
-    //             setIsError(false);
-    //             setSuccessMessage(response.message);
-    //             handleMessage(response.message);
-    //         }
-
-    //         updateImportReceiptConfirmInList(importRequestReceiptId, newStatus);
-    //         setCurrentStatus(newStatus);
-
-    //         console.log('Product status updated:', response);
-    //     } catch (error) {
-    //         console.error('Error updating category status:', error);
-    //         setIsError(true);
-    //         setIsSuccess(false);
-    //         setErrorMessage(error.response.data.message);
-    //         if (error.response) {
-    //             console.log('Error response:', error.response);
-    //         }
-    //     }
-    // };
-    // const handleOpenForm = () => {
-    //     const validImportReceipst = importRequestReceipt.find((o) => o.id === importRequestReceiptId);
-
-    //     if (validImportReceipst && validImportReceipst.status === 'IN_PROGRESS') {
-    //         setIsOpenImportForm(true);
-
-    //         setImportReceipstData({
-    //             id: validImportReceipst.id,
-    //             code: validImportReceipst.code,
-    //             description: validImportReceipst.description,
-    //             createdBy: validImportReceipst.createdBy,
-    //             details: validImportReceipst.details || [],
-    //             lastModifiedBy: validImportReceipst.lastModifiedBy || '',
-    //             status: validImportReceipst.status || '',
-    //             totalPrice: validImportReceipst.totalPrice || 0,
-    //             totalQuantity: validImportReceipst.totalQuantity || 0,
-    //             type: validImportReceipst.type || '',
-    //             updatedAt: validImportReceipst.updatedAt || '',
-    //             warehouseId: validImportReceipst.warehouseId || 0,
-    //         });
-
-    //         console.log(validImportReceipst);
-    //     } else {
-    //         console.error('Không tìm thấy dữ liệu hợp lệ cho importReceiptId: ', importRequestReceiptId);
-    //     }
-    // };
-    // const handleCloseForm = () => {
-    //     setIsOpenImportForm(false);
-    // };
     //==========================================================================================================
 
     return editedImportReceipt ? (
@@ -393,12 +260,12 @@ const ImportRequestReceiptDetailManagerForm = ({
                                                 currentStatus === 'Pending_Approval'
                                                     ? 'Chờ xác nhận'
                                                     : currentStatus === 'Approved'
-                                                    ? 'Đã xác nhận'
-                                                    : currentStatus === 'IN_PROGRESS'
-                                                    ? 'Đang tiến hành'
-                                                    : currentStatus === 'Completed'
-                                                    ? 'Hoàn thành'
-                                                    : 'Ngừng hoạt động'
+                                                        ? 'Đã xác nhận'
+                                                        : currentStatus === 'IN_PROGRESS'
+                                                            ? 'Đang tiến hành'
+                                                            : currentStatus === 'Completed'
+                                                                ? 'Hoàn thành'
+                                                                : 'Ngừng hoạt động'
                                             }
                                         />
                                     </Grid>

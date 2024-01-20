@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, TextField, Button, Typography, Grid, IconButton } from '@mui/material';
 
 import { editItemLocations } from '~/data/mutation/items/item-mutation';
-import { getAllLocation, getLocationsByEmptyItem } from '~/data/mutation/location/location-mutation';
+import { getLocationsByEmptyItem } from '~/data/mutation/location/location-mutation';
 import CloseIcon from '@mui/icons-material/Close';
 
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
@@ -261,20 +261,20 @@ const UpdateLocationsImportForm = ({
         setToLocation_id((prevTags) => [...prevTags, newData]);
     };
 
-    const updateItemLocations = (itemId, locations) => {
-        setItemLocations((prevLocations) => ({
-            ...prevLocations,
-            [itemId]: locations,
-        }));
-    };
+    // const updateItemLocations = (itemId, locations) => {
+    //     setItemLocations((prevLocations) => ({
+    //         ...prevLocations,
+    //         [itemId]: locations,
+    //     }));
+    // };
 
-    // Example function to update quantities for an item
-    const updateItemQuantities = (itemId, quantities) => {
-        setItemQuantities((prevQuantities) => ({
-            ...prevQuantities,
-            [itemId]: quantities,
-        }));
-    };
+    // // Example function to update quantities for an item
+    // const updateItemQuantities = (itemId, quantities) => {
+    //     setItemQuantities((prevQuantities) => ({
+    //         ...prevQuantities,
+    //         [itemId]: quantities,
+    //     }));
+    // };
 
 
     return (

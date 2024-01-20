@@ -190,9 +190,7 @@ const InternalExportRequestInventory = () => {
     };
 
     const updateExportReceiptConfirmInList = (goodReceiptId, newStatus) => {
-        const importRquestReceiptIndex = exportRequestData.findIndex(
-            (good_receipt) => good_receipt.id === goodReceiptId,
-        );
+        const importRquestReceiptIndex = exportRequestData.findIndex((good_receipt) => good_receipt.id === goodReceiptId,);
 
         if (importRquestReceiptIndex !== -1) {
             const UpdatedGoodReceipt = [...exportRequestData];
@@ -287,7 +285,6 @@ const InternalExportRequestInventory = () => {
         getInternalExportRequestForInventory()
             .then((response) => {
                 const data = response.data;
-                console.log(data);
                 if (Array.isArray(data)) {
                     const sortedData = data.sort((a, b) => {
                         return dayjs(b.createdAt, 'DD/MM/YYYY HH:mm:ss').diff(
@@ -499,12 +496,12 @@ const InternalExportRequestInventory = () => {
                                                         {importRequest.status === 'Pending_Approval'
                                                             ? 'Chờ xác nhận'
                                                             : importRequest.status === 'Approved'
-                                                            ? 'Đã xác nhận'
-                                                            : importRequest.status === 'IN_PROGRESS'
-                                                            ? 'Đang tiến hành'
-                                                            : importRequest.status === 'Completed'
-                                                            ? 'Hoàn thành'
-                                                            : 'Ngừng hoạt động'}
+                                                                ? 'Đã xác nhận'
+                                                                : importRequest.status === 'IN_PROGRESS'
+                                                                    ? 'Đang tiến hành'
+                                                                    : importRequest.status === 'Completed'
+                                                                        ? 'Hoàn thành'
+                                                                        : 'Ngừng hoạt động'}
                                                     </Label>
                                                 </TableCell>
                                             </TableRow>
@@ -515,7 +512,7 @@ const InternalExportRequestInventory = () => {
                                                         <InternalExportRequestDetail
                                                             exportRequestReceipt={exportRequestData}
                                                             // importRequestReceiptStatus={importRequestStatus}
-                                                            importRequestReceiptId={selectedGoodReceiptId}
+                                                            exportRequestReceiptId={selectedGoodReceiptId}
                                                             updateGoodReceiptInList={updateGoodReceiptInList}
                                                             updateExportReceiptConfirmInList={
                                                                 updateExportReceiptConfirmInList

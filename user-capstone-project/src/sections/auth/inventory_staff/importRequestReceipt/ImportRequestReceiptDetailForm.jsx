@@ -17,12 +17,7 @@ import {
     Dialog,
     DialogTitle,
 } from '@mui/material';
-// icons
-// import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import ClearIcon from '@mui/icons-material/Clear';
-import SaveIcon from '@mui/icons-material/Save';
 //notification
-import Snackbar from '@mui/material/Snackbar';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 // api
@@ -216,23 +211,6 @@ const ImportRequestReceiptDetailForm = ({
     if (!importReceipst) {
         return null;
     }
-
-    const updateImportReceipt = async () => {
-        if (!editedImportReceipt) {
-            return;
-        }
-        try {
-            const response = await editImportReceipt(importReceiptId, editedImportReceipt);
-
-            if (response.status === '200 OK') {
-            }
-            updateImportReceiptInList(response.data);
-            console.log('Product updated:', response);
-        } catch (error) {
-            console.error('An error occurred while updating the product:', error);
-        }
-    };
-
     const updateImportReceiptConfirm = async () => {
         try {
             // if (currentStatus !== 'Pending_Approval') {
@@ -335,21 +313,6 @@ const ImportRequestReceiptDetailForm = ({
     //==========================================================================================================
     const handleCloseCreateImportRequestForm = (isClosed) => {
         setIsExportFormOpen(isClosed);
-    };
-
-    const handleDataReload = () => {
-        getAllImportReceipt()
-            .then((response) => {
-                const data = response.data;
-                if (Array.isArray(data)) {
-                    setImportReceiptData(data);
-                } else {
-                    console.error('API response is not an array:', data);
-                }
-            })
-            .catch((error) => {
-                console.error('Error fetching import receipts:', error);
-            });
     };
 
     return editedImportReceipt ? (

@@ -16,17 +16,13 @@ import {
 } from '@mui/material';
 // components
 import Label from '~/components/label/Label';
-import Iconify from '~/components/iconify/Iconify';
 import Scrollbar from '~/components/scrollbar/Scrollbar';
-import CloseIcon from '@mui/icons-material/Close';
-//icons
-import FilterAltIcon from '@mui/icons-material/FilterAlt';
 // sections
 import { InventoryReportListHead, InventoryReportToolbar } from '~/sections/@dashboard/manager/inventoryReport';
 // mock
 import PRODUCTSLIST from '../../../_mock/products';
 // api
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 import dayjs from 'dayjs';
 import { getAllInventoryCheck } from '~/data/mutation/inventoryCheck/InventoryCheck-mutation';
@@ -76,16 +72,7 @@ function applySortFilter(array, comparator, query) {
     return stabilizedThis.map((el) => el[0]);
 }
 
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-    PaperProps: {
-        style: {
-            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-            width: 250,
-        },
-    },
-};
+
 const InventoryCheckManagerPage = () => {
     // State mở các form----------------------------------------------------------------
     // const [open, setOpen] = useState(null);
@@ -103,7 +90,7 @@ const InventoryCheckManagerPage = () => {
     // const [openOderForm, setOpenOderForm] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
     // State data và xử lý data
     const [inventoryCheckData, setInventoryCheckData] = useState([]);
@@ -122,10 +109,6 @@ const InventoryCheckManagerPage = () => {
     const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
     const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
 
-    // const handleProductClick = (product) => {
-    //     setSelectedProduct(product);
-    //     setInventoryCheckDetailOpen(true);
-    // };
     const handleItemClick = (item) => {
         console.log(item);
         if (selectedItemCheckId === item.id) {

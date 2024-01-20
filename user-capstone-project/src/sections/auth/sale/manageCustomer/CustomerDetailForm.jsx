@@ -130,7 +130,7 @@ const CustomerDetailForm = ({ customer, customerId, updateCustomerStatusInList, 
     }, [customerId, customer, mode]);
 
     const customers = customer.find((o) => o.id === customerId);
-
+    console.log(customers, formHeight);
     if (!customer) {
         return null;
     }
@@ -281,8 +281,8 @@ const CustomerDetailForm = ({ customer, customerId, updateCustomerStatusInList, 
                                                 ? editedCustomer.type === 'INDIVIDUAL'
                                                     ? 'Cá nhân'
                                                     : editedCustomer.type === 'COMPANY'
-                                                    ? 'Công ty'
-                                                    : 'Không có'
+                                                        ? 'Công ty'
+                                                        : 'Không có'
                                                 : ''
                                         }
                                     />

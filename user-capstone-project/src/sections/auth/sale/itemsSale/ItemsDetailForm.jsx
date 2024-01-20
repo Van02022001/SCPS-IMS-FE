@@ -21,15 +21,13 @@ import {
 } from '@mui/material';
 
 // import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import { editItem, editStatusItem, getItemsByPriceHistory, getItemsByPricingHistory } from '~/data/mutation/items/item-mutation';
+import { getItemsByPriceHistory, getItemsByPricingHistory } from '~/data/mutation/items/item-mutation';
 
 import { getAllSubCategory } from '~/data/mutation/subCategory/subCategory-mutation';
 import { getAllBrands } from '~/data/mutation/brand/brands-mutation';
 import { getAllOrigins } from '~/data/mutation/origins/origins-mutation';
 import { getAllSuppliers } from '~/data/mutation/supplier/suppliers-mutation';
 //icons
-import AddIcon from '@mui/icons-material/Add';
-import CustomDialog from '~/components/alert/ConfirmDialog';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
@@ -37,10 +35,8 @@ import SnackbarError from '~/components/alert/SnackbarError';
 import dayjs from 'dayjs';
 
 const ItemsDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode, updateItemStatusInList }) => {
-    const [expandedItem, setExpandedItem] = useState(itemId);
     const [formHeight, setFormHeight] = useState(0);
     const [selectedTab, setSelectedTab] = useState(0);
-    const [tab1Data, setTab1Data] = useState({ categories_id: [] });
 
     const [editedItem, setEditedItem] = useState({});
 
@@ -49,8 +45,6 @@ const ItemsDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mod
     const [supplier_id, setSupplier_id] = useState([]);
     const [origin_id, setOrigin_id] = useState([]);
     const [itemPriceData, setItemPriceData] = useState([]);
-    const [currentStatus, setCurrentStatus] = useState('');
-    const [openAddCategoryDialog, setOpenAddCategoryDialog] = useState(false);
     const [itemPricingData, setItemPricingData] = useState([]);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [page, setPage] = useState(0);
@@ -61,8 +55,7 @@ const ItemsDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mod
     //========================== Hàm notification của trang ==================================
     const [open, setOpen] = React.useState(false);
     const [open1, setOpen1] = React.useState(false);
-    const [confirmOpen1, setConfirmOpen1] = useState(false);
-    const [confirmOpen2, setConfirmOpen2] = useState(false);
+
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
@@ -208,61 +201,7 @@ const ItemsDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mod
         return null;
     }
 
-    const handleSave = () => {
-        // Xử lý lưu
-    };
 
-    const updateItemStatus = async () => {
-        try {
-            let newStatus = currentStatus === 'Active' ? 'Inactive' : 'Active';
-
-            const response = await editStatusItem(itemId, newStatus);
-
-            if (response.status === '200 OK') {
-                handleSuccessMessage(response.message);
-            }
-
-            // Sử dụng hàm để cập nhật trạng thái trong danh sách categories trong CategoryPage
-            updateItemStatusInList(itemId, newStatus);
-            setCurrentStatus(newStatus);
-
-            console.log('Item status updated:', response);
-        } catch (error) {
-            console.error('Error updating category status:', error);
-            setErrorMessage(error.response.data.message);
-            if (error.response) {
-                console.log('Error response:', error.response);
-            }
-        }
-    };
-
-    const handleDelete = () => {
-        // Xử lý xóa
-    };
-
-    const updateItems = async () => {
-        if (!editedItem) {
-            return;
-        }
-        try {
-            const response = await editItem(itemId, editedItem);
-
-            if (response.status === '200 OK') {
-                setSuccessMessage(response.message);
-                handleSuccessMessage(response.message);
-            }
-
-            updateItemInList(response.data);
-            console.log('Item updated:', response);
-        } catch (error) {
-            console.error('An error occurred while updating the item:', error);
-            setErrorMessage(error.response.data.message);
-            if (error.response) {
-                console.log('Error response:', error.response);
-            }
-            handleErrorMessage(error.response.data.message);
-        }
-    };
     const handleEdit = (field, value) => {
         console.log(`Field: ${field}, Value: ${value}`);
         if (field === 'sub_category_id') {
@@ -280,13 +219,7 @@ const ItemsDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mod
     };
 
     // hàm xử lý đóng mở popup form
-    const handleOpenAddCategoryDialog = () => {
-        setOpenAddCategoryDialog(true);
-    };
 
-    const handleCloseAddCategoryDialog = () => {
-        setOpenAddCategoryDialog(false);
-    };
 
     const calculateTotalQuantity = (warehouseName) => {
         const totalQuantity = item.locations
@@ -516,29 +449,28 @@ const ItemsDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mod
                                             value={
                                                 item.locations
                                                     ? [
-                                                          ...new Set(
-                                                              item.locations.map(
-                                                                  (location) =>
-                                                                      `${
-                                                                          location.warehouse.name
-                                                                      } - Số lượng: ${calculateTotalQuantity(
-                                                                          location.warehouse.name,
-                                                                      )}`,
-                                                              ),
-                                                          ),
-                                                      ].join('\n')
+                                                        ...new Set(
+                                                            item.locations.map(
+                                                                (location) =>
+                                                                    `${location.warehouse.name
+                                                                    } - Số lượng: ${calculateTotalQuantity(
+                                                                        location.warehouse.name,
+                                                                    )}`,
+                                                            ),
+                                                        ),
+                                                    ].join('\n')
                                                     : ''
                                             }
                                             title={
                                                 item.locations
                                                     ? [
-                                                          ...new Set(
-                                                              item.locations.map(
-                                                                  (location) =>
-                                                                      `${location.warehouse.address} - ${location.warehouse.name}`,
-                                                              ),
-                                                          ),
-                                                      ].join('\n')
+                                                        ...new Set(
+                                                            item.locations.map(
+                                                                (location) =>
+                                                                    `${location.warehouse.address} - ${location.warehouse.name}`,
+                                                            ),
+                                                        ),
+                                                    ].join('\n')
                                                     : ''
                                             }
                                         />

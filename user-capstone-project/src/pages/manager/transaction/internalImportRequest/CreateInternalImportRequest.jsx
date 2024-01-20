@@ -381,18 +381,18 @@ const CreateInternalImportRequest = () => {
         }, 0);
     };
 
-    const calculateTotalAmount = () => {
-        return selectedItems.reduce((total, item) => {
-            const quantity = parseInt(item.quantity, 10);
-            const unitPrice = parseFloat(item.unitPrice);
+    // const calculateTotalAmount = () => {
+    //     return selectedItems.reduce((total, item) => {
+    //         const quantity = parseInt(item.quantity, 10);
+    //         const unitPrice = parseFloat(item.unitPrice);
 
-            if (!isNaN(quantity) && !isNaN(unitPrice)) {
-                return total + quantity * unitPrice;
-            }
+    //         if (!isNaN(quantity) && !isNaN(unitPrice)) {
+    //             return total + quantity * unitPrice;
+    //         }
 
-            return total;
-        }, 0);
-    };
+    //         return total;
+    //     }, 0);
+    // };
     // const handleDataSearch = (searchResult) => {
     //     // Cập nhật state của trang chính với dữ liệu từ tìm kiếm
     //     setDropdownData(searchResult);
@@ -634,14 +634,22 @@ const CreateInternalImportRequest = () => {
                                                 <div style={{ display: 'flex' }}>
                                                     {items.subCategory.images &&
                                                         items.subCategory.images.length > 0 && (
-                                                            <img
-                                                                src={items.subCategory.images[0].url}
-                                                                style={{
-                                                                    width: '40%',
-                                                                    height: '70px',
-                                                                    objectFit: 'cover',
-                                                                }}
-                                                            />
+                                                            <div style={{
+                                                                width: '100px',
+                                                                height: '100px',
+                                                                overflow: 'hidden',
+                                                                borderRadius: 5,
+                                                            }}>
+                                                                <img
+                                                                    alt={items.subCategory.name}
+                                                                    src={items.subCategory.images[0].url}
+                                                                    style={{
+                                                                        width: '100%',
+                                                                        height: '100%',
+                                                                        objectFit: 'cover',
+                                                                    }}
+                                                                />
+                                                            </div>
                                                         )}
                                                     <div style={{ padding: '8px' }}>
                                                         <Typography variant="body1">

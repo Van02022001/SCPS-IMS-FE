@@ -10,7 +10,6 @@ import {
     Typography,
     MenuItem,
     FormControl,
-    Input,
     Select,
     Stack,
     Box,
@@ -23,7 +22,7 @@ import {
 } from '@mui/material';
 
 import USERLIST from '~/_mock/user';
-import { Search, FilterList, Sort } from '@mui/icons-material';
+
 //compornent
 import { Helmet } from 'react-helmet-async';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -31,8 +30,8 @@ import Scrollbar from '~/components/scrollbar/Scrollbar';
 
 import { useNavigate } from 'react-router-dom';
 //api
-import { UserListHead } from '~/sections/@dashboard/user';
-import { getAllItem, getAllItemBySale } from '~/data/mutation/items/item-mutation';
+
+import { getAllItemBySale } from '~/data/mutation/items/item-mutation';
 import { getAllWarehouse, getInventoryStaffByWarehouseId } from '~/data/mutation/warehouse/warehouse-mutation';
 import { createRequestCustomer } from '~/data/mutation/customerRequest/CustomerRequest-mutation';
 import { getAllCustomer } from '~/data/mutation/customer/customer-mutation';
@@ -46,8 +45,6 @@ const CreateRequestCustomerPage = () => {
     const [orderBy, setOrderBy] = useState('name');
     const [selected, setSelected] = useState([]);
 
-    const [itemId, setItemId] = useState([]);
-    const [quantity, setQuantity] = useState(null);
     const [note, setNote] = useState(null);
     const [customerData, setCustomerData] = useState([]);
     const [itemsData, setItemsData] = useState([]);

@@ -7,7 +7,6 @@ import {
     TableRow,
     Card,
     CardContent,
-    TextField,
     Button,
     Grid,
     Typography,
@@ -147,10 +146,6 @@ const CreateInternalExportReceiptForm = ({ isOpen, onCloseForm, exportReceipst, 
     };
 
     const handleConfirm = async () => {
-        const paramReceipt = {
-            receipt_id: dataReceiptDetail.id,
-        };
-
         try {
             const response = await getExaminationItem(dataReceiptDetail.id);
             console.log('API Response:', response);
@@ -178,11 +173,6 @@ const CreateInternalExportReceiptForm = ({ isOpen, onCloseForm, exportReceipst, 
                 : 'Thành công',
         );
         setSnackbarSuccessOpen(true);
-    };
-
-    const handleClosePopup = () => {
-        setOpenAddCategoryDialog(false);
-        onCloseForm(); // Close the main popup
     };
 
     const handleUpdateLocations = ({ detailId, locations }) => {

@@ -7,8 +7,6 @@ import {
     Table,
     Stack,
     Paper,
-    Avatar,
-    Checkbox,
     TableRow,
     TableBody,
     TableCell,

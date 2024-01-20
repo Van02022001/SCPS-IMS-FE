@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, TextField, Button, Typography, Grid, IconButton } from '@mui/material';
 
-import SuccessAlerts from '~/components/alert/SuccessAlert';
-import ErrorAlerts from '~/components/alert/ErrorAlert';
 import { editItemLocationsExport } from '~/data/mutation/items/item-mutation';
 import { getAllLocationByItem } from '~/data/mutation/location/location-mutation';
 import SnackbarError from '~/components/alert/SnackbarError';
@@ -33,7 +31,6 @@ const UpdateLocationToExportForm = ({
     onSave,
     itemId,
 }) => {
-    const [quantity, setQuantity] = useState('');
     const [toLocation_id, setToLocation_id] = useState([]);
 
     const [showLocationSelection, setShowLocationSelection] = useState(false);
@@ -44,6 +41,7 @@ const UpdateLocationToExportForm = ({
     const [itemLocations, setItemLocations] = useState({});
     const [itemQuantities, setItemQuantities] = useState({});
     const [receiptDetailId, setReceiptDetailId] = useState(null);
+    console.log(receiptDetailId, itemQuantities, itemLocations, showLocationSelection);
     //========================== Hàm notification của trang ==================================
     const [open1, setOpen1] = React.useState(false);
     const [errorMessage, setErrorMessage] = useState('');

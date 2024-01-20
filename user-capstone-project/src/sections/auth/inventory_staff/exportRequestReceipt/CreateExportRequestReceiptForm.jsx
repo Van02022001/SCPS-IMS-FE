@@ -35,7 +35,7 @@ const CreateExportRequestReceiptForm = ({ isOpen, onCloseForm, importReceipst, o
     const [selectedDetailId, setSelectedDetailId] = useState(null);
     const [toLocation_id, setToLocation_id] = useState([]);
     const [selectedDetailQuantity, setSelectedDetailQuantity] = useState(null);
-
+    console.log(setToLocation_id, setSelectedLocationsFlag, setLocationQuantities);
     //========================== Hàm notification của trang ==================================
     const [open, setOpen] = React.useState(false);
     const [open1, setOpen1] = React.useState(false);
@@ -113,7 +113,6 @@ const CreateExportRequestReceiptForm = ({ isOpen, onCloseForm, importReceipst, o
                 const updatedLocations = prevSelectedLocations.map((loc, index) =>
                     index === existingIndex ? { ...loc, locations } : loc,
                 );
-
                 // Check if all locations are selected
                 const allLocationsSelected = locations.every((location) => location.quantity > 0);
 
@@ -157,10 +156,6 @@ const CreateExportRequestReceiptForm = ({ isOpen, onCloseForm, importReceipst, o
     console.log(dataReceiptDetail);
 
     const handleConfirm = async () => {
-        const paramReceipt = {
-            receipt_id: dataReceiptDetail.id,
-        };
-
         try {
             const response = await getExaminationItem(dataReceiptDetail.id);
             console.log('API Response:', response);

@@ -13,18 +13,18 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
-import { getAllLocation, getAllLocationByItem } from '~/data/mutation/location/location-mutation';
+import { getAllLocationByItem } from '~/data/mutation/location/location-mutation';
 import { getExaminationItem, getUpdatedLocationDetails } from '~/data/mutation/items/item-mutation';
 import UpdateLocationToExportForm from './UpdateLocationToExportForm';
 import { useNavigate } from 'react-router-dom';
 
 const AddLocationToExportReceipt = ({ open, onClose, dataReceiptDetail, details, updateDataReceiptDetail, onSave }) => {
-    const [quantity, setQuantity] = useState('');
+
     const navigate = useNavigate();
-    const [exportLocation_id, setExportLocation_id] = useState([]);
+
     const [showLocationSelection, setShowLocationSelection] = useState(false);
     const [locationQuantities, setLocationQuantities] = useState({});
-
+    console.log(showLocationSelection, setLocationQuantities);
     const [selectedLocationsFlag, setSelectedLocationsFlag] = useState({});
 
     // State to manage the selected locations for each detailId
@@ -69,15 +69,11 @@ const AddLocationToExportReceipt = ({ open, onClose, dataReceiptDetail, details,
         onClose();
     };
 
-    useEffect(() => {
-        console.log('Selected Locations Flag Updated:', selectedLocationsFlag);
-        console.log('Location Quantities Updated:', locationQuantities);
-    }, [selectedLocationsFlag, locationQuantities]);
 
     const handleConfirm = async () => {
-        const paramReceipt = {
-            receipt_id: dataReceiptDetail.id,
-        };
+        // const paramReceipt = {
+        //     receipt_id: dataReceiptDetail.id,
+        // };
 
         try {
             const response = await getExaminationItem(dataReceiptDetail.id);
@@ -111,6 +107,7 @@ const AddLocationToExportReceipt = ({ open, onClose, dataReceiptDetail, details,
             console.error('Error calling getUpdatedDetails API:', error);
         }
     };
+
     useEffect(() => {
         // Call the function to check updated details when the component mounts
         if (dataReceiptDetail.id) {
@@ -164,7 +161,7 @@ const AddLocationToExportReceipt = ({ open, onClose, dataReceiptDetail, details,
                                             {!locationQuantities[detail.id] > 0 &&
                                                 !selectedLocationsFlag[detail.id] &&
                                                 selectedLocations.find((loc) => loc.detailId === detail.id) ===
-                                                    undefined && (
+                                                undefined && (
                                                     <Button
                                                         variant="contained"
                                                         color="primary"
@@ -186,8 +183,8 @@ const AddLocationToExportReceipt = ({ open, onClose, dataReceiptDetail, details,
                                             itemId={
                                                 dataReceiptDetail?.details && selectedDetailId
                                                     ? dataReceiptDetail.details.find(
-                                                          (detail) => detail.id === selectedDetailId,
-                                                      )?.item?.id
+                                                        (detail) => detail.id === selectedDetailId,
+                                                    )?.item?.id
                                                     : null
                                             }
                                             onUpdate={handleUpdateLocations}
@@ -205,7 +202,7 @@ const AddLocationToExportReceipt = ({ open, onClose, dataReceiptDetail, details,
                     Lưu
                 </Button>
             </div>
-            
+
         </>
     );
 };

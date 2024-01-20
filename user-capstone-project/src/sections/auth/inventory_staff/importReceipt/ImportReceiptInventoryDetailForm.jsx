@@ -18,16 +18,9 @@ import {
 } from '@mui/material';
 
 //notification
-import Snackbar from '@mui/material/Snackbar';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 // api
-import {
-    editImportReceipt,
-    editImportReceiptConfirm,
-    editReceiptStartImport,
-} from '~/data/mutation/importRequestReceipt/ImportRequestReceipt-mutation';
-
 import AddLocationsImportForm from './AddLocationsImportForm';
 import SnackbarError from '~/components/alert/SnackbarError';
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
@@ -43,10 +36,6 @@ const ImportReceiptInventoryDetailForm = ({
     mode,
 }) => {
     const [open, setOpen] = React.useState(false);
-
-    const [tab1Data, setTab1Data] = useState({ categories_id: [] });
-    const [tab2Data, setTab2Data] = useState({});
-
     // const [expandedItem, setExpandedItem] = useState(subCategoryId);
     const [formHeight, setFormHeight] = useState(0);
     const [currentTab, setCurrentTab] = useState(0);
@@ -63,7 +52,7 @@ const ImportReceiptInventoryDetailForm = ({
         description: '',
         details: [],
     });
-
+    console.log(formHeight, importRecieptParams, importReceipstData);
     // Thông báo
     const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
     const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
@@ -99,15 +88,6 @@ const ImportReceiptInventoryDetailForm = ({
         </React.Fragment>
     );
 
-    const handleTab1DataChange = (event) => {
-        // Cập nhật dữ liệu cho tab 1 tại đây
-        setTab1Data({ ...tab1Data, [event.target.name]: event.target.value });
-    };
-
-    const handleTab2DataChange = (event) => {
-        // Cập nhật dữ liệu cho tab 2 tại đây
-        setTab2Data({ ...tab2Data, [event.target.name]: event.target.value });
-    };
     const handleChangeTab = (event, newValue) => {
         setCurrentTab(newValue);
     };
@@ -163,103 +143,12 @@ const ImportReceiptInventoryDetailForm = ({
             }
         }
     }, [importReceiptId, importReceipt, mode]);
-
-    // useEffect(() => {
-
-    // }, []);
-
-    // useEffect(() => {
-    //     if (mode === 'create') {
-
-    //         setEditSubCategoryMeta({
-    //             key: '',
-    //             description: '',
-
-    //         });
-    //     } else {
-    //         if (subCategoryMeta) {
-
-    //             const editedSubCategoryMeta = {
-    //                 key: subCategoryMeta.key,
-    //                 description: subCategoryMeta.description,
-    //             };
-    //             setEditSubCategoryMeta(editedSubCategoryMeta);
-    //         }
-    //     }
-    // }, []);
     //===================================================== Những hàm update thay đổi data =====================================================
     const importReceipst = importReceipt.find((o) => o.id === importReceiptId);
 
     if (!importReceipst) {
         return null;
     }
-
-    // const updateImportReceipt = async () => {
-    //     if (!editedImportReceipt) {
-    //         return;
-    //     }
-    //     try {
-    //         const response = await editImportReceipt(importReceiptId, editedImportReceipt);
-
-    //         if (response.status === '200 OK') {
-    //             setSuccessMessage(response.message);
-    //             handleMessage(response.message);
-    //         }
-    //         updateImportReceiptInList(response.data);
-    //         console.log('Product updated:', response);
-    //     } catch (error) {
-    //         console.error('An error occurred while updating the product:', error);
-    //         if (error.response?.data?.message === 'Invalid request') {
-    //             setErrorMessage('Yêu cầu không hợp lệ');
-    //         }
-    //         if (error.response?.data?.error === '404 NOT_FOUND') {
-    //             setErrorMessage('Mô tả quá dài');
-    //         }
-    //     }
-    // };
-
-    // const updateImportReceiptConfirm = async () => {
-    //     try {
-    //         let newStatus = currentStatus === 'Pending_Approval' ? 'Inactive' : 'Approved';
-
-    //         const response = await editImportReceiptConfirm(importReceiptId, newStatus);
-
-    //         if (response.status === '200 OK') {
-    //             setSuccessMessage(response.message);
-    //             handleMessage(response.message);
-    //         }
-
-    //         updateImportReceiptConfirmInList(importReceiptId, newStatus);
-    //         setCurrentStatus(newStatus);
-
-    //         console.log('Product status updated:', response);
-    //     } catch (error) {
-    //         //handleErrorMessage(error.response.data.message);
-    //     }
-    // };
-    // const updateReceiptStartImport = async () => {
-    //     try {
-    //         let newStatus = currentStatus === 'Approved' ? 'Inactive' : 'Completed';
-
-    //         const response = await editReceiptStartImport(importReceiptId, newStatus);
-
-    //         if (response.status === '200 OK') {
-    //             setSuccessMessage(response.message);
-    //             handleMessage(response.message);
-    //         }
-
-    //         updateImportReceiptConfirmInList(importReceiptId, newStatus);
-    //         setCurrentStatus(newStatus);
-
-    //         console.log('Product status updated:', response);
-    //     } catch (error) {
-    //         console.error('Error updating category status:', error);
-    //         setErrorMessage(error.response.data.message);
-    //         if (error.response) {
-    //             console.log('Error response:', error.response);
-    //         }
-    //     }
-    // };
     const handleOpenForm = () => {
         const validImportReceipst = importReceipt.find((o) => o.id === importReceiptId);
 
@@ -400,12 +289,12 @@ const ImportReceiptInventoryDetailForm = ({
                                                 currentStatus === 'Pending_Approval'
                                                     ? 'Chờ phê duyệt'
                                                     : currentStatus === 'Approved'
-                                                    ? 'Đã xác nhận'
-                                                    : currentStatus === 'NOT_COMPLETED'
-                                                    ? 'Chưa hoàn thành'
-                                                    : currentStatus === 'Completed'
-                                                    ? 'Hoàn thành'
-                                                    : 'Ngừng hoạt động'
+                                                        ? 'Đã xác nhận'
+                                                        : currentStatus === 'NOT_COMPLETED'
+                                                            ? 'Chưa hoàn thành'
+                                                            : currentStatus === 'Completed'
+                                                                ? 'Hoàn thành'
+                                                                : 'Ngừng hoạt động'
                                             }
                                         />
                                     </Grid>

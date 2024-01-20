@@ -42,6 +42,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import ImportReceiptInventoryDetailForm from '~/sections/auth/inventory_staff/importReceipt/ImportReceiptInventoryDetailForm';
 import { getAllInternalImportRequestOfWarehouse, getAllInternalImportWarehouse } from '~/data/mutation/internalImportRequest/internalImportRequest-mutation';
+import InternalImportDetail from '~/sections/auth/inventory_staff/internalImport/InternalImportDetail';
 
 // ----------------------------------------------------------------------
 
@@ -469,7 +470,7 @@ const InternalImportReceiptPage = () => {
                                             {selectedImportReceiptId === importReceipt.id && (
                                                 <TableRow>
                                                     <TableCell colSpan={8}>
-                                                        <ImportReceiptInventoryDetailForm
+                                                        <InternalImportDetail
                                                             importReceipt={importReceiptData}
                                                             // productStatus={productStatus}
                                                             importReceiptId={selectedImportReceiptId}

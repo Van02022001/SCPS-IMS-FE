@@ -40,9 +40,8 @@ import { getAllWarehouse, getInventoryStaffByWarehouseId } from '~/data/mutation
 import SnackbarError from '~/components/alert/SnackbarError';
 import {
     CreateRequestReceiptHead,
-    CreateRequestReceiptToolbar,
 } from '~/sections/@dashboard/manager/transaction/createRequestReceipt';
-import { Dropdown } from '~/components/dropdown';
+
 
 
 
@@ -76,12 +75,10 @@ const CreateInternalExportRequest = () => {
     //========================== Hàm notification của trang ==================================
     const [open, setOpen] = React.useState(false);
     const [open1, setOpen1] = React.useState(false);
-    const [confirmOpen1, setConfirmOpen1] = useState(false);
-    const [confirmOpen2, setConfirmOpen2] = useState(false);
+
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
-    const [dropdownData, setDropdownData] = useState([]);
     const handleSuccessMessage = (message) => {
         setOpen(true);
         if (message === 'Import request receipt created successfully') {
@@ -130,18 +127,7 @@ const CreateInternalExportRequest = () => {
             </IconButton>
         </React.Fragment>
     );
-    const handleConfirmClose1 = () => {
-        setConfirmOpen1(false);
-    };
 
-    const handleConfirmUpdate1 = () => {
-        setConfirmOpen1(false);
-        handleCreateImportReceipt();
-    };
-
-    const handleConfirm1 = () => {
-        setConfirmOpen1(true);
-    };
 
     //========================== Hàm notification của trang ==================================
 
@@ -353,22 +339,22 @@ const CreateInternalExportRequest = () => {
         }, 0);
     };
 
-    const calculateTotalAmount = () => {
-        return selectedItems.reduce((total, item) => {
-            const quantity = parseInt(item.quantity, 10);
-            const unitPrice = parseFloat(item.unitPrice);
+    // const calculateTotalAmount = () => {
+    //     return selectedItems.reduce((total, item) => {
+    //         const quantity = parseInt(item.quantity, 10);
+    //         const unitPrice = parseFloat(item.unitPrice);
 
-            if (!isNaN(quantity) && !isNaN(unitPrice)) {
-                return total + quantity * unitPrice;
-            }
+    //         if (!isNaN(quantity) && !isNaN(unitPrice)) {
+    //             return total + quantity * unitPrice;
+    //         }
 
-            return total;
-        }, 0);
-    };
-    const handleDataSearch = (searchResult) => {
-        // Cập nhật state của trang chính với dữ liệu từ tìm kiếm
-        setDropdownData(searchResult);
-    };
+    //         return total;
+    //     }, 0);
+    // };
+    // const handleDataSearch = (searchResult) => {
+    //     // Cập nhật state của trang chính với dữ liệu từ tìm kiếm
+    //     setDropdownData(searchResult);
+    // };
     return (
         <>
             <Helmet>

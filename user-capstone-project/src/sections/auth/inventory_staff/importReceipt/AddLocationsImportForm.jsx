@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import {
-    Dialog,
     DialogTitle,
     DialogContent,
     Button,
@@ -13,7 +12,7 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { getExaminationItem, getUpdatedLocationDetails } from '~/data/mutation/items/item-mutation';
-import { getAllLocation, getLocationDetails } from '~/data/mutation/location/location-mutation';
+import { getAllLocation } from '~/data/mutation/location/location-mutation';
 
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 import SnackbarError from '~/components/alert/SnackbarError';
@@ -22,10 +21,9 @@ import { useNavigate } from 'react-router-dom';
 
 const AddLocationsImportForm = ({ open, onClose, importReceipst, onUpdate, onSave }) => {
     const navigate = useNavigate();
-    const [quantity, setQuantity] = useState('');
     const [toLocation_id, setToLocation_id] = useState([]);
     const [locationQuantities, setLocationQuantities] = useState({});
-
+    console.log(setLocationQuantities);
     const [selectedLocationsFlag, setSelectedLocationsFlag] = useState({});
     // State to manage the selected locations for each detailId
     const [selectedLocations, setSelectedLocations] = useState([]);
@@ -116,9 +114,6 @@ const AddLocationsImportForm = ({ open, onClose, importReceipst, onUpdate, onSav
     }, [selectedLocationsFlag, locationQuantities]);
 
     const handleConfirm = async () => {
-        const paramReceipt = {
-            receipt_id: importReceipst.id,
-        };
 
         try {
             const response = await getExaminationItem(importReceipst.id);
@@ -209,7 +204,7 @@ const AddLocationsImportForm = ({ open, onClose, importReceipst, onUpdate, onSav
                                             {!locationQuantities[detail.id] > 0 &&
                                                 !selectedLocationsFlag[detail.id] &&
                                                 selectedLocations.find((loc) => loc.detailId === detail.id) ===
-                                                    undefined && (
+                                                undefined && (
                                                     <Button
                                                         variant="contained"
                                                         color="primary"
@@ -231,8 +226,8 @@ const AddLocationsImportForm = ({ open, onClose, importReceipst, onUpdate, onSav
                                             itemId={
                                                 importReceipst?.details && selectedDetailId
                                                     ? importReceipst.details.find(
-                                                          (detail) => detail.id === selectedDetailId,
-                                                      )?.item?.id
+                                                        (detail) => detail.id === selectedDetailId,
+                                                    )?.item?.id
                                                     : null
                                             }
                                             onUpdate={handleUpdateLocations}

@@ -15,40 +15,31 @@ import {
     TableRow,
     TableCell,
     Dialog,
-    DialogTitle,
 } from '@mui/material';
-// icons
-// import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import ClearIcon from '@mui/icons-material/Clear';
-import SaveIcon from '@mui/icons-material/Save';
 //notification
 import Snackbar from '@mui/material/Snackbar';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 // api
-import { editImportReceipt, } from '~/data/mutation/importRequestReceipt/ImportRequestReceipt-mutation';
 
 import { getAllImportReceipt } from '~/data/mutation/importReceipt/ImportReceipt-mutation';
-import SnackbarError from '~/components/alert/SnackbarError';
-import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
-import {
-    editInternalExportReceiptConfirm,
-    editReceiptStartInternalExport,
-} from '~/data/mutation/internalExportRequest/internalExportRequest-mutation';
-import CreateInternalExportReceiptForm from './CreateInternalExportReceiptForm';
 
-const InternalExportRequestDetail = ({
-    exportRequestReceipt,
-    exportRequestReceiptId,
-    updateExportReceiptInList,
-    updateExportReceiptConfirmInList,
+import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
+import SnackbarError from '~/components/alert/SnackbarError';
+import AddLocationsImportForm from '../importReceipt/AddLocationsImportForm';
+
+
+const InternalImportDetail = ({
+    importReceipt,
+    importReceiptId,
+    updateImportReceiptInList,
+    updateImportReceiptConfirmInList,
     onClose,
     isOpen,
     mode,
-    setIsExportFormOpen,
 }) => {
-    // const [tab1Data, setTab1Data] = useState({ categories_id: [] });
-    // const [tab2Data, setTab2Data] = useState({});
+    const [tab1Data, setTab1Data] = useState({ categories_id: [] });
+    const [tab2Data, setTab2Data] = useState({});
 
     // const [expandedItem, setExpandedItem] = useState(subCategoryId);
     const [formHeight, setFormHeight] = useState(0);
@@ -58,15 +49,10 @@ const InternalExportRequestDetail = ({
     const [importReceipstData, setImportReceipstData] = useState(null);
 
     const [editedImportReceipt, setEditedImportReceipt] = useState(null);
-
     const [currentStatus, setCurrentStatus] = useState('');
     const [importReceiptData, setImportReceiptData] = useState([]);
 
-    // const [positionedSnackbarOpen, setPositionedSnackbarOpen] = useState(false);
-    // const [positionedSnackbarError, setPositionedSnackbarError] = useState(false);
     // form
-    // const [openAddSubCategoryMetaForm, setOpenAddSubCategoryMetaForm] = useState(false);
-
     const [importRecieptParams, setImportRecieptParams] = useState({
         warehouseId: null,
         inventoryStaffId: null,
@@ -84,9 +70,9 @@ const InternalExportRequestDetail = ({
 
     const handleSuccessMessage = (message) => {
         setOpen(true);
-        if (message === 'Internal Export process started successfully') {
+        if (message === 'Import process started successfully') {
             setSuccessMessage('Thành công');
-        } else if (message === 'Internal export request receipt confirmed successfully') {
+        } else if (message === 'Import process started successfully') {
             setSuccessMessage('Thành công');
         }
     };
@@ -97,7 +83,7 @@ const InternalExportRequestDetail = ({
         if (message === 'Invalid request') {
             setErrorMessage('Yêu cầu không hợp lệ !');
         } else if (message === 'Receipt is not in the approved state for processing') {
-            setErrorMessage('Phiếu không ở trạng thái được chờ xác nhận để xử lý !');
+            setErrorMessage('Phiếu không ở trạng thái được phê duyệt để xử lý !');
         }
     };
 
@@ -121,6 +107,16 @@ const InternalExportRequestDetail = ({
     );
 
     //========================== Hàm notification của trang ==================================
+
+    const handleTab1DataChange = (event) => {
+        // Cập nhật dữ liệu cho tab 1 tại đây
+        setTab1Data({ ...tab1Data, [event.target.name]: event.target.value });
+    };
+
+    const handleTab2DataChange = (event) => {
+        // Cập nhật dữ liệu cho tab 2 tại đây
+        setTab2Data({ ...tab2Data, [event.target.name]: event.target.value });
+    };
     const handleChangeTab = (event, newValue) => {
         setCurrentTab(newValue);
     };
@@ -151,9 +147,9 @@ const InternalExportRequestDetail = ({
                 ],
             });
         } else {
-            const exportReceipst = exportRequestReceipt.find((o) => o.id === exportRequestReceiptId);
-            console.log(exportReceipst);
-            if (exportReceipst) {
+            const importReceipst = importReceipt.find((o) => o.id === importReceiptId);
+            console.log(importReceipst);
+            if (importReceipst) {
                 const importRecieptParams = {
                     // warehouseId: 0,
                     // inventoryStaffId: 0,
@@ -171,109 +167,83 @@ const InternalExportRequestDetail = ({
                 };
 
                 setEditedImportReceipt(importRecieptParams);
-                setCurrentStatus(exportReceipst.status);
+                setCurrentStatus(importReceipst.status);
                 console.log(importRecieptParams);
             }
         }
-    }, [exportRequestReceiptId, exportRequestReceipt, mode]);
-
-    // useEffect(() => {
-
-    // }, []);
-
-    // useEffect(() => {
-    //     if (mode === 'create') {
-
-    //         setEditSubCategoryMeta({
-    //             key: '',
-    //             description: '',
-
-    //         });
-    //     } else {
-    //         if (subCategoryMeta) {
-
-    //             const editedSubCategoryMeta = {
-    //                 key: subCategoryMeta.key,
-    //                 description: subCategoryMeta.description,
-    //             };
-    //             setEditSubCategoryMeta(editedSubCategoryMeta);
-    //         }
-    //     }
-    // }, []);
+    }, [importReceiptId, importReceipt, mode]);
     //===================================================== Những hàm update thay đổi data =====================================================
-    const exportReceipst = exportRequestReceipt.find((o) => o.id === exportRequestReceiptId);
+    const importReceipst = importReceipt.find((o) => o.id === importReceiptId);
 
-    if (!exportReceipst) {
+    if (!importReceipst) {
         return null;
     }
 
-    const updateImportReceipt = async () => {
-        if (!editedImportReceipt) {
-            return;
-        }
-        try {
-            const response = await editImportReceipt(importRequestReceiptId, editedImportReceipt);
+    // const updateImportReceipt = async () => {
+    //     if (!editedImportReceipt) {
+    //         return;
+    //     }
+    //     try {
+    //         const response = await editImportReceipt(importReceiptId, editedImportReceipt);
 
-            if (response.status === '200 OK') {
-            }
-            updateExportReceiptInList(response.data);
-            console.log('Product updated:', response);
-        } catch (error) {
-            console.error('An error occurred while updating the product:', error);
-        }
-    };
+    //         if (response.status === '200 OK') {
+    //         }
+    //         updateImportReceiptInList(response.data);
+    //         console.log('Product updated:', response);
+    //     } catch (error) {
+    //         handleErrorMessage(error.response.data.message);
+    //     }
+    // };
 
-    const updateExportReceiptConfirm = async () => {
-        try {
-            // if (currentStatus !== 'Pending_Approval') {
-            //     const errorMessage = 'Không thể xác nhận. Phiếu này không ở trạng thái Chờ xác nhận !';
-            //     handleErrorMessage(errorMessage);
-            //     return;
-            // }
+    // const updateExportReceiptConfirm = async () => {
+    //     try {
+    //         const newStatus = 'IN_PROGRESS';
 
-            const newStatus = 'Approved';
+    //         const response = await editExportRequestReceipt(importReceiptId, newStatus);
 
-            const response = await editInternalExportReceiptConfirm(exportRequestReceiptId, newStatus);
+    //         if (response.status === '200 OK') {
+    //             handleSuccessMessage(response.message);
+    //         }
 
-            console.log(response.status);
-            if (response.status === '200 OK') {
-                handleSuccessMessage(response.message);
-            }
+    //         updateImportReceiptConfirmInList(importReceiptId, newStatus);
+    //         setCurrentStatus(newStatus);
 
-            updateExportReceiptConfirmInList(exportRequestReceiptId, newStatus);
-            setCurrentStatus(newStatus);
-        } catch (error) {
-            console.error('Error updating category status:', error);
-            handleErrorMessage(error.response?.data?.message || 'An error occurred.');
-        }
-    };
+    //         console.log('Product status updated:', response);
+    //     } catch (error) {
+    //         handleErrorMessage(error.response.data.message);
+    //     }
+    // };
+    // const updateReceiptStartImport = async () => {
+    //     try {
+    //         let newStatus = currentStatus === 'Approved' ? 'Inactive' : 'Completed';
 
-    const updateReceiptStartImport = async () => {
-        try {
-            // if (currentStatus !== 'Approved') {
-            //     const errorMessage = 'Không thể Tiến hành nhập kho. Phiếu này không ở trạng thái Đã xác nhận !';
-            //     handleErrorMessage(errorMessage);
-            //     return;
-            // }
+    //         const response = await editExportRequestReceipt(importReceiptId, newStatus);
 
-            const newStatus = 'IN_PROGRESS';
+    //         if (response.status === '200 OK') {
+    //             setIsSuccess(true);
+    //             setIsError(false);
+    //             setSuccessMessage(response.message);
+    //             handleMessage(response.message);
+    //         }
 
-            const response = await editReceiptStartInternalExport(exportRequestReceiptId, newStatus);
+    //         updateImportReceiptConfirmInList(importReceiptId, newStatus);
+    //         setCurrentStatus(newStatus);
 
-            if (response.status === '200 OK') {
-                handleSuccessMessage(response.message);
-            }
-
-            updateExportReceiptConfirmInList(exportRequestReceiptId, newStatus);
-            setCurrentStatus(newStatus);
-        } catch (error) {
-            console.error('Error updating category status:', error);
-        }
-    };
+    //         console.log('Product status updated:', response);
+    //     } catch (error) {
+    //         console.error('Error updating category status:', error);
+    //         setIsError(true);
+    //         setIsSuccess(false);
+    //         setErrorMessage(error.response.data.message);
+    //         if (error.response) {
+    //             console.log('Error response:', error.response);
+    //         }
+    //     }
+    // };
     const handleOpenForm = () => {
-        const validImportReceipst = exportRequestReceipt.find((o) => o.id === exportRequestReceiptId);
+        const validImportReceipst = importReceipt.find((o) => o.id === importReceiptId);
 
-        if (validImportReceipst && validImportReceipst.status === 'IN_PROGRESS') {
+        if (validImportReceipst && validImportReceipst.status === 'NOT_COMPLETED') {
             setIsOpenImportForm(true);
 
             setImportReceipstData({
@@ -293,13 +263,15 @@ const InternalExportRequestDetail = ({
 
             console.log(validImportReceipst);
         } else {
-            console.error('Không tìm thấy dữ liệu hợp lệ cho importReceiptId: ', exportRequestReceiptId);
-            const errorMessage = 'Tiến hành nhập kho để tạo phiếu !';
-            handleErrorMessage(errorMessage);
+            console.error('Không tìm thấy dữ liệu hợp lệ cho importReceiptId: ', importReceiptId);
         }
     };
+    const handleCloseForm = () => {
+        setIsOpenImportForm(false);
+    };
 
-    const handleSaveLocation = (successMessage, newStatus) => {
+    const handleSaveImport = (successMessage, newStatus) => {
+        // You can handle any logic here after saving the category
         setSnackbarSuccessMessage(
             successMessage === 'Cập nhật vị trí các sản phẩm thành công.'
                 ? 'Cập nhật vị trí các sản phẩm thành công.'
@@ -309,19 +281,7 @@ const InternalExportRequestDetail = ({
         setCurrentStatus(newStatus);
         console.log(newStatus);
     };
-
-    const handleCloseAddCategoryDialog = () => {
-        setIsOpenImportForm(false);
-    };
-
-    const handleCloseForm = (isClosed) => {
-        setIsOpenImportForm(false);
-        handleCloseCreateImportRequestForm(isClosed);
-    };
     //==========================================================================================================
-    const handleCloseCreateImportRequestForm = (isClosed) => {
-        setIsExportFormOpen(isClosed);
-    };
 
     const handleDataReload = () => {
         getAllImportReceipt()
@@ -338,6 +298,10 @@ const InternalExportRequestDetail = ({
             });
     };
 
+    const handleCloseAddCategoryDialog = () => {
+        setIsOpenImportForm(false);
+    };
+
     return editedImportReceipt ? (
         <div
             id="productDetailForm"
@@ -349,34 +313,24 @@ const InternalExportRequestDetail = ({
         >
             <Tabs value={currentTab} onChange={handleChangeTab} indicatorColor="primary" textColor="primary">
                 <Tab label="Thông tin" />
-                {/* <Tab label="Thông tin thêm" /> */}
-                {/* <Tab label="Tồn kho" /> */}
             </Tabs>
 
             {currentTab === 0 && (
                 <div>
                     <div>
-                        {currentStatus === 'IN_PROGRESS' && (
+                        {currentStatus === 'NOT_COMPLETED' && (
                             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                                 <Button variant="contained" color="primary" onClick={handleOpenForm}>
-                                    Tạo phiếu xuất kho
+                                    Thực hiện cập nhập vị trí
                                 </Button>
                             </div>
                         )}
                         <Dialog maxWidth="lg" fullWidth open={isOpenImportForm}>
-                            <DialogTitle style={{ textAlign: 'center' }}>
-                                Phiếu Xuất Kho Nội Bộ
-                                <IconButton style={{ float: 'right' }} onClick={handleCloseForm}>
-                                    <CloseIcon color="primary" />
-                                </IconButton>{' '}
-                            </DialogTitle>
-
-                            <CreateInternalExportReceiptForm
+                            <AddLocationsImportForm
                                 isOpen={isOpenImportForm}
                                 onClose={handleCloseAddCategoryDialog}
-                                exportReceipst={exportReceipst}
-                                onSave={handleSaveLocation}
-                                onCloseForm={handleCloseCreateImportRequestForm}
+                                onSave={handleSaveImport}
+                                dataReceiptDetail={importReceipst}
                             />
                         </Dialog>
                     </div>
@@ -390,15 +344,15 @@ const InternalExportRequestDetail = ({
                                     justifyContent="space-between"
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
+                                    InputProps={{ readOnly: true }}
                                 >
                                     <Typography variant="body1">Mã phiếu:</Typography>
                                     <TextField
-                                        InputProps={{ readOnly: true }}
                                         size="small"
                                         variant="outlined"
                                         label="Tên sản phẩm"
                                         sx={{ width: '70%' }}
-                                        value={exportReceipst.code}
+                                        value={importReceipst.code}
                                     />
                                 </Grid>
 
@@ -409,10 +363,10 @@ const InternalExportRequestDetail = ({
                                     justifyContent="space-between"
                                     alignItems="center"
                                     sx={{ marginBottom: 4, gap: 5 }}
+                                    InputProps={{ readOnly: true }}
                                 >
                                     <Typography variant="body1">Mô tả:</Typography>
                                     <TextField
-                                        InputProps={{ readOnly: true }}
                                         id="outlined-multiline-static"
                                         multiline
                                         rows={4}
@@ -420,7 +374,7 @@ const InternalExportRequestDetail = ({
                                         variant="outlined"
                                         label="Mô tả"
                                         sx={{ width: '70%' }}
-                                        value={exportReceipst.description}
+                                        value={importReceipst.description}
                                     />
                                 </Grid>
                             </Grid>
@@ -435,24 +389,24 @@ const InternalExportRequestDetail = ({
                                         justifyContent="space-between"
                                         alignItems="center"
                                         sx={{ marginBottom: 4, gap: 5 }}
+                                        InputProps={{ readOnly: true }}
                                     >
                                         <Typography variant="body1">Trạng thái:</Typography>
                                         <TextField
-                                            InputProps={{ readOnly: true }}
                                             size="small"
                                             variant="outlined"
                                             label="Trạng thái"
-                                            sx={{ width: '70%', pointerEvents: 'none' }}
+                                            sx={{ width: '70%' }}
                                             value={
                                                 currentStatus === 'Pending_Approval'
-                                                    ? 'Chờ xác nhận'
-                                                    : currentStatus === 'Approved'
-                                                    ? 'Đã xác nhận'
+                                                    ? 'Chờ phê duyệt'
                                                     : currentStatus === 'IN_PROGRESS'
-                                                    ? 'Đang tiến hành'
-                                                    : currentStatus === 'Completed'
-                                                    ? 'Hoàn thành'
-                                                    : 'Ngừng hoạt động'
+                                                        ? 'Đang tiến hành'
+                                                        : currentStatus === 'NOT_COMPLETED'
+                                                            ? 'Chưa hoàn thành'
+                                                            : currentStatus === 'Completed'
+                                                                ? 'Hoàn thành'
+                                                                : 'Ngừng hoạt động'
                                             }
                                         />
                                     </Grid>
@@ -462,25 +416,20 @@ const InternalExportRequestDetail = ({
                                         direction="row"
                                         justifyContent="space-between"
                                         alignItems="center"
-                                        sx={{ marginBottom: 4, gap: 5 }}
+                                        sx={{ marginBottom: 4, gap: 5, marginLeft: 0.05 }}
                                     >
                                         <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
                                             Người tạo:{' '}
                                         </Typography>
                                         <Grid xs={8.5}>
                                             <TextField
-                                                InputProps={{ readOnly: true }}
                                                 size="small"
                                                 labelId="group-label"
                                                 id="group-select"
-                                                sx={{ width: '98.5%', fontSize: '14px', marginLeft: 1 }}
-                                                value={exportReceipst.createdBy}
+                                                sx={{ width: '99%', fontSize: '14px' }}
+                                                value={importReceipst.createdBy}
+                                                InputProps={{ readOnly: true }}
                                             />
-                                            {/* {categories_id.map((category) => (
-                                                    <MenuItem key={category.id} value={category.id}>
-                                                        {category.name}
-                                                    </MenuItem>
-                                                ))} */}
                                         </Grid>
                                     </Grid>
 
@@ -499,7 +448,7 @@ const InternalExportRequestDetail = ({
                                             variant="outlined"
                                             label="Ngày tạo"
                                             sx={{ width: '70%' }}
-                                            value={exportReceipst.createdAt}
+                                            value={importReceipst.createdAt}
                                         />
                                     </Grid>
                                 </div>
@@ -524,39 +473,20 @@ const InternalExportRequestDetail = ({
                                                     padding: '10px 0 0 20px',
                                                 }}
                                             >
-                                                <TableCell></TableCell>
                                                 <TableCell>Mã sản phẩm</TableCell>
                                                 <TableCell>Tên sản phẩm</TableCell>
                                                 <TableCell>Số lượng</TableCell>
-                                                <TableCell>Giá sản phẩm</TableCell>
-                                                <TableCell>Tổng</TableCell>
+                                                <TableCell>Tổng giá phiếu</TableCell>
                                                 <TableCell>Đơn vị</TableCell>
-                                                <TableCell>Thương hiệu</TableCell>
-                                                <TableCell>Xuất xứ</TableCell>
-                                                <TableCell>Nhà cung cấp</TableCell>
                                             </TableRow>
-                                            {exportReceipst.details.map((items) => {
+                                            {importReceipst.details.map((items) => {
                                                 return (
                                                     <TableRow key={items.id}>
-                                                        <TableCell>
-                                                            <img
-                                                                src={items.item.imageUrl}
-                                                                alt={`Item ${items.code}`}
-                                                                width="48"
-                                                                height="48"
-                                                            />
-                                                        </TableCell>
                                                         <TableCell>{items.item.code}</TableCell>
                                                         <TableCell>{items.item.subcategoryName}</TableCell>
                                                         <TableCell>{items.quantity}</TableCell>
-                                                        <TableCell>{items.price?.toLocaleString('vi-VN')}</TableCell>
-                                                        <TableCell>
-                                                            {items.totalPrice?.toLocaleString('vi-VN')}
-                                                        </TableCell>
+                                                        <TableCell>{items.totalPrice?.toLocaleString('vi-VN')}</TableCell>
                                                         <TableCell>{items.unitName}</TableCell>
-                                                        <TableCell>{items.item.brandName}</TableCell>
-                                                        <TableCell>{items.item.originName}</TableCell>
-                                                        <TableCell>{items.item.supplierName}</TableCell>
                                                     </TableRow>
                                                 );
                                             })}
@@ -566,78 +496,36 @@ const InternalExportRequestDetail = ({
                                         <Typography variant="h6">Thông tin phiếu</Typography>
                                         <TableRow>
                                             <TableCell>Tổng số lượng:</TableCell>
-                                            <TableCell>{exportReceipst.totalQuantity}</TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell>Tổng giá:</TableCell>
-                                            <TableCell>{exportReceipst.totalPrice?.toLocaleString('vi-VN')}</TableCell>
+                                            <TableCell>{importReceipst.totalQuantity?.toLocaleString('vi-VN')}</TableCell>
                                         </TableRow>
                                     </TableBody>
                                 </TableContainer>
                             </CardContent>
                         </Card>
                     </div>
-
-                    {/* {isSuccess && <SuccessAlerts message={successMessage} />}
-                    {isError && <ErrorAlerts errorMessage={errorMessage} />} */}
                     <Stack spacing={4} margin={2}>
-                        <Grid container spacing={1} sx={{ gap: '10px' }}>
-                            {/* <Button
-                                variant="contained"
-                                color="primary"
-                                startIcon={<SaveIcon />}
-                                onClick={updateImportReceipt}
-                            >
-                                Cập nhật
-                            </Button> */}
-
-                            {currentStatus === 'Pending_Approval' && (
-                                <div>
-                                    <Button variant="contained" color="primary" onClick={updateExportReceiptConfirm}>
-                                        Xác nhận
-                                    </Button>
-                                </div>
-                            )}
-
-                            {currentStatus === 'Approved' && (
-                                <div>
-                                    <Button variant="contained" color="warning" onClick={updateReceiptStartImport}>
-                                        Tiến hành xuất kho
-                                    </Button>
-                                </div>
-                            )}
-                            <SnackbarSuccess
-                                open={open}
-                                handleClose={handleClose}
-                                message={successMessage}
-                                action={action}
-                                style={{ bottom: '16px', right: '16px' }}
-                            />
-                            <SnackbarSuccess
-                                open={snackbarSuccessOpen}
-                                handleClose={() => {
-                                    setSnackbarSuccessOpen(false);
-                                    setSnackbarSuccessMessage('');
-                                }}
-                                message={snackbarSuccessMessage}
-                                style={{ bottom: '16px', right: '16px' }}
-                            />
-                            <SnackbarError
-                                open={open1}
-                                handleClose={handleClose}
-                                message={errorMessage}
-                                action={action}
-                                style={{ bottom: '16px', right: '16px' }}
-                            />
-                            {/* <Button variant="outlined" color="error" onClick={handleClear}>
-                                Hủy bỏ
-                            </Button> */}
-                        </Grid>
+                        <Grid container spacing={1} sx={{ gap: '10px' }}></Grid>
                     </Stack>
                 </div>
             )}
+            <SnackbarError
+                open={open}
+                handleClose={handleClose}
+                message={errorMessage}
+                action={action}
+                style={{ bottom: '16px', right: '16px' }}
+            />
+            <SnackbarSuccess
+                open={snackbarSuccessOpen}
+                handleClose={() => {
+                    setSnackbarSuccessOpen(false);
+                    setSnackbarSuccessMessage('');
+                }}
+                message={snackbarSuccessMessage}
+                style={{ bottom: '16px', right: '16px' }}
+            />
         </div>
     ) : null;
 };
 
-export default InternalExportRequestDetail;
+export default InternalImportDetail;

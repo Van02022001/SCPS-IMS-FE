@@ -17,17 +17,13 @@ import {
     Dialog,
 } from '@mui/material';
 //notification
-import Snackbar from '@mui/material/Snackbar';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 // api
-import { editImportReceipt } from '~/data/mutation/importRequestReceipt/ImportRequestReceipt-mutation';
-
-import { getAllImportReceipt } from '~/data/mutation/importReceipt/ImportReceipt-mutation';
-import { editExportRequestReceipt } from '~/data/mutation/customerRequest/CustomerRequest-mutation';
 
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 import SnackbarError from '~/components/alert/SnackbarError';
+import AddLocationToExportReceipt from '../exportReceipt/AddLocationToExportReceipt';
 
 
 const InternalExportDetail = ({
@@ -39,8 +35,8 @@ const InternalExportDetail = ({
     isOpen,
     mode,
 }) => {
-    const [tab1Data, setTab1Data] = useState({ categories_id: [] });
-    const [tab2Data, setTab2Data] = useState({});
+    // const [tab1Data, setTab1Data] = useState({ categories_id: [] });
+    // const [tab2Data, setTab2Data] = useState({});
 
     // const [expandedItem, setExpandedItem] = useState(subCategoryId);
     const [formHeight, setFormHeight] = useState(0);
@@ -60,7 +56,7 @@ const InternalExportDetail = ({
         description: '',
         details: [],
     });
-
+    console.log(importRecieptParams, importReceiptData, importReceipstData, formHeight);
     //========================== Hàm notification của trang ==================================
     const [open, setOpen] = React.useState(false);
     const [open1, setOpen1] = React.useState(false);
@@ -109,15 +105,15 @@ const InternalExportDetail = ({
 
     //========================== Hàm notification của trang ==================================
 
-    const handleTab1DataChange = (event) => {
-        // Cập nhật dữ liệu cho tab 1 tại đây
-        setTab1Data({ ...tab1Data, [event.target.name]: event.target.value });
-    };
+    // const handleTab1DataChange = (event) => {
+    //     // Cập nhật dữ liệu cho tab 1 tại đây
+    //     setTab1Data({ ...tab1Data, [event.target.name]: event.target.value });
+    // };
 
-    const handleTab2DataChange = (event) => {
-        // Cập nhật dữ liệu cho tab 2 tại đây
-        setTab2Data({ ...tab2Data, [event.target.name]: event.target.value });
-    };
+    // const handleTab2DataChange = (event) => {
+    //     // Cập nhật dữ liệu cho tab 2 tại đây
+    //     setTab2Data({ ...tab2Data, [event.target.name]: event.target.value });
+    // };
     const handleChangeTab = (event, newValue) => {
         setCurrentTab(newValue);
     };
@@ -180,67 +176,6 @@ const InternalExportDetail = ({
         return null;
     }
 
-    const updateImportReceipt = async () => {
-        if (!editedImportReceipt) {
-            return;
-        }
-        try {
-            const response = await editImportReceipt(importReceiptId, editedImportReceipt);
-
-            if (response.status === '200 OK') {
-            }
-            updateImportReceiptInList(response.data);
-            console.log('Product updated:', response);
-        } catch (error) {
-            handleErrorMessage(error.response.data.message);
-        }
-    };
-
-    const updateExportReceiptConfirm = async () => {
-        try {
-            const newStatus = 'IN_PROGRESS';
-
-            const response = await editExportRequestReceipt(importReceiptId, newStatus);
-
-            if (response.status === '200 OK') {
-                handleSuccessMessage(response.message);
-            }
-
-            updateImportReceiptConfirmInList(importReceiptId, newStatus);
-            setCurrentStatus(newStatus);
-
-            console.log('Product status updated:', response);
-        } catch (error) {
-            handleErrorMessage(error.response.data.message);
-        }
-    };
-    // const updateReceiptStartImport = async () => {
-    //     try {
-    //         let newStatus = currentStatus === 'Approved' ? 'Inactive' : 'Completed';
-
-    //         const response = await editExportRequestReceipt(importReceiptId, newStatus);
-
-    //         if (response.status === '200 OK') {
-    //             setIsSuccess(true);
-    //             setIsError(false);
-    //             setSuccessMessage(response.message);
-    //             handleMessage(response.message);
-    //         }
-
-    //         updateImportReceiptConfirmInList(importReceiptId, newStatus);
-    //         setCurrentStatus(newStatus);
-
-    //         console.log('Product status updated:', response);
-    //     } catch (error) {
-    //         console.error('Error updating category status:', error);
-    //         setIsError(true);
-    //         setIsSuccess(false);
-    //         setErrorMessage(error.response.data.message);
-    //         if (error.response) {
-    //             console.log('Error response:', error.response);
-    //         }
-    //     }
-    // };
     const handleOpenForm = () => {
         const validImportReceipst = importReceipt.find((o) => o.id === importReceiptId);
 
@@ -267,9 +202,7 @@ const InternalExportDetail = ({
             console.error('Không tìm thấy dữ liệu hợp lệ cho importReceiptId: ', importReceiptId);
         }
     };
-    const handleCloseForm = () => {
-        setIsOpenImportForm(false);
-    };
+
 
     const handleSaveImport = (successMessage, newStatus) => {
         // You can handle any logic here after saving the category
@@ -283,21 +216,6 @@ const InternalExportDetail = ({
         console.log(newStatus);
     };
     //==========================================================================================================
-
-    const handleDataReload = () => {
-        getAllImportReceipt()
-            .then((response) => {
-                const data = response.data;
-                if (Array.isArray(data)) {
-                    setImportReceiptData(data);
-                } else {
-                    console.error('API response is not an array:', data);
-                }
-            })
-            .catch((error) => {
-                console.error('Error fetching import receipts:', error);
-            });
-    };
 
     const handleCloseAddCategoryDialog = () => {
         setIsOpenImportForm(false);
@@ -326,14 +244,14 @@ const InternalExportDetail = ({
                                 </Button>
                             </div>
                         )}
-                        {/* <Dialog maxWidth="lg" fullWidth open={isOpenImportForm}>
+                        <Dialog maxWidth="lg" fullWidth open={isOpenImportForm}>
                             <AddLocationToExportReceipt
                                 isOpen={isOpenImportForm}
                                 onClose={handleCloseAddCategoryDialog}
                                 onSave={handleSaveImport}
                                 dataReceiptDetail={importReceipst}
                             />
-                        </Dialog> */}
+                        </Dialog>
                     </div>
                     <Stack spacing={4} margin={2}>
                         <Grid container spacing={2}>

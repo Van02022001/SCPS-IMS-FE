@@ -9,13 +9,9 @@ import LoginPage from './pages/login/LoginPage';
 import Page404 from './pages/Page404';
 import DashboardAppPage from './pages/dashboard/DashboardAppPage';
 import CreateProduct from './sections/@dashboard/products/crudProducts/CreateProduct';
-import ProductDetail from './pages/manager/productDetail/ProductDetail';
 import ItemsManagerPage from './pages/manager/items/ItemsManager';
 import CategoryPage from './pages/manager/category/CategoryPage';
 import UpdateProduct from './sections/@dashboard/products/crudProducts/UpdateProduct';
-import ReportPage from './pages/manager/report/ReportPage';
-import ReportProductPage from './pages/manager/report/ReportProductPage';
-import ReportSalePage from './pages/manager/report/ReportSalePage';
 import ProductsPricePage from './pages/manager/subCategory/ProductPrice';
 import ForgotPassword from './pages/login/ForgotPassword';
 import WarehousePage from './pages/manager/warehouse/WarehousePage';
@@ -83,7 +79,6 @@ const Router = () => {
                         { path: 'products-price', element: <ProductsPricePage /> },
                     ],
                 },
-                { path: 'productsDetail', element: <ProductDetail /> },
                 { path: 'itemsManager', element: <ItemsManagerPage /> },
                 { path: 'category', element: <CategoryPage /> },
                 { path: 'origin', element: <OriginPage /> },
@@ -112,15 +107,6 @@ const Router = () => {
                 { path: 'products-check', element: <InventoryReportPage/> },
                 { path: 'inventory-check-manager', element: <InventoryCheckManagerPage/> },
                 { path: 'notfication-to-request-receipt', element: <NotificationToImportRequest/> },
-                {
-                    path: 'report',
-                    children: [
-                        { element: <Navigate to="/dashboard/report" />, index: true },
-                        { path: 'report-end-day', element: <ReportPage /> },
-                        { path: 'report-sale', element: <ReportSalePage /> },
-                        { path: 'report-inventory', element: <ReportProductPage /> },
-                    ],
-                },
             ],
         },
         {

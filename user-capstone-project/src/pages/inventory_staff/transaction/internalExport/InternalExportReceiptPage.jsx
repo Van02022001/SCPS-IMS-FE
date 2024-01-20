@@ -43,6 +43,7 @@ import dayjs from 'dayjs';
 import ImportReceiptInventoryDetailForm from '~/sections/auth/inventory_staff/importReceipt/ImportReceiptInventoryDetailForm';
 import { getAllInternalImportWarehouse } from '~/data/mutation/internalImportRequest/internalImportRequest-mutation';
 import { getAllInternalExportWarehouse } from '~/data/mutation/internalExportRequest/internalExportRequest-mutation';
+import InternalExportDetail from '~/sections/auth/inventory_staff/internalExport/InternalExportDetail';
 
 // ----------------------------------------------------------------------
 
@@ -470,7 +471,7 @@ const InternalExportReceiptPage = () => {
                                             {selectedImportReceiptId === importReceipt.id && (
                                                 <TableRow>
                                                     <TableCell colSpan={8}>
-                                                        <ImportReceiptInventoryDetailForm
+                                                        <InternalExportDetail
                                                             importReceipt={importReceiptData}
                                                             // productStatus={productStatus}
                                                             importReceiptId={selectedImportReceiptId}

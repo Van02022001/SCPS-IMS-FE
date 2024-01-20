@@ -27,7 +27,6 @@ import { useNavigate } from 'react-router-dom';
 import { createImportRequestReceipt } from '~/data/mutation/importRequestReceipt/ImportRequestReceipt-mutation';
 // mock
 import USERLIST from '~/_mock/user';
-import Scrollbar from '~/components/scrollbar/Scrollbar';
 // icons
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditIcon from '@mui/icons-material/Edit';
@@ -41,7 +40,6 @@ import { getAllWarehouse, getInventoryStaffByWarehouseId } from '~/data/mutation
 import SnackbarError from '~/components/alert/SnackbarError';
 import {
     CreateRequestReceiptHead,
-    CreateRequestReceiptToolbar,
 } from '~/sections/@dashboard/manager/transaction/createRequestReceipt';
 import { Dropdown } from '~/components/dropdown';
 
@@ -54,8 +52,6 @@ const CreateGoodReceipt = () => {
     // state form create==============================================
     const [descriptionReceipt, setDescriptionReceipt] = useState('');
     const [itemId, setItemId] = useState([]);
-    const [quantity, setQuantity] = useState(null);
-    const [unitPrice, setUnitPrice] = useState(null);
     const [unitId, setUnitId] = useState([]);
     const [descriptionItems, setDescriptionItems] = useState('');
 
@@ -63,7 +59,7 @@ const CreateGoodReceipt = () => {
 
     const [itemsData, setItemsData] = useState([]);
     const [selectedItems, setSelectedItems] = useState([]);
-    const [selectedUnitId, setSelectedUnitId] = useState('');
+
     // warehouse
     const [selectedWarehouse, setSelectedWarehouse] = useState(null);
     // const [selectedWarehouseId, setSelectedWarehouseId] = useState(null);
@@ -80,12 +76,10 @@ const CreateGoodReceipt = () => {
     //========================== Hàm notification của trang ==================================
     const [open, setOpen] = React.useState(false);
     const [open1, setOpen1] = React.useState(false);
-    const [confirmOpen1, setConfirmOpen1] = useState(false);
-    const [confirmOpen2, setConfirmOpen2] = useState(false);
+
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
-    const [dropdownData, setDropdownData] = useState([]);
     const handleSuccessMessage = (message) => {
         setOpen(true);
         if (message === 'Import request receipt created successfully') {
@@ -130,20 +124,20 @@ const CreateGoodReceipt = () => {
             </IconButton>
         </React.Fragment>
     );
-    const handleConfirmClose1 = () => {
-        setConfirmOpen1(false);
-    };
+    // const handleConfirmClose1 = () => {
+    //     setConfirmOpen1(false);
+    // };
 
-    const handleConfirmUpdate1 = () => {
-        setConfirmOpen1(false);
-        handleCreateImportReceipt();
-    };
+    // const handleConfirmUpdate1 = () => {
+    //     setConfirmOpen1(false);
+    //     handleCreateImportReceipt();
+    // };
 
-    const handleConfirm1 = () => {
-        setConfirmOpen1(true);
-    };
+    // const handleConfirm1 = () => {
+    //     setConfirmOpen1(true);
+    // };
 
-    //========================== Hàm notification của trang ==================================
+    // //========================== Hàm notification của trang ==================================
 
     const navigate = useNavigate();
 
@@ -226,17 +220,6 @@ const CreateGoodReceipt = () => {
         }
     };
 
-    // const handleSearch = (selectedWarehouseId, selectedInventoryStaffId) => {
-    //     setWarehouseId(selectedWarehouseId);
-    //     setInventoryStaffId(selectedInventoryStaffId);
-    //     console.log('Warehouse ID:', selectedWarehouseId);
-    //     console.log('Inventory Staff ID:', selectedInventoryStaffId);
-    // };
-
-    // const handleUnitChange = (newUnitId) => {
-    //     setSelectedUnitId(newUnitId);
-    //     setUnitId((prevUnitId) => [...prevUnitId, newUnitId]);
-    // };
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
@@ -329,46 +312,6 @@ const CreateGoodReceipt = () => {
         setRecieptParams(updatedRecieptParams);
     };
 
-    // const handleUnitPriceChange = (index, value) => {
-    //     const updatedItems = [...selectedItems];
-    //     updatedItems[index].unitPrice = value;
-    //     setSelectedItems(updatedItems);
-
-    //     // Update recieptParams
-    //     const updatedRecieptParams = {
-    //         ...recieptParams,
-    //         details: updatedItems.map((item) => ({
-    //             itemId: item.itemId,
-    //             quantity: item.quantity,
-    //             unitPrice: item.unitPrice,
-    //             unitId: item.unitId,
-    //             description: item.description,
-    //         })),
-    //     };
-
-    //     setRecieptParams(updatedRecieptParams);
-    // };
-
-    // const handleUnitIdChange = (index, value) => {
-    //     const updatedItems = [...selectedItems];
-    //     updatedItems[index].unitId = value;
-    //     setSelectedItems(updatedItems);
-
-    //     // Update recieptParams
-    //     const updatedRecieptParams = {
-    //         ...recieptParams,
-    //         details: updatedItems.map((item) => ({
-    //             itemId: item.itemId,
-    //             quantity: item.quantity,
-    //             unitPrice: item.unitPrice,
-    //             unitId: item.unitId,
-    //             description: item.description,
-    //         })),
-    //     };
-
-    //     setRecieptParams(updatedRecieptParams);
-    // };
-
     const handleRemoveFromCart = (index) => {
         const updatedItems = [...selectedItems];
         updatedItems.splice(index, 1);
@@ -407,10 +350,10 @@ const CreateGoodReceipt = () => {
             return total;
         }, 0);
     };
-    const handleDataSearch = (searchResult) => {
-        // Cập nhật state của trang chính với dữ liệu từ tìm kiếm
-        setDropdownData(searchResult);
-    };
+    // const handleDataSearch = (searchResult) => {
+    //     // Cập nhật state của trang chính với dữ liệu từ tìm kiếm
+    //     setDropdownData(searchResult);
+    // };
     return (
         <>
             <Helmet>
