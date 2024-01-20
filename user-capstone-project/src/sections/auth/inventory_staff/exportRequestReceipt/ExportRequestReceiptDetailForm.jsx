@@ -19,20 +19,14 @@ import {
 } from '@mui/material';
 // icons
 // import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import ClearIcon from '@mui/icons-material/Clear';
-import SaveIcon from '@mui/icons-material/Save';
 //notification
-import Snackbar from '@mui/material/Snackbar';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 // api
 import {
-    editImportReceipt,
-    editImportReceiptConfirm,
     editReceiptStartImport,
 } from '~/data/mutation/importRequestReceipt/ImportRequestReceipt-mutation';
 
-import { getAllImportReceipt } from '~/data/mutation/importReceipt/ImportReceipt-mutation';
 import SnackbarError from '~/components/alert/SnackbarError';
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
 import CreateExportRequestReceiptForm from './CreateExportRequestReceiptForm';
@@ -180,7 +174,7 @@ const ExportRequestReceiptDetailForm = ({
         return null;
     }
 
-    const updateImportReceiptConfirm = async () => {
+    const updateExportReceiptConfirm = async () => {
         try {
             // if (currentStatus !== 'Pending_Approval') {
             //     const errorMessage = 'Không thể xác nhận. Phiếu này không ở trạng thái Chờ phê duyệt !';
@@ -525,7 +519,7 @@ const ExportRequestReceiptDetailForm = ({
                         <Grid container spacing={1} sx={{ gap: '10px' }}>
                             {currentStatus === 'Pending_Approval' && (
                                 <div>
-                                    <Button variant="contained" color="primary" onClick={updateImportReceiptConfirm}>
+                                    <Button variant="contained" color="primary" onClick={updateExportReceiptConfirm}>
                                         Xác nhận
                                     </Button>
                                 </div>

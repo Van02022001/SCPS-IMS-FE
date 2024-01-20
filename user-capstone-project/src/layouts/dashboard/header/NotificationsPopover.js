@@ -323,6 +323,28 @@ function renderContent(notification) {
       title,
     };
   }
+  if (notification.type === "YEU_CAU_NHAP_KHO_NOI_BO") {
+    return {
+      avatar: (
+        <img alt={notification.title} src="/assets/icons/ic_notification_shipping.svg" />
+      ),
+      title,
+    };
+  }
+  if (notification.type === "YEU_CAU_XUAT_KHO_NOI_BO") {
+    return {
+      avatar: (
+        <img alt={notification.title} src="/assets/icons/ic_notification_package.svg" />
+      ),
+      title,
+    };
+  }
+  if (notification.type === 'DANG_TIEN_HANH_XUAT_KHO') {
+    return {
+      avatar: <img alt={notification.title} src="/assets/icons/ic_notification_mail.svg" />,
+      title,
+    };
+  }
   if (notification.type === 'chat_message') {
     return {
       avatar: (

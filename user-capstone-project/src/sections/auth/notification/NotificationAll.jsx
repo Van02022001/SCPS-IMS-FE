@@ -16,6 +16,10 @@ function NotificationAll({ notifications, onClose }) {
                 return `Thông báo Đang tiến hành nhập kho!`;
             case 'XAC_NHAN_NHAP_KHO':
                 return `Thông báo Xác nhận nhập kho!`;
+            case 'DANG_TIEN_HANH_XUAT_KHO':
+                return `Thông báo Đang tiến hành xuất kho!`;
+            case 'XAC_NHAN_XUAT_KHO':
+                return `Thông báo Xác nhận xuất kho!`;
             default:
                 return content;
         }
@@ -31,6 +35,12 @@ function NotificationAll({ notifications, onClose }) {
                 return 'Đang tiến hành nhập kho';
             case 'XAC_NHAN_NHAP_KHO':
                 return 'Xác nhận nhập kho';
+            case 'YEU_CAU_XUAT_KHO':
+                return 'Yêu cầu xuất kho';
+            case 'XAC_NHAN_XUAT_KHO':
+                return 'Xác nhận nhập kho';
+            case 'DANG_TIEN_HANH_XUAT_KHO':
+                return 'Đang tiến hành xuất kho';
             default:
                 return type;
         }
@@ -41,6 +51,8 @@ function NotificationAll({ notifications, onClose }) {
             case 'XAC_NHAN_NHAP_KHO':
                 return <img src="/assets/icons/ic_notification_package.svg" />;
             case 'DANG_TIEN_HANH_NHAP_KHO':
+                return <img src="/assets/icons/ic_notification_mail.svg" />;
+            case 'DANG_TIEN_HANH_XUAT_KHO':
                 return <img src="/assets/icons/ic_notification_mail.svg" />;
             case 'CANH_BAO_HET_HANG':
                 return (

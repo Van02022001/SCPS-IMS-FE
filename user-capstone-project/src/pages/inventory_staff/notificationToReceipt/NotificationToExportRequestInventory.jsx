@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import {
     Typography,
@@ -30,7 +30,7 @@ import CloseIcon from '@mui/icons-material/Close';
 
 import Scrollbar from '~/components/scrollbar/Scrollbar';
 import { InventoryReportListHead } from '~/sections/@dashboard/manager/inventoryReport';
-import { getCustomerRequestById } from '~/data/mutation/customerRequest/CustomerRequest-mutation';
+import { editExportRequestReceipt, getCustomerRequestById } from '~/data/mutation/customerRequest/CustomerRequest-mutation';
 
 import SnackbarError from '~/components/alert/SnackbarError';
 import Label from '~/components/label/Label';
@@ -59,10 +59,6 @@ const NotificationToExportRequestInventory = ({
     const { state } = location;
     const receiptId = state?.receiptId;
 
-    const [tab1Data, setTab1Data] = useState({ categories_id: [] });
-    const [tab2Data, setTab2Data] = useState({});
-
-
     const [receiptData, setReceiptData] = useState([]);
     // const [expandedItem, setExpandedItem] = useState(subCategoryId);
     const [currentTab, setCurrentTab] = useState(0);
@@ -82,15 +78,13 @@ const NotificationToExportRequestInventory = ({
     const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
     const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
 
-
+    const navigate = useNavigate();
     const handleSuccessMessage = (message) => {
         setOpen(true);
-        // Đặt logic hiển thị nội dung thông báo từ API ở đây
-        if (message === 'Update SubCategory status successfully.') {
-            setMessage('Cập nhập trạng thái danh mục thành công');
-        } else if (message === 'Update SubCategory successfully.') {
-            setMessage('Cập nhập danh mục thành công');
-            console.error('Error message:', errorMessage);
+        if (message === 'Customer request receipt retrieved successfully') {
+            setSuccessMessage('Thành công');
+        } else if (message === 'Import process started successfully') {
+            setSuccessMessage('Thành công');
         }
     };
     const handleErrorMessage = (message) => {
@@ -120,11 +114,6 @@ const NotificationToExportRequestInventory = ({
         </React.Fragment>
     );
 
-
-
-    const handleChangeTab = (event, newValue) => {
-        setCurrentTab(newValue);
-    };
     const handleItemClickDetail = (item) => {
         setSelectedReceiptDetailId(item.id === selectedReceiptDetailId ? null : item.id);
     };
@@ -145,7 +134,7 @@ const NotificationToExportRequestInventory = ({
             });
     }, [receiptId, currentStatus]);
 
-    const updateImportReceiptConfirm = async () => {
+    const updateExportReceiptConfirm = async () => {
         try {
             // if (currentStatus !== 'Pending_Approval') {
             //     const errorMessage = 'Không thể xác nhận. Phiếu này không ở trạng thái Chờ phê duyệt !';
@@ -153,13 +142,13 @@ const NotificationToExportRequestInventory = ({
             //     return;
             // }
 
-            const newStatus = 'Approved'; // Set the desired status
+            const newStatus = 'IN_PROGRESS';
 
-            const response = await editImportReceiptConfirm(receiptData.id, newStatus);
+            const response = await editExportRequestReceipt(receiptData.id, newStatus);
 
             if (response.status === '200 OK') {
                 // Handle success if needed
-                handleSuccessMessage('Import request receipt confirmed successfully');
+                handleSuccessMessage('Customer request receipt retrieved successfully');
             }
 
             setCurrentStatus(newStatus);
@@ -242,6 +231,10 @@ const NotificationToExportRequestInventory = ({
     const handleCloseForm = (isClosed) => {
         setIsOpenImportForm(false);
     };
+
+    const handleNavigate = () => {
+        navigate('/inventory-staff/requests-export-receipt');
+    };
     //==========================================================================================================
 
     return (
@@ -251,7 +244,7 @@ const NotificationToExportRequestInventory = ({
             </Helmet>
 
             <Stack direction="row" alignItems="center" mb={5}>
-                <Button >
+                <Button onClick={handleNavigate}>
                     <ArrowBackIcon fontSize="large" color="action" />
                 </Button>
                 <Typography variant="h4" gutterBottom>
@@ -281,7 +274,7 @@ const NotificationToExportRequestInventory = ({
                                     onClick={() => handleItemClickDetail(receiptData)}
                                 >
                                     <TableCell align="left">{receiptData.code}</TableCell>
-                                    <TableCell align="left">{receiptData.description}</TableCell>
+                                    <TableCell align="left">{receiptData.note}</TableCell>
                                     <TableCell align="left">{receiptData.createdBy}</TableCell>
                                     <TableCell align="left">{receiptData.createdAt}</TableCell>
                                     <TableCell align="left">
@@ -297,7 +290,7 @@ const NotificationToExportRequestInventory = ({
                                             }
                                         >
                                             {receiptData.status === 'Pending_Approval'
-                                                ? 'Chờ phê duyệt'
+                                                ? 'Chờ xác nhận'
                                                 : receiptData.status === 'Approved'
                                                     ? 'Đã xác nhận'
                                                     : receiptData.status === 'IN_PROGRESS'
@@ -377,7 +370,7 @@ const NotificationToExportRequestInventory = ({
                                                                 variant="outlined"
                                                                 label="Mô tả"
                                                                 sx={{ width: '70%', pointerEvents: 'none' }}
-                                                                value={receiptData.description}
+                                                                value={receiptData.note}
                                                             />
                                                         </Grid>
 
@@ -403,7 +396,7 @@ const NotificationToExportRequestInventory = ({
                                                                     sx={{ width: '70%', pointerEvents: 'none' }}
                                                                     value={
                                                                         currentStatus === 'Pending_Approval'
-                                                                            ? 'Chờ phê duyệt'
+                                                                            ? 'Chờ xác nhận'
                                                                             : currentStatus === 'Approved'
                                                                                 ? 'Đã xác nhận'
                                                                                 : currentStatus === 'IN_PROGRESS'
@@ -539,12 +532,11 @@ const NotificationToExportRequestInventory = ({
                                             </div>
                                         </TableCell>
                                     </TableRow>
+
                                 )}
-                            </React.Fragment>
-                        </Table>
-                        <Stack spacing={4} margin={2}>
-                            <Grid container spacing={1} sx={{ gap: '10px' }}>
-                                {/* <Button
+                                <Stack spacing={4} margin={2}>
+                                    <Grid container spacing={1} sx={{ gap: '10px' }}>
+                                        {/* <Button
                                 variant="contained"
                                 color="primary"
                                 startIcon={<SaveIcon />}
@@ -553,49 +545,50 @@ const NotificationToExportRequestInventory = ({
                                 Cập nhật
                             </Button> */}
 
-                                {currentStatus === 'Pending_Approval' && (
-                                    <div>
-                                        <Button variant="contained" color="primary" onClick={updateImportReceiptConfirm}>
-                                            Xác nhận
-                                        </Button>
-                                    </div>
-                                )}
+                                        {currentStatus === 'Pending_Approval' && (
+                                            <div>
+                                                <Button variant="contained" color="primary" onClick={updateExportReceiptConfirm}>
+                                                    Xác nhận
+                                                </Button>
+                                            </div>
+                                        )}
 
-                                {currentStatus === 'Approved' && (
-                                    <div>
-                                        <Button variant="contained" color="warning" onClick={updateReceiptStartImport}>
-                                            Tiến hành nhập kho
-                                        </Button>
-                                    </div>
-                                )}
-                                <SnackbarSuccess
-                                    open={open}
-                                    handleClose={handleClose}
-                                    message={successMessage}
-                                    action={action}
-                                    style={{ bottom: '16px', right: '16px' }}
-                                />
-                                <SnackbarSuccess
-                                    open={snackbarSuccessOpen}
-                                    handleClose={() => {
-                                        setSnackbarSuccessOpen(false);
-                                        setSnackbarSuccessMessage('');
-                                    }}
-                                    message={snackbarSuccessMessage}
-                                    style={{ bottom: '16px', right: '16px' }}
-                                />
-                                <SnackbarError
-                                    open={open1}
-                                    handleClose={handleClose}
-                                    message={errorMessage}
-                                    action={action}
-                                    style={{ bottom: '16px', right: '16px' }}
-                                />
-                                {/* <Button variant="outlined" color="error" onClick={handleClear}>
-                                Hủy bỏ
-                            </Button> */}
-                            </Grid>
-                        </Stack>
+                                        {currentStatus === 'Approved' && (
+                                            <div>
+                                                <Button variant="contained" color="warning" onClick={updateReceiptStartImport}>
+                                                    Tiến hành nhập kho
+                                                </Button>
+                                            </div>
+                                        )}
+                                        <SnackbarSuccess
+                                            open={open}
+                                            handleClose={handleClose}
+                                            message={successMessage}
+                                            action={action}
+                                            style={{ bottom: '16px', right: '16px' }}
+                                        />
+                                        <SnackbarSuccess
+                                            open={snackbarSuccessOpen}
+                                            handleClose={() => {
+                                                setSnackbarSuccessOpen(false);
+                                                setSnackbarSuccessMessage('');
+                                            }}
+                                            message={snackbarSuccessMessage}
+                                            style={{ bottom: '16px', right: '16px' }}
+                                        />
+                                        <SnackbarError
+                                            open={open1}
+                                            handleClose={handleClose}
+                                            message={errorMessage}
+                                            action={action}
+                                            style={{ bottom: '16px', right: '16px' }}
+                                        />
+
+                                    </Grid>
+                                </Stack>
+                            </React.Fragment>
+                        </Table>
+
                     </TableContainer>
                 </Scrollbar>
 
