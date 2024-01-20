@@ -39,7 +39,7 @@ import ImportReaceiptDetailForm from '~/sections/auth/inventory_staff/importRequ
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getAllImportReceipt } from '~/data/mutation/importReceipt/ImportReceipt-mutation';
 import ExportReceiptDetailForm from '~/sections/auth/inventory_staff/exportReceipt/ExportReceiptDetailForm';
-import { getAllExportReceipt } from '~/data/mutation/exportReceipt/ExportReceipt-mutation';
+import { getAllExportReceipt, getAllExportReceiptWarehouse } from '~/data/mutation/exportReceipt/ExportReceipt-mutation';
 import dayjs from 'dayjs';
 
 // ----------------------------------------------------------------------
@@ -273,7 +273,7 @@ const ExportReceiptPage = () => {
     const isNotFound = !filteredUsers.length && !!filterName;
 
     useEffect(() => {
-        getAllExportReceipt()
+        getAllExportReceiptWarehouse()
             .then((respone) => {
                 const data = respone.data;
                 if (Array.isArray(data)) {
