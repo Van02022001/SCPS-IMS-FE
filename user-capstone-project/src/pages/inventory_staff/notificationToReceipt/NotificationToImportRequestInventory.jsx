@@ -293,7 +293,7 @@ const NotificationToImportRequestInventory = ({
                                 {selectedReceiptDetailId === receiptData.id && (
                                     <TableRow>
                                         <TableCell colSpan={8}>
-                                            <div>
+                                            {/* <div>
                                                 {receiptData.status === 'IN_PROGRESS' && (
                                                     <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                                                         <Button variant="contained" color="primary" onClick={handleOpenForm}>
@@ -317,7 +317,7 @@ const NotificationToImportRequestInventory = ({
 
                                                     />
                                                 </Dialog>
-                                            </div>
+                                            </div> */}
                                             <Stack spacing={4} margin={2}>
                                                 <Grid container spacing={2}>
                                                     <Grid item xs={6}>
@@ -557,7 +557,7 @@ const NotificationToImportRequestInventory = ({
                             </React.Fragment>
                             <Stack spacing={4} margin={2}>
                                 <Grid container spacing={1} sx={{ gap: '10px' }}>
-                                    {receiptData.status === 'Pending_Approval' && (
+                                    {/* {receiptData.status === 'Pending_Approval' && (
                                         <div>
                                             <Button variant="contained" color="primary" onClick={updateImportReceiptConfirm}>
                                                 Xác nhận
@@ -571,7 +571,7 @@ const NotificationToImportRequestInventory = ({
                                                 Tiến hành nhập kho
                                             </Button>
                                         </div>
-                                    )}
+                                    )} */}
                                     <SnackbarSuccess
                                         open={open}
                                         handleClose={handleClose}

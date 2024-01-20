@@ -8,7 +8,7 @@ const BaseURLWeb = "https://phu-tung-bom-be-tong-sg.azurewebsites.net/api/v1"
 
 
 export const axiosInstance = axios.create({
-  baseURL: BaseURLWeb,
+  baseURL: BaseURL,
   timeout: 30000,
   headers: {
     common: {
@@ -19,7 +19,7 @@ export const axiosInstance = axios.create({
 });
 
 export const imageInstance = axios.create({
-  baseURL: BaseURLWeb,
+  baseURL: BaseURL,
   timeout: 30000,
   headers: {
     common: {

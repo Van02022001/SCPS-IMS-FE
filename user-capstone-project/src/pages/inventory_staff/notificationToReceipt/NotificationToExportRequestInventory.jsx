@@ -305,7 +305,7 @@ const NotificationToExportRequestInventory = ({
                                 {selectedReceiptDetailId === receiptData.id && (
                                     <TableRow>
                                         <TableCell colSpan={8}>
-                                            <div>
+                                            {/* <div>
                                                 {currentStatus === 'IN_PROGRESS' && (
                                                     <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                                                         <Button variant="contained" color="primary" onClick={handleOpenForm}>
@@ -329,7 +329,7 @@ const NotificationToExportRequestInventory = ({
 
                                                     />
                                                 </Dialog>
-                                            </div>
+                                            </div> */}
                                             <Stack spacing={4} margin={2}>
                                                 <Grid container spacing={2}>
                                                     <Grid item xs={6}>
@@ -545,7 +545,7 @@ const NotificationToExportRequestInventory = ({
                                 Cập nhật
                             </Button> */}
 
-                                        {currentStatus === 'Pending_Approval' && (
+                                        {/* {currentStatus === 'Pending_Approval' && (
                                             <div>
                                                 <Button variant="contained" color="primary" onClick={updateExportReceiptConfirm}>
                                                     Xác nhận
@@ -559,7 +559,7 @@ const NotificationToExportRequestInventory = ({
                                                     Tiến hành nhập kho
                                                 </Button>
                                             </div>
-                                        )}
+                                        )} */}
                                         <SnackbarSuccess
                                             open={open}
                                             handleClose={handleClose}
