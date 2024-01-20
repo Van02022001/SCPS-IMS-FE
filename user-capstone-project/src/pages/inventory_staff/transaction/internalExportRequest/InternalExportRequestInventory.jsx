@@ -129,7 +129,7 @@ const InternalExportRequestInventory = () => {
     const [displayedGoodReceiptData, setDisplayedGoodReceiptData] = useState([]);
     // State data và xử lý data
     const [exportRequestData, setExportRequestData] = useState([]);
-    const [importRequestStatus, setImportRequestStatus] = useState('');
+    // const [importRequestStatus, setImportRequestStatus] = useState('');
 
     const [filteredCategory, setFilteredCategory] = useState(null);
 
