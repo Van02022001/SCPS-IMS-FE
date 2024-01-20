@@ -509,7 +509,7 @@ const InternalImportRequestPage = () => {
                                                             (importRequest.status === 'Pending_Approval' &&
                                                                 'warning') ||
                                                             (importRequest.status === 'Approved' && 'success') ||
-                                                            (importRequest.status === ' IN_PROGRESS' && 'warning') ||
+                                                            (importRequest.status === ' IN_PROGRESS' && 'primary') ||
                                                             (importRequest.status === 'Complete' && 'primary') ||
                                                             (importRequest.status === 'Inactive' && 'error') ||
                                                             'default'

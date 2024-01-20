@@ -376,7 +376,7 @@ const ExportReceiptManagerPage = () => {
                                                         }
                                                     >
                                                         {importReceipt.status === 'Pending_Approval'
-                                                            ? 'Chờ phê duyệt'
+                                                            ? 'Chờ xác nhận'
                                                             : importReceipt.status === 'Approved'
                                                             ? 'Đã xác nhận'
                                                             : importReceipt.status === 'IN_PROGRESS'
