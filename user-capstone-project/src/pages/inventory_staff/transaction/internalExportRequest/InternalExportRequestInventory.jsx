@@ -198,7 +198,7 @@ const InternalExportRequestInventory = () => {
             const UpdatedGoodReceipt = [...exportRequestData];
             UpdatedGoodReceipt[importRquestReceiptIndex].status = newStatus;
 
-            exportRequestData(UpdatedGoodReceipt);
+            setExportRequestData(UpdatedGoodReceipt);
         }
     };
 
@@ -490,7 +490,7 @@ const InternalExportRequestInventory = () => {
                                                             (importRequest.status === 'Pending_Approval' &&
                                                                 'warning') ||
                                                             (importRequest.status === 'Approved' && 'success') ||
-                                                            (importRequest.status === ' IN_PROGRESS' && 'warning') ||
+                                                            (importRequest.status === 'IN_PROGRESS' && 'primary') ||
                                                             (importRequest.status === 'Complete' && 'primary') ||
                                                             (importRequest.status === 'Inactive' && 'error') ||
                                                             'default'

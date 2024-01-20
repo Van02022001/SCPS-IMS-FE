@@ -158,7 +158,7 @@ const CreateInternalExportReceiptForm = ({ isOpen, onCloseForm, exportReceipst, 
                 onSave && onSave(response.message, 'Completed');
                 // Đóng form
                 onClose && onClose();
-                navigate('/inventory-staff/requests-internal-import', {
+                navigate('/inventory-staff/internal-export-request-staff', {
                     state: { successMessage: response.message },
                 });
                 handleSuccessMessage(response.message);

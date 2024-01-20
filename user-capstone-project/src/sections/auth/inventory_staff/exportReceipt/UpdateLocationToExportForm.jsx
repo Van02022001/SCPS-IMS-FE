@@ -58,6 +58,8 @@ const UpdateLocationToExportForm = ({
             setErrorMessage('Số lượng của phiếu này đã được thêm vào địa chỉ !');
         } else if (message === 'Vị trí đã tồn tại sản phẩm khác.') {
             setErrorMessage('Vị trí đã tồn tại sản phẩm khác. !');
+        } else if (message === 'Số lượng sản phẩm trong vị trí không đủ để xuất.') {
+            setErrorMessage('Số lượng sản phẩm trong vị trí không đủ để xuất !');
         }
     };
 

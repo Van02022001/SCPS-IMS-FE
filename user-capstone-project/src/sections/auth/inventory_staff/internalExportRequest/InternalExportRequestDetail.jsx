@@ -35,7 +35,10 @@ import {
 import { getAllImportReceipt } from '~/data/mutation/importReceipt/ImportReceipt-mutation';
 import SnackbarError from '~/components/alert/SnackbarError';
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
-import { editInternalExportReceiptConfirm, editReceiptStartInternalExport } from '~/data/mutation/internalExportRequest/internalExportRequest-mutation';
+import {
+    editInternalExportReceiptConfirm,
+    editReceiptStartInternalExport,
+} from '~/data/mutation/internalExportRequest/internalExportRequest-mutation';
 import CreateInternalExportReceiptForm from './CreateInternalExportReceiptForm';
 
 const InternalExportRequestDetail = ({
@@ -213,7 +216,7 @@ const InternalExportRequestDetail = ({
             return;
         }
         try {
-            const response = await editImportReceipt(exportRequestReceipt, editedImportReceipt);
+            const response = await editImportReceipt(importRequestReceiptId, editedImportReceipt);
 
             if (response.status === '200 OK') {
             }
@@ -238,14 +241,11 @@ const InternalExportRequestDetail = ({
 
             console.log(response.status);
             if (response.status === '200 OK') {
-                // Handle success if needed
-                console.log(response.message);
                 handleSuccessMessage(response.message);
             }
 
             updateExportReceiptConfirmInList(importRequestReceiptId, newStatus);
             setCurrentStatus(newStatus);
-
         } catch (error) {
             handleErrorMessage(error.response?.data?.message || 'An error occurred.');
         }
@@ -450,12 +450,12 @@ const InternalExportRequestDetail = ({
                                                 currentStatus === 'Pending_Approval'
                                                     ? 'Chờ xác nhận'
                                                     : currentStatus === 'Approved'
-                                                        ? 'Đã xác nhận'
-                                                        : currentStatus === 'IN_PROGRESS'
-                                                            ? 'Đang tiến hành'
-                                                            : currentStatus === 'Completed'
-                                                                ? 'Hoàn thành'
-                                                                : 'Ngừng hoạt động'
+                                                    ? 'Đã xác nhận'
+                                                    : currentStatus === 'IN_PROGRESS'
+                                                    ? 'Đang tiến hành'
+                                                    : currentStatus === 'Completed'
+                                                    ? 'Hoàn thành'
+                                                    : 'Ngừng hoạt động'
                                             }
                                         />
                                     </Grid>
@@ -527,22 +527,39 @@ const InternalExportRequestDetail = ({
                                                     padding: '10px 0 0 20px',
                                                 }}
                                             >
+                                                <TableCell></TableCell>
                                                 <TableCell>Mã sản phẩm</TableCell>
                                                 <TableCell>Tên sản phẩm</TableCell>
                                                 <TableCell>Số lượng</TableCell>
                                                 <TableCell>Giá sản phẩm</TableCell>
                                                 <TableCell>Tổng</TableCell>
                                                 <TableCell>Đơn vị</TableCell>
+                                                <TableCell>Thương hiệu</TableCell>
+                                                <TableCell>Xuất xứ</TableCell>
+                                                <TableCell>Nhà cung cấp</TableCell>
                                             </TableRow>
                                             {exportReceipst.details.map((items) => {
                                                 return (
                                                     <TableRow key={items.id}>
+                                                        <TableCell>
+                                                            <img
+                                                                src={items.item.imageUrl}
+                                                                alt={`Item ${items.code}`}
+                                                                width="48"
+                                                                height="48"
+                                                            />
+                                                        </TableCell>
                                                         <TableCell>{items.item.code}</TableCell>
                                                         <TableCell>{items.item.subcategoryName}</TableCell>
                                                         <TableCell>{items.quantity}</TableCell>
-                                                        <TableCell>{items.price}</TableCell>
-                                                        <TableCell>{items.totalPrice}</TableCell>
+                                                        <TableCell>{items.price?.toLocaleString('vi-VN')}</TableCell>
+                                                        <TableCell>
+                                                            {items.totalPrice?.toLocaleString('vi-VN')}
+                                                        </TableCell>
                                                         <TableCell>{items.unitName}</TableCell>
+                                                        <TableCell>{items.item.brandName}</TableCell>
+                                                        <TableCell>{items.item.originName}</TableCell>
+                                                        <TableCell>{items.item.supplierName}</TableCell>
                                                     </TableRow>
                                                 );
                                             })}
@@ -556,7 +573,7 @@ const InternalExportRequestDetail = ({
                                         </TableRow>
                                         <TableRow>
                                             <TableCell>Tổng giá:</TableCell>
-                                            <TableCell>{exportReceipst.totalPrice}</TableCell>
+                                            <TableCell>{exportReceipst.totalPrice?.toLocaleString('vi-VN')}</TableCell>
                                         </TableRow>
                                     </TableBody>
                                 </TableContainer>
