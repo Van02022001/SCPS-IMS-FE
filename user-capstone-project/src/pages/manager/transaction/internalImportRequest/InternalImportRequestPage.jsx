@@ -316,6 +316,8 @@ const InternalImportRequestPage = () => {
         switch (englishMessage) {
             case 'Import request receipt created successfully':
                 return 'Tạo phiếu yêu cầu nhập kho nội bộ thành công';
+            case 'Internal Import request receipt created successfully':
+                return 'Thành công';
             // Thêm các trường hợp khác nếu cần
             default:
                 return englishMessage;

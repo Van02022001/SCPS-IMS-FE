@@ -531,6 +531,48 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                     sx={{ marginBottom: 4, gap: 5 }}
                                 >
                                     <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                                        Hàng bị hư:
+                                    </Typography>
+                                    <TextField
+                                        InputProps={{ readOnly: true }}
+                                        size="small"
+                                        variant="outlined"
+                                        label="Hàng bị hư"
+                                        sx={{ width: '70%', marginRight: 5, pointerEvents: 'none' }}
+                                        value={item.defective}
+                                    />
+                                </Grid>
+
+                                <Grid
+                                    container
+                                    spacing={1}
+                                    direction="row"
+                                    justifyContent="space-between"
+                                    alignItems="center"
+                                    sx={{ marginBottom: 4, gap: 5 }}
+                                >
+                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                                        Hàng bị mất:
+                                    </Typography>
+                                    <TextField
+                                        InputProps={{ readOnly: true }}
+                                        size="small"
+                                        variant="outlined"
+                                        label="Hàng bị mất"
+                                        sx={{ width: '70%', marginRight: 5, pointerEvents: 'none' }}
+                                        value={item.lost}
+                                    />
+                                </Grid>
+
+                                <Grid
+                                    container
+                                    spacing={1}
+                                    direction="row"
+                                    justifyContent="space-between"
+                                    alignItems="center"
+                                    sx={{ marginBottom: 4, gap: 5 }}
+                                >
+                                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
                                         Giá mua:
                                     </Typography>
                                     <TextField
