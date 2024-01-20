@@ -16,20 +16,10 @@ import {
     Typography,
     TableContainer,
     TablePagination,
-    FormControl,
-    InputLabel,
-    Select,
-    MenuItem,
-    ListItemText,
-    OutlinedInput,
 } from '@mui/material';
 // components
-import Label from '~/components/label/Label';
-import Iconify from '~/components/iconify/Iconify';
 import Scrollbar from '~/components/scrollbar/Scrollbar';
-import CloseIcon from '@mui/icons-material/Close';
 //icons
-import FilterAltIcon from '@mui/icons-material/FilterAlt';
 // sections
 import { InventoryReportListHead, InventoryReportToolbar } from '~/sections/@dashboard/manager/inventoryReport';
 // mock
@@ -40,8 +30,6 @@ import PRODUCTSLIST from '../../../_mock/products';
 // import EditCategoryForm from '~/sections/auth/manager/categories/EditCategoryForm';
 // import GoodsReceiptPage from '../GoodsReceiptPage';
 import { useNavigate } from 'react-router-dom';
-import { getAllImportReceipt } from '~/data/mutation/importReceipt/ImportReceipt-mutation';
-import ImportReceiptDetailManagerForm from '~/sections/auth/manager/transaction/importReceipt/ImportReceiptDetailManagerForm';
 import {
     getAllInventoryByItems,
     getAllInventoryByWarehouse,
@@ -54,15 +42,16 @@ import dayjs from 'dayjs';
 
 const TABLE_HEAD = [
     // { id: 'id', label: 'Mã hàng', alignRight: false },
+    { id: 'itemCode', label: 'Mã hàng', alignRight: false },
     { id: 'itemName', label: 'Tên hàng', alignRight: false },
-    // { id: 'openingStockQuantity', label: 'Số lượng tồn kho đầu', alignRight: false },
-    // { id: 'openingStockValue', label: 'Giá trị tồn kho đầu', alignRight: false },
-    // { id: 'closingStockQuantity', label: 'Số lượng tồn kho cuối', alignRight: false },
-    // { id: 'closingStockValue', label: 'Giá trị tồn kho cuối', alignRight: false },
+    { id: 'available', label: 'Hàng có săn', alignRight: false },
+    { id: 'averageUnitValue', label: 'Đơn giá trung bình', alignRight: false },
+    { id: 'defective', label: 'Hàng hỏng', alignRight: false },
+    { id: 'lost', label: 'Hàng mất', alignRight: false },
     { id: 'inboundQuantity', label: 'Số lượng đầu vào', alignRight: false },
     { id: 'inboundValue', label: 'Giá trị đầu vào', alignRight: false },
-    { id: 'outboundQuantity', label: 'Số lượng gửi đi', alignRight: false },
-    { id: 'outboundValue', label: 'Giá trị gửi đi', alignRight: false },
+    { id: 'outboundQuantity', label: 'Số lượng đầu ra', alignRight: false },
+    { id: 'outboundValue', label: 'Giá trị đầu ra', alignRight: false },
     { id: 'totalValue', label: 'Tổng giá trị', alignRight: false },
 ];
 
@@ -334,19 +323,22 @@ const InventoryStaffReportPage = () => {
                                 {filteredInventoryReport.slice(startIndex, endIndex).map((inventoryReport) => {
                                     return (
                                         <React.Fragment key={inventoryReport.itemId}>
-                                            <TableRow key={inventoryReport.itemId}>
 
+
+                                            <TableRow key={inventoryReport.itemId}>
+                                                <TableCell>{inventoryReport.itemCode}</TableCell>
                                                 <TableCell>{inventoryReport.itemName}</TableCell>
-                                                {/* <TableCell>{inventoryReport.openingStockQuantity}</TableCell>
-                                                <TableCell>{inventoryReport.openingStockValue}</TableCell>
-                                                <TableCell>{inventoryReport.closingStockQuantity}</TableCell>
-                                                <TableCell>{inventoryReport.closingStockValue}</TableCell> */}
+                                                <TableCell>{inventoryReport.available}</TableCell>
+                                                <TableCell>{inventoryReport.averageUnitValue}</TableCell>
+                                                <TableCell>{inventoryReport.defective}</TableCell>
+                                                <TableCell>{inventoryReport.lost}</TableCell>
                                                 <TableCell>{inventoryReport.inboundQuantity}</TableCell>
                                                 <TableCell>{inventoryReport.inboundValue}</TableCell>
                                                 <TableCell>{inventoryReport.outboundQuantity}</TableCell>
                                                 <TableCell>{inventoryReport.outboundValue}</TableCell>
                                                 <TableCell>{inventoryReport.totalValue}</TableCell>
                                             </TableRow>
+
                                         </React.Fragment>
                                     );
                                 })}

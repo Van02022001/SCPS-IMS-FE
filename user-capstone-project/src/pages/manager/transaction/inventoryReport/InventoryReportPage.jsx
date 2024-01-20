@@ -53,15 +53,16 @@ import dayjs from 'dayjs';
 
 const TABLE_HEAD = [
     // { id: 'id', label: 'Mã hàng', alignRight: false },
+    { id: 'itemCode', label: 'Mã hàng', alignRight: false },
     { id: 'itemName', label: 'Tên hàng', alignRight: false },
-    // { id: 'openingStockQuantity', label: 'Số lượng tồn kho đầu', alignRight: false },
-    // { id: 'openingStockValue', label: 'Giá trị tồn kho đầu', alignRight: false },
-    // { id: 'closingStockQuantity', label: 'Số lượng tồn kho cuối', alignRight: false },
-    // { id: 'closingStockValue', label: 'Giá trị tồn kho cuối', alignRight: false },
+    { id: 'available', label: 'Hàng có săn', alignRight: false },
+    { id: 'averageUnitValue', label: 'Đơn giá trung bình', alignRight: false },
+    { id: 'defective', label: 'Hàng hỏng', alignRight: false },
+    { id: 'lost', label: 'Hàng mất', alignRight: false },
     { id: 'inboundQuantity', label: 'Số lượng đầu vào', alignRight: false },
     { id: 'inboundValue', label: 'Giá trị đầu vào', alignRight: false },
-    { id: 'outboundQuantity', label: 'Số lượng xuất kho', alignRight: false },
-    { id: 'outboundValue', label: 'Giá trị xuất kho', alignRight: false },
+    { id: 'outboundQuantity', label: 'Số lượng đầu ra', alignRight: false },
+    { id: 'outboundValue', label: 'Giá trị đầu ra', alignRight: false },
     { id: 'totalValue', label: 'Tổng giá trị', alignRight: false },
 ];
 
@@ -338,11 +339,12 @@ const InventoryReportPage = () => {
                                     return (
                                         <React.Fragment key={inventoryReport.itemId}>
                                             <TableRow key={inventoryReport.itemId}>
+                                                <TableCell>{inventoryReport.itemCode}</TableCell>
                                                 <TableCell>{inventoryReport.itemName}</TableCell>
-                                                {/* <TableCell>{inventoryReport.openingStockQuantity}</TableCell>
-                                                <TableCell>{inventoryReport.openingStockValue}</TableCell>
-                                                <TableCell>{inventoryReport.closingStockQuantity}</TableCell>
-                                                <TableCell>{inventoryReport.closingStockValue}</TableCell> */}
+                                                <TableCell>{inventoryReport.available}</TableCell>
+                                                <TableCell>{inventoryReport.averageUnitValue}</TableCell>
+                                                <TableCell>{inventoryReport.defective}</TableCell>
+                                                <TableCell>{inventoryReport.lost}</TableCell>
                                                 <TableCell>{inventoryReport.inboundQuantity}</TableCell>
                                                 <TableCell>{inventoryReport.inboundValue}</TableCell>
                                                 <TableCell>{inventoryReport.outboundQuantity}</TableCell>
