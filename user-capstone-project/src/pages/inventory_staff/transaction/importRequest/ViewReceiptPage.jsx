@@ -353,11 +353,11 @@ const ViewReceiptPage = () => {
 
             {/* ===========================================filter=========================================== */}
             <Card>
-                <ProductsListToolbar
+                {/* <ProductsListToolbar
                     numSelected={selected.length}
                     filterName={filterName}
                     onFilterName={handleFilterByName}
-                />
+                /> */}
 
                 <Scrollbar>
                     <TableContainer sx={{ minWidth: 800 }}>

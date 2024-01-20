@@ -31,6 +31,7 @@ import { getItemsByMovementsHistory } from '~/data/mutation/items-movement/items
 import AddItemsMovementForm from './AddItemsMovementForm';
 import dayjs from 'dayjs';
 import SnackbarSuccess from '~/components/alert/SnackbarSuccess';
+import { getAllLocationByItem } from '~/data/mutation/location/location-mutation';
 
 const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode, updateItemStatusInList }) => {
     // const [expandedItem, setExpandedItem] = useState(itemId);
@@ -52,6 +53,7 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
     const [openAddItemMovementDialog, setOpenAddItemMovementDialog] = useState(false);
 
     const [itemMovementsData, setItemMovementsData] = useState([]);
+    const [fromLocation_id, setFromLocation_id] = useState('');
 
     //thông báo
     const [isSuccess, setIsSuccess] = useState(false);
@@ -158,17 +160,27 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
             .then((respone) => {
                 const data = respone.data;
                 const sortedData = data.sort((a, b) => {
-                    return dayjs(b.movedAt, 'DD/MM/YYYY HH:mm:ss').diff(
-                        dayjs(a.movedAt, 'DD/MM/YYYY HH:mm:ss'),
-                    );
+                    return dayjs(b.movedAt, 'DD/MM/YYYY HH:mm:ss').diff(dayjs(a.movedAt, 'DD/MM/YYYY HH:mm:ss'));
                 });
                 setItemMovementsData(sortedData);
             })
             .catch((error) => console.error('Error fetching Items:', error));
     }, []);
 
+    useEffect(() => {
+        getAllLocationByItem(itemId)
+            .then((respone) => {
+                const data = respone.data;
+                const dataArray = Array.isArray(data) ? data : [data];
+                setFromLocation_id(dataArray);
+                console.log(dataArray);
+            })
+            .catch((error) => console.error('Error fetching categories:', error));
+    }, []);
+
     const item = items.find((o) => o.id === itemId);
     console.log(item);
+    console.log(fromLocation_id);
 
     if (!item) {
         return null;
@@ -802,19 +814,23 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                                     <TableCell>Kho chứa</TableCell>
                                                     <TableCell>Số lượng</TableCell>
                                                 </TableRow>
-                                                {item.locations.slice(startIndex, endIndex).map((items) => {
-                                                    return (
-                                                        <TableRow key={items.id}>
+                                                {fromLocation_id.length > 0 ? (
+                                                    fromLocation_id[0].locations.map((location) => (
+                                                        <TableRow key={location.id}>
                                                             <TableCell>
                                                                 <div>
-                                                                    {items.shelfNumber} - {items.binNumber}
+                                                                    {location.shelfNumber} - {location.binNumber}
                                                                 </div>
                                                             </TableCell>
-                                                            <TableCell>{items.warehouse.name}</TableCell>
-                                                            <TableCell>{items.item_quantity}</TableCell>
+                                                            <TableCell>{location.warehouse.name}</TableCell>
+                                                            <TableCell>{location.item_quantity}</TableCell>
                                                         </TableRow>
-                                                    );
-                                                })}
+                                                    ))
+                                                ) : (
+                                                    <TableRow>
+                                                        <TableCell colSpan={3}>Không có dữ liệu</TableCell>
+                                                    </TableRow>
+                                                )}
                                             </TableBody>
                                         </Table>
                                     </TableContainer>
@@ -843,6 +859,7 @@ const ItemDetaiIventoryForm = ({ items, itemId, onClose, isOpen, updateItemInLis
                                             onSave={handleSaveLocation}
                                             itemId={itemId}
                                             itemMovementsData={itemMovementsData}
+                                            fromLocation_id={fromLocation_id}
                                         />
                                     </Grid>
                                 </Stack>

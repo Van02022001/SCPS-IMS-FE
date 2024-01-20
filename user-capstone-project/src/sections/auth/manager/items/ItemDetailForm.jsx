@@ -96,6 +96,8 @@ const ItemDetailForm = ({ items, itemId, onClose, isOpen, updateItemInList, mode
             setErrorMessage('Tên thể loại đã tồn tại !');
         } else if (message === 'Update category successfully') {
             setErrorMessage('Cập nhập thể loại thành công !');
+        } else if (message === 'Invalid request') {
+            setErrorMessage('Yêu cầu không hợp lệ !');
         }
     };
 
