@@ -233,7 +233,7 @@ const ImportRequestReceiptDetailManagerForm = ({
                                         variant="outlined"
                                         label="Mô tả"
                                         sx={{ width: '70%', pointerEvents: 'none' }}
-                                        value={importReceipst.note}
+                                        value={importReceipst.description}
                                     />
                                 </Grid>
                             </Grid>

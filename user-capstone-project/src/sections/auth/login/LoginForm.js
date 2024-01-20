@@ -36,7 +36,7 @@ export default function LoginForm() {
                     headers: myHeaders,
                     redirect: 'follow',
                 };
-                fetch('http://localhost:8080/api/v1/auth/validation', requestOptions)
+                fetch('https://phu-tung-bom-be-tong-sg.azurewebsites.net/api/v1/auth/validation', requestOptions)
                     .then((response) => {
                         if (response.ok) {
                             return response.json();
@@ -55,7 +55,7 @@ export default function LoginForm() {
                         } else if (localStorage.getItem('role') === 'INVENTORY_STAFF') {
                             navigate('/inventory-staff/itemsInventory', { replace: true });
                         } else if (localStorage.getItem('role') === 'SALE_STAFF') {
-                            navigate('/dashboard', { replace: true });
+                            navigate('/sale-staff/items-sale', { replace: true });
                         } else {
                             navigate('/login');
                         }

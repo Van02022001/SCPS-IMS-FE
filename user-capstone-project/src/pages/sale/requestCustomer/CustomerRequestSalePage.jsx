@@ -329,7 +329,7 @@ const CustomerRequestSalePage = () => {
             {/* <Container> */}
             <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
                 <Typography variant="h4" gutterBottom>
-                    Yêu cầu khách hàng
+                    Phiếu yêu cầu xuất kho
                 </Typography>
                 <Button
                     variant="contained"
