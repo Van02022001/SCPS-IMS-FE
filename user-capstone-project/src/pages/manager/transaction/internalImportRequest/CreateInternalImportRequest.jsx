@@ -26,7 +26,6 @@ import { useNavigate } from 'react-router-dom';
 
 // mock
 import USERLIST from '~/_mock/user';
-import Scrollbar from '~/components/scrollbar/Scrollbar';
 // icons
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditIcon from '@mui/icons-material/Edit';
@@ -83,11 +82,11 @@ const CreateInternalImportRequest = () => {
     const [open, setOpen] = React.useState(false);
     const [open1, setOpen1] = React.useState(false);
     const [confirmOpen1, setConfirmOpen1] = useState(false);
-    const [confirmOpen2, setConfirmOpen2] = useState(false);
+    // const [confirmOpen2, setConfirmOpen2] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
-    const [dropdownData, setDropdownData] = useState([]);
+    // const [dropdownData, setDropdownData] = useState([]);
     const handleSuccessMessage = (message) => {
         setOpen(true);
         if (message === 'Import request receipt created successfully') {
@@ -394,10 +393,10 @@ const CreateInternalImportRequest = () => {
             return total;
         }, 0);
     };
-    const handleDataSearch = (searchResult) => {
-        // Cập nhật state của trang chính với dữ liệu từ tìm kiếm
-        setDropdownData(searchResult);
-    };
+    // const handleDataSearch = (searchResult) => {
+    //     // Cập nhật state của trang chính với dữ liệu từ tìm kiếm
+    //     setDropdownData(searchResult);
+    // };
     return (
         <>
             <Helmet>

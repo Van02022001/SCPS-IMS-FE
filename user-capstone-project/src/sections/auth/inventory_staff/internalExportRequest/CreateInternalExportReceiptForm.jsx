@@ -125,6 +125,10 @@ const CreateInternalExportReceiptForm = ({ isOpen, onCloseForm, exportReceipst, 
 
     const handleSendToManager = async () => {
         try {
+            const quantities = exportReceipst.details.reduce((acc, detail) => {
+                acc[detail.item.id] = detail.quantity;
+                return acc;
+            }, {});
             const response = await createInternalExportReceipt(exportReceipst.id, quantities);
 
             // Handle success
@@ -320,7 +324,7 @@ const CreateInternalExportReceiptForm = ({ isOpen, onCloseForm, exportReceipst, 
                                                 <TableCell>{items.unitName}</TableCell>
 
                                                 <TableCell>
-                                                    <TextField
+                                                    {/* <TextField
                                                         type="text"
                                                         label="Số lượng nhập thực tế"
                                                         style={{ width: '50%' }}
@@ -335,7 +339,7 @@ const CreateInternalExportReceiptForm = ({ isOpen, onCloseForm, exportReceipst, 
                                                             inputMode: 'numeric',
                                                             pattern: '[0-9]*',
                                                         }}
-                                                    />
+                                                    /> */}
                                                 </TableCell>
                                             </TableRow>
                                         ))}

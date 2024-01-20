@@ -461,12 +461,12 @@ const ImportRequestReceiptDetailForm = ({
                                                 currentStatus === 'Pending_Approval'
                                                     ? 'Chờ phê duyệt'
                                                     : currentStatus === 'Approved'
-                                                    ? 'Đã xác nhận'
-                                                    : currentStatus === 'IN_PROGRESS'
-                                                    ? 'Đang tiến hành'
-                                                    : currentStatus === 'Completed'
-                                                    ? 'Hoàn thành'
-                                                    : 'Ngừng hoạt động'
+                                                        ? 'Đã xác nhận'
+                                                        : currentStatus === 'IN_PROGRESS'
+                                                            ? 'Đang tiến hành'
+                                                            : currentStatus === 'Completed'
+                                                                ? 'Hoàn thành'
+                                                                : 'Ngừng hoạt động'
                                             }
                                         />
                                     </Grid>
@@ -637,9 +637,6 @@ const ImportRequestReceiptDetailForm = ({
                                 action={action}
                                 style={{ bottom: '16px', right: '16px' }}
                             />
-                            {/* <Button variant="outlined" color="error" onClick={handleClear}>
-                                Hủy bỏ
-                            </Button> */}
                         </Grid>
                     </Stack>
                 </div>

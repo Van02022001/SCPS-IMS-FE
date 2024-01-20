@@ -283,6 +283,9 @@ function renderContent(notification) {
           notification.type === "XAC_NHAN_KIEM_KHO" ? 'Xác nhận kiểm kho' : 
           notification.type === "CANH_BAO_HET_HANG" ? 'Cảnh báo hết hàng' : 
           notification.type === "CANH_BAO_THUA_HANG" ? 'Cảnh báo thừa hàng' : 
+          notification.type === "YEU_CAU_NHAP_KHO_NOI_BO" ? 'Yêu cầu nhập kho nội bộ!' : 
+          notification.type === "YEU_CAU_XUAT_KHO_NOI_BO" ? 'Yêu cầu xuất kho nội bộ!' : 
+         
           '' }
         </Typography>
       )}

@@ -178,7 +178,7 @@ const CreateInventoryCheck = ({
             [itemId]: value,
         }));
     };
-
+    console.log(statusQuantities);
     const handleLocationQuantityChange = (locationId, event) => {
         const newQuantity = event.target.value;
 
@@ -395,7 +395,17 @@ const CreateInventoryCheck = ({
                                                         <TableCell sx={{ fontWeight: 'bold' }}>
                                                             Tổng số lượng thực tế:{' '}
                                                             {totalQuantities.totalActualQuantity}
+                                                            {statusQuantities[item.id]?.LOST > 0 && (
+                                                                <span> (Mất: {statusQuantities[item.id].LOST})</span>
+                                                            )}
+                                                            {statusQuantities[item.id]?.DEFECTIVE > 0 && (
+                                                                <span> (Hư: {statusQuantities[item.id].DEFECTIVE})</span>
+                                                            )}
+                                                            {statusQuantities[item.id]?.REDUNDANT > 0 && (
+                                                                <span> (Thừa: {statusQuantities[item.id].REDUNDANT})</span>
+                                                            )}
                                                         </TableCell>
+
                                                         <TableCell sx={{ fontWeight: 'bold' }}>
                                                             Tổng số lượng tại vị trí: {totalQuantities.totalQuantity}
                                                         </TableCell>
@@ -483,12 +493,13 @@ const StatusQuality = ({ onChange }) => {
 
 
     return (
-        <>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             <Select
                 value={statusQuantities}
                 onChange={(e) => {
                     setStatusQuantities(e.target.value);
                 }}
+                style={{ width: '200px' }}
             >
                 {!hasRedundantData && (
                     <MenuItem value={IStatusQuantity.LOST}>Sản phẩm bị mất</MenuItem>
@@ -500,7 +511,7 @@ const StatusQuality = ({ onChange }) => {
             </Select>
             <Input
                 type={'number'}
-                placeHolder={'Nhập số lượng'}
+                placeholder={'Nhập số lượng'}
                 value={
                     statusQuantities === IStatusQuantity.LOST
                         ? lostAmount
@@ -511,8 +522,9 @@ const StatusQuality = ({ onChange }) => {
                 onChange={(e) => {
                     handleOnChange(e.target.value);
                 }}
+                style={{ width: '200px' }}
             />
-        </>
+        </div>
     );
 };
 

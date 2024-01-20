@@ -124,7 +124,12 @@ const CreateInternalImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, 
     }, []);
 
     const handleSendToManager = async () => {
+
         try {
+            const quantities = importReceipst.details.reduce((acc, detail) => {
+                acc[detail.item.id] = detail.quantity;
+                return acc;
+            }, {});
             const response = await createInternalImportReceipt(importReceipst.id, quantities);
 
             // Handle success
@@ -284,9 +289,9 @@ const CreateInternalImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, 
 
                                                 <TableCell>{detail.quantity}</TableCell>
 
-                                                  <TableCell>{detail.price}</TableCell>
+                                                <TableCell>{detail.price}</TableCell>
 
-                                                  <TableCell>{detail.totalPrice}</TableCell>
+                                                <TableCell>{detail.totalPrice}</TableCell>
 
                                                 <TableCell>
                                                     {!locationQuantities[detail.id] > 0 &&
@@ -322,8 +327,8 @@ const CreateInternalImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, 
                                                 <TableCell>{items.quantity}</TableCell>
                                                 <TableCell>{items.unitName}</TableCell>
 
-                                                  <TableCell>
-                                                      <TextField
+                                                <TableCell>
+                                                    {/* <TextField
                                                           type="text"
                                                           label="Số lượng nhập thực tế"
                                                           style={{ width: '50%' }}
@@ -338,13 +343,13 @@ const CreateInternalImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, 
                                                               inputMode: 'numeric',
                                                               pattern: '[0-9]*',
                                                           }}
-                                                      />
-                                                  </TableCell>
-                                                  <TableCell>{items.price}</TableCell>
-                                                  <TableCell>{items.totalPrice}</TableCell>
+                                                      /> */}
+                                                </TableCell>
+                                                <TableCell>{items.price}</TableCell>
+                                                <TableCell>{items.totalPrice}</TableCell>
 
-                                              </TableRow>
-                                          ))}
+                                            </TableRow>
+                                        ))}
                                     <div
                                         style={{
                                             display: 'flex',
