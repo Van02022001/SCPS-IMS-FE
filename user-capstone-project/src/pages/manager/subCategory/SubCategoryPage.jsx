@@ -145,7 +145,6 @@ const SubCategoryPage = () => {
 
     // const [anchorElOptions, setAnchorElOptions] = useState(null);
 
-
     const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
     const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('');
 
@@ -158,7 +157,6 @@ const SubCategoryPage = () => {
     const [endDate, setEndDate] = useState(null);
     const startIndex = page * rowsPerPage;
     const endIndex = startIndex + rowsPerPage;
-
 
     // ========================== Hàm để thay đổi data mỗi khi Edit xong api=======================================
     const updateSubCategoryInList = (updatedSubCategory) => {
@@ -291,7 +289,6 @@ const SubCategoryPage = () => {
     const handleCloseOdersForm = () => {
         setOpenOderForm(false);
     };
-
 
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - categoryData.length) : 0;
 
@@ -456,7 +453,6 @@ const SubCategoryPage = () => {
                                                 selected={selectedSubCategoryId === sub_category.id}
                                                 onClick={() => handleSubCategoryClick(sub_category)}
                                             >
-
                                                 <TableCell align="left">
                                                     <Stack direction="row" alignItems="center" spacing={2}>
                                                         {/* <Avatar alt={name} src={avatarUrl} /> */}
@@ -470,7 +466,11 @@ const SubCategoryPage = () => {
                                                         </Typography>
                                                     </Stack>
                                                 </TableCell>
-                                                <TableCell align="left">{sub_category.description}</TableCell>
+                                                <TableCell align="left">
+                                                    {sub_category.description.length > 20
+                                                        ? `${sub_category.description.substring(0, 20)}...`
+                                                        : sub_category.description}
+                                                </TableCell>
                                                 <TableCell align="left">{sub_category.createdAt}</TableCell>
                                                 {/* <TableCell align="left">{sub_category.updatedAt}</TableCell> */}
                                                 <TableCell align="left">
