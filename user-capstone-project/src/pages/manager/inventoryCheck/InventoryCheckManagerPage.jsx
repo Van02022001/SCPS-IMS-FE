@@ -350,7 +350,7 @@ const InventoryCheckManagerPage = () => {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    // count={filteredInventoryReport.length}
+                    count={inventoryCheckData.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}

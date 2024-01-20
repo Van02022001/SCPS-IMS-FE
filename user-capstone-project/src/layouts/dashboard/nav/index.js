@@ -221,7 +221,7 @@ const managerNavConfig = [
                     },
                     {
                         title: 'Phiếu xuất kho nội bộ',
-                        // path: '/dashboard/internal-import',
+                        path: '/dashboard/internal-export',
                         icon: <Receipt />,
                     },
                 ]

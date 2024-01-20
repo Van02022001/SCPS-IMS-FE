@@ -102,7 +102,7 @@ const Router = () => {
 
                 { path: 'create-internal-export-request', element: <CreateInternalExportRequest/> },
                 { path: 'internal-exprot-request', element: <InternalExportRequestpage /> }, 
-                { path: 'internal-export', element: <InternalImportPage/> },
+                { path: 'internal-export', element: <InternalExportPage/> },
 //Kiểm khoc
                 { path: 'products-check', element: <InventoryReportPage/> },
                 { path: 'inventory-check-manager', element: <InventoryCheckManagerPage/> },
