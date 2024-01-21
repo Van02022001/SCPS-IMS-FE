@@ -373,8 +373,8 @@ const InventoryCheckDetail = ({ inventoryCheckData, inventoryCheckId, onClose, i
                                                     >
                                                         <TableCell>{items.codeItem}</TableCell>
                                                         <TableCell>{items.itemName}</TableCell>
-                                                        <TableCell>{items.expectedQuantity}</TableCell>
                                                         <TableCell>{items.actualQuantity}</TableCell>
+                                                        <TableCell>{items.expectedQuantity}</TableCell>
                                                         <TableCell>{items.discrepancyQuantity}</TableCell>
                                                         <TableCell>{items.discrepancyValue}</TableCell>
                                                         <TableCell>{items.note}</TableCell>
