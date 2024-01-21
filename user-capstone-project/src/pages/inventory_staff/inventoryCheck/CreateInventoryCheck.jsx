@@ -32,7 +32,8 @@ import SnackbarError from '~/components/alert/SnackbarError';
 import Scrollbar from '~/components/scrollbar/Scrollbar';
 
 const TABLE_HEAD = [
-    { id: 'itemName', label: 'Mã sản phẩm', alignRight: false },
+    { id: 'itemCode', label: 'Mã sản phẩm', alignRight: false },
+    { id: 'itemName', label: 'Tên sản phẩm', alignRight: false },
     { id: 'quantity', label: 'Số lượng', alignRight: false },
     { id: 'actualQuantity', label: 'Số lượng thực tế', alignRight: false },
     { id: 'statusQuantity', label: 'Số lượng chênh lệch', alignRight: false },
@@ -89,8 +90,8 @@ const CreateInventoryCheck = ({
             setErrorMessage('Yêu cầu không hợp lệ');
         } else if (message === '404 NOT_FOUND') {
             setErrorMessage('Mô tả quá dài');
-        } else if (message === 'Warehouse not found!') {
-            setErrorMessage('Hãy chọn kho và nhân viên !');
+        } else if (message === 'Hãy nhập số lượng!') {
+            setErrorMessage('Hãy nhập số lượng thực tế !');
         } else if (message === 'An error occurred while creating the inventory check receipt') {
             setErrorMessage('Hãy nhập số lượng thực tế !');
         }
@@ -326,6 +327,7 @@ const CreateInventoryCheck = ({
                                         selected={selectedItemCheckDetailId === item.id}
                                         onClick={() => handleItemClickDetail(item)}
                                     >
+                                        <TableCell align="left">{item.code}</TableCell>
                                         <TableCell align="left">{item.subCategory.name}</TableCell>
                                         <TableCell align="left">{item.quantity}</TableCell>
                                         <TableCell>
@@ -396,13 +398,16 @@ const CreateInventoryCheck = ({
                                                             Tổng số lượng thực tế:{' '}
                                                             {totalQuantities.totalActualQuantity}
                                                             {statusQuantities[item.id]?.LOST > 0 && (
-                                                                <span> (Mất: {statusQuantities[item.id].LOST})</span>
+                                                                <span> (Thiếu: {statusQuantities[item.id].LOST})</span>
                                                             )}
                                                             {statusQuantities[item.id]?.DEFECTIVE > 0 && (
                                                                 <span> (Hư: {statusQuantities[item.id].DEFECTIVE})</span>
                                                             )}
                                                             {statusQuantities[item.id]?.REDUNDANT > 0 && (
                                                                 <span> (Thừa: {statusQuantities[item.id].REDUNDANT})</span>
+                                                            )}
+                                                            {statusQuantities[item.id]?.ENOUGH === 0 && (
+                                                                <span> (Đủ)</span>
                                                             )}
                                                         </TableCell>
 
@@ -448,10 +453,12 @@ const StatusQuality = ({ onChange }) => {
         LOST: 'LOST',
         DEFECTIVE: 'DEFECTIVE',
         REDUNDANT: 'REDUNDANT',
+        ENOUGH: 'ENOUGH'
     };
 
     const hasLostData = lostAmount > 0;
     const hasRedundantData = redundantAmount > 0;
+
     const handleOnChange = (value) => {
         const numericValue = parseInt(value, 10);
 
@@ -486,9 +493,20 @@ const StatusQuality = ({ onChange }) => {
                     return numericValue;
                 });
                 break;
+            case IStatusQuantity.ENOUGH:
+                onChange({
+                    ENOUGH: 0,
+                });
+                break;
             default:
+                onChange({
+                    LOST: lostAmount,
+                    DEFECTIVE: defectiveAmount,
+                    REDUNDANT: redundantAmount,
+                });
                 break;
         }
+
     };
 
 
@@ -502,12 +520,13 @@ const StatusQuality = ({ onChange }) => {
                 style={{ width: '200px' }}
             >
                 {!hasRedundantData && (
-                    <MenuItem value={IStatusQuantity.LOST}>Sản phẩm bị mất</MenuItem>
+                    <MenuItem value={IStatusQuantity.LOST}>Sản phẩm bị thiếu</MenuItem>
                 )}
                 <MenuItem value={IStatusQuantity.DEFECTIVE}>Sản phẩm bị hư</MenuItem>
                 {!hasLostData && (
                     <MenuItem value={IStatusQuantity.REDUNDANT}>Sản phẩm thừa</MenuItem>
                 )}
+                <MenuItem value={IStatusQuantity.ENOUGH}>Đủ sản phẩm</MenuItem>
             </Select>
             <Input
                 type={'number'}

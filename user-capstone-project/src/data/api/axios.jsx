@@ -3,7 +3,7 @@ import axios from "axios";
 
 // const token = localStorage.getItem('token')
 
-// const BaseURL = "http://localhost:8080/api/v1"
+const BaseURL = "http://localhost:8080/api/v1"
 const BaseURLWeb = "https://phu-tung-bom-be-tong-sg.azurewebsites.net/api/v1"
 
 export const axiosInstance = axios.create({
