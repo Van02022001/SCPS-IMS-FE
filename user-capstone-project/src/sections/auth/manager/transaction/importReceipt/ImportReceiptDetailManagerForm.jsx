@@ -531,6 +531,7 @@ const ImportReceiptDetailManagerForm = ({
                                                 <TableCell>Mã sản phẩm</TableCell>
                                                 <TableCell>Tên sản phẩm</TableCell>
                                                 <TableCell>Số lượng</TableCell>
+                                                <TableCell>Số lượng chênh lệch</TableCell>
                                                 <TableCell>Đơn vị</TableCell>
                                                 <TableCell>Tổng Giá</TableCell>
                                                 <TableCell>Thương hiệu</TableCell>
@@ -551,6 +552,7 @@ const ImportReceiptDetailManagerForm = ({
                                                         <TableCell>{items.item.code}</TableCell>
                                                         <TableCell>{items.item.subcategoryName}</TableCell>
                                                         <TableCell>{items.quantity}</TableCell>
+                                                        <TableCell>{items.discrepancyQuantity}</TableCell>
                                                         <TableCell>{items.unitName}</TableCell>
                                                         <TableCell>{items.totalPrice?.toLocaleString('vi-VN')}</TableCell>
                                                         <TableCell>{items.item.brandName}</TableCell>

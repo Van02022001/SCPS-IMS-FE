@@ -250,73 +250,86 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose,
                                         <TableCell>Số lượng yêu cầu</TableCell>
                                         <TableCell>Đơn vị</TableCell>
                                         <TableCell>Số lượng thực tế</TableCell>
+                                        <TableCell>Tổng giá nhập</TableCell>
+                                        <TableCell>Số lượng chênh lệch</TableCell>
+                                        <TableCell>Giá trị chênh lệch</TableCell>
                                         <TableCell></TableCell>
                                     </TableRow>
                                     {dataReceiptDetail !== null
                                         ? dataReceiptDetail.details.map((detail) => (
-                                            <TableRow key={detail.id}>
-                                                <TableCell>{detail.item.code}</TableCell>
-                                                <TableCell>{detail.item.subcategoryName}</TableCell>
-                                                <TableCell>
-                                                    {detail.discrepancyLogs && detail.discrepancyLogs.length > 0
-                                                        ? detail.discrepancyLogs[0].requiredQuantity
-                                                        : detail.quantity}
-                                                </TableCell>
+                                              <TableRow key={detail.id}>
+                                                  <TableCell>{detail.item.code}</TableCell>
+                                                  <TableCell>{detail.item.subcategoryName}</TableCell>
+                                                  <TableCell>
+                                                      {detail.discrepancyLogs && detail.discrepancyLogs.length > 0
+                                                          ? detail.discrepancyLogs[0].requiredQuantity
+                                                          : detail.quantity}
+                                                  </TableCell>
 
-                                                <TableCell>{detail.unitName}</TableCell>
+                                                  <TableCell>{detail.unitName}</TableCell>
 
-                                                <TableCell>{detail.quantity}</TableCell>
+                                                  <TableCell>{detail.quantity}</TableCell>
 
-                                                <TableCell>
-                                                    {!locationQuantities[detail.id] > 0 &&
-                                                        !selectedLocationsFlag[detail.id] &&
-                                                        selectedLocations.find(
-                                                            (loc) => loc.detailId === detail.id,
-                                                        ) === undefined && (
-                                                            <Button
-                                                                variant="contained"
-                                                                color="primary"
-                                                                onClick={() => handleOpenAddCategoryDialog(detail.id)}
-                                                                disabled={selectedLocationsFlag[detail.id]}
-                                                            >
-                                                                Chọn vị trí
-                                                            </Button>
-                                                        )}
-                                                </TableCell>
-                                            </TableRow>
-                                        ))
+                                                  <TableCell>{detail.totalPrice}</TableCell>
+
+                                                  <TableCell>{detail.discrepancyQuantity}</TableCell>
+
+                                                  <TableCell>
+                                                      {detail.discrepancyLogs && detail.discrepancyLogs.length > 0
+                                                          ? detail.discrepancyLogs[0].discrepancyValue
+                                                          : detail.discrepancyValue}
+                                                  </TableCell>
+
+                                                  <TableCell>
+                                                      {!locationQuantities[detail.id] > 0 &&
+                                                          !selectedLocationsFlag[detail.id] &&
+                                                          selectedLocations.find(
+                                                              (loc) => loc.detailId === detail.id,
+                                                          ) === undefined && (
+                                                              <Button
+                                                                  variant="contained"
+                                                                  color="primary"
+                                                                  onClick={() => handleOpenAddCategoryDialog(detail.id)}
+                                                                  disabled={selectedLocationsFlag[detail.id]}
+                                                              >
+                                                                  Chọn vị trí
+                                                              </Button>
+                                                          )}
+                                                  </TableCell>
+                                              </TableRow>
+                                          ))
                                         : importReceipst.details.map((items) => (
-                                            <TableRow key={items.id}>
-                                                {console.log(quantities[items.id])}
-                                                <TableCell>{items.item.code}</TableCell>
-                                                <TableCell>{items.item.subcategoryName}</TableCell>
-                                                <TableCell>{items.quantity}</TableCell>
-                                                <TableCell>{items.unitName}</TableCell>
-                                                <TableCell>
-                                                    <TextField
-                                                        type="text"
-                                                        label="Số lượng nhập thực tế"
-                                                        style={{ width: '50%' }}
-                                                        value={quantities[items.id] || ''}
-                                                        onChange={(e) => {
-                                                            const inputValue = e.target.value;
-                                                            if (/^\d*$/.test(inputValue)) {
-                                                                handleQuantityChange(items.id, e.target.value);
-                                                            }
-                                                        }}
-                                                        inputProps={{
-                                                            inputMode: 'numeric',
-                                                            pattern: '[0-9]*',
-                                                        }}
-                                                    />
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
+                                              <TableRow key={items.id}>
+                                                  {console.log(quantities[items.id])}
+                                                  <TableCell>{items.item.code}</TableCell>
+                                                  <TableCell>{items.item.subcategoryName}</TableCell>
+                                                  <TableCell>{items.quantity}</TableCell>
+                                                  <TableCell>{items.unitName}</TableCell>
+                                                  <TableCell>
+                                                      <TextField
+                                                          type="text"
+                                                          label="Số lượng nhập thực tế"
+                                                          style={{ width: '50%' }}
+                                                          value={quantities[items.id] || ''}
+                                                          onChange={(e) => {
+                                                              const inputValue = e.target.value;
+                                                              if (/^\d*$/.test(inputValue)) {
+                                                                  handleQuantityChange(items.id, e.target.value);
+                                                              }
+                                                          }}
+                                                          inputProps={{
+                                                              inputMode: 'numeric',
+                                                              pattern: '[0-9]*',
+                                                          }}
+                                                      />
+                                                  </TableCell>
+                                              </TableRow>
+                                          ))}
                                     <div
                                         style={{
                                             display: 'flex',
                                             flexDirection: 'column',
-                                            minWidth: 100,
+                                            minWidth: 200,
                                         }}
                                     >
                                         <TableBody>
@@ -324,6 +337,10 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose,
                                             <TableRow>
                                                 <TableCell>Tổng số lượng:</TableCell>
                                                 <TableCell>{importReceipst.totalQuantity}</TableCell>
+                                            </TableRow>
+                                            <TableRow>
+                                                <TableCell>Tổng giá nhập:</TableCell>
+                                                <TableCell>{dataReceiptDetail.totalPrice}</TableCell>
                                             </TableRow>
                                         </TableBody>
                                     </div>
@@ -353,7 +370,7 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose,
                                 itemId={
                                     dataReceiptDetail?.details && selectedDetailId
                                         ? dataReceiptDetail.details.find((detail) => detail.id === selectedDetailId)
-                                            ?.item?.id
+                                              ?.item?.id
                                         : null
                                 }
                                 selectedDetailQuantity={selectedDetailQuantity}
