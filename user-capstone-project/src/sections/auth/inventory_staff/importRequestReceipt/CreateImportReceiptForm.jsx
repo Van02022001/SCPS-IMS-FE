@@ -250,9 +250,9 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose,
                                         <TableCell>Số lượng yêu cầu</TableCell>
                                         <TableCell>Đơn vị</TableCell>
                                         <TableCell>Số lượng thực tế</TableCell>
-                                        <TableCell>Tổng giá nhập</TableCell>
-                                        <TableCell>Số lượng chênh lệch</TableCell>
-                                        <TableCell>Giá trị chênh lệch</TableCell>
+                                        {/* <TableCell>Tổng giá nhập</TableCell> */}
+                                        {/* <TableCell>Số lượng chênh lệch</TableCell> */}
+                                        {/* <TableCell>Giá trị chênh lệch</TableCell> */}
                                         <TableCell></TableCell>
                                     </TableRow>
                                     {dataReceiptDetail !== null
@@ -270,15 +270,15 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose,
 
                                                   <TableCell>{detail.quantity}</TableCell>
 
-                                                  <TableCell>{detail.totalPrice}</TableCell>
+                                                  {/* <TableCell>{detail.totalPrice}</TableCell> */}
 
-                                                  <TableCell>{detail.discrepancyQuantity}</TableCell>
+                                                  {/* <TableCell>{detail.discrepancyQuantity}</TableCell> */}
 
-                                                  <TableCell>
+                                                  {/* <TableCell>
                                                       {detail.discrepancyLogs && detail.discrepancyLogs.length > 0
                                                           ? detail.discrepancyLogs[0].discrepancyValue
                                                           : detail.discrepancyValue}
-                                                  </TableCell>
+                                                  </TableCell> */}
 
                                                   <TableCell>
                                                       {!locationQuantities[detail.id] > 0 &&
@@ -338,10 +338,10 @@ const CreateImportReceiptForm = ({ isOpen, onCloseForm, importReceipst, onClose,
                                                 <TableCell>Tổng số lượng:</TableCell>
                                                 <TableCell>{importReceipst.totalQuantity}</TableCell>
                                             </TableRow>
-                                            <TableRow>
+                                            {/* <TableRow>
                                                 <TableCell>Tổng giá nhập:</TableCell>
                                                 <TableCell>{dataReceiptDetail.totalPrice}</TableCell>
-                                            </TableRow>
+                                            </TableRow> */}
                                         </TableBody>
                                     </div>
                                 </TableBody>
